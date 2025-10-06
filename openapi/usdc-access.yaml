@@ -1,0 +1,844 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: USDC Access
+  description: USDC Access API documentation.
+servers:
+  - url: https://api.circle.com
+security:
+  - BearerAuth: []
+tags:
+  - name: Quotes
+  - name: Trade Configurations
+  - name: Sessions
+paths:
+  /v1/w3s/ramp/quotes:
+    post:
+      tags:
+        - Quotes
+      summary: Create a USDC Access Onramp or Offramp quote
+      description: |
+        Creates an Onramp (BUY) or Offramp (SELL) quote. For **BUY rampType**, `cryptoAmount.amount` must be empty. For **SELL rampType**, `fiatAmount.amount` must be empty.
+      operationId: createQuote
+      requestBody:
+        $ref: '#/components/requestBodies/QuoteCreationRequest'
+      responses:
+        '201':
+          description: Quote created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security:
+        - BearerAuth: []
+  /v1/w3s/ramp/tradeConfigurations:
+    get:
+      tags:
+        - Trade Configurations
+      summary: Retrieve trade configurations
+      description: |
+        Retrieves the available trade configuration details. This API endpoint is optional for creating a quote or session, but it is recommended if dynamic fetching of configurations is needed.
+      operationId: listTradeConfigurations
+      parameters:
+        - name: rampType
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/RampType'
+        - name: fiatCurrency
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/FiatCurrency'
+        - name: blockchain
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Blockchain'
+        - name: paymentMethodType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/FiatMethod'
+      responses:
+        '200':
+          description: Trade configurations retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TradeConfigurationResponse'
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security:
+        - BearerAuth: []
+  /v1/w3s/ramp/sessions:
+    post:
+      tags:
+        - Sessions
+      summary: Create a USDC Access session
+      description: |
+        Initializes a USDC Access Network widget and provides the corresponding URL to access it. When in `QUOTE_SCREEN` request mode:  for **BUY rampType**, `cryptoAmount.amount` must be empty; for **SELL rampType**, `fiatAmount.amount` must be empty.
+      operationId: createSession
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSessionRequest'
+      responses:
+        '201':
+          description: Session created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security:
+        - BearerAuth: []
+    get:
+      tags:
+        - Sessions
+      summary: List all sessions related to a developer
+      description: |
+        List all sessions related to a developer. The list can be filtered by status, ramp type, customer reference id, ref id, tx hash, blockchain, and creation date
+      operationId: listSessions
+      parameters:
+        - name: rampType
+          in: query
+          schema:
+            $ref: '#/components/schemas/RampType'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/SessionStatus'
+        - name: customerRefId
+          in: query
+          schema:
+            type: string
+            description: Unique customer reference ID.
+        - name: refId
+          in: query
+          schema:
+            type: string
+            description: Custom label field.
+            example: d620d523-b5ab-4541-94b0-efe4f4c825c8
+        - name: txHash
+          in: query
+          schema:
+            type: string
+        - name: blockchain
+          in: query
+          schema:
+            $ref: '#/components/schemas/Blockchain'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+        - $ref: '#/components/parameters/PageBefore'
+        - $ref: '#/components/parameters/PageAfter'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Sessions listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSessionsResponse'
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+            Link:
+              description: 'Pagination cursor information. format: <https://api-staging.circle.com/v1/w3s/ramp/sessions?pageSize=50>; rel=\"next\'
+              schema:
+                type: string
+      security:
+        - BearerAuth: []
+  /v1/w3s/ramp/sessions/{id}:
+    get:
+      tags:
+        - Sessions
+      summary: Retrieve a session
+      description: Retrieves details of a specific session given its unique identifier.
+      operationId: getSession
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Session retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/XRequestId'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+        - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: PREFIX:ID:SECRET
+      description: Circle's API Keys are formatted in the following structure "PREFIX:ID:SECRET". All three parts are requred to make a successful request.
+  schemas:
+    RampType:
+      type: string
+      description: Type of ramp session or quote. BUY (Onramp) or SELL (Offramp).
+      enum:
+        - BUY
+        - SELL
+      example: BUY
+    FiatCurrency:
+      type: string
+      description: Currency code of the fiat money.
+      enum:
+        - ARS
+        - BRL
+        - EUR
+        - MXN
+        - USD
+      example: USD
+    FiatMoney:
+      type: object
+      description: Amount and currency of the fiat money.
+      properties:
+        amount:
+          description: Asset quantity in units and decimals.
+          type: string
+          example: '1000.00'
+        currency:
+          $ref: '#/components/schemas/FiatCurrency'
+      required:
+        - currency
+    CryptoCurrency:
+      type: string
+      description: Currency code of the crypto money.
+      enum:
+        - USDC
+      example: USDC
+    CryptoMoney:
+      type: object
+      description: Amount and currency of the crypto money.
+      properties:
+        amount:
+          type: string
+          description: Asset quantity in units and decimals.
+          example: '1000.00'
+        currency:
+          $ref: '#/components/schemas/CryptoCurrency'
+      required:
+        - currency
+    FiatMethod:
+      type: string
+      description: The fiat payment method type.
+      enum:
+        - WIRE
+        - SEPA
+        - SPEI
+        - PIX
+        - ARS_BANK_TRANSFER
+      example: WIRE
+    Blockchain:
+      type: string
+      description: Blockchain network the resource is on, or will be created on. Networks with a dash indicate a testnet; e.g. ETH-SEPOLIA.
+      enum:
+        - ETH
+        - ARB
+        - BASE
+        - MATIC
+        - OP
+        - XLM
+        - ETH-SEPOLIA
+        - ARB-SEPOLIA
+        - BASE-SEPOLIA
+        - MATIC-AMOY
+        - OP-SEPOLIA
+        - XLM-TESTNET
+      example: ETH
+    QuoteCreationRequest:
+      type: object
+      properties:
+        rampType:
+          $ref: '#/components/schemas/RampType'
+        fiatAmount:
+          $ref: '#/components/schemas/FiatMoney'
+        cryptoAmount:
+          $ref: '#/components/schemas/CryptoMoney'
+        paymentMethodType:
+          $ref: '#/components/schemas/FiatMethod'
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+      required:
+        - paymentMethodType
+        - rampType
+        - blockchain
+    XRequestId:
+      type: string
+      description: A unique identifier, which can be helpful for identifying a request when communicating with Circle support.
+      example: 2adba88e-9d63-44bc-b975-9b6ae3440dde
+    Id:
+      type: string
+      format: uuid
+      description: System-generated unique identifier of the resource.
+      example: c4d1da72-111e-4d52-bdbf-2e74a2d803d5
+    PartnerName:
+      type: string
+      description: Display Name of the partner for on-ramp or off-ramp transactions.
+      example: Legend Trading
+    ExchangeRate:
+      type: object
+      description: Exchange rate between the trading pair.
+      properties:
+        rate:
+          type: string
+          example: '1.010100'
+          description: Exchange rate between the trading pair, accurate to 6 decimals. It represents the amount of fiat currency per 1 USDC.
+        pair:
+          type: string
+          example: USDC/USD
+          description: Trading pair as 'Token/Fiat' symbols.
+      required:
+        - rate
+        - pair
+    FeeType:
+      type: string
+      description: fee category | MARKUP - fee charged by developer, configured through Circle. NETWORK - network fee for the transaction. PROCESSING - a processing fee charged by liquidity provider. TAX - tax for the transaction, applicable based on country/region.
+      enum:
+        - MARKUP
+        - NETWORK
+        - PROCESSING
+        - TAX
+      example: MARKUP
+    FeeBreakdownObject:
+      type: object
+      description: Fee details as amount and category. The fee type is applicable based on the payment method, country and other factors, it may show up as 0 if the fee is applicable but free.
+      properties:
+        amount:
+          $ref: '#/components/schemas/FiatMoney'
+        type:
+          $ref: '#/components/schemas/FeeType'
+      required:
+        - amount
+        - type
+    FeesObject:
+      type: object
+      description: Total amount and breakdown of the fees.
+      properties:
+        totalAmount:
+          $ref: '#/components/schemas/FiatMoney'
+        breakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeeBreakdownObject'
+      required:
+        - totalAmount
+        - breakdown
+    CreateDate:
+      type: string
+      format: date-time
+      description: Date and time the resource was created, in ISO-8601 UTC format.
+      example: '2023-01-01T12:04:05Z'
+    ExpireDate:
+      type: string
+      format: date-time
+      description: Date and time the resource expire, in ISO-8601 UTC format.
+      example: '2023-01-01T12:04:05Z'
+    Quote:
+      type: object
+      description: A real-time best quote for buying or selling USDC based on the given parameters.
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        paymentMethodType:
+          $ref: '#/components/schemas/FiatMethod'
+        fiatAmount:
+          $ref: '#/components/schemas/FiatMoney'
+        cryptoAmount:
+          $ref: '#/components/schemas/CryptoMoney'
+        partnerName:
+          $ref: '#/components/schemas/PartnerName'
+        exchangeRate:
+          $ref: '#/components/schemas/ExchangeRate'
+        fees:
+          $ref: '#/components/schemas/FeesObject'
+        createDate:
+          $ref: '#/components/schemas/CreateDate'
+        expireDate:
+          $ref: '#/components/schemas/ExpireDate'
+      required:
+        - id
+        - partnerName
+        - blockchain
+        - fiatAmount
+        - cryptoAmount
+        - paymentMethodType
+        - exchangeRate
+        - expireDate
+        - createDate
+        - fees
+    QuoteResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/Quote'
+    TradeLimit:
+      type: object
+      description: Lower and upper bounds for the amount.
+      properties:
+        minAmount:
+          oneOf:
+            - $ref: '#/components/schemas/FiatMoney'
+            - $ref: '#/components/schemas/CryptoMoney'
+        maxAmount:
+          oneOf:
+            - $ref: '#/components/schemas/FiatMoney'
+            - $ref: '#/components/schemas/CryptoMoney'
+        currency:
+          $ref: '#/components/schemas/FiatCurrency'
+      required:
+        - minAmount
+        - maxAmount
+        - currency
+    Overview:
+      type: object
+      description: 'Overview of supported ramp options: currencies, blockchains, payment methods, and trade limits based on the input filters. However, not all combinations of these options are supported together since it is aggregated from `supportedTradingPairs`. To see the specific supported combinations, refer to the `supportedTradingPairs` section in the response.'
+      properties:
+        rampType:
+          $ref: '#/components/schemas/RampType'
+        fiatCurrencies:
+          type: array
+          description: List of supported fiat currencies.
+          items:
+            $ref: '#/components/schemas/FiatCurrency'
+        cryptoCurrencies:
+          type: array
+          description: List of supported crypto currencies.
+          items:
+            type: string
+            example: USDC
+        blockchains:
+          type: array
+          description: List of supported blockchain networks.
+          items:
+            $ref: '#/components/schemas/Blockchain'
+        paymentMethodTypes:
+          type: array
+          description: List of supported payment method types.
+          items:
+            $ref: '#/components/schemas/FiatMethod'
+        tradeLimits:
+          type: array
+          description: List of trade limits per fiat currency.
+          items:
+            $ref: '#/components/schemas/TradeLimit'
+      required:
+        - rampType
+        - fiatCurrencies
+        - cryptoCurrencies
+        - blockchains
+        - paymentMethodTypes
+        - tradeLimits
+    SupportedTradingPair:
+      type: object
+      description: Contains trade configuration response, including overview and list of supported pairs.
+      properties:
+        rampType:
+          $ref: '#/components/schemas/RampType'
+        fiatCurrency:
+          $ref: '#/components/schemas/FiatCurrency'
+        cryptoCurrency:
+          type: string
+          description: Crypto currency code.
+          example: USDC
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        paymentMethodType:
+          $ref: '#/components/schemas/FiatMethod'
+        tradeLimit:
+          $ref: '#/components/schemas/TradeLimit'
+      required:
+        - rampType
+        - fiatCurrency
+        - cryptoCurrency
+        - blockchain
+        - paymentMethodType
+        - tradeLimit
+    TradeConfiguration:
+      type: object
+      description: Trade configuration response containing overview and list of supported pairs.
+      properties:
+        overview:
+          $ref: '#/components/schemas/Overview'
+        supportedTradingPairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportedTradingPair'
+      required:
+        - overview
+        - supportedTradingPairs
+    TradeConfigurationResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/TradeConfiguration'
+    SessionStatus:
+      type: string
+      description: Status of the session.
+      enum:
+        - PENDING
+        - DEPOSIT_RECEIVED
+        - COMPLETED
+        - FAILED
+        - EXPIRED
+      example: PENDING
+    RefId:
+      type: string
+      description: RefID is a custom label field.
+      example: d620d523-b5ab-4541-94b0-efe4f4c825c8
+    CustomerRefId:
+      type: string
+      description: Unique customer reference ID.
+    Country:
+      type: object
+      description: |
+        Represents a country, and optionally a subdivision (state/province).
+      properties:
+        countryCode:
+          type: string
+          description: Two-letter country code (ISO 3166-1 alpha-2).
+          minLength: 2
+          maxLength: 2
+          example: US
+        subdivisionCode:
+          type: string
+          description: |
+            Optional code representing a subdivision (state/province). This field should only be used if the `countryCode` is "US", as it currently supports validation for US states only.
+          example: CA
+          minLength: 2
+          maxLength: 2
+      required:
+        - countryCode
+    BlockchainAddress:
+      type: object
+      description: Blockchain address information.
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        address:
+          type: string
+          description: The blockchain address.
+          example: '0x95Ba4cF87D6723ad9C0Db21737D862bE80e93911'
+        addressTag:
+          type: string
+          description: The address tag associated with the transaction. Used for additional context or identification; e.g. a memo in Stellar.
+          example: Transaction identifier
+      required:
+        - blockchain
+        - address
+    Transaction:
+      type: object
+      description: Transaction details of the ramp session. Includes details of both onchain and fiat transactions.
+      properties:
+        fiatAmount:
+          $ref: '#/components/schemas/FiatMoney'
+        cryptoAmount:
+          $ref: '#/components/schemas/CryptoMoney'
+        fromAddress:
+          $ref: '#/components/schemas/BlockchainAddress'
+        toAddress:
+          $ref: '#/components/schemas/BlockchainAddress'
+        txHash:
+          type: string
+          description: Transaction hash on the blockchain.
+        fees:
+          $ref: '#/components/schemas/FeesObject'
+        exchangeRate:
+          $ref: '#/components/schemas/ExchangeRate'
+    UpdateDate:
+      type: string
+      format: date-time
+      description: Date and time the resource was last updated, in ISO-8601 UTC format.
+      example: '2023-01-01T12:04:05Z'
+    Session:
+      type: object
+      description: A Circle-hosted widget that a developer's user uses to buy or sell USDC.
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        rampType:
+          $ref: '#/components/schemas/RampType'
+        status:
+          $ref: '#/components/schemas/SessionStatus'
+        url:
+          type: string
+          format: uri
+          description: URL for USDC Access widget. Redirects customers to this URL for Buy or Sell session.
+        refId:
+          $ref: '#/components/schemas/RefId'
+        customerRefId:
+          $ref: '#/components/schemas/CustomerRefId'
+        country:
+          $ref: '#/components/schemas/Country'
+        walletAddress:
+          $ref: '#/components/schemas/BlockchainAddress'
+        quote:
+          $ref: '#/components/schemas/Quote'
+        redirectUrl:
+          type: string
+          format: uri
+          description: URL to redirect customer back after session completes, appended with a sessionId as part of it.
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+        createDate:
+          $ref: '#/components/schemas/CreateDate'
+        updateDate:
+          $ref: '#/components/schemas/UpdateDate'
+      required:
+        - id
+        - status
+        - url
+        - rampType
+        - walletAddress
+        - createDate
+        - updateDate
+    ListSessionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+      required:
+        - data
+    SessionMode:
+      type: string
+      description: The USDC Access session mode. QUOTE_SCREEN brings user on Quote screen and provide flexible options to user. REVIEW_SCREEN brings user to the review order screen with the preselected customer's order.
+      enum:
+        - QUOTE_SCREEN
+        - REVIEW_SCREEN
+    BaseCreateSessionRequest:
+      type: object
+      required:
+        - mode
+        - rampType
+        - walletAddress
+        - country
+      properties:
+        mode:
+          $ref: '#/components/schemas/SessionMode'
+        rampType:
+          $ref: '#/components/schemas/RampType'
+        walletAddress:
+          $ref: '#/components/schemas/BlockchainAddress'
+        country:
+          $ref: '#/components/schemas/Country'
+        customerRefId:
+          $ref: '#/components/schemas/CustomerRefId'
+        refId:
+          $ref: '#/components/schemas/RefId'
+        redirectUrl:
+          type: string
+          format: uri
+          description: URL to redirect customer back after session completes.
+    QUOTE_SCREEN:
+      allOf:
+        - $ref: '#/components/schemas/BaseCreateSessionRequest'
+        - type: object
+          required:
+            - mode
+          properties:
+            mode:
+              type: string
+              enum:
+                - QUOTE_SCREEN
+            fiatAmount:
+              $ref: '#/components/schemas/FiatMoney'
+            cryptoAmount:
+              $ref: '#/components/schemas/CryptoMoney'
+            paymentMethodType:
+              $ref: '#/components/schemas/FiatMethod'
+    REVIEW_SCREEN:
+      allOf:
+        - $ref: '#/components/schemas/BaseCreateSessionRequest'
+        - type: object
+          required:
+            - mode
+            - quoteId
+          properties:
+            quoteId:
+              $ref: '#/components/schemas/Id'
+            mode:
+              type: string
+              enum:
+                - REVIEW_SCREEN
+    CreateSessionRequest:
+      type: object
+      discriminator:
+        propertyName: mode
+      oneOf:
+        - $ref: '#/components/schemas/QUOTE_SCREEN'
+        - $ref: '#/components/schemas/REVIEW_SCREEN'
+    SessionResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/Session'
+  requestBodies:
+    QuoteCreationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QuoteCreationRequest'
+      description: Request to create a quote.
+      required: true
+    CreateSessionRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSessionRequest'
+      required: true
+  headers:
+    XRequestId:
+      description: |
+        Developer-provided header parameter or Circle-generated universally unique identifier (UUID v4). Useful for identifying a specific request when communicating with Circle Support.
+      schema:
+        $ref: '#/components/schemas/XRequestId'
+  responses:
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            title: BadRequestResponse
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: integer
+                description: Code that corresponds to the error.
+              message:
+                type: string
+                description: Message that describes the error.
+            example:
+              code: 400
+              message: Bad request.
+      description: Request cannot be processed due to a client error.
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/XRequestId'
+    NotFound:
+      content:
+        application/json:
+          schema:
+            type: object
+            title: NotFoundResponse
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: integer
+                description: Code that corresponds to the error.
+              message:
+                type: string
+                description: Message that describes the error.
+            example:
+              code: 404
+              message: Not found.
+      description: Specified resource was not found.
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/XRequestId'
+  parameters:
+    From:
+      name: from
+      description: Queries items created since the specified date-time (inclusive) in ISO 8601 format.
+      in: query
+      schema:
+        type: string
+        format: date-time
+        example: '2023-01-01T12:04:05Z'
+    To:
+      name: to
+      description: Queries items created before the specified date-time (inclusive) in ISO 8601 format.
+      in: query
+      schema:
+        type: string
+        format: date-time
+        example: '2023-01-01T12:04:05Z'
+    PageBefore:
+      name: pageBefore
+      description: |
+        A collection ID value used for pagination.
+
+        It marks the exclusive end of a page. When provided, the collection resource will return the next n items before
+        the id, with n being specified by pageSize.
+
+        The items will be returned in the natural order of the collection.
+
+        The resource will return the first page if neither pageAfter nor pageBefore are specified. 
+
+        SHOULD NOT be used in conjunction with pageAfter.
+      in: query
+      schema:
+        type: string
+        format: uuid
+    PageAfter:
+      name: pageAfter
+      description: |
+        A collection ID value used for pagination.
+
+        It marks the exclusive begin of a page. When provided, the collection resource will return the next n items after
+        the id, with n being specified by pageSize.
+
+        The items will be returned in the natural order of the collection.
+
+        The resource will return the first page if neither pageAfter nor pageBefore are specified.
+
+        SHOULD NOT be used in conjunction with pageBefore.
+      in: query
+      schema:
+        type: string
+        format: uuid
+    PageSize:
+      name: pageSize
+      description: |
+        Limits the number of items to be returned.
+
+        Some collections have a strict upper bound that will disregard this value. In case the specified value is higher
+        than the allowed limit, the collection limit will be used.
+
+        If avoided, the collection will determine the page size itself.
+      in: query
+      schema:
+        type: integer
+        default: 10
+        maximum: 50
+        minimum: 1
+    Id:
+      name: id
+      description: The universally unique identifier of the resource.
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: b3d9d2d5-4c12-4946-a09d-953e82fae2b0

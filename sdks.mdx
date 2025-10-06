@@ -1,196 +1,206 @@
 ---
 title: Browse SDKs
-description: 
 featureFlag: sdkAndSampleOverviewEnabled
-initiator: 
 sidebarTitle: "SDKs"
+mode: wide
 ---
 
-<SdkSampleCard
+import {SDKCard} from "/snippets/SDKCard.jsx";
+
+<SDKCard
+  id="developer-controlled-wallet-sdk"
   title="Developer-Controlled Wallets SDK"
   description="Server SDK for creating and managing developer-controlled wallets"
-  iconName="WalletOutline"
-  iconColor="accent-orange"
-  textForProduct="Wallets"
-  textForLanguages="TypeScript, Python"
-  relevantLinks={[
+  icon="wallet"
+  iconColor="orange"
+  product="Wallets"
+  languages="TypeScript, Python"
+  links={[
     {
-      type: "npm",
       label: "Node.js",
-      url: "https://www.npmjs.com/package/@circle-fin/developer-controlled-wallets",
+      href: "https://www.npmjs.com/package/@circle-fin/developer-controlled-wallets",
+      icon: "npm",
     },
     {
       label: "Python",
-      url: "https://pypi.org/project/circle-developer-controlled-wallets/",
+      href: "https://pypi.org/project/circle-developer-controlled-wallets/",
     },
     {
       label: "Documentation",
-      url: "/sdk-explorer#server-side-sdks",
+      href: "/sdk-explorer#server-side-sdks",
     },
   ]}
-  anchor="developer-controlled-wallet-sdk"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="modular-wallet-sdk-client"
   title="Modular Wallets SDK"
   description="Client SDK for creating and managing modular wallets"
-  iconName="TemplateOutline"
-  iconColor="accent-blue"
-  textForProduct="Modular Wallets"
-  textForLanguages="JavaScript, TypeScript, Swift, Kotlin, Java"
-  platforms={["web", "ios", "android"]}
-  relevantLinks={[
+  icon="template"
+  iconColor="blue"
+  product="Modular Wallets"
+  languages="JavaScript, TypeScript, Swift, Kotlin, Java"
+  platforms={[
+    { name: "Web", icon: "globe" },
+    { name: "iOS", icon: "apple" },
+    { name: "Android", icon: "android" },
+  ]}
+  links={[
     {
-      type: "npm",
       label: "Web",
-      url: "https://www.npmjs.com/package/@circle-fin/modular-wallets-core",
+      href: "https://www.npmjs.com/package/@circle-fin/modular-wallets-core",
+      icon: "npm",
     },
     {
-      type: "github",
       label: "iOS",
-      url: "https://github.com/circlefin/modularwallets-ios-sdk",
+      href: "https://github.com/circlefin/modularwallets-ios-sdk",
+      icon: "github",
     },
     {
-      type: "github",
       label: "Android",
-      url: "https://github.com/circlefin/modularwallets-android-sdk",
+      href: "https://github.com/circlefin/modularwallets-android-sdk",
+      icon: "github",
     },
     {
       label: "Web documentation",
-      url: "/wallets/modular/web-sdk",
+      href: "/wallets/modular/web-sdk",
     },
     {
       label: "iOS documentation",
-      url: "/wallets/modular/ios-sdk",
+      href: "/wallets/modular/ios-sdk",
     },
     {
       label: "Android documentation",
-      url: "/wallets/modular/android-sdk",
+      href: "/wallets/modular/android-sdk",
     },
   ]}
-  anchor="modular-wallet-sdk-client"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="user-controlled-wallet-sdk-client"
   title="User-Controlled Wallets SDK (Client)"
   description="Client SDK for creating and managing user-controlled wallets"
-  iconName="WalletOutline"
-  iconColor="accent-green"
-  textForProduct="Wallets"
-  textForLanguages="JavaScript, TypeScript, Kotlin, Swift"
-  platforms={["web", "react", "ios", "android"]}
-  relevantLinks={[
+  icon="wallet"
+  iconColor="green"
+  product="Wallets"
+  languages="JavaScript, TypeScript, Kotlin, Swift"
+  platforms={[
+    { name: "Web", icon: "globe" },
+    { name: "React", icon: "react" },
+    { name: "iOS", icon: "apple" },
+    { name: "Android", icon: "android" },
+  ]}
+  links={[
     {
-      type: "github",
       label: "Web",
-      url: "https://github.com/circlefin/w3s-pw-web-sdk",
+      href: "https://github.com/circlefin/w3s-pw-web-sdk",
+      icon: "github",
     },
     {
-      type: "github",
       label: "React Native",
-      url: "https://github.com/circlefin/w3s-react-native-sdk",
+      href: "https://github.com/circlefin/w3s-react-native-sdk",
+      icon: "github",
     },
     {
-      type: "github",
       label: "iOS",
-      url: "https://github.com/circlefin/w3s-ios-sdk",
+      href: "https://github.com/circlefin/w3s-ios-sdk",
+      icon: "github",
     },
     {
-      type: "github",
       label: "Android",
-      url: "https://github.com/circlefin/w3s-android-sdk",
+      href: "https://github.com/circlefin/w3s-android-sdk",
+      icon: "github",
     },
     {
       label: "Documentation",
-      url: "/wallets/user-controlled/sdks",
+      href: "/wallets/user-controlled/sdks",
     },
   ]}
-  anchor="user-controlled-wallet-sdk-client"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="user-controlled-wallet-sdk-server"
   title="User-Controlled Wallets SDK (Server)"
   description="Server SDK for creating and managing user-controlled wallets"
-  iconName="WalletOutline"
-  iconColor="accent-green"
-  textForProduct="Wallets"
-  textForLanguages="TypeScript, Python"
-  relevantLinks={[
+  icon="wallet"
+  iconColor="green"
+  product="Wallets"
+  languages="TypeScript, Python"
+  links={[
     {
-      type: "npm",
       label: "Node.js",
-      url: "https://www.npmjs.com/package/@circle-fin/user-controlled-wallets",
+      href: "https://www.npmjs.com/package/@circle-fin/user-controlled-wallets",
+      icon: "npm",
     },
     {
       label: "Python",
-      url: "https://pypi.org/project/circle-user-controlled-wallets/",
+      href: "https://pypi.org/project/circle-user-controlled-wallets/",
     },
     {
       label: "Documentation",
-      url: "/sdk-explorer#server-side-sdks",
+      href: "/sdk-explorer#server-side-sdks",
     },
   ]}
-  anchor="user-controlled-wallet-sdk-server"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="smart-contract-platform-sdk"
   title="Contracts SDK"
   description="Server SDK for creating and managing smart contracts"
-  iconName="ContractOutline"
-  iconColor="accent-purple"
-  textForProduct="Contracts"
-  textForLanguages="TypeScript, Python"
-  relevantLinks={[
+  icon="contract"
+  iconColor="purple"
+  product="Contracts"
+  languages="TypeScript, Python"
+  links={[
     {
-      type: "npm",
       label: "Node.js",
-      url: "https://www.npmjs.com/package/@circle-fin/smart-contract-platform",
+      href: "https://www.npmjs.com/package/@circle-fin/smart-contract-platform",
+      icon: "npm",
     },
     {
       label: "Python",
-      url: "https://pypi.org/project/circle-smart-contract-platform/",
+      href: "https://pypi.org/project/circle-smart-contract-platform/",
     },
     {
       label: "Documentation",
-      url: "/sdk-explorer#server-side-sdks",
+      href: "/sdk-explorer#server-side-sdks",
     },
   ]}
-  anchor="smart-contract-platform-sdk"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="cctp-third-party-sdks"
   title="CCTP Third-Party SDKs"
   description="Server SDKs for integrating CCTP from third-party providers"
-  iconName="SwitchHorizontalOutline"
-  iconColor="accent-blue"
-  textForProduct="CCTP"
-  textForLanguages="Various"
-  relevantLinks={[
+  icon="switch"
+  iconColor="blue"
+  product="CCTP"
+  languages="Various"
+  links={[
     {
       label: "Stableit SDK",
-      url: "https://docs.stableit.com",
+      href: "https://docs.stableit.com",
     },
     {
       label: "cctp-rs",
-      url: "https://crates.io/crates/cctp-rs",
+      href: "https://crates.io/crates/cctp-rs",
     },
   ]}
-  anchor="cctp-third-party-sdks"
 />
 
-<SdkSampleCard
+<SDKCard
+  id="mint-payouts-sdk"
   title="Mint Payouts SDK"
   description="Server SDK for creating and managing crypto payouts"
-  iconName="LibraryOutline"
-  iconColor="accent-violet"
-  textForProduct="Mint"
-  textForLanguages="NodeJS"
-  relevantLinks={[
+  icon="library"
+  iconColor="violet"
+  product="Mint"
+  languages="NodeJS"
+  links={[
     {
-      type: "github",
       label: "Github",
-      url: "https://github.com/circlefin/circle-nodejs-sdk",
+      href: "https://github.com/circlefin/circle-nodejs-sdk",
+      icon: "github",
     },
   ]}
-  anchor="mint-payouts-sdk"
 />

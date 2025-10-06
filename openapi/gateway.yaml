@@ -1,0 +1,493 @@
+openapi: 3.0.2
+info:
+  title: Circle Gateway
+  version: 1.0.0
+  description: |
+    Circle Gateway allows you to create a chain-abstracted USDC balance and transfer it instantly to any supported destination chain.
+servers:
+  - url: https://gateway-api.circle.com
+  - url: https://gateway-api-testnet.circle.com
+tags:
+  - name: Gateway
+    description: Endpoints for getting a unified USDC balance and creating attestations for transfer
+paths:
+  /v1/balances:
+    post:
+      summary: Get token balances for specified addresses
+      description: Returns the current available balance of each specified address across different domains
+      operationId: GetTokenBalances
+      tags:
+        - Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetBalancesRequest'
+      responses:
+        '200':
+          description: Successfully retrieved balances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalancesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/info:
+    get:
+      summary: Get Gateway info for supported domains and tokens
+      description: Provides information about the API and details of the supported domains and tokens.
+      operationId: GetGatewayInfo
+      tags:
+        - Gateway
+      responses:
+        '200':
+          description: Gateway info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+  /v1/transfer:
+    post:
+      summary: Create a transfer attestation for transferring tokens
+      description: Generates a transfer attestation and operator signature for transferring tokens between domains
+      operationId: CreateTransferAttestation
+      tags:
+        - Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttestationRequest'
+      responses:
+        '201':
+          description: Successfully created transfer attestation or attestation set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+        '400':
+          description: Invalid request parameters or invalid burn intent(s)
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Token:
+      type: string
+      description: Supported tokens for Gateway
+      enum:
+        - USDC
+    Domain:
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 6
+        - 7
+        - 10
+      description: |
+        Circle domain identifiers for supported chains:
+        * 0 - Ethereum
+        * 1 - Avalanche
+        * 2 - OP
+        * 3 - Arbitrum
+        * 6 - Base
+        * 7 - Polygon PoS
+        * 10 - Unichain
+    GetBalancesRequest:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/Token'
+          description: Token type to query balances for
+        sources:
+          type: array
+          description: List of sources to query balances from
+          items:
+            type: object
+            properties:
+              domain:
+                $ref: '#/components/schemas/Domain'
+                description: Domain to query balance from
+              depositor:
+                type: string
+                description: Address of the depositor to query balance for
+            required:
+              - domain
+              - depositor
+      required:
+        - token
+        - sources
+    BalancesResponse:
+      type: object
+      description: Response containing token balances for specified sources
+      properties:
+        token:
+          $ref: '#/components/schemas/Token'
+          description: Token type that was queried
+        balances:
+          type: array
+          description: List of balance responses for each source
+          items:
+            type: object
+            properties:
+              domain:
+                $ref: '#/components/schemas/Domain'
+                description: Domain where the balance was queried
+              depositor:
+                type: string
+                description: Address of the depositor
+              balance:
+                type: string
+                pattern: ^\d+(\.\d+)?$
+                description: Current available balance for the depositor
+            required:
+              - domain
+              - depositor
+              - balance
+      required:
+        - token
+        - balances
+    XRequestId:
+      type: string
+      description: A unique identifier, which can be helpful for identifying a request when communicating with Circle support.
+      example: 2adba88e-9d63-44bc-b975-9b6ae3440dde
+    InfoResponse:
+      type: object
+      description: Response containing information about supported domains and tokens
+      properties:
+        version:
+          type: integer
+          description: API version number
+        domains:
+          type: array
+          description: List of supported domains and their contract information
+          items:
+            type: object
+            properties:
+              chain:
+                type: string
+                description: Human-readable chain name
+                example: Ethereum
+              network:
+                type: string
+                description: Human-readable network name
+                example: Sepolia
+              domain:
+                $ref: '#/components/schemas/Domain'
+                description: Domain identifier
+              walletContract:
+                type: object
+                description: Wallet contract information for this domain
+                properties:
+                  address:
+                    type: string
+                    description: Address of the wallet contract
+                  supportedTokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Token'
+                    description: List of tokens supported by this wallet contract
+                required:
+                  - address
+                  - supportedTokens
+              minterContract:
+                type: object
+                description: Minter contract information for this domain
+                properties:
+                  address:
+                    type: string
+                    description: Address of the minter contract
+                  supportedTokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Token'
+                    description: List of tokens supported by this minter contract
+                required:
+                  - address
+                  - supportedTokens
+              processedHeight:
+                type: string
+                description: The latest processed block height for this network
+                example: '8666762'
+              burnIntentExpirationHeight:
+                type: string
+                description: The current minimum accepted block height for a burn intent expiration on this network. The value is based on the latest confirmed block. Developers should add some buffer to this value to avoid transfer request failures.
+                example: '8666792'
+            required:
+              - chain
+              - network
+              - domain
+              - processedHeight
+              - burnIntentExpirationHeight
+      required:
+        - version
+        - domains
+    Uint256:
+      type: string
+      description: A large integer value, represented as a string.
+      example: '1000000000000000000'
+    Bytes32:
+      type: string
+      pattern: ^0x[a-fA-F0-9]{64}$
+      example: '0x1234567890123456789012345678901234567890123456789012345678901234'
+      description: A 32-byte hex string.
+    Hex:
+      type: string
+      pattern: ^0x[a-fA-F0-9]*$
+      example: '0x1a2b3c4d'
+      description: A hex string.
+    TransferSpec:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 0
+          maximum: 4294967295
+          description: Version of the transfer spec (uint32).
+          example: 1
+        sourceDomain:
+          type: integer
+          minimum: 0
+          maximum: 4294967295
+          description: The domain of the wallet contract this transfer came from (uint32).
+          example: 0
+        destinationDomain:
+          type: integer
+          minimum: 0
+          maximum: 4294967295
+          description: The domain of the minter contract this transfer is valid for (uint32).
+          example: 4
+        sourceContract:
+          $ref: '#/components/schemas/Bytes32'
+          description: The address of the wallet contract on the source domain (32-byte padded).
+        destinationContract:
+          $ref: '#/components/schemas/Bytes32'
+          description: The address of the minter contract on the destination domain (32-byte padded).
+        sourceToken:
+          $ref: '#/components/schemas/Bytes32'
+          description: The token address on the source domain (32-byte padded).
+        destinationToken:
+          $ref: '#/components/schemas/Bytes32'
+          description: The token address on the destination domain (32-byte padded).
+        sourceDepositor:
+          $ref: '#/components/schemas/Bytes32'
+          description: The address to debit within the wallet contract on the source domain (32-byte padded).
+        destinationRecipient:
+          $ref: '#/components/schemas/Bytes32'
+          description: The address that should receive the funds on the destination domain (32-byte padded).
+        sourceSigner:
+          $ref: '#/components/schemas/Bytes32'
+          description: The signer who signed for the transfer (32-byte padded).
+        destinationCaller:
+          $ref: '#/components/schemas/Bytes32'
+          description: The address of the caller who may use the attestation, 0 address if any caller (32-byte padded).
+        value:
+          $ref: '#/components/schemas/Uint256'
+          description: The amount to be transferred.
+        salt:
+          $ref: '#/components/schemas/Bytes32'
+          description: An arbitrary value chosen by the user to be unique.
+        hookData:
+          $ref: '#/components/schemas/Hex'
+          description: Arbitrary bytes that may be used for onchain composition (optional).
+      required:
+        - version
+        - sourceDomain
+        - destinationDomain
+        - sourceContract
+        - destinationContract
+        - sourceToken
+        - destinationToken
+        - sourceDepositor
+        - destinationRecipient
+        - sourceSigner
+        - destinationCaller
+        - value
+        - salt
+    BurnIntent:
+      type: object
+      properties:
+        maxBlockHeight:
+          $ref: '#/components/schemas/Uint256'
+          description: The maximum block height at which this burn is valid.
+        maxFee:
+          $ref: '#/components/schemas/Uint256'
+          description: The maximum fee the user is willing to pay.
+        spec:
+          $ref: '#/components/schemas/TransferSpec'
+      required:
+        - maxBlockHeight
+        - maxFee
+        - spec
+    SignedBurnIntent:
+      type: object
+      properties:
+        burnIntent:
+          $ref: '#/components/schemas/BurnIntent'
+        signature:
+          type: string
+          pattern: ^0x[a-fA-F0-9]+$
+          description: The signature over the burnIntent.
+      required:
+        - burnIntent
+        - signature
+    BurnIntentSet:
+      type: object
+      properties:
+        intents:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/BurnIntent'
+      required:
+        - intents
+    SignedBurnIntentSet:
+      type: object
+      properties:
+        burnIntentSet:
+          $ref: '#/components/schemas/BurnIntentSet'
+        signature:
+          type: string
+          pattern: ^0x[a-fA-F0-9]+$
+          description: The signature over the burnIntentSet.
+      required:
+        - burnIntentSet
+        - signature
+    CreateAttestationRequest:
+      type: array
+      description: Batch of signed burn intents or burn intent sets.
+      minItems: 1
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/SignedBurnIntent'
+          - $ref: '#/components/schemas/SignedBurnIntentSet'
+    IntentFee:
+      type: object
+      description: Fee breakdown for a single burn intent.
+      properties:
+        transferSpecHash:
+          $ref: '#/components/schemas/Bytes32'
+          description: Keccak256 hash of the encoded transfer specification.
+        domain:
+          $ref: '#/components/schemas/Domain'
+          description: The domain ID of the chain where the burn intent originated (uint32).
+        baseFee:
+          type: string
+          description: Fixed gas fee charged for the burn transaction.
+          example: '2'
+        transferFee:
+          type: string
+          description: Variable fee based on transfer amount. Omitted for same-chain burns.
+          example: '0.125'
+      required:
+        - transferSpecHash
+        - domain
+        - baseFee
+    FeeSummary:
+      type: object
+      description: Aggregated fee information for a transfer request.
+      properties:
+        total:
+          type: string
+          description: Total fees from all burn intents across chains.
+          example: '1.178'
+        token:
+          $ref: '#/components/schemas/Token'
+          description: Token symbol.
+          example: USDC
+        perIntent:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntentFee'
+          description: List of fee breakdowns for each burn intent.
+      required:
+        - total
+        - token
+        - perIntent
+    TransferResponse:
+      type: object
+      description: Response containing a transfer attestation or attestation set and operator signature
+      properties:
+        transferId:
+          type: string
+          format: uuid
+          description: The unique identifier of the transfer.
+        attestation:
+          type: string
+          pattern: ^0x[a-fA-F0-9]+$
+          description: The byte-encoded transfer attestation or attestation set that should be passed to the minter contract
+        signature:
+          type: string
+          pattern: ^0x[a-fA-F0-9]+$
+          description: The signature of the operator on the byte-encoded transfer attestation or attestation set
+        fees:
+          $ref: '#/components/schemas/FeeSummary'
+          description: Information on the transfer fees to be charged.
+        expirationBlock:
+          type: string
+          description: The block number on the destination chain after which this attestation expires.
+      required:
+        - attestation
+        - signature
+        - transferId
+        - fees
+        - expirationBlock
+  headers:
+    XRequestId:
+      description: |
+        Developer-provided header parameter or Circle-generated universally unique identifier (UUID v4). Useful for identifying a specific request when communicating with Circle Support.
+      schema:
+        $ref: '#/components/schemas/XRequestId'
+  responses:
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            title: BadRequestResponse
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: integer
+                description: Code that corresponds to the error.
+              message:
+                type: string
+                description: Message that describes the error.
+            example:
+              code: 400
+              message: Bad request.
+      description: Request cannot be processed due to a client error.
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/XRequestId'
+    NotFound:
+      content:
+        application/json:
+          schema:
+            type: object
+            title: NotFoundResponse
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: integer
+                description: Code that corresponds to the error.
+              message:
+                type: string
+                description: Message that describes the error.
+            example:
+              code: 404
+              message: Not found.
+      description: Specified resource was not found.
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/XRequestId'

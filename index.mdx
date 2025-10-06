@@ -1,97 +1,91 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+mode: "custom"
+title: "Circle Developer Docs"
 ---
 
-## Setting up
+<div className="relative w-full flex items-center justify-center" style={{ height: '28rem', overflow: 'hidden'}}>
 
-Get your documentation site up and running in minutes.
+  <div
+    id="background-div"
+    className="absolute inset-0 h-full dark:bg-[#080d0d] bg-[#eff0fb] bg-cover bg-center rounded-xl" style={{backgroundImage: 'url(https://mintlify-assets.b-cdn.net/1password-background.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
+  </div>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
+  <div
+    style={{
+      position: 'absolute', textAlign: 'center', padding: '0 1rem',
+    }}
+  >
+    <div
+      className="text-5xl text-white font-extrabold w-full mt-12 leading-[1.2] tracking-tight"
+    >
+      Welcome to Circle Docs!
+    </div>
+
+    <p className=" text-base text-white font-bold">
+      Explore our guides and examples to build on the Circle platform.
+    </p>
+
+    <div className="flex items-center justify-center" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <button
+        type="button"
+        className="hidden w-full lg:flex items-center text-sm leading-6 py-4 pl-4 pr-4 text-gray-500 rounded-full"
+        id="home-search-entry"
+        style={{
+          marginTop: '2rem',
+          maxWidth: '40rem',
+          background: '#FFF',
+          boxShadow: '0px 1px 4px 0px rgba(8, 9, 10, 0.25), 0px 0px 0px 4px rgba(255, 255, 255, 0.20)',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+        onClick={()=> document.getElementById('search-bar-entry').click()}
+      >
+        <svg
+          className="h-4 w-4 ml-1.5 flex-none bg-primary hover:bg-gray-600 dark:bg-primary-dark dark:hover:bg-white/70"
+          style={{
+          marginRight: '0.5rem',
+          maskImage:
+            'url("https://mintlify.b-cdn.net/v6.5.1/solid/magnifying-glass.svg")',
+          maskRepeat: 'no-repeat',
+          maskPosition: 'center center',
+          }}
+        />
+        Search or ask...
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  style={{marginTop: '2rem', marginBottom: '8rem', maxWidth: '70rem', marginLeft: 'auto',
+  marginRight: 'auto', paddingLeft: '1.25rem',
+  paddingRight: '1.25rem' }}
 >
-  Follow our three step quickstart guide.
-</Card>
 
-## Make it yours
+<Columns cols={4}>
+  <Card title="Interactive Quickstarts" cta="Try it out" icon="code" href="/interactive-quickstarts">
+    Experience our guided tutorials before diving into the code.
+  </Card>
 
-Design a docs site that looks great and empowers your users.
+  <Card title="SDKs" icon="code" cta="View now" href="/sdks">
+    Explore our server-side and client-side SDKs to start building fast.
+  </Card>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Sample APIS" icon="lightbulb" cta="View demos" href="/sample-projects">
+    Explore our range of open-source sample projects for inspiration.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+
+  <Card title="API Reference" icon="book-open" cta="View reference" href="/api-reference/overview">
+    See code snippets for Circle's APIs in Node.js, Python, and more.
   </Card>
 </Columns>
-
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
-
 <Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+  <Card title="Testnet Faucet" horizontal cta="View reference" href="/api-reference/w3s/common/ping">
+    Get free testnet USDC & EURC.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+
+  <Card title="Token Addresses" horizontal cta="View reference" href="/api-reference/w3s/common/ping">
+    Verify the token addresses for USDC and EURC on supported blockchains.
   </Card>
 </Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+</div>

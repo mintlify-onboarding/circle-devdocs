@@ -1,793 +1,771 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Circle Docs",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#8D7DDA",
+    "light": "#8D7DDA",
+    "dark": "#8D7DDA"
   },
-  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "light"
+  },
+  "background": {
+    "color": {
+      "light": "#fcfbff"
+    },
+    "decoration": "gradient"
+  },
+  "favicon": "/favicon.ico",
+  "fonts": {
+    "heading": {
+      "family": "Circularxx",
+      "source": "https://cdn.prod.website-files.com/67116d0daddc92483c812e88/6716bb4e120ecb0042f2f4ed_CircularXX-Regular.woff2",
+      "format": "woff2"
+    },
+    "body": {
+      "family": "Circularxx",
+      "source": "https://cdn.prod.website-files.com/67116d0daddc92483c812e88/6716bb4e120ecb0042f2f4ed_CircularXX-Regular.woff2",
+      "format": "woff2"
+    }
+  },
   "navigation": {
-    "groups": [
+    "tabs": [
       {
-        "group": "Stablecoins",
-        "pages": [
+        "tab": "Documentation",
+        "groups": [
           {
-            "group": "USDC",
+            "group": "Stablecoins",
             "pages": [
-              "stablecoins/what-is-usdc",
-              "stablecoins/usdc-contract-addresses",
               {
-                "group": "Quickstarts",
+                "group": "USDC",
                 "pages": [
-                  "stablecoins/quickstart-transfer-10-usdc-on-chain",
-                  "stablecoins/quickstart-setup-transfer-usdc-aptos",
-                  "stablecoins/quickstart-setup-transfer-usdc-hyperevm",
-                  "stablecoins/quickstart-setup-transfer-usdc-ink",
-                  "stablecoins/quickstart-setup-transfer-usdc-plume",
-                  "stablecoins/quickstart-setup-transfer-usdc-sei",
-                  "stablecoins/quickstart-transfer-10-usdc-on-solana",
-                  "stablecoins/quickstart-setup-transfer-usdc-sonic",
-                  "stablecoins/quickstart-setup-transfer-usdc-sui",
-                  "stablecoins/quickstart-setup-transfer-usdc-xdc",
-                  "stablecoins/quickstart-setup-usdc-trustline-xrpl"
-                ]
-              },
-              "stablecoins/glossary"
-            ]
-          },
-          {
-            "group": "EURC",
-            "pages": [
-              "stablecoins/what-is-eurc",
-              "stablecoins/eurc-contract-addresses",
-              "stablecoins/quickstart-transfer-10-eurc-on-chain"
-            ]
-          }
-        ]
-      },
-      {
-        "group": "Tokenized Funds",
-        "pages": [
-          {
-            "group": "USYC",
-            "pages": [
-              "tokenized/usyc/overview",
-              "tokenized/usyc/subscribe-and-redeem",
-              "tokenized/usyc/smart-contracts",
-              "tokenized/usyc/web2-apis"
-            ]
-          }
-        ]
-      },
-      {
-        "group": "Circle Payments Network",
-        "pages": [
-          {
-            "group": "CPN",
-            "pages": [
-              "cpn",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "cpn/concepts/integration-concepts",
-                  "cpn/concepts/block-confirmation-and-finality"
+                  "stablecoins/what-is-usdc",
+                  "stablecoins/usdc-contract-addresses",
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "stablecoins/quickstart-transfer-10-usdc-on-chain",
+                      "stablecoins/quickstart-setup-transfer-usdc-aptos",
+                      "stablecoins/quickstart-setup-transfer-usdc-hyperevm",
+                      "stablecoins/quickstart-setup-transfer-usdc-ink",
+                      "stablecoins/quickstart-setup-transfer-usdc-plume",
+                      "stablecoins/quickstart-setup-transfer-usdc-sei",
+                      "stablecoins/quickstart-transfer-10-usdc-on-solana",
+                      "stablecoins/quickstart-setup-transfer-usdc-sonic",
+                      "stablecoins/quickstart-setup-transfer-usdc-sui",
+                      "stablecoins/quickstart-setup-transfer-usdc-xdc",
+                      "stablecoins/quickstart-setup-usdc-trustline-xrpl"
+                    ]
+                  },
+                  "stablecoins/glossary"
                 ]
               },
               {
-                "group": "Quickstarts",
+                "group": "EURC",
                 "pages": [
-                  "cpn/quickstarts/integrate-with-cpn-ofi"
-                ]
-              },
-              {
-                "group": "How-tos",
-                "pages": [
-                  "cpn/howtos/setup-webhook-notifications",
-                  "cpn/howtos/verify-webhook-signatures",
-                  "cpn/howtos/request-payment-config",
-                  "cpn/howtos/integrate-with-json-schema",
-                  "cpn/howtos/encrypt-travel-rule-beneficiary-data",
-                  "cpn/howtos/create-an-onchain-txn",
-                  "cpn/howtos/encrypt-files",
-                  "cpn/howtos/create-support-ticket"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "cpn/references/supported-blockchains",
-                  "cpn/references/wallet-provider-compatibility",
-                  "cpn/references/component-states-and-workflows",
-                  "cpn/references/payment-reason-codes",
-                  "cpn/references/payment-reference",
-                  "cpn/references/magic-values",
-                  "cpn/references/webhook-events",
-                  "cpn/references/webhook-retries",
-                  "cpn/references/payment-and-transaction-failure-reasons",
-                  "cpn/references/payment-failure-codes",
-                  "cpn/references/error-codes",
-                  "cpn/references/json-schema",
-                  "cpn/references/rfi-levels",
-                  "cpn/references/travel-rule-requirements",
-                  "cpn/references/validating-brazil-tax-account-id",
-                  "api-reference/cpn/cpn-platform/get-payment-configurations-overview"
+                  "stablecoins/what-is-eurc",
+                  "stablecoins/eurc-contract-addresses",
+                  "stablecoins/quickstart-transfer-10-eurc-on-chain"
                 ]
               }
             ]
-          }
-        ]
-      },
-      {
-        "group": "Developer Services",
-        "pages": [
+          },
           {
-            "group": "Wallets",
+            "group": "Tokenized Funds",
             "pages": [
-              "wallets",
               {
-                "group": "Wallets Products",
+                "group": "USYC",
+                "pages": [
+                  "tokenized/usyc/overview",
+                  "tokenized/usyc/subscribe-and-redeem",
+                  "tokenized/usyc/smart-contracts",
+                  "tokenized/usyc/web2-apis"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Circle Payments Network",
+            "pages": [
+              {
+                "group": "CPN",
+                "pages": [
+                  "cpn",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "cpn/concepts/integration-concepts",
+                      "cpn/concepts/block-confirmation-and-finality"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "cpn/quickstarts/integrate-with-cpn-ofi"
+                    ]
+                  },
+                  {
+                    "group": "How-tos",
+                    "pages": [
+                      "cpn/howtos/setup-webhook-notifications",
+                      "cpn/howtos/verify-webhook-signatures",
+                      "cpn/howtos/request-payment-config",
+                      "cpn/howtos/integrate-with-json-schema",
+                      "cpn/howtos/encrypt-travel-rule-beneficiary-data",
+                      "cpn/howtos/create-an-onchain-txn",
+                      "cpn/howtos/encrypt-files",
+                      "cpn/howtos/create-support-ticket"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "cpn/references/supported-blockchains",
+                      "cpn/references/wallet-provider-compatibility",
+                      "cpn/references/component-states-and-workflows",
+                      "cpn/references/payment-reason-codes",
+                      "cpn/references/payment-reference",
+                      "cpn/references/magic-values",
+                      "cpn/references/webhook-events",
+                      "cpn/references/webhook-retries",
+                      "cpn/references/payment-and-transaction-failure-reasons",
+                      "cpn/references/payment-failure-codes",
+                      "cpn/references/error-codes",
+                      "cpn/references/json-schema",
+                      "cpn/references/rfi-levels",
+                      "cpn/references/travel-rule-requirements",
+                      "cpn/references/validating-brazil-tax-account-id",
+                      "api-reference/cpn/cpn-platform/get-payment-configurations-overview"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Developer Services",
+            "pages": [
+              {
+                "group": "Wallets",
+                "pages": [
+                  "wallets",
+                  {
+                    "group": "Wallets Products",
+                    "pages": [
+                      "wallets/modular",
+                      "wallets/user-controlled",
+                      "wallets/dev-controlled",
+                      "wallets/gas-station",
+                      "wallets/compliance-engine"
+                    ]
+                  },
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "wallets/key-management",
+                      "wallets/account-types",
+                      "wallets/signing-apis",
+                      "wallets/infrastructure-models",
+                      "wallets/unified-wallet-addressing-evm",
+                      "wallets/wallets-on-solana",
+                      "wallets/webhook-notification-flows",
+                      "wallets/webhook-logs"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/webhook-notifications"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "wallets/batch-operations",
+                      "wallets/sign-tx-evm",
+                      "wallets/sign-tx-solana",
+                      "wallets/sign-tx-near"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "wallets/supported-blockchains",
+                      "wallets/blockchain-infrastructure",
+                      "wallets/api-rate-limits",
+                      "wallets/transaction-limits-and-optimizations",
+                      "wallets/gas-fees",
+                      "wallets/monitored-tokens",
+                      "wallets/wallet-upgrades"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Gas Station",
+                "pages": [
+                  "wallets/gas-station",
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/gas-station/send-a-gasless-transaction"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "wallets/gas-station/contract-addresses",
+                      "wallets/gas-station/billing",
+                      "wallets/gas-station/policy-management"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Compliance Engine",
+                "pages": [
+                  "wallets/compliance-engine",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "wallets/compliance-engine/tx-screening"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/compliance-engine/tx-screening-quickstart"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "wallets/compliance-engine/tx-screening-testing",
+                      "wallets/compliance-engine/tx-screening-rule-management",
+                      "wallets/compliance-engine/tx-screening-alert-management"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Wallets: Dev-Controlled",
+                "pages": [
+                  "wallets/dev-controlled",
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/dev-controlled/register-entity-secret",
+                      "wallets/dev-controlled/create-your-first-wallet",
+                      "wallets/dev-controlled/receive-an-inbound-transfer",
+                      "wallets/dev-controlled/transfer-tokens-across-wallets"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "wallets/dev-controlled/entity-secret-management",
+                      "wallets/dev-controlled/onboard-users"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Wallets: User-Controlled",
+                "pages": [
+                  "wallets/user-controlled",
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/user-controlled/create-your-first-wallet-with-social-logins",
+                      "wallets/user-controlled/create-your-first-wallet-with-email",
+                      "wallets/user-controlled/create-your-first-wallet-with-pin"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "wallets/user-controlled/send-an-outbound-transfer-or-execute-contract",
+                      "wallets/user-controlled/initiate-a-signature-request",
+                      "wallets/user-controlled/receive-inbound-transfer",
+                      "wallets/user-controlled/send-outbound-transfer",
+                      "wallets/user-controlled/reset-account-pin",
+                      "wallets/user-controlled/recover-account"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "wallets/user-controlled/authentication-methods",
+                      "wallets/user-controlled/confirmation-uis",
+                      "wallets/user-controlled/sdk-architecture",
+                      {
+                        "group": "SDKs",
+                        "pages": [
+                          "wallets/user-controlled/sdks",
+                          "wallets/user-controlled/web-sdk",
+                          "wallets/user-controlled/ios-sdk",
+                          "wallets/user-controlled/android-sdk",
+                          "wallets/user-controlled/react-native-sdk",
+                          "wallets/user-controlled/web-sdk-ui-customizations",
+                          "wallets/user-controlled/ios-sdk-ui-customization-api",
+                          "wallets/user-controlled/android-sdk-ui-customization-api",
+                          "wallets/user-controlled/react-native-sdk-ui-customization-api"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Wallets: Modular",
                 "pages": [
                   "wallets/modular",
-                  "wallets/user-controlled",
-                  "wallets/dev-controlled",
-                  "wallets/gas-station",
-                  "wallets/compliance-engine"
-                ]
-              },
-              {
-                "group": "Concepts",
-                "pages": [
-                  "wallets/key-management",
-                  "wallets/account-types",
-                  "wallets/signing-apis",
-                  "wallets/infrastructure-models",
-                  "wallets/unified-wallet-addressing-evm",
-                  "wallets/wallets-on-solana",
-                  "wallets/webhook-notification-flows",
-                  "wallets/webhook-logs"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "wallets/webhook-notifications"
-                ]
-              },
-              {
-                "group": "Tutorials",
-                "pages": [
-                  "wallets/batch-operations",
-                  "wallets/sign-tx-evm",
-                  "wallets/sign-tx-solana",
-                  "wallets/sign-tx-near"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "wallets/supported-blockchains",
-                  "wallets/blockchain-infrastructure",
-                  "wallets/api-rate-limits",
-                  "wallets/transaction-limits-and-optimizations",
-                  "wallets/gas-fees",
-                  "wallets/monitored-tokens",
-                  "wallets/wallet-upgrades"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Gas Station",
-            "pages": [
-              "wallets/gas-station",
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "wallets/gas-station/send-a-gasless-transaction"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "wallets/gas-station/contract-addresses",
-                  "wallets/gas-station/billing",
-                  "wallets/gas-station/policy-management"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Compliance Engine",
-            "pages": [
-              "wallets/compliance-engine",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "wallets/compliance-engine/tx-screening"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "wallets/compliance-engine/tx-screening-quickstart"
-                ]
-              },
-              {
-                "group": "Tutorials",
-                "pages": [
-                  "wallets/compliance-engine/tx-screening-testing",
-                  "wallets/compliance-engine/tx-screening-rule-management",
-                  "wallets/compliance-engine/tx-screening-alert-management"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Wallets: Dev-Controlled",
-            "pages": [
-              "wallets/dev-controlled",
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "wallets/dev-controlled/register-entity-secret",
-                  "wallets/dev-controlled/create-your-first-wallet",
-                  "wallets/dev-controlled/receive-an-inbound-transfer",
-                  "wallets/dev-controlled/transfer-tokens-across-wallets"
-                ]
-              },
-              {
-                "group": "Tutorials",
-                "pages": [
-                  "wallets/dev-controlled/entity-secret-management",
-                  "wallets/dev-controlled/onboard-users"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Wallets: User-Controlled",
-            "pages": [
-              "wallets/user-controlled",
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "wallets/user-controlled/create-your-first-wallet-with-social-logins",
-                  "wallets/user-controlled/create-your-first-wallet-with-email",
-                  "wallets/user-controlled/create-your-first-wallet-with-pin"
-                ]
-              },
-              {
-                "group": "Tutorials",
-                "pages": [
-                  "wallets/user-controlled/send-an-outbound-transfer-or-execute-contract",
-                  "wallets/user-controlled/initiate-a-signature-request",
-                  "wallets/user-controlled/receive-inbound-transfer",
-                  "wallets/user-controlled/send-outbound-transfer",
-                  "wallets/user-controlled/reset-account-pin",
-                  "wallets/user-controlled/recover-account"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "wallets/user-controlled/authentication-methods",
-                  "wallets/user-controlled/confirmation-uis",
-                  "wallets/user-controlled/sdk-architecture",
                   {
-                    "group": "SDKs",
+                    "group": "Concepts",
                     "pages": [
-                      "wallets/user-controlled/sdks",
-                      "wallets/user-controlled/web-sdk",
-                      "wallets/user-controlled/ios-sdk",
-                      "wallets/user-controlled/android-sdk",
-                      "wallets/user-controlled/react-native-sdk",
-                      "wallets/user-controlled/web-sdk-ui-customizations",
-                      "wallets/user-controlled/ios-sdk-ui-customization-api",
-                      "wallets/user-controlled/android-sdk-ui-customization-api",
-                      "wallets/user-controlled/react-native-sdk-ui-customization-api"
+                      "wallets/modular/key-features",
+                      "wallets/modular/passkeys"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "wallets/modular/create-a-wallet-and-send-gasless-txn"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "wallets/modular/console-setup",
+                      "wallets/modular/recover-passkey",
+                      "wallets/modular/dynamic-integration"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "wallets/modular/modules",
+                      {
+                        "group": "SDKs",
+                        "pages": [
+                          "wallets/modular/web-sdk",
+                          "wallets/modular/ios-sdk",
+                          "wallets/modular/android-sdk"
+                        ]
+                      }
                     ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "group": "Wallets: Modular",
-            "pages": [
-              "wallets/modular",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "wallets/modular/key-features",
-                  "wallets/modular/passkeys"
-                ]
               },
               {
-                "group": "Quickstarts",
+                "group": "Contracts",
                 "pages": [
-                  "wallets/modular/create-a-wallet-and-send-gasless-txn"
-                ]
-              },
-              {
-                "group": "Tutorials",
-                "pages": [
-                  "wallets/modular/console-setup",
-                  "wallets/modular/recover-passkey",
-                  "wallets/modular/dynamic-integration"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "wallets/modular/modules",
+                  "contracts",
                   {
-                    "group": "SDKs",
+                    "group": "Concepts",
                     "pages": [
-                      "wallets/modular/web-sdk",
-                      "wallets/modular/ios-sdk",
-                      "wallets/modular/android-sdk"
+                      "contracts/scp-templates-overview"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "contracts/scp-deploy-smart-contract",
+                      "contracts/deploy-smart-contract-template",
+                      "contracts/scp-interact-smart-contract",
+                      "contracts/scp-event-monitoring"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "contracts/supported-blockchains",
+                      "contracts/airdrop",
+                      "contracts/erc-20-token",
+                      "contracts/erc-1155-multi-token",
+                      "contracts/erc-721-nft"
                     ]
                   }
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Contracts",
-            "pages": [
-              "contracts",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "contracts/scp-templates-overview"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "contracts/scp-deploy-smart-contract",
-                  "contracts/deploy-smart-contract-template",
-                  "contracts/scp-interact-smart-contract",
-                  "contracts/scp-event-monitoring"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "contracts/supported-blockchains",
-                  "contracts/airdrop",
-                  "contracts/erc-20-token",
-                  "contracts/erc-1155-multi-token",
-                  "contracts/erc-721-nft"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "CCTP",
-            "pages": [
-              "cctp",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "cctp/technical-guide",
-                  "cctp/cctp-faq"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "cctp/transfer-usdc-on-testnet-from-ethereum-to-avalanche"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "cctp/cctp-supported-blockchains",
-                  "cctp/evm-smart-contracts",
-                  {
-                    "group": "Non-EVM Contracts and Interfaces",
-                    "pages": [
-                      "cctp/solana-programs"
-                    ]
-                  },
-                  "cctp/required-block-confirmations",
-                  "api-reference/w3s/cctp/get-public-keys-v-2",
-                  "sample-projects",
-                  "cctp/v1"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "CCTP V1",
-            "pages": [
-              "cctp/v1",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "cctp/v1/generic-message-passing",
-                  "cctp/v1/message-format",
-                  "cctp/v1/cctp-apis",
-                  "cctp/v1/limits"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "cctp/v1/transfer-usdc-on-testnet-from-ethereum-to-avalanche",
-                  "cctp/v1/transfer-usdc-on-testnet-from-noble-to-ethereum",
-                  "cctp/v1/transfer-usdc-on-testnet-from-sui-to-ethereum",
-                  "cctp/v1/transfer-usdc-on-testnet-from-aptos-to-base",
-                  "cctp/v1/transfer-testnet-usdc-between-solana-devnet"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "cctp/v1/cctp-supported-blockchains",
-                  "cctp/v1/evm-smart-contracts",
-                  {
-                    "group": "Non-EVM Contracts and Interfaces",
-                    "pages": [
-                      "cctp/v1/solana-programs",
-                      "cctp/v1/noble-cosmos-module",
-                      "cctp/v1/sui-packages",
-                      "cctp/v1/aptos-packages"
-                    ]
-                  },
-                  "cctp/v1/required-block-confirmations",
-                  "cctp/v1/supported-domains",
-                  "api-reference/cctp/all/get-attestation",
-                  "sample-projects"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Gateway",
-            "pages": [
-              "gateway",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "gateway/concepts/technical-guide",
-                  "gateway/concepts/faq"
-                ]
-              },
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "gateway/quickstarts/unified-balance"
-                ]
-              },
-              {
-                "group": "How-tos",
-                "pages": [
-                  "gateway/howtos/create-unified-usdc-balance",
-                  "gateway/howtos/transfer-unified-usdc-balance"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "gateway/references/fees",
-                  "gateway/references/supported-blockchains",
-                  "gateway/references/contract-addresses",
-                  "gateway/references/contract-interfaces-and-events",
-                  "api-reference/gateway/all/get-token-balances"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Paymaster",
-            "pages": [
-              "paymaster",
-              {
-                "group": "Quickstarts",
-                "pages": [
-                  "paymaster/pay-gas-fees-usdc"
-                ]
-              },
-              {
-                "group": "References",
-                "pages": [
-                  "paymaster/addresses-and-events"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "References",
-            "pages": [
-              "w3s/supported-blockchains-and-currencies",
-              {
-                "group": "Supported Blockchains",
-                "pages": [
-                  "w3s/supported-blockchains-and-currencies",
-                  "w3s/blockchain-compatibility-for-circle-apis",
-                  "w3s/blockchain-confirmations",
-                  "w3s/sign-tx-chain-id"
-                ]
-              },
-              "w3s/web3-services-api-client-keys-auth",
-              "w3s/sandbox-vs-production",
-              "w3s/developer-console-faucet",
-              {
-                "group": "Developer Console",
-                "pages": [
-                  "w3s/circle-developer-account",
-                  "w3s/developer-account-logs",
-                  "w3s/manage-team-members"
-                ]
-              },
-              "w3s/postman",
-              "w3s/idempotent-requests",
-              "w3s/compliance-requirements",
-              "w3s/synchronous-errors",
-              "w3s/asynchronous-states-and-statuses",
-              "w3s/programmable-wallets-primitives"
-            ]
-          }
-        ]
-      },
-      {
-        "group": "Liquidity Services",
-        "pages": [
-          {
-            "group": "Mint",
-            "pages": [
-              "circle-mint/introducing-circle-mint",
-              {
-                "group": "Getting Started",
-                "pages": [
-                  "circle-mint/getting-started-with-the-circle-apis",
-                  "circle-mint/circle-apis-notifications-quickstart"
-                ]
-              },
-              "circle-mint/sandbox-to-production-transition-guide",
-              {
-                "group": "Core Functionality",
-                "pages": [
-                  "circle-mint/quickstart-deposit-via-blockchain-wallet",
-                  "circle-mint/quickstart-deposit-via-funds-transfer",
-                  "circle-mint/quickstart-withdraw-to-bank",
-                  "circle-mint/quickstart-withdraw-via-blockchain-wallet"
-                ]
-              },
-              {
-                "group": "Using the API",
-                "pages": [
-                  "circle-mint/authentication",
-                  "circle-mint/api-keys",
-                  "circle-mint/circle-apis-production-sandbox-environments",
-                  "circle-mint/testing-connectivity-and-api-keys",
-                  "circle-mint/a-note-on-idempotent-requests",
-                  "circle-mint/circle-api-resources",
-                  "circle-mint/notifications-data-models",
-                  "circle-mint/pagination-and-filtering"
-                ]
-              },
-              "circle-mint/blockchain-confirmations",
-              "circle-mint/supported-chains-and-currencies",
-              "circle-mint/supported-countries",
-              "circle-mint/travel-rule-on-chain",
-              "circle-mint/wire-virtual-account-number",
-              "circle-mint/circle-apis-api-errors",
-              {
-                "group": "Additional APIs",
-                "pages": [
-                  "circle-mint/additional-apis",
-                  "circle-mint/exchange-local-currency-usdc",
-                  "circle-mint/swap-between-usdc-and-eurc",
-                  "circle-mint/crypto-payouts",
-                  "circle-mint/crypto-payments-quickstart",
-                  "circle-mint/crypto-refunds"
-                ]
-              },
-              {
-                "group": "Developer Tools",
-                "pages": [
-                  "circle-mint/circle-sdks",
-                  "circle-mint/openapi",
-                  "circle-mint/postman",
-                  "circle-mint/api-logs",
-                  "circle-mint/webhook-subscription-management"
-                ]
-              },
-              "api-reference/circle-mint/account/list-business-balances"
-            ]
-          }
-        ]
-      },
-      {
-        "group": "Resources",
-        "pages": [
-          "api-reference",
-          {
-            "group": "Resources",
-            "pages": [
-              "sdks",
-              "sdk-explorer",
-              {
-                "group": "SDKs",
-                "pages": [
-                  "sdks",
-                  "sdks#developer-controlled-wallet-sdk",
-                  "sdks#modular-wallet-sdk-client",
-                  "sdks#user-controlled-wallet-sdk-client",
-                  "sdks#user-controlled-wallet-sdk-server",
-                  "sdks#smart-contract-platform-sdk",
-                  "sdks#cctp-third-party-sdks",
-                  "sdks#mint-payouts-sdk"
-                ]
-              },
-              {
-                "group": "Sample Projects",
-                "pages": [
-                  "sample-projects",
-                  "sample-projects#create-escrow-contracts-for-the-gig-economy-using-ai-and-usdc",
-                  "sample-projects#autonomous-payments-with-ai-agents",
-                  "sample-projects#create-a-smart-account-and-send-a-gasless-transaction",
-                  "sample-projects#user-account-creation-email-login-and-pin-authorization-flow",
-                  "sample-projects#user-account-creation-and-email-login-and-pin-authorization-flow",
-                  "sample-projects#user-account-creation-and-social-login",
-                  "sample-projects#manage-user-sessions",
-                  "sample-projects#telegram-bot-with-wallets",
-                  "sample-projects#pay-for-network-fees-with-usdc",
-                  "sample-projects#test-payment-flows",
-                  "sample-projects#fast-transfer-usdc-between-blockchains",
-                  "sample-projects#transfer-usdc-between-blockchains",
-                  "sample-projects#cross-chain-usdc-telegram-bot-with-cctp-and-wallets",
-                  "sample-projects#evaluate-a-fast-confirmation-rule-on-ethereum",
-                  "sample-projects#execute-onchain-transactions-with-intents-and-ai",
-                  "sample-projects#create-credit-apps-powered-by-usdc"
-                ]
-              }
-            ]
-          },
-          "sdk-explorer",
-          "sdks",
-          "sample-projects",
-          {
-            "group": "Interactive Quickstarts",
-            "pages": [
-              "interactive-quickstarts",
-              "interactive-quickstarts",
-              {
-                "group": "Get Started",
-                "pages": [
-                  "interactive-quickstarts/get-started",
-                  "interactive-quickstarts/get-started#create-a-developer-services-account",
-                  "interactive-quickstarts/get-started#understanding-testnet-vs-mainnet-environments",
-                  "interactive-quickstarts/get-started#create-your-api-key",
-                  "interactive-quickstarts/get-started#the-power-of-testnet"
-                ]
-              },
-              {
-                "group": "Developer Controlled Wallets",
-                "pages": [
-                  "interactive-quickstarts/dev-controlled-wallets",
-                  "interactive-quickstarts/dev-controlled-wallets#introduction",
-                  "interactive-quickstarts/dev-controlled-wallets#prerequisites",
-                  "interactive-quickstarts/dev-controlled-wallets#setup-your-entity-secret",
-                  "interactive-quickstarts/dev-controlled-wallets#create-a-wallet",
-                  "interactive-quickstarts/dev-controlled-wallets#initiate-a-transaction",
-                  "interactive-quickstarts/dev-controlled-wallets#congratulations-on-your-progress"
-                ]
-              },
-              {
-                "group": "User Controlled Wallets",
-                "pages": [
-                  "interactive-quickstarts/user-controlled-wallets",
-                  "interactive-quickstarts/user-controlled-wallets#introduction",
-                  "interactive-quickstarts/user-controlled-wallets#prerequisites",
-                  "interactive-quickstarts/user-controlled-wallets#configure-your-app-get-your-appid",
-                  "interactive-quickstarts/user-controlled-wallets#create-your-user-wallet",
-                  "interactive-quickstarts/user-controlled-wallets#initiate-a-transaction",
-                  "interactive-quickstarts/user-controlled-wallets#congratulations-on-your-progress"
                 ]
               },
               {
                 "group": "CCTP",
                 "pages": [
-                  "interactive-quickstarts/cctp",
-                  "interactive-quickstarts/cctp#introduction",
-                  "interactive-quickstarts/cctp#prerequisites",
-                  "interactive-quickstarts/cctp#burn-usdc",
-                  "interactive-quickstarts/cctp#approve-burn",
-                  "interactive-quickstarts/cctp#mint-usdc",
-                  "interactive-quickstarts/cctp#congratulations-on-your-progress"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Build with AI",
-            "pages": [
-              "ai-codegen",
-              "ai-codegen"
-            ]
-          },
-          {
-            "group": "Release Notes",
-            "pages": [
-              "release-notes",
-              {
-                "group": "2025",
-                "pages": [
-                  "release-notes/w3s-2025",
-                  "release-notes/circle-mint-2025",
-                  "release-notes/stablecoins-2025",
-                  "release-notes/tokenized-funds-2025",
-                  "release-notes/cpn-2025"
+                  "cctp",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "cctp/technical-guide",
+                      "cctp/cctp-faq"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "cctp/transfer-usdc-on-testnet-from-ethereum-to-avalanche"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "cctp/cctp-supported-blockchains",
+                      "cctp/evm-smart-contracts",
+                      {
+                        "group": "Non-EVM Contracts and Interfaces",
+                        "pages": [
+                          "cctp/solana-programs"
+                        ]
+                      },
+                      "cctp/required-block-confirmations",
+                      "api-reference/w3s/cctp/get-public-keys-v-2",
+                      "cctp/sample-projects",
+                      "cctp/v1"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "2024",
+                "group": "CCTP V1",
                 "pages": [
-                  "release-notes/w3s-2024",
-                  "release-notes/circle-mint-2024",
-                  "release-notes/stablecoins-2024"
+                  "cctp/v1",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "cctp/v1/generic-message-passing",
+                      "cctp/v1/message-format",
+                      "cctp/v1/cctp-apis",
+                      "cctp/v1/limits"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "cctp/v1/transfer-usdc-on-testnet-from-ethereum-to-avalanche",
+                      "cctp/v1/transfer-usdc-on-testnet-from-noble-to-ethereum",
+                      "cctp/v1/transfer-usdc-on-testnet-from-sui-to-ethereum",
+                      "cctp/v1/transfer-usdc-on-testnet-from-aptos-to-base",
+                      "cctp/v1/transfer-testnet-usdc-between-solana-devnet"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "cctp/v1/cctp-supported-blockchains",
+                      "cctp/v1/evm-smart-contracts",
+                      {
+                        "group": "Non-EVM Contracts and Interfaces",
+                        "pages": [
+                          "cctp/v1/solana-programs",
+                          "cctp/v1/noble-cosmos-module",
+                          "cctp/v1/sui-packages",
+                          "cctp/v1/aptos-packages"
+                        ]
+                      },
+                      "cctp/v1/required-block-confirmations",
+                      "cctp/v1/supported-domains",
+                      "api-reference/cctp/all/get-attestation",
+                      "cctp/sample-projects"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Gateway",
+                "pages": [
+                  "gateway",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "gateway/concepts/technical-guide",
+                      "gateway/concepts/faq"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "gateway/quickstarts/unified-balance"
+                    ]
+                  },
+                  {
+                    "group": "How-tos",
+                    "pages": [
+                      "gateway/howtos/create-unified-usdc-balance",
+                      "gateway/howtos/transfer-unified-usdc-balance"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "gateway/references/fees",
+                      "gateway/references/supported-blockchains",
+                      "gateway/references/contract-addresses",
+                      "gateway/references/contract-interfaces-and-events",
+                      "api-reference/gateway/all/get-token-balances"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Paymaster",
+                "pages": [
+                  "paymaster",
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "paymaster/pay-gas-fees-usdc"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "paymaster/addresses-and-events"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "References",
+                "pages": [
+                  "w3s/supported-blockchains-and-currencies",
+                  {
+                    "group": "Supported Blockchains",
+                    "pages": [
+                      "w3s/supported-blockchains-and-currencies",
+                      "w3s/blockchain-compatibility-for-circle-apis",
+                      "w3s/blockchain-confirmations",
+                      "w3s/sign-tx-chain-id"
+                    ]
+                  },
+                  "w3s/web3-services-api-client-keys-auth",
+                  "w3s/sandbox-vs-production",
+                  "w3s/developer-console-faucet",
+                  {
+                    "group": "Developer Console",
+                    "pages": [
+                      "w3s/circle-developer-account",
+                      "w3s/developer-account-logs",
+                      "w3s/manage-team-members"
+                    ]
+                  },
+                  "w3s/postman",
+                  "w3s/idempotent-requests",
+                  "w3s/compliance-requirements",
+                  "w3s/synchronous-errors",
+                  "w3s/asynchronous-states-and-statuses",
+                  "w3s/programmable-wallets-primitives"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Liquidity Services",
+            "pages": [
+              {
+                "group": "Mint",
+                "pages": [
+                  "circle-mint/introducing-circle-mint",
+                  {
+                    "group": "Getting Started",
+                    "pages": [
+                      "circle-mint/getting-started-with-the-circle-apis",
+                      "circle-mint/circle-apis-notifications-quickstart"
+                    ]
+                  },
+                  "circle-mint/sandbox-to-production-transition-guide",
+                  {
+                    "group": "Core Functionality",
+                    "pages": [
+                      "circle-mint/quickstart-deposit-via-blockchain-wallet",
+                      "circle-mint/quickstart-deposit-via-funds-transfer",
+                      "circle-mint/quickstart-withdraw-to-bank",
+                      "circle-mint/quickstart-withdraw-via-blockchain-wallet"
+                    ]
+                  },
+                  {
+                    "group": "Using the API",
+                    "pages": [
+                      "circle-mint/authentication",
+                      "circle-mint/api-keys",
+                      "circle-mint/circle-apis-production-sandbox-environments",
+                      "circle-mint/testing-connectivity-and-api-keys",
+                      "circle-mint/a-note-on-idempotent-requests",
+                      "circle-mint/circle-api-resources",
+                      "circle-mint/notifications-data-models",
+                      "circle-mint/pagination-and-filtering"
+                    ]
+                  },
+                  "circle-mint/blockchain-confirmations",
+                  "circle-mint/supported-chains-and-currencies",
+                  "circle-mint/supported-countries",
+                  "circle-mint/travel-rule-on-chain",
+                  "circle-mint/wire-virtual-account-number",
+                  "circle-mint/circle-apis-api-errors",
+                  {
+                    "group": "Additional APIs",
+                    "pages": [
+                      "circle-mint/additional-apis",
+                      "circle-mint/exchange-local-currency-usdc",
+                      "circle-mint/swap-between-usdc-and-eurc",
+                      "circle-mint/crypto-payouts",
+                      "circle-mint/crypto-payments-quickstart",
+                      "circle-mint/crypto-refunds"
+                    ]
+                  },
+                  {
+                    "group": "Developer Tools",
+                    "pages": [
+                      "circle-mint/circle-sdks",
+                      "circle-mint/openapi",
+                      "circle-mint/postman",
+                      "circle-mint/api-logs",
+                      "circle-mint/webhook-subscription-management"
+                    ]
+                  },
+                  "api-reference/circle-mint/account/list-business-balances"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "pages": [
+          "api-reference"
+        ]
+      },
+      {
+        "tab": "SDK Reference",
+        "groups": [
+          {
+            "group": "Resources",
+            "pages": [
+              "sdk-explorer",
+              "sdks",
+              "sample-projects"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Interactive Quickstarts",
+        "pages": [
+          "interactive-quickstarts",
+          {
+            "group": "Get Started",
+            "pages": [
+              "interactive-quickstarts/get-started",
+              "interactive-quickstarts/get-started#create-a-developer-services-account",
+              "interactive-quickstarts/get-started#understanding-testnet-vs-mainnet-environments",
+              "interactive-quickstarts/get-started#create-your-api-key",
+              "interactive-quickstarts/get-started#the-power-of-testnet"
+            ]
+          },
+          {
+            "group": "Developer Controlled Wallets",
+            "pages": [
+              "interactive-quickstarts/dev-controlled-wallets",
+              "interactive-quickstarts/dev-controlled-wallets#introduction",
+              "interactive-quickstarts/dev-controlled-wallets#prerequisites",
+              "interactive-quickstarts/dev-controlled-wallets#setup-your-entity-secret",
+              "interactive-quickstarts/dev-controlled-wallets#create-a-wallet",
+              "interactive-quickstarts/dev-controlled-wallets#initiate-a-transaction",
+              "interactive-quickstarts/dev-controlled-wallets#congratulations-on-your-progress"
+            ]
+          },
+          {
+            "group": "User Controlled Wallets",
+            "pages": [
+              "interactive-quickstarts/user-controlled-wallets",
+              "interactive-quickstarts/user-controlled-wallets#introduction",
+              "interactive-quickstarts/user-controlled-wallets#prerequisites",
+              "interactive-quickstarts/user-controlled-wallets#configure-your-app-get-your-appid",
+              "interactive-quickstarts/user-controlled-wallets#create-your-user-wallet",
+              "interactive-quickstarts/user-controlled-wallets#initiate-a-transaction",
+              "interactive-quickstarts/user-controlled-wallets#congratulations-on-your-progress"
+            ]
+          },
+          {
+            "group": "CCTP",
+            "pages": [
+              "interactive-quickstarts/cctp",
+              "interactive-quickstarts/cctp#introduction",
+              "interactive-quickstarts/cctp#prerequisites",
+              "interactive-quickstarts/cctp#burn-usdc",
+              "interactive-quickstarts/cctp#approve-burn",
+              "interactive-quickstarts/cctp#mint-usdc",
+              "interactive-quickstarts/cctp#congratulations-on-your-progress"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Release Notes",
+        "pages": [
+          "release-notes",
+          {
+            "group": "2025",
+            "pages": [
+              "release-notes/w3s-2025",
+              "release-notes/circle-mint-2025",
+              "release-notes/stablecoins-2025",
+              "release-notes/tokenized-funds-2025",
+              "release-notes/cpn-2025"
+            ]
+          },
+          {
+            "group": "2024",
+            "pages": [
+              "release-notes/w3s-2024",
+              "release-notes/circle-mint-2024",
+              "release-notes/stablecoins-2024"
             ]
           }
         ]
       }
     ],
     "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+      "anchors": []
     }
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://www.circle.com"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Sign in",
+        "href": "https://app.circle.com/signin"
+      },
+      {
+        "label": "Faucet",
+        "href": "https://faucet.circle.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Help",
+      "href": "https://support.usdc.circle.com"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://twitter.com/circle",
+      "linkedin": "https://www.linkedin.com/company/circle-internet-financial/",
+      "instagram": "https://www.instagram.com/teamcircle/?hl=en",
+      "youtube": "https://www.youtube.com/c/Circlecryptofinance",
+      "discord": "https://discord.com/invite/buildoncircle"
     }
   },
   "contextual": {
     "options": [
       "copy",
-      "view",
       "chatgpt",
       "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
+      "view"
     ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
   }
 }

@@ -8,7 +8,8 @@ tableOfContents: true
 sidebarTitle: "FAQ"
 ---
 
-## What is Circle Gateway?
+<AccordionGroup>
+<Accordion title="What is Circle Gateway?">
 
 Circle Gateway is a new crosschain primitive enabling a unified USDC balance,
 unlocking instant crosschain liquidity in \<500 ms.
@@ -20,8 +21,8 @@ external liquidity.
 At the same time, they maintain the ownership and control over their USDC that
 is native to blockchains. Gateway enables a user experience where access to USDC
 is immediate and universal, and ownership is always preserved by the user.
-
-## How does Circle Gateway differ from CCTP?
+</Accordion>
+<Accordion title="How does Circle Gateway differ from CCTP?">
 
 Gateway allows users to front-load the finalization wait time rather than
 requiring finality in the middle of a transfer flow. This enables users to use
@@ -29,18 +30,18 @@ all of their USDC instantly on any chain (even in amounts exceeding the balance
 held on any single chain), without needing to decide beforehand what amount or
 destination is needed. As such, it's optimized for use-cases requiring capital
 efficiency, low latency, and chain abstraction.
-
-## Who is Gateway designed for?
+</Accordion>
+<Accordion title="Who is Gateway designed for?">
 
 Gateway has been designed for businesses and developers facing pain points from
 multichain liquidity fragmentation and crosschain friction between chains.
-
-## Does Gateway require signing up with Circle?
+</Accordion>
+<Accordion title="Does Gateway require signing up with Circle?">
 
 No, Gateway does not require sign-up with Circle. Gateway is permissionless
 crosschain infrastructure that is available for all users and developers.
-
-## What are the fees associated with Gateway?
+</Accordion>
+<Accordion title="What are the fees associated with Gateway?">
 
 Fees for using Circle Gateway vary based on several factors, including the
 source blockchain where USDC is being transferred from and the size of the
@@ -69,14 +70,14 @@ If you have further questions about the current fee structure or would like to
 discuss long-term pricing options, reach out to Circle directly via the
 [Discord support channel](https://discord.com/invite/buildoncircle) or your
 [Circle account representative](https://discord.com/invite/buildoncircle).
-
-## Where is USDC held after deposit into the Gateway Wallet contract?
+</Accordion>
+<Accordion title="Where is USDC held after deposit into the Gateway Wallet contract?">
 
 USDC deposited to the GatewayWallet smart contract is fully controlled by the
 user, and remains in the contract until the user has provided a signed request
 to move assets.
-
-## How does a trustless withdrawal work?
+</Accordion>
+<Accordion title="How does a trustless withdrawal work?">
 
 In the unlikely event that Circle's APIs are down for an extended period or
 service is unavailable for any other reason, users can trustlessly withdraw USDC
@@ -87,10 +88,12 @@ First, make a contract call to the
 method on the Gateway Wallet contract with the desired amount to withdrawal.
 After a delay of 7 days, make a contract call to the withdraw method to complete
 the withdrawal.
-
-## Have the Gateway Wallet contracts been audited?
+</Accordion>
+<Accordion title="Have the Gateway Wallet contracts been audited?">
 
 Yes, Gateway smart contracts have been audited by two separate firms.
 
 - [ChainSecurity audit report](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/CCTP/%5BPublic%5D%20%5BChainSecurity%5D%20Circle_Gateway_audit.pdf)
 - [Ottersec audit report](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/Circle%20Gateway%20Audit%20-%20OtterSec%20-%207-21-2025.pdf)
+</Accordion>
+</AccordionGroup>

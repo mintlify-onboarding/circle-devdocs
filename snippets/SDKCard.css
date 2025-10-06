@@ -1,0 +1,100 @@
+/* SDK Card Styles */
+.cb-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.cb-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.accent-orange {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+
+.accent-blue {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.accent-green {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.accent-purple {
+  background-color: #faf5ff;
+  color: #9333ea;
+}
+
+.accent-violet {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+
+.type-header-xs {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #111827;
+}
+
+.type-body-base {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.type-body-xs-bold {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.type-body-sm {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.type-body-sm-bold {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.text-neutral-subtle {
+  color: #6b7280;
+}
+
+.text-icon-neutral {
+  color: #6b7280;
+}
+
+.cb-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #374151;
+}
+
+.cb-button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
