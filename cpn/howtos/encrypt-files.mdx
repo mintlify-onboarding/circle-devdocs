@@ -1,0 +1,167 @@
+---
+title: "How-to: Encrypt Files for RFI Transmission"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Encrypt Files for RFI Transmission"
+---
+
+This guide explains how to set up encryption and decryption between an OFI and a
+BFI during the RFI process so that a file can be passed securely. This
+encryption varies from the method used to encrypt JSON communications between
+OFI and BFI, but shares some features. For compactness, files are encrypted
+using AES, and then the key is encrypted using JWE. Both are then transmitted to
+the BFI for a two-stage decryption process.
+
+In the CPN system, the OFI encrypts a payload with a randomly generated AES key.
+This key is then encrypted with the BFI's public key using
+[JSON Web Encryption](https://datatracker.ietf.org/doc/html/rfc7516). The
+encrypted AES key and encrypted file payload are transmitted to the BFI. The BFI
+decrypts the AES key using their private JWK and uses it to decrypt the file
+contents.
+
+## Steps
+
+The following sections describe the steps necessary to encrypt a file sent from
+an OFI to a BFI through the RFI endpoint.
+
+### Step 1: Generate a random 128-bit AES key
+
+Using your chosen implementation language, generate a random 128-bit AES key for
+AES-128-GCM encryption.
+
+```java
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+
+
+/**
+ * @return A SecretKey for AES encryption.
+ * @throws GeneralSecurityException if the AES algorithm is not available.
+ */
+public static SecretKey generateAesKey() throws GeneralSecurityException {
+  KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+  keyGenerator.init(128, new SecureRandom());
+  return keyGenerator.generateKey();
+}
+```
+
+### Step 2: Generate a 12-byte IV
+
+Using your chosen implementation language, generate a 12-byte IV.
+
+```java
+import java.security.SecureRandom;
+
+/**
+ * @return A 12-byte array containing the IV.
+ */
+public static byte[] generateIv() {
+  byte[] iv = new byte[12];
+  new SecureRandom().nextBytes(iv);
+  return iv;
+}
+```
+
+### Step 3: Encrypt the file contents
+
+Encrypt the file contents using AES-128-GCM using the key and IV from the
+previous steps.
+
+```java
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import java.security.GeneralSecurityException;
+
+
+/**
+ * @param plaintextPayload The raw data to encrypt.
+ * @param aesKey The AES key to use for encryption.
+ * @param iv The 12-byte Initialization Vector.
+ * @return The encrypted data, including the GCM authentication tag.
+ * @throws GeneralSecurityException if a cryptographic error occurs.
+ */
+public static byte[] encryptPayload(byte[] plaintextPayload, SecretKey aesKey, byte[] iv) throws GeneralSecurityException {
+  Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+  GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv);
+  cipher.init(Cipher.ENCRYPT_MODE, aesKey, gcmParameterSpec);
+  return cipher.doFinal(plaintextPayload);
+}
+```
+
+### Step 4: Encrypt the AES key
+
+Using the JWK data from the quote response, encrypt the AES key that was used to
+encrypt the file contents with the following parameters using JWE:
+
+```java
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEEncrypter;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.Payload;
+import javax.crypto.SecretKey;
+import java.security.interfaces.ECPublicKey;
+
+
+/**
+ * @param aesKey The AES key to wrap.
+ * @param bfiPublicKey The recipient's Elliptic Curve public key.
+ * @return A compact, serialized JWE string representing the encrypted key.
+ * @throws JOSEException if an error occurs during JWE creation or encryption.
+ */
+public static String wrapAesKey(SecretKey aesKey, ECPublicKey bfiPublicKey) throws JOSEException {
+// Create the JWEHeader using ECDH_ES+AS128KW and AES-128-GCM
+  JWEHeader header = new JWEHeader(
+      JWEAlgorithm.ECDH_ES_A128KW,
+      EncryptionMethod.A128GCM
+  );
+  Payload jwePayload = new Payload(aesKey.getEncoded());
+  JWEObject jweObject = new JWEObject(header, jwePayload);
+  JWEEncrypter encrypter = new ECDHEncrypter(bfiPublicKey);
+  jweObject.encrypt(encrypter);
+  return jweObject.serialize();
+}
+```
+
+### Step 5: Transmit the encrypted payload
+
+After performing the encryption steps from the previous steps, you should have
+the AES-encrypted file, the compact JWE string representing the AES key, and the
+12-byte IV. Assemble those components into a `multipart/form-data` request as
+shown below and send it to the
+[upload RFI file endpoint](/api-reference/cpn/cpn-platform/upload-rfi-file). A
+`200` response from the API indicates that the encryption was performed
+correctly and the BFI can decrypt the file's contents.
+
+```text
+------WebKitFormBoundary
+Content-Disposition: form-data; name="fileMetadata"
+Content-Type: application/json
+
+{
+  "fileName": "example.pdf",
+  "fileType": "application/pdf",
+  "fileKey": "PROOF_OF_ADDRESS"
+}
+------WebKitFormBoundary
+Content-Disposition: form-data; name="encryption"
+Content-Type: application/json
+
+{
+  "encryptedAesKey": "<base64-encoded-encrypted-aes-key>",
+  "iv": "<base64-encoded-iv-for-file-encryption>",
+}
+------WebKitFormBoundary
+Content-Disposition: form-data; name="encryptedFile"; filename="encrypted_data.bin"
+Content-Type: application/octet-stream
+
+[AES ENCRYPTED BINARY FILE DATA]
+```

@@ -1,0 +1,812 @@
+---
+title: iOS Mobile SDK
+description:
+  Set up the client-side iOS SDK for user-controlled wallets in your mobile
+  application.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The Circle iOS SDK enables user-controlled wallets within your mobile
+application. Three authentication methods are supported, namely **social
+logins**, **email**, or **PIN**, which includes security questions for recovery.
+This allows you to authenticate your users in a seamless way and create
+user-controlled wallets for them.
+
+By integrating this client-side SDK, your users can securely create wallets and
+make transactions using social accounts or email. If you choose the PIN
+authentication method, your users can input sensitive data, like PINs or
+security answers, in a secure way. Moreover, the SDK encrypts the request body
+sent by the application, protecting your users' information.
+
+<Note>
+**Note:**
+
+The Web and Mobile SDKs preserve the user keyshare with the individual, giving
+them complete control. You must use the SDKs with the user-controlled wallet
+product. Additionally, the Web and Mobile SDKs support only the user-controlled
+wallet product.
+
+</Note>
+
+At Circle, we understand the importance of end-to-end security for your
+application and the need to create a tailored and seamless user experience for
+your end-users. Hence, Circle’s SDK also exposes functionality for you to
+customize the description and layout. See the
+[iOS SDK UI Customization API](/wallets/user-controlled/ios-sdk-ui-customization-api)
+article about customizing the SDK.
+
+## Install the SDKs
+
+The iOS SDK supports:
+
+1. iOS 13.0+
+
+2. macOS 12.5+
+
+3. Xcode 14.1+
+
+\*Earlier versions are not supported.
+
+## CocoaPods (recommended)
+
+CocoaPods is a dependency manager for Cocoa projects. You can install it with
+the following command:
+
+```shell Terminal
+brew install cocoapods
+```
+
+<Note>
+  How to install Homebrew in MacOS:
+  [Link](https://mac.install.guide/homebrew/3.html)
+</Note>
+
+To integrate into your Xcode project using CocoaPods, specify it in your
+`Podfile`:
+
+```ruby Podfile
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/circlefin/w3s-ios-sdk-podspecs.git'
+
+target '<Your Target Name>' do
+  pod 'CircleProgrammableWalletSDK'
+end
+```
+
+Then, run the following command:
+
+```shell Terminal
+pod install
+```
+
+## Manual
+
+You can also manually set up the iOS SDK by downloading it from
+[GitHub: circlefin/w3s-ios-sdk](https://github.com/circlefin/w3s-ios-sdk).
+
+## SDK architecture
+
+You must use Web, iOS, or Android SDKs to access the user-controlled
+Programmable Wallet product. The SDK secures, manages, and communicates with
+your server to ensure your user’s keyshare, always stays with them and is not
+exposed to your servers.
+
+To learn more, see
+[SDK Architecture for User-Controlled Wallets](/wallets/user-controlled/sdk-architecture).
+
+## SDK API references
+
+## WalletSdk
+
+| Public Methods                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| /// Singleton <br /> <br />`public static let shared = WalletSdk()`                                                                                                                                                                                                                                                                                                             |
+| /// Set SDK configuration <br />/// - Parameter configuration: Configure the Circle endpoint for SDK to connect and other settings. <br />/// - Throws: An error is thrown while the configuration is invalid. <br /> <br />`public func setConfiguration(_ configuration: Configuration) throws`                                                                               |
+| /// Execute the operations by challengeId and call the completion after sending the request to the Circle endpoint. <br /> <br />`public func execute(userToken: String, encryptionKey: String, challengeIds: [String], completion: ExecuteCompletion? = nil)`                                                                                                                  |
+| /// Set SDK LayoutProvider <br />/// - Parameter provider: WalletSdkLayoutProvider <br /> <br />`public func setLayoutProvider(_ provider: WalletSdkLayoutProvider)`                                                                                                                                                                                                            |
+| /// Set messenger for custom error messages <br />/// - Parameter messenger: ErrorMessager <br /> <br />`public func setErrorMessenger(_ messenger: ErrorMessenger)`                                                                                                                                                                                                            |
+| /// Set SDK delegate <br />/// - Parameter delegate: WalletSdkDelegate <br /> <br />`public func setDelegate(_ delegate: WalletSdkDelegate)`                                                                                                                                                                                                                                    |
+| /// Set up biometrics to protect PIN code <br />/// - Parameters: <br />/// - userToken: User token <br />/// - encryptionKey: Encryption key <br />/// - completion: The completion handler that will be called when biometrics setup is complete. <br /> <br />`public func setBiometricsPin(userToken: String, encryptionKey: String, completion: ExecuteCompletion? = nil)` |
+| /// Get device ID <br />/// - Returns: String ex: 01234567-0123-0123-0123-012345678901 <br /> <br />`public func getDeviceId() -> String`                                                                                                                                                                                                                                       |
+| /// Get the SDK version string <br />/// - Returns: String? ex: 1.0.3 (63) <br /> <br />`public func sdkVersion() -> String?`                                                                                                                                                                                                                                                   |
+| /// Execute social provider login flow to get userToken, encryptionKey, refreshToken and OAuthInfo object <br /> <br />`public func performLogin(provider: SocialProvider, deviceToken: String, encryptionKey: String, completion: LoginCompletion? = nil)`                                                                                                                     |
+| /// Prompt OTP input UI and to verify email OTP and get userToken, encryptionKey, refreshToken <br /> <br />`public func verifyOTP(deviceToken: String, encryptionKey: String, otpToken: String, completion: LoginCompletion? = nil)`                                                                                                                                           |
+| /// Clean login data, includes provider’s data and userSecret <br /> <br />`public func performLogout(provider: SocialProvider, completion: LogoutCompletion? = nil)`                                                                                                                                                                                                           |
+
+### WalletSdk.Configuration
+
+`public struct Configuration`
+
+| Fields             |                                                                                |
+| ------------------ | ------------------------------------------------------------------------------ |
+| String             | `endPoint` <br />Init with Circle endpoint. SDK will connect to this endpoint. |
+| String             | `appId` <br />AppID from Circle Developer Services Console                     |
+| SettingsManagement | `settings` <br /> <br />Configure other settings and features                  |
+
+### SettingsManagement
+
+```swift
+public struct SettingsManagement {
+
+    /// Enable biometrics to protect PIN code
+    let enableBiometricsPin: Bool
+
+    public init(enableBiometricsPin: Bool = false)
+}
+
+```
+
+<Note>
+**💡 Notice:**
+
+**Important**: In any app that uses biometrics, include the
+[NSFaceIDUsageDescription](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW75)
+key in the app's `Info.plist` file. Without this key, the system won’t allow
+your app to use biometrics (Face ID).
+
+</Note>
+
+### ExecuteCompletion
+
+```swift
+public typealias ExecuteCompletion = ((ExecuteCompletionStruct) -> Void)
+```
+
+### ExecuteCompletionStruct
+
+```swift
+public struct ExecuteCompletionStruct {
+    public let challenges: [String]
+    public let result: Result<ExecuteResult, ApiError>
+    public let onErrorController: UINavigationController?
+    public let onWarning: ExecuteWarning?
+}
+```
+
+- When receiving an error or warning, we will not close the current page by
+  default.
+- You will get the onErrorController in the callback, and then you can decide to
+  dismiss/push the page by your error-handling strategy.
+
+### ExecuteResult
+
+```swift
+public struct ExecuteResult {
+
+  /// The type of the operation that the challenge represents.
+  public let resultType: ChallengeType
+
+  /// The execute result
+  public let status: ChallengeStatus
+
+  /// The data of the execution. (optional)
+  public private(set) var data: ExecuteResultData? = nil
+}
+```
+
+### ChallengeType
+
+```swift
+public enum ChallengeType: String, Decodable {
+  case SET_PIN
+  case CHANGE_PIN
+  case RESTORE_PIN
+  case SET_SECURITY_QUESTIONS
+  case SET_BIOMETRICS_PIN
+  case CREATE_WALLET
+  case CREATE_TRANSACTION
+  case ACCELERATE_TRANSACTION
+  case CANCEL_TRANSACTION
+  case CONTRACT_EXECUTION
+  case SIGN_MESSAGE
+  case SIGN_TYPEDDATA
+  case SIGN_TRANSACTION
+  case INITIALIZE
+  case WALLET_UPGRADE
+  case UNKNOWN
+}
+```
+
+### ChallengeStatus
+
+```swift
+public enum ChallengeStatus: String, Decodable {
+  case PENDING
+  case IN_PROGRESS
+  case COMPLETE
+  case FAILED
+  case EXPIRED
+}
+```
+
+### ExecuteResultData
+
+```swift
+public struct ExecuteResultData: Decodable {
+
+    /// The signature for SIGN_MESSAGE and SIGN_TYPEDDATA
+    public let signature: String?
+
+    /// For SIGN_TRANSACTION
+    public let signedTransaction: String?
+
+    /// For SIGN_TRANSACTION
+    public let txHash: String?
+
+    /// For SIGN_TRANSACTION and only returned for ECDSA chains
+    public let v: String?
+
+    /// For SIGN_TRANSACTION and only returned for ECDSA chains
+    public let r: String?
+
+    /// For SIGN_TRANSACTION and only returned for ECDSA chains
+    public let s: String?
+
+}
+
+```
+
+### ExecuteWarning
+
+```swift
+public struct ExecuteWarning {
+
+    /// The warning type of the operation (the challenge execution is success)
+    public let warningType: WarningType
+
+    /// Description of the warning type
+    public var warningString: String
+}
+```
+
+### WarningType
+
+```swift
+public enum WarningType: Int {
+
+    // Biometrics
+
+    case deviceNotSupportBiometrics = 155709
+    case biometricsKeyPermanentlyInvalidated = 155710   // For Android
+    case biometricsUserSkip = 155711
+    case biometricsUserDisableForPin = 155712
+    case biometricsUserLockout = 155713                 // For Android
+    case biometricsUserLockoutPermanent = 155714
+    case biometricsUserNotAllowPermission = 155715
+    case biometricsInternalError = 155716
+}
+```
+
+### LoginCompletion
+
+```swift
+public typealias LoginCompletion = ((LoginCompletionStruct) -> Void)
+```
+
+### LoginCompletionStruct
+
+```swift
+public struct LoginCompletionStruct {
+    public let result: Result<LoginResult, ApiError>
+    public let onErrorController: UIViewController?
+}
+```
+
+### LoginResult
+
+```swift
+public struct LoginResult {
+    public let userToken: String
+    public let encryptionKey: String
+    public let refreshToken: String
+    public let oauthInfo: OauthInfo?
+}
+```
+
+### OauthInfo
+
+`OauthInfo` for Social login
+
+```swift sw
+public struct OauthInfo: Decodable {
+    public let provider: String
+    public let scope: [String]?
+    public let socialUserUUID: String
+    public let socialUserInfo: SocialUserInfo?
+}
+```
+
+### SocialUserInfo
+
+`SocialUserInfo` for Social login
+
+```swift
+public struct OauthInfo: Decodable {
+    public struct SocialUserInfo: Decodable {
+        public let name: String?
+        public let email: String?
+        public let phone: String?
+    }
+
+    public let provider: String
+    public let scope: [String]?
+    public let socialUserUUID: String
+    public let socialUserInfo: SocialUserInfo?
+}
+
+```
+
+### LogoutCompletion
+
+```swift
+public typealias LogoutCompletion = ((Result<Void, Error>) -> Void)
+```
+
+### ApiError
+
+`public struct ApiError`
+
+| Fields             |                                                 |
+| :----------------- | :---------------------------------------------- |
+| ApiError.ErrorCode | `errorCode`                                     |
+| String             | `errorString` /// Error string from the SDK     |
+| String             | `displayString` /// Error string for UI display |
+
+### ApiError.ErrorCode
+
+`public enum`
+
+```swift Enum Cases
+case undefined(code: Int) // Error code defined dynamically by server, not in SDK.
+
+case unknown = -1
+case success = 0
+case apiParameterMissing = 1
+case apiParameterInvalid = 2
+case forbidden = 3
+case unauthorized = 4
+case retry = 9
+case customerSuspended = 10
+case pending = 11
+case invalidSession = 12
+case invalidPartnerId = 13
+case invalidMessage = 14
+case invalidPhone = 15
+case userAlreadyExisted = 155101
+case userNotFound = 155102
+case userTokenNotFound = 155103
+case userTokenExpired = 155104
+case invalidUserToken = 155105
+case userWasInitialized = 155106
+case userHasSetPin = 155107
+case userHasSetSecurityQuestion = 155108
+case userWasDisabled = 155109
+case userDoesNotSetPinYet = 155110
+case userDoesNotSetSecurityQuestionYet = 155111
+case incorrectUserPin = 155112
+case incorrectDeviceId = 155113
+case incorrectAppId = 155114
+case incorrectSecurityAnswers = 155115
+case invalidChallengeId = 155116
+case invalidApproveContent = 155117
+case invalidEncryptionKey = 155118
+case userPinLocked = 155119
+case securityAnswersLocked = 155120
+case walletIsFrozen = 155501
+case maxWalletLimitReached = 155502
+case walletSetIdMutuallyExclusive = 155503
+case metadataUnmatched = 155504
+case userCanceled = 155701
+case launchUiFailed = 155702
+case pinCodeNotMatched = 155703
+case insecurePinCode = 155704
+case hintsMatchAnswers = 155705
+case networkError = 155706
+case biometricsSettingNotEnabled = 155708
+case deviceNotSupportBiometrics = 155709
+case biometricsKeyPermanentlyInvalidated = 155710 // For Android
+case biometricsUserSkip = 155711
+case biometricsUserDisableForPin = 155712
+case biometricsUserLockout = 155713 // For Android
+case biometricsUserLockoutPermanent = 155714
+case biometricsUserNotAllowPermission = 155715
+case biometricsInternalError = 155716
+case invalidUserTokenFormat = 155718
+case userTokenMismatch = 155719
+case socialLoginFailed = 155720
+case loginInfoMissing = 155721
+case walletIdNotFound = 156001
+case tokenIdNotFound = 156002
+case transactionIdNotFound = 156003
+case entityCredentialNotFound = 156004
+case walletSetIdNotFound = 156005
+```
+
+### SocialProvider
+
+Specify a social provider to operate on. See **WalletSdk.performLogin** and
+**WalletSdk.performLogout**.
+
+```swift
+public enum SocialProvider: String {
+    case Google
+    case Facebook
+    case Apple
+}
+```
+
+### WalletSdkLayoutProvider
+
+Set **WalletSdkLayoutProvider** for layout customization.
+
+```swift
+public protocol WalletSdkLayoutProvider: AnyObject {
+  /// Set security question list
+  ///
+  /// - Returns: [SecurityQuestion]
+  func securityQuestions() -> [SecurityQuestion]
+
+  /// Set security question required count (default is 2), used in SecurityQuestionsViewController
+  ///
+  /// - Returns: Int
+  func securityQuestionsRequiredCount() -> Int
+
+  /// Set security confirm item list
+  ///
+  /// - Returns: [SecurityConfirmItem]
+  func securityConfirmItems() -> [SecurityConfirmItem]
+
+  /// Set local and remote images
+  ///
+  /// - Returns: ImageStore
+  func imageStore() -> ImageStore
+
+  /// Set theme font programmatically
+  ///
+  /// - Returns: ThemeFont
+  func themeFont() -> ThemeConfig.ThemeFont?
+
+  /// Set the date format for display date strings. (Default is "yyyy-MM-dd")
+  /// Reference: https://stackoverflow.com/a/52297497
+  ///
+  /// - Returns: Date format string
+  func displayDateFormat() -> String
+}
+```
+
+### SecurityQuestion
+
+`public struct SecurityQuestion`
+
+| Fields                     |                                                        |
+| -------------------------- | ------------------------------------------------------ |
+| String                     | title <br /> <br />The question string                 |
+| SecurityQuestion.InputType | inputType <br /> <br />The input type of the question. |
+
+### SecurityQuestion.InputType
+
+`public enum InputType`
+
+```swift Enum Cases
+text
+datePicker
+...
+```
+
+### SecurityConfirmItem
+
+`public struct SecurityConfirmItem`
+
+| Fields   |                                                                        |
+| -------- | ---------------------------------------------------------------------- |
+| UIImage? | Image <br /> <br />The drawable resource ID for the introduction item. |
+| URL?     | url <br /> <br />The remote image url                                  |
+| String   | Text <br /> <br />The Text for the introduction item.                  |
+
+### ImageStore
+
+`public struct ImageStore`
+
+| Fields         |                                            |
+| -------------- | ------------------------------------------ |
+| [Img: UIImage] | local <br />The images from local          |
+| [Img: URL]     | remote <br /> <br />The images from remote |
+
+### ImageStore.Img
+
+`public enum Img`
+
+```swift Enum Cases
+
+naviClose
+naviBack
+
+securityIntroMain
+selectCheckMark
+dropdownArrow
+errorInfo
+securityConfirmMain
+
+biometricsAllowMain
+
+showPin
+hidePin
+
+transactionTokenIcon
+networkFeeTipIcon
+showLessDetailArrow
+showMoreDetailArrow
+requestIcon
+```
+
+### WalletSdkDelegate
+
+Methods for managing **CircleProgrammableWalletSDK** process and customizing
+controllers.
+
+```swift
+public protocol WalletSdkDelegate: AnyObject {
+  /// Tells the delegate that the SDK is about to be present the controller.
+  /// You can customize the layout as you wish dynamically.
+  ///
+  /// - Parameter controller: The UIViewController to be presented
+  func walletSdk(willPresentController controller: UIViewController)
+
+  /// Tells the delegate that the forget PIN button was selected in the controller
+  ///
+  /// - Parameter controller: Current controller
+  /// - Parameter onSelect: Void
+  func walletSdk(controller: UIViewController, onForgetPINButtonSelected onSelect: Void)
+
+  /// Tells the delegate that the send again button was selected in the controller
+  ///
+  /// - Parameter controller: Current controller
+  /// - Parameter onSelect: Void
+  func walletSdk(controller: UIViewController, onSendAgainButtonSelected onSelect: Void)
+}
+```
+
+### ErrorMessenger
+
+Define the customized error description. All error codes are listed in
+ApiError.ErrorCode.
+
+```swift
+public protocol ErrorMessenger {
+  func getErrorString(_ code: ApiError.ErrorCode) -> String?
+}
+```
+
+## Static Resources
+
+### Localized String
+
+Provide with a strings file **CirclePWLocalizable.strings**
+
+```swift
+"circlepw_show_pin" = "Show PIN";
+"circlepw_hide_pin" = "Hide PIN";
+"circlepw_continue" = "Continue";
+"circlepw_next" = "Next";
+...
+
+```
+
+### Theme
+
+provide with a JSON file **CirclePWTheme.json**
+
+```swift
+{
+    "font": {
+        "regular": "Arial",
+        "medium": "",
+        "semibold": "",
+        "bold": "Arial-BoldMT",
+        ...
+    },
+
+    "color": {
+        "background": "#FFFFFF",
+        "divider": "#F0EFEF",
+        "success": "#0073C3",
+        "error": "#F55538",
+        "error_background": "#FDF2F2",
+        ...
+    }
+}
+
+```
+
+### ThemeConfig
+
+`public struct ThemeConfig`
+
+| Fields            |                                                        |
+| ----------------- | ------------------------------------------------------ |
+| ThemeFontConfig?  | fontConfig <br /> <br />The struct of the theme font   |
+| ThemeColorConfig? | colorConfig <br /> <br />The struct of the theme color |
+
+### ThemeFontConfig
+
+`public struct ThemeFontConfig`
+
+| Fields  |                                                                       |
+| ------- | --------------------------------------------------------------------- |
+| String? | ultraLight <br /> <br />The font name for ultraLight of UIFont.Weight |
+| String? | thin <br /> <br />The font name for thin of UIFont.Weight             |
+| String? | light <br /> <br />The font name for light of UIFont.Weight           |
+| String? | regular <br /> <br />The font name for regular of UIFont.Weight       |
+| String? | medium <br /> <br />The font name for medium of UIFont.Weight         |
+| ...     | ...                                                                   |
+
+### ThemeColorConfig
+
+`public struct ThemeColorConfig` (see
+[Color Reference](../docs/web-sdk-ui-customizations#colors))
+
+| Fields  |                                                         |
+| ------- | ------------------------------------------------------- |
+| String? | textMain <br /> <br />The hex format of theme text main |
+| String? | error <br /> <br />The hex format of theme error        |
+| ...     | ...                                                     |
+
+## Sample Code
+
+### Set endpoint
+
+```swift
+let configuration = WalletSdk.Configuration(endPoint: endPoint, appId: appId)
+
+do {
+    try WalletSdk.shared.setConfiguration(configuration)
+} catch {
+    // error handling
+}
+
+```
+
+### Set endpoint and enable biometrics
+
+```swift
+let settings: WalletSdk.SettingsManagement = .init(enableBiometricsPin: true)
+let configuration = WalletSdk.Configuration(endPoint: endPoint, appId: _appId, settingsManagement: settings)
+
+do {
+    try WalletSdk.shared.setConfiguration(configuration)
+} catch {
+    // error handling
+}
+
+```
+
+### Execute
+
+```swift
+Wallets.shared.execute(userToken: "USERTOKEN",
+                       encryptionKey: "ENCRYPTIONKEY",
+                       challengeIds: ["challengeId_1", "challengeId_2"])
+
+```
+
+### Set Biometrics Pin
+
+```swift
+WalletSdk.shared.setBiometricsPin(userToken: "USERTOKEN",
+                                  encryptionKey: "ENCRYPTIONKEY")
+```
+
+### WalletSdkLayoutProvider
+
+```swift
+class SomeClass: WalletSdkLayoutProvider {
+
+    func securityQuestions() -> [SecurityQuestion] {
+        return [...]
+    }
+
+    func securityConfirmItems() -> [SecurityConfirmItem] {
+        return [...]
+    }
+
+    func imageStore() -> ImageStore {
+        let local: [ImageStore.Img: UIImage] =  [...]
+        let remote: [ImageStore.Img : URL] = [...]
+        return ImageStore(local: local, remote: remote)
+    }
+
+    func displayDateFormat() -> String {
+        return "dd/MM/yyyy"
+    }
+}
+
+WalletSdk.shared.setLayoutProvider(SomeClass())
+
+```
+
+### Set Error Messages
+
+```swift
+class CustomErrorMessenger: ErrorMessenger {
+
+    func getErrorString(_ code: ApiError.ErrorCode) -> String? {
+        switch code {
+        case .pinCodeNotMatched:
+            return "The code you entered is not the same as the first one."
+
+        case .insecurePinCode:
+            return "Your PIN can’t have repeating or consecutive numbers."
+
+        case .hintsMatchAnswers:
+            return "Your hint can’t be the same as the answer."
+
+        case .undefined(let code):
+            if code == 155134 {
+                return "Please check if the OTP value and OTP token match."
+            } else {
+                return nil
+            }
+
+        default:
+            return nil
+        }
+    }
+}
+
+WalletSdk.shared.setErrorMessenger(CustomErrorMessenger())
+
+```
+
+### Confirm the delegate for customizing the UI
+
+```swift
+class SomeClass: WalletSdkDelegate {
+func walletSdk(willPresentController controller: UIViewController) {
+
+// You can customize the controller's UI here
+
+        if let vc = controller as? SecurityIntrosViewController {
+            vc.introImageView.sd_setImage(with: URL(string: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"), placeholderImage: UIImage(named: "imangeName"))
+            vc.introLink = "https://www.google.com"
+            vc.introDescLabel.text = "Test Desc here"
+        }
+    }
+}
+
+```
+
+### PerformLogin Flow
+
+```swift
+WalletSdk.shared.performLogin(provider: ”SOCIAL_PROVIDER”,
+                              deviceToken: “DEVICE_TOKEN”,
+                              encryptionKey: “DEVICE_ENCRYPTION_KEY”) { response in
+......
+}
+
+```
+
+### VerifyOTP flow
+
+```swift
+WalletSdk.shared.verifyOTP(deviceToken: “DEVICE_TOKEN”,
+                           encryptionKey: “DEVICE_ENCRYPTION_KEY”
+                           otpToken: ”OTP_TOKEN”) { response in
+    ......
+}
+
+```
+
+### PerformLogout Flow
+
+```swift
+WalletSdk.shared.performLogout(provider:  ”SOCIAL_PROVIDER”) { result in
+    ......
+}
+
+```
+
+See our [sample app guides](/sample-projects).

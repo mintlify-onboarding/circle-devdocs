@@ -1,0 +1,94 @@
+---
+title: Getting Started with Smart Contract Platform - Python
+featureFlag: sdkExplorerEnabled
+dropDownNavigation:
+  label: Python
+  items:
+    - label: Node.js
+      href: /sdk-explorer/smart-contract-platform/Node.js/getting-started
+---
+
+Use the Python SDK to interact with Smart Contract Platform APIs, which allow
+you interact with smart contracts on the blockchain using the Developer Services
+platform.
+
+This page provides short examples of how to install and use the Smart Contract
+Platform SDK. For complete examples, see the [Sample Projects](/sample-projects)
+page. For more information see the
+[Smart Contract Platform documentation](/contracts).
+
+## Prerequisites
+
+- Have Python installed.
+- Have an active [Circle Developer Account](https://console.circle.com/).
+- [Generate an API key](https://developers.circle.com/w3s/web3-services-api-client-keys-auth)
+  to use in requests to the Circle API.
+- [Generate an entity secret](https://developers.circle.com/wallets/dev-controlled/register-entity-secret)
+  to use in requests with the Smart Contract Platform SDK.
+
+Although not a requirement for using the SDK, Circle recommends that you
+[use a virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
+for development. A Python virtual environment is an isolated environment that
+you can use to silo your project from the global Python environment.
+
+## Install the SDK
+
+Use the following command to install the SDK with
+[pip](https://pypi.org/project/pip/):
+
+```shell
+pip install circle-smart-contract-platform
+```
+
+## Smart Contract Platform client
+
+To start using the SDK, you first need to configure a client and initialize it
+with your API key and entity secret.
+
+### Import the client
+
+The following example shows how to import the client and configure it to use
+your API key and entity secret:
+
+```python
+from circle.web3 import utils
+
+client = utils.init_smart_contract_platform_client(
+  api_key="Your API KEY",
+  entity_secret="Your entity secret"
+)
+```
+
+### Import a smart contract
+
+The following example shows how to import a smart contract using the client:
+
+```python
+from circle.web3 import smart_contract_platform
+
+api_instance = smart_contract_platform.DeployImportApi(client)
+
+# import contract
+try:
+    request = smart_contract_platform.ImportContractRequest.from_dict({
+        "name": "UChildERC20Proxy",
+        "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        "blockchain": "MATIC"
+    })
+    response = api_instance.import_contract(request)
+    print(response)
+except smart_contract_platform.ApiException as e:
+    print("Exception when calling DeployImportApi->import_contract: %s\n" % e)
+```
+
+## Client configuration options
+
+The client for the Smart Contract Platform SDK accepts the following
+configuration parameters:
+
+| **Option**      | **Required?** | **Description**                                                                                 |
+| --------------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| `api_key`       | Yes           | The API key used to authenticate requests to the Circle API.                                    |
+| `entity_secret` | Yes           | Your configured entity secret.                                                                  |
+| `host`          | No            | The base URL that overrides the default API URL of `https://api.circle.com/v1/w3s`.             |
+| `user_agent`    | No            | Custom user agent request header. If provided, it's added before the default user agent header. |

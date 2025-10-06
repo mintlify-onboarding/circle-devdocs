@@ -1,0 +1,141 @@
+---
+title: "How-to: Create a Unified USDC Balance"
+description: ""
+sideNav: ""
+documentationItems: 
+- title: Documentation
+tableOfContents: true
+sidebarTitle: "Create a Unified USDC Balance"
+---
+
+Circle Gateway allows you to establish a unified USDC balance consisting of USDC
+stored on multiple source chains. Once established, you can transfer this
+balance instantly to any destination chain.
+
+This guide demonstrates how to establish a unified USDC balance by depositing
+USDC into the Gateway Wallet contract. You can perform this action on multiple
+chains to establish a chain-abstracted balance.
+
+## Prerequisites
+
+Before you begin, ensure that you've:
+
+- Installed **Node.js** and **npm** on your development machine
+- Created a testnet wallet on Ethereum Sepolia and have the private key
+  available
+- Funded your testnet wallet with USDC and native tokens
+- Created a new Node project and have the following dependencies installed:
+  - `viem`
+  - `dotenv`
+- You've set up a `.env` file with the following variables:
+
+  ```text
+  PRIVATE_KEY=<your_private_key>
+  ```
+
+## Steps
+
+Follow these steps to establish a unified USDC balance. Note that this example
+demonstrates how to deposit USDC on a single chain (Ethereum Sepolia). Repeat
+these steps on other chains to add to your balance.
+
+### Step 1. Approve the Gateway Wallet to transfer USDC from your address
+
+Create a new file called `index.js` in the root of your project, and add the
+following code to it. This code calls the `approve()` method on the USDC
+contract to allow the Gateway Wallet contract to transfer USDC from your wallet.
+
+```javascript
+import "dotenv/config";
+import { createPublicClient, getContract, http, erc20Abi } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import * as chains from "viem/chains";
+
+// Partial ABI for the functions needed on the Gateway wallet
+const gatewayWalletAbi = [
+  {
+    type: "function",
+    name: "deposit",
+    inputs: [
+      {
+        name: "token",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "value",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+];
+
+// Contract addresses on Ethereum Sepolia
+const gatewayWalletAddress = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9";
+const usdcAddress = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238";
+
+const DEPOSIT_AMOUNT = 10_000000n; // 10 USDC
+const account = privateKeyToAccount(process.env.PRIVATE_KEY);
+
+const client = createPublicClient({
+  chain: chains["sepolia"],
+  account,
+  transport: http(),
+});
+
+const usdc = getContract({ address: usdcAddress, abi: erc20Abi, client });
+const gatewayWallet = getContract({
+  address: gatewayWalletAddress,
+  abi: gatewayWalletAbi,
+  client,
+});
+
+const approvalTx = await usdc.write.approve([
+  gatewayWallet.address,
+  DEPOSIT_AMOUNT,
+]);
+
+await client.waitForTransactionReceipt({ hash: approvalTx });
+```
+
+### Step 2. Call the deposit method on the Gateway Wallet contract
+
+Add the following code to the `index.js` file to call the `deposit()` method on
+the Gateway Wallet contract. Note that you must use the `deposit()` method and
+not the standard transfer on the USDC contract.
+
+<Warning>
+
+**Warning:** Directly transferring USDC to the Gateway Wallet contract with a
+standard ERC-20 transfer will result in loss of that USDC. You must use one of
+the deposit methods on the wallet contract to get a unified USDC balance.
+
+</Warning>
+
+```javascript
+const depositTx = await gatewayWallet.write.deposit([
+  usdc.address,
+  DEPOSIT_AMOUNT,
+]);
+```
+
+### Step 3. Run the script
+
+Once you have added the code to your `index.js` file, run it with the following
+command:
+
+```shell
+node index.js
+```
+
+### Step 4. Wait for the required number of block confirmations
+
+Wait for the
+[required number of block confirmations](/gateway/references/supported-blockchains#required-block-confirmations).
+Once the deposit transaction is final, your unified balance to reflects the
+amount from Ethereum Sepolia. If you have balances on other chains, the total
+balance is the sum of all the USDC from deposit transactions across all
+supported chains that have reached finality.

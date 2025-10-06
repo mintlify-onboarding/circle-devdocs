@@ -1,0 +1,331 @@
+---
+title: Webhooks Quickstart
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Subscribing to Webhook Notifications"
+---
+
+This quickstart guide helps you quickly set up notifications for Circle Wallets.
+Follow this to configure a subscriber endpoint that sends a notification every
+time the status of resource changes.
+
+This guide focuses on the challenge resource but applies to any resources
+available in Programmable Wallet Notifications.
+
+## 1. Expose a Subscriber Endpoint
+
+To receive notifications on changes in resource status, you must expose a
+publicly accessible subscriber endpoint on your side. The endpoint must handle
+both `HEAD` and **POST** requests over HTTPS.
+
+To quickly expose an endpoint for testing, we will use
+[webhook.site](https://webhook.site/) in this guide, which allows you to easily
+inspect, test and automate any incoming HTTPS request or e-mail directly in a
+web browser.
+
+When visiting [webhook.site](https://webhook.site/) for the first time, you
+should see a status message that looks like the following:
+
+<Note>
+  Your unique URL (Please copy it from here, not from the address bar!)
+  `https://webhook.site/83fa21a0-f00a-4673-bb50-bcf62c78b1f7`
+</Note>
+
+<Note>
+**Record the value of the **unique URL**.**
+
+In the example above, the unique URL
+is:`https://webhook.site/83fa21a0-f00a-4673-bb50-bcf62c78b1f7`. Use the
+public-facing URL you receive as you progress throughout this guide.
+
+</Note>
+
+## 2. Subscribe to Webhook Notifications
+
+Now that you have a publicly accessible endpoint, you need to register your
+endpoint as a subscriber to webhook notifications by doing the following:
+
+1. Click **Webhooks** in your Circle Developer account.
+2. Click **Add a Webhook** in the upper right corner.
+3. Enter your endpoint URL from above. It will be similar to the earlier
+   example:`https://webhook.site/83fa21a0-f00a-4673-bb50-bcf62c78b1f7`.
+4. Click **Add Webhook**.
+5. At this stage, you should receive a Hello World test notification indicating
+   you have subscribed to your endpoint successfully:
+
+```json
+{
+  "subscriptionId": "00000000-0000-0000-0000-000000000000",
+  "notificationId": "00000000-0000-0000-0000-000000000000",
+  "notificationType": "webhooks.test",
+  "notification": {
+    "hello": "world"
+  },
+  "timestamp": "2023-07-20T16:18:40.816010685Z",
+  "version": 2
+}
+```
+
+Now you have a sample local environment ready to receive transaction and
+challenge status change notifications. Note that in testnet and mainnet there is
+a limit of 20 webhook notifications each.
+
+### Customize Webhook Notifications
+
+You can customize your webhook notifications. Customized webhook notifications
+allow you to listen to a restricted set of specific events, such as inbound
+transactions only, or a specific set of events, such as transaction or
+challenges, through a URL endpoint on your receiving application.
+
+To customize your endpoints to only receive certain notifications, toggle on
+“Limit to specific events” when creating your webhook.
+
+You are then able to pick the event categories that you want to listen to on
+your endpoint. These can be further customized at the event level under each
+category. This gives you the flexibility to only listen to events you care about
+at each endpoint, rather than overwhelming the endpoint with all notifications.
+This reduces the amount of data your server needs to process, making it more
+efficient and easier to manage. It also helps in focusing only on the relevant
+events, which can improve the performance and reliability of your application.
+
+## 3. Initiate a Challenge Flow to Receive a Notification
+
+To observe a notification message on the status of a challenge, initiate the
+creation of a wallet (for example, by following the
+[user-controlled wallets interactive quickstart](/interactive-quickstarts/user-controlled-wallets)
+for creating a user-controlled wallet).
+
+Once you successfully initiate a challenge payment, you should see a
+notification message on your local server shell that looks like the following:
+
+**Sample Challenge Notification**:
+
+```json
+{
+  "subscriptionId": "a68cd974-d209-46cd-8dbf-b7a081fbd627",
+  "notificationId": "eaa4a4fe-24b8-4329-a4c6-6dfd557dbcb2",
+  "notificationType": "challenges.initialize",
+  "notification": {
+    "id": "9c0a1991-735a-5140-8996-7b95720c5e55",
+    "userId": "2a054cd1-3124-4aa7-b1f0-86c4a4df995c",
+    "type": "INITIALIZE",
+    "status": "COMPLETE",
+    "correlationIds": ["01890792-a199-77bc-b005-b229f81824fa"],
+    "errorCode": 0,
+    "errorMessage": ""
+  },
+  "timestamp": "2023-06-29T14:33:17.785131449Z",
+  "version": 2
+}
+```
+
+## 4. Verify Digital Signature
+
+1. Every webhook notification is digitally signed by an asymmetric key. In the
+   headers of each webhook, you can find:
+   1. `X-Circle-Signature`: a header containing the digital signature generated
+      by Circle
+   2. `X-Circle-Key-Id`: a header containing the UUID you need to retrieve the
+      relevant public key
+
+{/* <!-- markdownlint-disable MD040 --> */}
+
+```
+# Headers
+`X-Circle-Key-Id: “879dc113-5ca4-4ff7-a6b7-54652083fcf8”`
+`X-Circle-Signature: “MEYCIQCA9EvPbdEJiy7Cw0eY+KQZA/oFi5ZEInPs8CYpyaJexgIhAKtRNnDz9QRQmFKx8QFrvawp+8b9Bs2dQ03xD+XaWVDE”`
+```
+
+{/* <!-- markdownlint-enable MD040 --> */}
+
+2. Using the X-Circle-Key-Id value, query the following endpoint to retrieve the
+   public key and algorithm used to sign the message:
+   [`GET /v2/notifications/publicKey/{keyId)`](/api-reference/w3s/common/get-notification-signature)
+
+```shell
+# Replace ${YOUR_API_KEY} with your API key
+# Replace ${PUBLIC_KEY_ID} with your public key id
+curl --request GET \
+     --url 'https://api.circle.com/v2/notifications/publicKey/${PUBLIC_KEY_ID)' \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer $ENV_API_KEY:ID:SECRET$' \
+```
+
+If successful, you will receive a response with the following shape
+
+```json Response Body
+{
+  "data": {
+    "id": "879dc113-5ca4-4ff7-a6b7-54652083fcf8",
+    "algorithm": "ECDSA_SHA_256",
+    "publicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESl76SZPBJemW0mJNN4KTvYkLT8bOT4UGhFhzNk3fJqf6iuPlLQLq533FelXwczJbjg2U1PHTvQTK7qOQnDL2Tg==",
+    "createDate": "2023-06-28T21:47:35.107250Z"
+  }
+}
+```
+
+3. Use the public key and algorithm to verify the integrity of the webhook’s
+   payload against the signature found in `X-Circle-Signature`.
+
+**Note:** Please make sure the webhook notification is properly formatted JSON
+string prior to verifying it
+
+```json Response Body
+{
+  "subscriptionId": "890a8cae-46bd-40ad-bd7f-2e49b8dea9da",
+  "notificationId": "0bdd3e4b-5070-4530-8ed4-2e2e4c9fd2f0",
+  "notificationType": "webhooks.test",
+  "notification": {
+    "hello": "world"
+  },
+  "timestamp": "2023-07-12T04: 02: 28.555562821Z",
+  "version": 2
+}
+```
+
+The following code sample demonstrates how to verify the `X-Circle-Signature`:
+
+<CodeGroup>
+
+```python Python
+import base64
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec
+
+# Load the public key from the base64 encoded string
+# Note: The public key is static for a given publicKeyId, therefore we recommend you to cache it
+public_key_base64 = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESl76SZPBJemW0mJNN4KTvYkLT8bOT4UGhFhzNk3fJqf6iuPlLQLq533FelXwczJbjg2U1PHTvQTK7qOQnDL2Tg=="
+public_key_bytes = base64.b64decode(public_key_base64)
+public_key = serialization.load_der_public_key(public_key_bytes)
+
+# Load the signature you want to verify
+signature_base64 = "MEQCIBlJPX7t0FDOcozsRK6qIQwik5Fq6mhAtCSSgIB/yQO7AiB9U5lVpdufKvPhk3cz4TH2f5MP7ArnmPRBmhPztpsIFQ=="
+signature_bytes = base64.b64decode(signature_base64)
+
+# Load the message you want to verify
+message = "{\"subscriptionId\":\"00000000-0000-0000-0000-000000000000\",\"notificationId\":\"00000000-0000-0000-0000-000000000000\",\"notificationType\":\"webhooks.test\",\"notification\":{\"hello\":\"world\"},\"timestamp\":\"2024-01-26T18:22:19.779834211Z\",\"version\":2}"
+message_bytes = message.encode(encoding="utf-8")
+
+# Verify the signature
+try:
+    public_key.verify(
+        signature_bytes,
+        message_bytes,
+        ec.ECDSA(hashes.SHA256()),
+    )
+    print("Signature is valid.")
+except InvalidSignature:
+    print("Signature is invalid.")
+```
+
+```javascript Node.js
+const crypto = require("crypto");
+
+// Load the public key from the base64 encoded string
+// Note: The public key is static for a given publicKeyId, therefore we recommend you to cache it
+const publicKeyBase64 =
+  "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESl76SZPBJemW0mJNN4KTvYkLT8bOT4UGhFhzNk3fJqf6iuPlLQLq533FelXwczJbjg2U1PHTvQTK7qOQnDL2Tg==";
+const publicKeyBytes = Buffer.from(publicKeyBase64, "base64");
+const publicKey = crypto.createPublicKey({
+  key: publicKeyBytes,
+  format: "der",
+  type: "spki",
+});
+
+// Load the signature you want to verify
+const signatureBase64 =
+  "MEQCIBlJPX7t0FDOcozsRK6qIQwik5Fq6mhAtCSSgIB/yQO7AiB9U5lVpdufKvPhk3cz4TH2f5MP7ArnmPRBmhPztpsIFQ==";
+const signatureBytes = Buffer.from(signatureBase64, "base64");
+
+// Load the message you want to verify
+const message =
+  '{"subscriptionId":"00000000-0000-0000-0000-000000000000","notificationId":"00000000-0000-0000-0000-000000000000","notificationType":"webhooks.test","notification":{"hello":"world"},"timestamp":"2024-01-26T18:22:19.779834211Z","version":2}';
+const messageBytes = Buffer.from(message);
+
+// Verify the signature
+const isSignatureValid = crypto.verify(
+  "sha256",
+  messageBytes,
+  publicKey,
+  signatureBytes,
+);
+
+if (isSignatureValid) {
+  console.log("Signature is valid.");
+} else {
+  console.log("Signature is invalid.");
+}
+```
+
+```java Java
+package com.circle.webhook;
+
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+public class CircleSignature {
+    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
+        // Load the public key from the base64 encoded string
+        // Note: The public key is static for a given publicKeyId, therefore we recommend you to cache it
+        String publicKeyBase64 = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESl76SZPBJemW0mJNN4KTvYkLT8bOT4UGhFhzNk3fJqf6iuPlLQLq533FelXwczJbjg2U1PHTvQTK7qOQnDL2Tg==";
+        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("EC");
+        PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+        // Load the signature you want to verify
+        String signatureBase64 = "MEQCIBlJPX7t0FDOcozsRK6qIQwik5Fq6mhAtCSSgIB/yQO7AiB9U5lVpdufKvPhk3cz4TH2f5MP7ArnmPRBmhPztpsIFQ==";
+        byte[] signatureBytes = Base64.getDecoder().decode(signatureBase64);
+
+        // Load the message you want to verify
+        String message = "{\"subscriptionId\":\"00000000-0000-0000-0000-000000000000\",\"notificationId\":\"00000000-0000-0000-0000-000000000000\",\"notificationType\":\"webhooks.test\",\"notification\":{\"hello\":\"world\"},\"timestamp\":\"2024-01-26T18:22:19.779834211Z\",\"version\":2}";
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+
+        // Verify the signature
+        Signature signature = Signature.getInstance("SHA256withECDSA");
+        signature.initVerify(publicKey);
+        signature.update(messageBytes);
+
+        boolean isSignatureValid = signature.verify(signatureBytes);
+        if (isSignatureValid) {
+            System.out.println("Signature is valid.");
+        } else {
+            System.out.println("Signature is invalid.");
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+## 5. Confirm IP Accesslist
+
+To ensure the security of your integration, only trust Circle webhook
+notifications from the following IP addresses.
+
+- `54.243.112.156`
+- `100.24.191.35`
+- `54.165.52.248`
+- `54.87.106.46`
+
+<Note>
+**Webhook notification handling**
+
+We enforce a 5 second timeout for your endpoint to respond back to our webhook
+notifications. It is highly recommended that you process notifications outside
+of the response loop and respond back promptly.
+
+</Note>

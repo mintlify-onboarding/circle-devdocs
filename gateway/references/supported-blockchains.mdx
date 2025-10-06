@@ -1,0 +1,59 @@
+---
+title: Gateway Supported Blockchains
+description: ""
+sideNav: ""
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Supported Blockchains and Confirmations"
+---
+
+Gateway support is divided into two categories:
+
+- **Source Chains** where USDC can be deposited to the Gateway Wallet smart
+  contract to create a unified balance.
+- **Destination Chains** where USDC can be instantly minted from the unified
+  balance.
+
+The following sections show the chains that Gateway supports and their status as
+a source or destination chain.
+
+## Testnet
+
+| Blockchain       | Source | Destination |
+| ---------------- | ------ | ----------- |
+| Avalanche Fuji   | ✅     | ✅          |
+| Base Sepolia     | ✅     | ✅          |
+| Ethereum Sepolia | ✅     | ✅          |
+
+## Mainnet
+
+| Blockchain  | Source | Destination |
+| ----------- | ------ | ----------- |
+| Arbitrum    | ✅     | ✅          |
+| Avalanche   | ✅     | ✅          |
+| Base        | ✅     | ✅          |
+| Ethereum    | ✅     | ✅          |
+| OP          | ✅     | ✅          |
+| Polygon PoS | ✅     | ✅          |
+| Unichain    | ✅     | ✅          |
+
+## Required block confirmations
+
+Before updating the unified USDC balance or issuing attestations, the Gateway
+API waits for a specific number of block confirmations so that the deposit
+transaction is unlikely to be reverted.
+
+The following table shows the number of block confirmations and the average time
+to attestation for each supported chain. The average time to attestation is the
+time it takes for a transaction to be included in a block and confirmed by the
+network.
+
+| Blockchain  | Number of blocks | Average time      |
+| ----------- | ---------------- | ----------------- |
+| Arbitrum    | ~65 ETH blocks   | ~13 to 19 minutes |
+| Avalanche   | 1                | ~8 seconds        |
+| Base        | ~65 ETH blocks   | ~13 to 19 minutes |
+| Ethereum    | ~65              | ~13 to 19 minutes |
+| OP          | ~65 ETH blocks   | ~13 to 19 minutes |
+| Polygon PoS | ~2-3             | ~8 seconds        |
+| Unichain    | ~65 ETH blocks   | ~13 to 19 minutes |

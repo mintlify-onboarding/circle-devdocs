@@ -1,0 +1,99 @@
+---
+title: Getting Started with Developer-Controlled Wallets - Python
+featureFlag: sdkExplorerEnabled
+dropDownNavigation:
+  label: Python
+  items:
+    - label: Node.js
+      href: /sdk-explorer/developer-controlled-wallets/Node.js/getting-started
+---
+
+Use the Python SDK to interact with Circle's Developer-Controlled Wallet APIs,
+which allow you to embed secure wallets in your applications and create
+blockchain transactions using the Developer Services platform.
+
+This page provides short examples of how to install and use the
+developer-controlled wallets SDK. For complete examples, see the
+[Sample Projects](/sample-projects) page. For more information see the
+[developer-controlled wallets documentation](/wallets/dev-controlled).
+
+## Prerequisites
+
+- Have Python installed.
+- Have an active [Circle Developer Account](https://console.circle.com/).
+- [Generate an API key](https://developers.circle.com/w3s/web3-services-api-client-keys-auth)
+  to use in requests to the Circle API.
+- [Generate an entity secret](https://developers.circle.com/wallets/dev-controlled/register-entity-secret)
+  to use in requests with the developer-controlled wallets SDK.
+
+Although not a requirement for using the SDK, Circle recommends that you
+[use a virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
+for development. A Python virtual environment is an isolated environment that
+you can use to silo your project from the global Python environment.
+
+## Install the SDK
+
+Use the following command to install the SDK with
+[pip](https://pypi.org/project/pip/):
+
+```shell
+pip install circle-developer-controlled-wallets
+```
+
+## Developer-controlled wallets client
+
+To start using the SDK, you first need to configure a client and initialize it
+with your API key and entity secret.
+
+### Import the client
+
+The following example shows how to import the client and configure it to use
+your API key and entity secret:
+
+```python
+from circle.web3 import utils
+
+client = utils.init_developer_controlled_wallets_client(
+  api_key="Your API KEY",
+  entity_secret="Your entity secret"
+)
+```
+
+### Create a wallet
+
+The following example shows how to create a wallet using the client:
+
+```python
+from circle.web3 import developer_controlled_wallets
+
+api_instance = developer_controlled_wallets.WalletSetsApi(client)
+
+# create wallet sets
+try:
+    request = developer_controlled_wallets.CreateWalletSetRequest.from_dict({
+        "name": "my_wallet_set"
+    })
+    api_instance.create_wallet_set(request)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling WalletSetsApi->create_wallet_set: %s\n" % e)
+
+# get wallet sets
+try:
+    response = api_instance.get_wallet_sets()
+    for wallet_set in response.data.wallet_sets:
+        print(wallet_set.actual_instance.id)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling WalletSetsApi->get_wallet_sets: %s\n" % e)
+```
+
+## Client configuration options
+
+The client for the developer-controlled wallets SDK accepts the following
+configuration parameters:
+
+| **Option**      | **Required?** | **Description**                                                                                 |
+| --------------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| `api_key`       | Yes           | The API key used to authenticate requests to the Circle API.                                    |
+| `entity_secret` | Yes           | Your configured entity secret.                                                                  |
+| `host`          | No            | The base URL that overrides the default API URL of `https://api.circle.com/v1/w3s`.             |
+| `user_agent`    | No            | Custom user agent request header. If provided, it's added before the default user agent header. |

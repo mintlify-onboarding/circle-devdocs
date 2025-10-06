@@ -1,0 +1,62 @@
+---
+title: Initiate a Signature Request
+description:
+  Learn how to initiate a signature request from a user-controlled wallet with
+  social logins or email authentication
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+This guide outlines initiating a signature request from a previously created
+user-controlled wallet with social logins or email authentication. To create a
+wallet, see
+[Create Your First Wallet with Social Logins](/wallets/user-controlled/create-your-first-wallet-with-social-logins)
+or
+[Create Your First Wallet with Email](/wallets/user-controlled/create-your-first-wallet-with-email).
+
+<Note>
+  If it has been over 14 days or you end the last trial attempt since you first
+  ran the sample app, your session is logged out. You must run the sample app
+  and acquire a new user token to proceed further. For instructions, see the
+  perform login part of [Create Your First Wallet with Social
+  Logins](/wallets/user-controlled/create-your-first-wallet-with-social-logins)
+  or [Create Your First Wallet with Email
+  Authentication](/wallets/user-controlled/create-your-first-wallet-with-email).
+</Note>
+
+## Step 1. Initiate a signature request
+
+1. Sign the transaction, EIP-191 message, or EIP-712 typed structure data from a
+   specified user-controlled wallet:
+   - For a transaction, include `walletId` and `transaction` object or
+     `rawTransaction` string in a `POST` request to the `/user/sign/transaction`
+     endpoint.
+   - For EIP-191, include `walletId` and `message` in a `POST` request to the
+     `/user/sign/message` endpoint.
+   - For EIP-712, include `walletId` and `data` in a `POST` request to the
+     `/user/sign/typedData` endpoint.
+2. From the response, copy `challengeId` for the next step.
+
+## Step 2. Perform signing
+
+To perform signing on the sample app's confirmation UI, ensure you have obtained
+an active user token and encryption key.
+
+From the Execute Challenge screen, paste the Challenge ID and select
+**Execute**.
+
+<Frame>
+  <img src="/w3s/images/ucw-isr-execchall01.svg" />
+</Frame>
+
+## Step 3. Confirm signature request
+
+The sample app prompts a confirmation UI for the user to view the signing
+details and confirm it. You can customize confirmation UIs. For more, see
+[Confirmation UIs](/wallets/user-controlled/confirmation-uis) .
+
+<Frame>
+  <img src="/w3s/images/ucw-isr-sigrec01.svg" />
+</Frame>

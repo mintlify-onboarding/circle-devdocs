@@ -1,0 +1,394 @@
+---
+title: Supported Blockchains and APIs
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Blockchain Compatibility for Developer Services APIs"
+---
+
+The availability of wallets endpoints varies by blockchain.
+
+The following tables are organized by API category and list which endpoints are
+supported on each blockchain for both mainnet and testnet.
+
+## Developer-controlled wallets
+
+The following tables group developer-controlled wallets endpoints by API
+category and show which blockchains support them.
+
+### Wallets API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported wallet endpoints.
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                                                                                                        | Aptos | Arbitrum | Avalanche | Base |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------- | --------- | ---- |
+| [Create developer wallets](/api-reference/w3s/developer-controlled-wallets/create-wallet)                                                                                              | Yes   | Yes      | Yes       | Yes  |
+| [List developer wallets](/api-reference/w3s/developer-controlled-wallets/get-wallets) <br /> [Retrieve a developer wallet](/api-reference/w3s/developer-controlled-wallets/get-wallet) | Yes   | Yes      | Yes       | Yes  |
+| [Fetch balances for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-balance)                                                                                     | Yes   | Yes      | Yes       | Yes  |
+| [Fetch NFTs for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-nfts)                                                                                            | No    | Yes      | Yes       | Yes  |
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                                                                                                        | Ethereum | Optimism | Polygon |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | ------- |
+| [Create developer wallets](/api-reference/w3s/developer-controlled-wallets/create-wallet)                                                                                              | Yes      | Yes      | Yes     |
+| [List developer wallets](/api-reference/w3s/developer-controlled-wallets/get-wallets) <br /> [Retrieve a developer wallet](/api-reference/w3s/developer-controlled-wallets/get-wallet) | Yes      | Yes      | Yes     |
+| [Fetch balances for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-balance)                                                                                     | Yes      | Yes      | Yes     |
+| [Fetch NFTs for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-nfts)                                                                                            | Yes      | Yes      | Yes     |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                                                                                                        | Near | Solana | Unichain |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------- |
+| [Create developer wallets](/api-reference/w3s/developer-controlled-wallets/create-wallet)                                                                                              | Yes  | Yes    | Yes      |
+| [List developer wallets](/api-reference/w3s/developer-controlled-wallets/get-wallets) <br /> [Retrieve a developer wallet](/api-reference/w3s/developer-controlled-wallets/get-wallet) | Yes  | Yes    | Yes      |
+| [Fetch balances for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-balance)                                                                                     | No   | Yes    | Yes      |
+| [Fetch NFTs for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-nfts)                                                                                            | No   | Yes    | Yes      |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                                                                                                        | Other EVM blockchains                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [Create developer wallets](/api-reference/w3s/developer-controlled-wallets/create-wallet)                                                                                              | Yes, if `blockchain` value is `EVM` or `EVM-TEST` |
+| [List developer wallets](/api-reference/w3s/developer-controlled-wallets/get-wallets) <br /> [Retrieve a developer wallet](/api-reference/w3s/developer-controlled-wallets/get-wallet) | Yes                                               |
+| [Fetch balances for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-balance)                                                                                     | No                                                |
+| [Fetch NFTs for a wallet](/api-reference/w3s/developer-controlled-wallets/list-wallet-nfts)                                                                                            | No                                                |
+
+</Tab>
+</Tabs>
+
+### Transactions API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported transactions endpoints.
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                                                                                                                                                                                                                                   | Aptos     | Arbitrum | Avalanche | Base |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | -------- | --------- | ---- |
+| [Create a transfer](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer) <br /> [Validate an address](/api-reference/wallets/developer-controlled-wallets/create-validate-address)                                                                                          | Yes       | Yes      | Yes       | Yes  |
+| [Accelerate a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate) <br /> [Cancel a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)                                                                    | No        | No       | Yes       | Yes  |
+| [Create a contract execution](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution) <br /> [Estimate contract execution fees](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution)                                 | Limited\* | Yes      | Yes       | Yes  |
+| [List transactions](/api-reference/wallets/developer-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction) <br /> [Estimate transfer fees](/api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee) | Yes       | Yes      | Yes       | Yes  |
+
+**\*Note: Limited support for contract execution on Aptos**
+
+For Aptos, the contract execution endpoints are available only for batch
+transfers, and requires fixed values for `abiFunctionSignature` and
+`contractAddress`.
+
+The following sample request body shows the required values.
+
+```json
+{
+  "idempotencyKey": "{{$YourUUID}}",
+  "walletId": "639ff7f1-2fed-5de4-9976-c1706ca1ef88",
+  "feeLevel": "MEDIUM",
+  "abiFunctionSignature": "aptos_account::batch_transfer_fungible_assets(metadata:object::Object<fungible_asset::Metadata>,recipients:vector<address>,amounts:vector<u64>)",
+  "abiParameters": [
+    "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832",
+    [
+      "0xe78568bcfc30070fae04c1c4ba267eecc228e077672e18086baa042cbfb0ba70",
+      "0xb8019c3e505fafe00edd1ba95c34f3f78e957da668c23ecb56ccd3a59ee8f21e"
+    ],
+    ["1", "1"]
+  ],
+  "contractAddress": "0x1",
+  "refId": "aptos-testnet-contractExecution",
+  "entitySecretCiphertext": "{{entity-secret-ciphertext}}"
+}
+```
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                                                                                                                                                                                                                                   | Ethereum | Optimism | Polygon |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | ------- |
+| [Create a transfer](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer) <br /> [Validate an address](/api-reference/wallets/developer-controlled-wallets/create-validate-address)                                                                                          | Yes      | Yes      | Yes     |
+| [Accelerate a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate) <br /> [Cancel a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)                                                                    | Yes      | Yes      | Yes     |
+| [Create a contract execution](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution) <br /> [Estimate contract execution fees](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution)                                 | Yes      | Yes      | Yes     |
+| [List transactions](/api-reference/wallets/developer-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction) <br /> [Estimate transfer fees](/api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee) | Yes      | Yes      | Yes     |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                                                                                                                                                                                                                                   | Near | Solana | Unichain |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------- |
+| [Create a transfer](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer) <br /> [Validate an address](/api-reference/wallets/developer-controlled-wallets/create-validate-address)                                                                                          | No   | Yes    | Yes      |
+| [Accelerate a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate) <br /> [Cancel a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)                                                                    | No   | No     | Yes      |
+| [Create a contract execution](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution) <br /> [Estimate contract execution fees](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution)                                 | No   | No     | Yes      |
+| [List transactions](/api-reference/wallets/developer-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction) <br /> [Estimate transfer fees](/api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee) | No   | Yes    | Yes      |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                                                                                                                                                                                                                                   | Other EVM blockchains |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| [Create a transfer](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer) <br /> [Validate an address](/api-reference/wallets/developer-controlled-wallets/create-validate-address)                                                                                          | Yes                   |
+| [Accelerate a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate) <br /> [Cancel a transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)                                                                    | No                    |
+| [Create a contract execution](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution) <br /> [Estimate contract execution fees](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution)                                 | No                    |
+| [List transactions](/api-reference/wallets/developer-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction) <br /> [Estimate transfer fees](/api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee) | No                    |
+
+</Tab>
+</Tabs>
+
+### Signing API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported signing endpoints.
+
+<Note>
+To sign transactions with an `EVM-TESTNET` wallet, use the appropriate
+[chain ID](/w3s/sign-tx-chain-id). If you're on mainnet, you can use an `EVM`
+wallet to sign transactions on any EVM-compatible chain.
+</Note>
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                  | Aptos | Arbitrum                          | Avalanche                         | Base                              |
+| ------------------------------------------------------------------------------------------------ | ----- | --------------------------------- | --------------------------------- | --------------------------------- |
+| [Sign message](/api-reference/wallets/developer-controlled-wallets/sign-message)                 | Yes   | Yes                               | Yes                               | Yes                               |
+| [Sign typed data](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)           | No    | Yes                               | Yes                               | Yes                               |
+| [Sign transaction](/api-reference/wallets/developer-controlled-wallets/sign-transaction)         | No    | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only |
+| [Sign delegate action](/api-reference/wallets/developer-controlled-wallets/sign-delegate-action) | No    | No                                | No                                | No                                |
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                  | Ethereum                          | Optimism                          | Polygon                           |
+| ------------------------------------------------------------------------------------------------ | --------------------------------- | --------------------------------- | --------------------------------- |
+| [Sign message](/api-reference/wallets/developer-controlled-wallets/sign-message)                 | Yes                               | Yes                               | Yes                               |
+| [Sign typed data](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)           | Yes                               | Yes                               | Yes                               |
+| [Sign transaction](/api-reference/wallets/developer-controlled-wallets/sign-transaction)         | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only |
+| [Sign delegate action](/api-reference/wallets/developer-controlled-wallets/sign-delegate-action) | No                                | No                                | No                                |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                  | Near | Solana | Unichain                          |
+| ------------------------------------------------------------------------------------------------ | ---- | ------ | --------------------------------- |
+| [Sign message](/api-reference/wallets/developer-controlled-wallets/sign-message)                 | No   | Yes    | Yes                               |
+| [Sign typed data](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)           | No   | No     | Yes                               |
+| [Sign transaction](/api-reference/wallets/developer-controlled-wallets/sign-transaction)         | Yes  | Yes    | `EVM`, `EVM-TESTNET` wallets only |
+| [Sign delegate action](/api-reference/wallets/developer-controlled-wallets/sign-delegate-action) | Yes  | No     | No                                |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                  | Other EVM chains |
+| ------------------------------------------------------------------------------------------------ | ---------------- |
+| [Sign message](/api-reference/wallets/developer-controlled-wallets/sign-message)                 | Yes              |
+| [Sign typed data](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)           | Yes              |
+| [Sign transaction](/api-reference/wallets/developer-controlled-wallets/sign-transaction)         | Yes              |
+| [Sign delegate action](/api-reference/wallets/developer-controlled-wallets/sign-delegate-action) | No               |
+
+</Tab>
+</Tabs>
+
+### Token Lookup API
+
+The
+[retrieve a developer token](/api-reference/wallets/developer-controlled-wallets/get-token-id)
+endpoint is available for all
+[supported chains](/w3s/supported-blockchains-and-currencies) except Near.
+
+## User-controlled wallets
+
+The following tables group user-controlled wallets endpoints by API category and
+show which blockchains support them.
+
+### PIN Authentication API
+
+The
+[create a challenge to initialize a user](/api-reference/w3s/user-controlled-wallets/create-user-with-pin-challenge)
+endpoint is available on all
+[supported blockchains](/w3s/supported-blockchains-and-currencies).
+
+### Wallets API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported wallet endpoints.
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                                                                                                                                                                                 | Aptos | Arbitrum | Avalanche | Base |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------- | --------- | ---- |
+| [Create a user wallet](/api-reference/w3s/user-controlled-wallets/create-user-wallet)<br /> [Retrieve a user wallet](/api-reference/w3s/user-controlled-wallets/get-wallet) <br /> [List user wallets](/api-reference/w3s/user-controlled-wallets/list-wallets) | Yes   | Yes      | Yes       | Yes  |
+| [Fetch balance for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-balance)                                                                                                                                                                    | Yes   | Yes      | Yes       | Yes  |
+| [Fetch NFTs for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-nfts)                                                                                                                                                                          | No    | Yes      | Yes       | Yes  |
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                                                                                                                                                                                 | Ethereum | Optimism | Polygon |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | ------- |
+| [Create a user wallet](/api-reference/w3s/user-controlled-wallets/create-user-wallet)<br /> [Retrieve a user wallet](/api-reference/w3s/user-controlled-wallets/get-wallet) <br /> [List user wallets](/api-reference/w3s/user-controlled-wallets/list-wallets) | Yes      | Yes      | Yes     |
+| [Fetch balance for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-balance)                                                                                                                                                                    | Yes      | Yes      | Yes     |
+| [Fetch NFTs for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-nfts)                                                                                                                                                                          | Yes      | Yes      | Yes     |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                                                                                                                                                                                 | Near | Solana | Unichain |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------- |
+| [Create a user wallet](/api-reference/w3s/user-controlled-wallets/create-user-wallet)<br /> [Retrieve a user wallet](/api-reference/w3s/user-controlled-wallets/get-wallet) <br /> [List user wallets](/api-reference/w3s/user-controlled-wallets/list-wallets) | No   | Yes    | Yes      |
+| [Fetch balance for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-balance)                                                                                                                                                                    | No   | Yes    | Yes      |
+| [Fetch NFTs for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-nfts)                                                                                                                                                                          | No   | Yes    | Yes      |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                                                                                                                                                                                 | Other EVM chains |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| [Create a user wallet](/api-reference/w3s/user-controlled-wallets/create-user-wallet)<br /> [Retrieve a user wallet](/api-reference/w3s/user-controlled-wallets/get-wallet) <br /> [List user wallets](/api-reference/w3s/user-controlled-wallets/list-wallets) | Yes              |
+| [Fetch balance for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-balance)                                                                                                                                                                    | No               |
+| [Fetch NFTs for a wallet](/api-reference/w3s/user-controlled-wallets/list-wallet-nfts)                                                                                                                                                                          | No               |
+
+</Tab>
+</Tabs>
+
+### Transactions API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported transaction endpoints.
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                                                                                                                                                                                            | Aptos     | Arbitrum | Avalanche | Base |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | -------- | --------- | ---- |
+| [Create challenge for transfer](/api-reference/w3s/user-controlled-wallets/create-user-transaction-transfer-challenge)                                                                                                                                                     | Yes       | Yes      | Yes       | Yes  |
+| [Create challenge to accelerate transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-accelerate-challenge) <br /> [Create challenge to cancel transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-cancel-challenge) | No        | No       | Yes       | Yes  |
+| [Create challenge to execute contract](/api-reference/w3s/user-controlled-wallets/create-user-transaction-contract-execution-challenge) <br /> [Estimate contract execution fees](/api-reference/w3s/user-controlled-wallets/create-transaction-estimate-fee)              | Limited\* | Yes      | Yes       | Yes  |
+| [Estimate transfer fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                                                                                                                                                                          | Yes       | Yes      | Yes       | Yes  |
+| [List transactions](/api-reference/w3s/user-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/w3s/user-controlled-wallets/get-transaction)                                                                                              | Yes       | Yes      | Yes       | Yes  |
+| [Validate an address](/api-reference/w3s/user-controlled-wallets/create-validate-address)                                                                                                                                                                                  | Yes       | Yes      | Yes       | Yes  |
+
+**\*Note: Limited support for contract execution on Aptos**
+
+For Aptos, the contract execution endpoints are available only for batch
+transfers, and requires fixed values for `abiFunctionSignature` and
+`contractAddress`.
+
+The following sample request body shows the required values.
+
+```json
+{
+  "idempotencyKey": "{{$YourUUID}}",
+  "walletId": "639ff7f1-2fed-5de4-9976-c1706ca1ef88",
+  "feeLevel": "MEDIUM",
+  "abiFunctionSignature": "aptos_account::batch_transfer_fungible_assets(metadata:object::Object<fungible_asset::Metadata>,recipients:vector<address>,amounts:vector<u64>)",
+  "abiParameters": [
+    "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832",
+    [
+      "0xe78568bcfc30070fae04c1c4ba267eecc228e077672e18086baa042cbfb0ba70",
+      "0xb8019c3e505fafe00edd1ba95c34f3f78e957da668c23ecb56ccd3a59ee8f21e"
+    ],
+    ["1", "1"]
+  ],
+  "contractAddress": "0x1",
+  "refId": "aptos-testnet-contractExecution",
+  "entitySecretCiphertext": "{{entity-secret-ciphertext}}"
+}
+```
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                                                                                                                                                                                            | Ethereum | Optimism | Polygon |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | ------- |
+| [Create challenge for transfer](/api-reference/w3s/user-controlled-wallets/create-user-transaction-transfer-challenge)                                                                                                                                                     | Yes      | Yes      | Yes     |
+| [Create challenge to accelerate transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-accelerate-challenge) <br /> [Create challenge to cancel transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-cancel-challenge) | Yes      | Yes      | Yes     |
+| [Create challenge to execute contract](/api-reference/w3s/user-controlled-wallets/create-user-transaction-contract-execution-challenge) <br /> [Estimate contract execution fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                 | Yes      | Yes      | Yes     |
+| [Estimate transfer fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                                                                                                                                                                          | Yes      | Yes      | Yes     |
+| [List transactions](/api-reference/w3s/user-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/w3s/user-controlled-wallets/get-transaction)                                                                                              | Yes      | Yes      | Yes     |
+| [Validate an address](/api-reference/w3s/user-controlled-wallets/create-validate-address)                                                                                                                                                                                  | Yes      | Yes      | Yes     |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                                                                                                                                                                                            | Near | Solana | Unichain |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------- |
+| [Create challenge for transfer](/api-reference/w3s/user-controlled-wallets/create-user-transaction-transfer-challenge)                                                                                                                                                     | No   | Yes    | Yes      |
+| [Create challenge to accelerate transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-accelerate-challenge) <br /> [Create challenge to cancel transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-cancel-challenge) | No   | No     | Yes      |
+| [Create challenge to execute contract](/api-reference/w3s/user-controlled-wallets/create-user-transaction-contract-execution-challenge) <br /> [Estimate contract execution fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                 | No   | No     | Yes      |
+| [Estimate transfer fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                                                                                                                                                                          | No   | Yes    | Yes      |
+| [List transactions](/api-reference/w3s/user-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/w3s/user-controlled-wallets/get-transaction)                                                                                              | No   | Yes    | Yes      |
+| [Validate an address](/api-reference/w3s/user-controlled-wallets/create-validate-address)                                                                                                                                                                                  | No   | Yes    | Yes      |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                                                                                                                                                                                            | Other EVM chains |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| [Create challenge for transfer](/api-reference/w3s/user-controlled-wallets/create-user-transaction-transfer-challenge)                                                                                                                                                     | No               |
+| [Create challenge to accelerate transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-accelerate-challenge) <br /> [Create challenge to cancel transaction](/api-reference/w3s/user-controlled-wallets/create-user-transaction-cancel-challenge) | No               |
+| [Create challenge to execute contract](/api-reference/w3s/user-controlled-wallets/create-user-transaction-contract-execution-challenge) <br /> [Estimate contract execution fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                 | No               |
+| [Estimate transfer fees](/api-reference/w3s/user-controlled-wallets/create-transfer-estimate-fee)                                                                                                                                                                          | No               |
+| [List transactions](/api-reference/w3s/user-controlled-wallets/list-transactions) <br /> [Retrieve a transaction](/api-reference/w3s/user-controlled-wallets/get-transaction)                                                                                              | Yes              |
+| [Validate an address](/api-reference/w3s/user-controlled-wallets/create-validate-address)                                                                                                                                                                                  | Yes              |
+
+</Tab>
+</Tabs>
+
+### Signing API
+
+Select the tab that matches the first letter range of your blockchain name to
+see supported signing endpoints.
+
+<Tabs>
+<Tab title="A - B">
+
+|                                                                                                          | Aptos | Arbitrum                          | Avalanche                         | Base                              |
+| -------------------------------------------------------------------------------------------------------- | ----- | --------------------------------- | --------------------------------- | --------------------------------- |
+| [Create challenge to sign message](/api-reference/w3s/user-controlled-wallets/sign-user-message)         | Yes   | Yes                               | Yes                               | Yes                               |
+| [Create challenge to sign typed data](/api-reference/w3s/user-controlled-wallets/sign-user-typed-data)   | No    | Yes                               | Yes                               | Yes                               |
+| [Create challenge to sign transaction](/api-reference/w3s/user-controlled-wallets/sign-user-transaction) | No    | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only |
+
+</Tab>
+<Tab title="E - P">
+
+|                                                                                                          | Ethereum                          | Optimism                          | Polygon                           |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- |
+| [Create challenge to sign message](/api-reference/w3s/user-controlled-wallets/sign-user-message)         | Yes                               | Yes                               | Yes                               |
+| [Create challenge to sign typed data](/api-reference/w3s/user-controlled-wallets/sign-user-typed-data)   | Yes                               | Yes                               | Yes                               |
+| [Create challenge to sign transaction](/api-reference/w3s/user-controlled-wallets/sign-user-transaction) | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only | `EVM`, `EVM-TESTNET` wallets only |
+
+</Tab>
+<Tab title="N - S">
+
+|                                                                                                          | Near | Solana | Unichain                          |
+| -------------------------------------------------------------------------------------------------------- | ---- | ------ | --------------------------------- |
+| [Create challenge to sign message](/api-reference/w3s/user-controlled-wallets/sign-user-message)         | No   | Yes    | Yes                               |
+| [Create challenge to sign typed data](/api-reference/w3s/user-controlled-wallets/sign-user-typed-data)   | No   | No     | Yes                               |
+| [Create challenge to sign transaction](/api-reference/w3s/user-controlled-wallets/sign-user-transaction) | No   | Yes    | `EVM`, `EVM-TESTNET` wallets only |
+
+</Tab>
+<Tab title="Other">
+
+|                                                                                                          | Other EVM chains |
+| -------------------------------------------------------------------------------------------------------- | ---------------- |
+| [Create challenge to sign message](/api-reference/w3s/user-controlled-wallets/sign-user-message)         | Yes              |
+| [Create challenge to sign typed data](/api-reference/w3s/user-controlled-wallets/sign-user-typed-data)   | Yes              |
+| [Create challenge to sign transaction](/api-reference/w3s/user-controlled-wallets/sign-user-transaction) | Yes              |
+
+</Tab>
+</Tabs>
+
+### Token Lookup API
+
+The
+[retrieve a user token](/api-reference/w3s/user-controlled-wallets/get-token-id)
+endpoint is available on all supported blockchains except Near.

@@ -1,0 +1,177 @@
+---
+title: Sign Transactions on NEAR
+description:
+  "Learn how to create NEAR wallets, build transactions, and sign them with our
+  server-side SDK."
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+This tutorial walks you through creating a developer-controlled wallet to sign
+transactions on NEAR.
+
+## Prerequisites
+
+Before you begin:
+
+- Create a [Circle Developer Account](/w3s/circle-developer-account) and API key
+- Install the Developer Services
+  [Server-side SDKs](/sdk-explorer#server-side-sdks)
+- Complete the
+  [Create Your First Developer-Controlled Wallet](/wallets/dev-controlled/create-your-first-wallet)
+  tutorial to register an entity secret and create a wallet set
+
+## Step 1. Create NEAR wallets
+
+When
+[creating a developer-controlled wallet](/api-reference/wallets/developer-controlled-wallets/create-wallet),
+pass `NEAR-TESTNET` or `NEAR` in the `blockchains` field. This wallet can be
+used to sign transactions on NEAR.
+
+The following example code shows how to create a wallet using the Circle
+Developer SDK.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.createWallets({
+  accountType: "EOA",
+  blockchains: ["NEAR-TESTNET"],
+  count: 2,
+  walletSetId: "<wallet-set-id>",
+});
+```
+
+</CodeGroup>
+
+<Warning>
+  You must send NEAR tokens to activate the wallet. Without NEAR tokens in the
+  wallet, you will receive an error stating that the account does not exist when
+  broadcasting a transaction.
+</Warning>
+
+<Note>
+  Use `count` to specify the number of wallets to create, up to a maximum of 200
+  per API request.
+</Note>
+
+## Step 2. Build and sign a raw transaction
+
+To build a raw transaction for signing in JavaScript:
+
+1. **Prepare the transaction object** - To build a NEAR transaction, you must
+   define several parameters, including the sender, receiver, amount, actions,
+   nonce, and any additional metadata required.
+2. **Serialize the transaction object with Borsh and encode it with Base64** -
+   NEAR uses Borsh serialization for transaction objects, so you need to
+   serialize the constructed transaction and then encode it to Base64 before
+   signing.
+
+The following example code shows how to build a raw transaction for signing.
+
+<CodeGroup>
+
+```javascript
+import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
+import { connect, utils } from "near-api-js";
+import { baseDecode, baseEncode } from "@near-js/utils";
+import { PublicKey } from "@near-js/crypto";
+import {
+  createTransaction,
+  actionCreators,
+  encodeTransaction,
+} from "@near-js/transactions";
+import axios from "axios";
+import fs from "fs";
+
+const NEAR_CONFIG = {
+  networkId: "testnet",
+  nodeUrl: "https://rpc.testnet.near.org",
+};
+
+// fill in these variables
+const CIRCLE_API_KEY = "";
+const CIRCLE_ENTITY_SECRET = "";
+const CIRCLE_WALLET_PUBLIC_KEY = ""; // with `ed25519:` scheme
+const CIRCLE_WALLET_ID = "";
+const CIRCLE_TX_MEMO = "";
+const MASTER_ACCOUNT = "";
+const RECEIVER = "";
+const AMOUNT = "0.001";
+
+async function main() {
+  const client = initiateDeveloperControlledWalletsClient({
+    apiKey: CIRCLE_API_KEY,
+    entitySecret: CIRCLE_ENTITY_SECRET,
+  });
+
+  try {
+    // setup client and account
+    const near = await connect({ ...NEAR_CONFIG });
+    const sender = await near.account(MASTER_ACCOUNT);
+
+    // get latest finalized block
+    const block = await near.connection.provider.block({ finality: "final" });
+    const blockHash = block.header.hash;
+
+    // get sender nonce
+    const senderAccessKey = await sender.getAccessKeys();
+    let nonce = BigInt(0);
+    for (let i = 0; i < senderAccessKey.length; i++) {
+      if (senderAccessKey[i].public_key === CIRCLE_WALLET_PUBLIC_KEY) {
+        nonce = senderAccessKey[i].access_key.nonce + BigInt(1);
+      }
+    }
+    if (nonce === BigInt(0)) {
+      console.error(
+        `couldn't find corresponding access key: ${CIRCLE_WALLET_PUBLIC_KEY}`,
+      );
+      return;
+    }
+
+    // build raw transaction
+    const actions = [
+      actionCreators.transfer(
+        BigInt(utils.format.parseNearAmount(AMOUNT) || 0),
+      ),
+    ];
+    const signerPublicKey = PublicKey.fromString(CIRCLE_WALLET_PUBLIC_KEY);
+    const transaction = createTransaction(
+      MASTER_ACCOUNT,
+      signerPublicKey,
+      RECEIVER,
+      nonce,
+      actions,
+      baseDecode(blockHash),
+    );
+
+    // serialize borsh
+    const message = encodeTransaction(transaction);
+
+    // base64 encode
+    const base64EncodedTx = Buffer.from(message).toString("base64");
+
+    // call Circle's API to sign tx
+    const signedTx = await client.signTransaction({
+      walletId: CIRCLE_WALLET_ID,
+      rawTransaction: base64EncodedTx,
+      memo: CIRCLE_TX_MEMO,
+    });
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.error(`status: ${err.response?.status}`);
+      console.error(`data: `, err.response?.data);
+    } else {
+      console.error(`unknown err: `, err);
+    }
+  }
+}
+
+(async () => {
+  await main();
+})();
+```
+
+</CodeGroup>

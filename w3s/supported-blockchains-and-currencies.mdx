@@ -1,0 +1,132 @@
+---
+title: Supported Blockchains
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "References"
+---
+
+## Introduction to blockchains and currencies
+
+If you are unfamiliar with blockchain concepts, a blockchain can be described as
+a distributed ledger that records a sequence of actions. It is maintained and
+synchronized across multiple computers connected through the Internet. Visualize
+it as a decentralized database where participants in the network record their
+transactions according to predefined rules to prevent fraudulent or dishonest
+actions. Notable examples of blockchains include
+[Bitcoin](https://en.wikipedia.org/wiki/Bitcoin) and
+[Ethereum](https://en.wikipedia.org/wiki/Ethereum).
+
+Typically, a blockchain supports one or more cryptocurrencies, often known as
+tokens. These tokens can represent value and are sometimes interchangeably
+referred to as currencies. In most cases, a blockchain hosts a native currency
+and may include additional tokens or currencies on the same chain. For instance,
+the Ethereum blockchain supports its native currency, Ethereum (ETH), alongside
+various tokens such as USDC and EURC. To streamline compatibility and
+interaction between different tokens, many adhere to a technical standard known
+as ERC-20.
+
+It is worth noting that occasionally, a single currency can be available on
+multiple blockchains, expanding its reach and versatility.
+
+## Supported blockchains and currencies
+
+Below is a list of blockchain networks supported by each product. Whichever
+Programmable Wallet [infrastructure model](/wallets/infrastructure-models) you
+select, user-controlled or developer-controlled, the same blockchains are
+supported. The selected [account type](/wallets/account-types), externally owned
+account (EOA) or smart contract account (SCA), does affect which blockchains are
+supported.
+
+| Blockchain Network       |  Chain code   |                      Wallets EOA                       | Wallets SCA | Contracts | Gas Station |
+| ------------------------ | :-----------: | :----------------------------------------------------: | :---------: | :-------: | :---------: |
+| Aptos Mainnet            |     APTOS     |                           ✅                           |     ❌      |    ❌     |     ✅      |
+| Aptos Testnet            | APTOS-TESTNET |                           ✅                           |     ❌      |    ❌     |     ✅      |
+| Arbitrum Mainnet         |      ARB      |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Arbitrum Sepolia Testnet |  ARB-SEPOLIA  |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Avalanche Mainnet        |     AVAX      |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Avalanche Fuji Testnet   |   AVAX-FUJI   |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Base Mainnet             |     BASE      |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Base Sepolia Testnet     | BASE-SEPOLIA  |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Ethereum Mainnet         |      ETH      |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Ethereum Sepolia Testnet |  ETH-SEPOLIA  |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Near Mainnet             |     NEAR      | Only supports signing for developer-controlled wallets |     ❌      |    ❌     |     ❌      |
+| Optimism Mainnet         |      OP       |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Optimism Sepolia Testnet |  OP-SEPOLIA   |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Polygon Mainnet          |     MATIC     |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Polygon Amoy Testnet     |  MATIC-AMOY   |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Solana Mainnet           |      SOL      |                           ✅                           |     ❌      |    ❌     |     ✅      |
+| Solana Devnet            |  SOL-DEVNET   |                           ✅                           |     ❌      |    ❌     |     ✅      |
+| Unichain Mainnet         |      UNI      |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Unichain Sepolia Testnet |  UNI-SEPOLIA  |                           ✅                           |     ✅      |    ✅     |     ✅      |
+| Other EVMs               |               |                           ✅                           |     ❌      |    ❌     |     ❌      |
+
+<Note>
+
+The following tokens and standards are supported across blockchains:
+
+- **EVM-compatible chains** - native coin, ERC-20, ERC-721 and ERC-1155
+- **Solana** - native coin, SPL
+
+</Note>
+
+## Testnet faucets
+
+Use the following sources to request **testnet USDC** and other assets for
+development and testing purposes:
+
+| Faucet Source                                 | Description                                                                                  | Link                                                                           |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Circle Public Faucet**                      | Request testnet USDC directly.                                                               | [faucet.circle.com](https://faucet.circle.com)                                 |
+| **Console Faucet (Developer Services users)** | For Developer Services users: drip testnet USDC and native assets into programmable wallets. | [Console Faucet](https://console.circle.com/faucet)                            |
+| **Community Faucet Directory**                | Explore additional testnet faucets across various networks.                                  | [Alchemy Crypto Faucet Directory](https://www.alchemy.com/best/crypto-faucets) |
+
+For more details, see the
+[Testnet Faucet documentation](/w3s/developer-console-faucet).
+
+## Support for additional EVM blockchains
+
+If you need a consistent wallet address across multiple EVM chains to ensuring a
+direct mapping between the addresses on different chains, you can use our wallet
+creation APIs. When you create a wallet address on one EVM chain, you can
+replicate and map the same address to another EVM chain. This 1-to-1 mapping
+ensures that the wallet address remains consistent and easily identifiable
+across the different chains you are utilizing.
+
+### User-controlled wallets
+
+For user-controlled wallets, send a `POST` request to the
+[`/user/wallets`](/api-reference/wallets/user-controlled-wallets/create-user-wallet)
+endpoint and include the same `X-User-Token` in the header for authentication.
+In the request body, pass the new blockchains that you want to associate with
+the wallets in the `blockchains` field. The existing EVM wallet address is be
+used by default to create the wallets on the newly specified blockchains, which
+ensures consistency across chains.
+
+### Developer-controlled wallets
+
+For developer-controlled wallets, send a `POST` request to the
+[`/developer/wallets`](/api-reference/wallets/developer-controlled-wallets/create-wallet)
+endpoint and include the same `walletSetId` that was used for previously created
+wallets on another EVM chain. To ensure consistency, provide the same `count`
+value as the number of wallets associated with the `walletSetId`. If you need to
+obtain the count for a specific `walletSetId`, you can send a `GET` request to
+the
+[`/developer/wallets?walletSetId=<ID>`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+endpoint and include `walletSetId` as a query parameter.
+
+If you only need signing capabilities such as sign transaction, sign typed data,
+or sign message on EVM chains, you can create wallets with a `blockchains` value
+of `EVM` or `EVM-TESTNET` and use those wallets to sign across different
+EVM-compatible chains. This ensures the same address is used across all EVM
+chains you support. For more information, see
+[Signing APIs](/wallets/signing-apis).
+
+<Note>
+  For `EVM-TESTNET` wallets, you can sign transactions on the blockchains listed
+  in [Chain IDs for Signing Transactions](/w3s/sign-tx-chain-id). Once you
+  transition to Mainnet, you can use your `EVM` wallet to sign transactions on
+  any EVM-compatible chains.
+</Note>

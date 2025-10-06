@@ -1,0 +1,142 @@
+---
+title: API Keys and Client Keys
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+You can use API keys and client keys to authenticate requests to Circle's APIs.
+Use **API keys** to authenticate and authorize calls to Circle’s APIs from your
+backend services. Use **Client keys** to authenticate and authorize calls to
+Circle's APIs from your frontend apps, exposed sites, and other public
+interfaces. This document explains their differences, usage, and security best
+practices.
+
+## Purpose of API/Client Keys
+
+The table below highlights the purpose of API keys and client keys.
+
+| Purpose          | API Key                                                                                                           | Client Key                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Usage**        | Authenticates and authorizes access to Circle W3S RESTful APIs from backend systems. Not safe for public sharing. | Authenticates your client application and grants limited access to Circle's RESTful APIs. Typically used with Circle's SDKs. |
+| **Ideal for**    | Services from your backend that leverage Circle's APIs.                                                           | Frontend applications (for example, web or mobile apps) using Circle's serverless SDKs.                                      |
+| **Where to use** | Required for serverless cloud apps, micro-services, and client apps to make secure calls to Circle's APIs.        | Required for client applications to make secure calls to Circle's services.                                                  |
+
+## Products and API/Client Keys
+
+The table below lists which Circle products require API keys or client keys.
+
+| Product/Service          | API Key                                                                                   | Client Key                  |
+| ------------------------ | ----------------------------------------------------------------------------------------- | --------------------------- |
+| Wallets: Modular         | ✅ For retrieving transfer and UserOps data from Circle Indexing Service via RESTful APIs | ✅ For modular wallets SDKs |
+| Wallets: User-Controlled | ✅                                                                                        | ❌                          |
+| Wallets: Dev-Controlled  | ✅                                                                                        | ❌                          |
+| Contracts                | ✅                                                                                        | ❌                          |
+
+## API Key
+
+### What is an API Key?
+
+An **API key** is a unique string used to authenticate and enable access to
+privileged operations on Circle’s APIs. It’s required for any RESTful API
+requests to Circle services. Without it, requests will fail.
+
+### Keep Your API Keys Safe
+
+API keys allow access to sensitive operations, so they must be secured.
+
+- **Avoid public exposure**. Never share API keys or include them in client-side
+  code, public repositories, or other public mediums.
+- **Manage securely**. Use your
+  [Circle Developer account](https://console.circle.com/api-keys) to generate
+  and manage API keys. When generating a key, copy it exactly as displayed.
+
+<Warning>
+  **Caution:** Losing control of your API key can result in financial loss.
+</Warning>
+
+### API Key Authentication
+
+You can use the headers below to authenticate requests on testnet or mainnet,
+respectively.
+
+<Note>
+**TEST_API_KEY and LIVE_API_KEY**
+
+The strings `TEST_API_KEY` and `LIVE_API_KEY` are essential components of an API
+key. You must include these strings when passing API keys to access Circle's
+services.
+
+</Note>
+
+#### Testnet (Test) Authorization Header Example
+
+```text
+authorization: Bearer TEST_API_KEY:ebb3ad72232624921abc4b162148bb84:019ef3358ef9cd6d08fc32csfe89a68d
+```
+
+#### Mainnet (Live) Authorization Header Example
+
+```text
+authorization: Bearer LIVE_API_KEY:ebb3ad72232624921abc4b162148bb84:019ef3358ef9cd6d08fc32csfe89a68d
+```
+
+### Testing Authentication
+
+To verify your API key setup, you can use the following `curl` command, for
+example, to retrieve wallets:
+
+```shell
+curl --request GET \
+     --url https://api.circle.com/v1/w3s/wallets \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+```json Successful Response Example
+{
+  "data": {
+    "wallets": []
+  }
+}
+```
+
+```json Error Response Example
+{
+  "code": 401,
+  "message": "Malformed authorization. Are the credentials properly encoded?"
+}
+```
+
+## Client Key
+
+### What is a Client Key?
+
+A **client key** is a unique string used to authenticate and authorize API
+access for customer applications leveraging Circle's SDKs. A client key is
+linked to a specific domain host (for websites), a bundle ID (for iOS mobile),
+or a package name (for Android mobile), ensuring access is restricted to
+preconfigured applications.
+
+<Note>
+  **Note:** A client key must be included in the headers of all modular wallets
+  SDK API calls.
+</Note>
+
+### Best Practices for Client Keys
+
+Client keys enable access to sensitive application operations, so it’s critical
+to protect them. Follow these best practices to ensure their security:
+
+1. **Use separate keys for each application**. Create separate keys for web and
+   mobile apps (iOS, Android, etc.) to prevent shared vulnerabilities.
+2. **Monitor for misuse**. Set up alerts for unusual activity, such as
+   unexpected spikes in API calls, using monitoring tools to detect anomalies.
+3. **Rotate keys regularly**. Regenerate client keys periodically and update
+   them in your apps to reduce risk if a key is compromised.
+4. **Store keys securely**. Use secure storage options like Local Storage or
+   Secure Storage for mobile apps, and avoid unnecessary exposure.
+5. **Restrict access**. Limit the scope of client keys by associating them with
+   specific apps or domains to minimize potential misuse.

@@ -1,0 +1,107 @@
+---
+title: Getting Started with User-Controlled Wallets - Node.js
+featureFlag: sdkExplorerEnabled
+dropDownNavigation:
+  label: Node.js
+  items:
+    - label: Python
+      href: /sdk-explorer/user-controlled-wallets/Python/getting-started
+---
+
+Use the Node.js SDK to interact with Circle's User-Controlled Wallet APIs, which
+allow you to embed secure wallets in your applications and create blockchain
+transactions using the Developer Services platform.
+
+This page provides short examples of how to install and use the user-controlled
+wallets SDK. For complete examples, see the [Sample Projects](/sample-projects)
+page. For more information see the
+[user-controlled wallets documentation](/wallets/user-controlled).
+
+## Prerequisites
+
+To successfully use the user-controlled wallets SDK, you need the following:
+
+- Have [Node.js](https://nodejs.org) and npm installed. Circle recommends Node
+  16 or higher.
+- Have an active [Circle Developer Account](https://console.circle.com/).
+- [Generate an API key](https://developers.circle.com/w3s/web3-services-api-client-keys-auth)
+  to use in requests to the Circle API.
+
+## Install the SDK
+
+Use the following commands to install the SDK. You can
+[view the package information on the npm site](https://www.npmjs.com/package/@circle-fin/user-controlled-wallets).
+
+<CodeGroup>
+
+```shell npm
+npm install @circle-fin/user-controlled-wallets --save
+```
+
+```shell yarn
+yarn add @circle-fin/user-controlled-wallets
+```
+
+</CodeGroup>
+
+## User-controlled wallets client
+
+To start using the SDK, you first need to configure a client. Import the
+`initiateUserControlledWalletsClient` factory from the SDK, and then initialize
+the client using your API key.
+
+### Import the client
+
+The following example shows how to import the client and configure it to use
+your API key:
+
+<CodeGroup>
+
+```javascript CommonJS
+const {
+  initiateUserControlledWalletsClient,
+} = require("@circle-fin/user-controlled-wallets");
+const client = initiateUserControlledWalletsClient({
+  apiKey: "<your-api-key>",
+});
+```
+
+```javascript ES Module
+import { initiateUserControlledWalletsClient } from "@circle-fin/user-controlled-wallets";
+const client = initiateUserControlledWalletsClient({
+  apiKey: "<your-api-key>",
+});
+```
+
+</CodeGroup>
+
+## Create a transaction
+
+The following example shows how to create a transaction using the client:
+
+```javascript
+const response = await client.createTransaction({
+  userToken: "dummy-user-token",
+  amounts: ["0.01"],
+  destinationAddress: "0xa51c9c604b79a0fadbfed35dd576ca1bce71da0a",
+  tokenId: "738c8a6d-8896-46d1-b2cb-083600c1c69b",
+  walletId: "a635d679-4207-4e37-b12e-766afb9b3892",
+  fee: {
+    type: "level",
+    config: {
+      feeLevel: "HIGH",
+    },
+  },
+});
+console.log(response.data?.challengeId);
+```
+
+## Client configuration options
+
+The client for the user-controlled wallets SDK accepts the following
+configuration parameters:
+
+| **Option** | **Required?** | **Description**                                                                                        |
+| ---------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| `apiKey`   | Yes           | The API key used to authenticate requests to the Circle API.                                           |
+| `storage`  | No            | Optional custom storage solution for persisting data. If not provided, the SDK uses in-memory storage. |

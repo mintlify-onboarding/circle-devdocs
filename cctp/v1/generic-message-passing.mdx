@@ -1,0 +1,120 @@
+---
+title: CCTP Message Passing V1
+description: CCTP V1 architecture on EVM and non-EVM domains
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Message Passing"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+Cross-Chain Transfer Protocol V1 uses generalized message passing to facilitate
+the native burning and minting of USDC across supported blockchains, also known
+as [domains](/cctp/v1/supported-domains). Message passing is a three-step
+process:
+
+1. An onchain component on the source domain emits a message.
+2. Circle's offchain attestation service signs the message.
+3. The onchain component at the destination domain receives the message, and
+   forwards the message body to the specified recipient.
+
+## Architecture
+
+Onchain components on all domains have the same purpose, but implementation
+differs between EVM-compatible and non-EVM domains.
+
+### CCTP V1 on EVM Domains
+
+The relationship between CCTP V1's onchain components and Circle's offchain
+Attestation Service is illustrated below for a burn-and-mint of USDC between
+EVM-compatible domains:
+
+<Frame>
+  <img src="/cctp/v1/images/cctp-gmp-archdomains01.png" />
+</Frame>
+
+On EVM domains, the onchain component for cross-chain burning and minting is
+called **TokenMessenger**, which is built on top of **MessageTransmitter**, an
+onchain component for generalized message passing.
+
+In the diagram above, a token depositor calls the
+[TokenMessenger#depositForBurn](https://github.com/circlefin/evm-cctp-contracts/blob/adb2a382b09ea574f4d18d8af5b6706e8ed9b8f2/src/TokenMessenger.sol#L169)
+function to deposit a native token (such as USDC), which delegates to the
+**TokenMinter** contract to burn the token. The **TokenMessenger** contract then
+sends a message via the
+[MessageTransmitter#sendMessage](https://github.com/circlefin/evm-cctp-contracts/blob/adb2a382b09ea574f4d18d8af5b6706e8ed9b8f2/src/MessageTransmitter.sol#L108)
+function. After
+[sufficient block confirmations](/cctp/v1/required-block-confirmations),
+Circle's offchain attestation service, Iris, signs the message. An API consumer
+queries this attestation and submits it onchain to the destination domain's
+[MessageTransmitter#receiveMessage](https://github.com/circlefin/evm-cctp-contracts/blob/adb2a382b09ea574f4d18d8af5b6706e8ed9b8f2/src/MessageTransmitter.sol#L250)
+function. For more details, see
+[Quickstart: Cross-chain USDC transfer](/cctp/v1/transfer-usdc-on-testnet-from-ethereum-to-avalanche).
+
+To send an arbitrary message, directly call
+[MessageTransmitter#sendMessage](https://github.com/circlefin/evm-cctp-contracts/blob/adb2a382b09ea574f4d18d8af5b6706e8ed9b8f2/src/MessageTransmitter.sol#L108).
+Note that the message recipient must implement
+[IMessageHandler#handleReceiveMessage](https://github.com/circlefin/evm-cctp-contracts/blob/master/src/interfaces/IMessageHandler.sol#L31C14-L31C34).
+
+<Note>
+**Note:**
+
+In CCTP V1, it is not possible to perform a burn-and-mint operation for USDC
+and include arbitrary data in the same message. You must include arbitrary
+data in a separate message. In later CCTP versions, you can burn-and-mint
+while including data in the same message via Hooks.
+</Note>
+
+### CCTP V1 on Non-EVM Domains
+
+#### Noble
+
+Noble is a Cosmos application-specific blockchain (or "appchain") that provides
+native asset issuance for the Cosmos ecosystem. USDC is natively issued on Noble
+and can be transferred via the Inter-Blockchain Communication (IBC) protocol to
+other supported appchains in Cosmos, or via CCTP V1 to any supported domain (for
+example, Ethereum).
+
+Note that there are key differences between Cosmos appchains like Noble and
+EVM-compatible blockchains. Unlike on EVM domains where CCTP V1 is a set of
+smart contracts, CCTP V1 on Noble is a Cosmos SDK module, which is deployed by
+Noble governance and built into the Noble blockchain. Cosmos appchains can use
+IBC to build composable flows with CCTP V1 on Noble. Refer to the
+[Noble documentation](/cctp/v1/noble-cosmos-module) for more details.
+
+#### Solana
+
+Solana is a layer-1 blockchain where USDC is natively issued as an SPL-token.
+CCTP V1 is deployed to Solana as two Anchor programs: **MessageTransmitter** and
+**TokenMessengerMinter**. Developers can compose programs on top of CCTP V1
+programs through CPI's (Cross-Program Invocations). Arbitrary messages can be
+sent directly by calling `MessageTransmitter#send_message` just as described in
+the EVM section above. Refer to the
+[Solana documentation](/cctp/v1/solana-programs) for more details.
+
+#### Sui
+
+Sui is another layer-1 blockchain where USDC is natively issued as a
+[`Coin` implementation](https://docs.sui.io/guides/developer/coin). CCTP V1 is
+deployed to Sui as two programs: **MessageTransmitter** and
+**TokenMessengerMinter**. Arbitrary messages can be sent by directly calling
+`message_transmitter::send_message` similar to the EVM section above. Refer to
+the [Sui documentation](/cctp/v1/sui-packages) for more details.
+
+#### Aptos
+
+Aptos is another layer-1 blockchain where USDC is natively issued as a
+[`FA` implementation](https://aptos.dev/en/build/smart-contracts/fungible-asset).
+CCTP V1 is deployed to Aptos as two programs: **MessageTransmitter** and
+**TokenMessengerMinter**. Arbitrary messages can be sent by directly calling
+`message_transmitter::send_message` similar to the EVM section above. Refer to
+the [Aptos documentation](/cctp/v1/aptos-packages) for more details.
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Message Format V1 <Icon icon="arrow-right" />](/cctp/v1/message-format)

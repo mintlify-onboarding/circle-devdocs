@@ -1,0 +1,169 @@
+---
+title: Sign Transactions on EVM chains
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Sign Transactions on EVM Chains"
+---
+
+This tutorial walks you through creating a developer-controlled wallet to sign
+transactions on EVM chains.
+
+<Note>
+You can only create Externally Owned Accounts (EOA) for signing transactions.
+For details, see the [Account Types](/wallets/account-types) guide.
+</Note>
+
+## Prerequisites
+
+Before you begin:
+
+- Create a [Circle Developer Account](/w3s/circle-developer-account) and API key
+- Install the Developer Services
+  [Server-side SDKs](/sdk-explorer#server-side-sdks)
+- Complete the
+  [Create Your First Developer-Controlled Wallet](/wallets/dev-controlled/create-your-first-wallet)
+  tutorial to register an entity secret and create a wallet set
+- Get familiar with [wallets](/w3s/programmable-wallets-primitives#wallets) and
+  [wallet sets](/w3s/programmable-wallets-primitives#wallet-sets)
+
+<Warning>
+
+If you have created a wallet on an EVM-compatible chain such as Ethereum,
+Polygon, Avalanche, or Arbitrum, an EVM wallet created under the same wallet set
+maps to the same address.
+
+In the case where a native wallet is already created, it is important that you
+don't use the generic EVM wallet to sign transactions in place of the native
+wallet on those chains.
+
+If you sign with the generic EVM wallet, your transaction may become stuck.
+
+</Warning>
+
+## Step 1. Create EVM wallets
+
+When
+[creating a developer-controlled wallet](/api-reference/wallets/developer-controlled-wallets/create-wallet),
+pass `EVM-TESTNET` or `EVM` in the `blockchains` field. This wallet can be used
+to sign transactions on any EVM chain.
+
+The following example code shows how to create a wallet using the Circle
+Developer SDK.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.createWallets({
+  accountType: "EOA",
+  blockchains: ["EVM-TESTNET"],
+  count: 2,
+  walletSetId: "<wallet-set-id>",
+});
+```
+
+</CodeGroup>
+
+<Note>
+  Use `count` to specify the number of wallets to create, up to a maximum of 200
+  per API request.
+</Note>
+
+## Step 2. Build transactions
+
+To build a transaction, connect to an Ethereum node and prepare your transaction
+object as shown in the following example code.
+
+<CodeGroup>
+
+```javascript
+const { createPublicClient, http, parseEther, parseGwei } = require("viem");
+
+// Connect to an Ethereum node
+const client = createPublicClient({
+  chain: "mainnet",
+  transport: http("https://mainnet.infura.io/v3/YOUR-PROJECT-ID"),
+});
+
+async function buildTransactionObject() {
+  // Sender's address
+  const senderAddress = "0x1234..."; // Replace with the sender's address
+
+  // Recipient's address
+  const recipientAddress = "0x5678..."; // Replace with the recipient's address
+
+  // Amount to send in wei
+  const amountToSend = parseEther("0.01");
+
+  try {
+    // Get the nonce
+    const nonce = await client.getTransactionCount({
+      address: senderAddress,
+    });
+
+    // Estimate gas limit
+    const estimateGas = await client.estimateGas({
+      from: senderAddress,
+      to: recipientAddress,
+      value: amountToSend,
+    });
+
+    // Get the current gas price
+    const gasPrice = await client.getGasPrice();
+
+    // Calculate max fees with some premium
+    const maxFeePerGas = (gasPrice * 120n) / 100n; // Add 20% premium
+    const maxPriorityFeePerGas = parseGwei("2"); // Set fixed priority fee
+
+    // Prepare the transaction object
+    const txObject = {
+      nonce: nonce,
+      to: recipientAddress,
+      value: amountToSend.toString(),
+      gas: estimateGas.toString(),
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+      chainId: 1,
+    };
+
+    return JSON.stringify(txObject); // Return the transaction object in JSON string
+  } catch (error) {
+    console.error("Error building transaction object:", error);
+    throw error; // Rethrow the error for further handling
+  }
+}
+```
+
+</CodeGroup>
+
+<Note>
+**Note:** The `txObject` schema conforms to the Ethereum JSON-RPC
+[transaction specification](https://ethereum.org/developers/docs/apis/json-rpc/#eth_sendtransaction).
+In [go-ethereum](https://geth.ethereum.org/docs), this corresponds to the
+[transaction call object](https://geth.ethereum.org/docs/interacting-with-geth/rpc/objects).
+`chainId` is required to ensure the transaction is processed on the right
+chain; use the appropriate [chain ID](/w3s/sign-tx-chain-id) for your network.
+
+For EVM-compatible wallets, these EIP-1559 fields are required when setting
+gas fees:
+
+- `maxFeePerGas` - the maximum total fee per unit of gas
+- `maxPriorityFeePerGas` - the maximum priority fee per unit of gas
+</Note>
+
+## Step 3. Sign a transaction
+
+The following example code shows how to sign a transaction.
+
+<CodeGroup>
+
+```javascript
+const responseObject = await circleDeveloperSdk.signTransaction({
+  walletID: "<wallet-id>",
+  transaction: txObjectString, // Pass the transaction object
+});
+```
+
+</CodeGroup>

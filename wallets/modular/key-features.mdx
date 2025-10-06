@@ -1,0 +1,1487 @@
+---
+title: Key Features
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Modular wallets are built on smart accounts that extend functionality through
+modules. This allows developers to tailor specific use cases and enable key
+features such as:
+
+- [Circle Smart Accounts](#circle-smart-accounts): Smart accounts leverage
+  passkey signing for seamless Web3 integration and support advanced use cases
+  through modules.
+- [Send a Transaction](#send-a-transaction). Enable blockchain operations
+  without requiring users to send a transaction directly.
+- [Send a Gasless Transaction](#send-a-gasless-transaction). Enables developers
+  to cover network fees on behalf of users, simplifying blockchain interactions.
+- [Batch Processing](#batch-processing). Combine multiple transactions into a
+  single call for efficiency.
+- [Parallel Execution](#parallel-execution). Execute independent transactions
+  simultaneously using 2D nonces.
+- [Secure Signing and Verification](#secure-signing-and-verification). Perform
+  secure operations like signing messages and verifying signatures.
+
+Explore these key features in more detail below.
+
+## Circle Smart Accounts
+
+Circle Smart Accounts allow users to set up passkeys and utilize biometrics
+verification for signing, which provides a seamless Web3 experience. Smart
+Accounts are built on top of **Viem** and adhere to the **ERC-6900** and
+**ERC-4337 (v0.7)** standards. Advanced use cases are supported through modules.
+
+<CodeGroup>
+
+```javascript Web SDK
+// 1. register or login with a passkey
+const passkeyTransport = toPasskeyTransport(clientUrl, clientKey);
+const credential = await toWebAuthnCredential({
+  transport: passkeyTransport,
+  mode: WebAuthnMode.Register, //or WebAuthnMode.Login if login
+  username: "my-passkey",
+});
+
+// 2. create a public client
+const modularTransport = toModularTransport(
+  clientUrl + "/polygonAmoy",
+  clientKey,
+);
+const client = createPublicClient({
+  chain: polygonAmoy,
+  transport: modularTransport,
+});
+
+// 3. create a circle smart account
+const smartAccount = await toCircleSmartAccount({
+  client,
+  owner: toWebAuthnAccount({
+    credential,
+  }),
+});
+
+// 4. create a bundler client
+const bundlerClient = createBundlerClient({
+  smartAccount,
+  chain: polygonAmoy,
+  transport: modularTransport,
+});
+```
+
+```swift iOS SDK
+import CircleModularWalletsCore
+
+let CLIENT_KEY = "xxxxxxx:xxxxx"
+
+Task {
+    do {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        let transport = toPasskeyTransport(clientKey: CLIENT_KEY)
+
+        let credential =
+            try await toWebAuthnCredential(
+                transport: transport,
+                userName: "MyExampleName", // userName
+                mode: WebAuthnMode.register // or WebAuthnMode.login
+            )
+
+        // 2. Create a WebAuthn owner account from the credential
+        let webAuthnAccount = toWebAuthnAccount(
+            credential
+        )
+
+        // 3. Create modular transport from client key and client url
+        let modularTransport = toModularTransport(
+            clientKey: CLIENT_KEY,
+            url: clientUrl
+        )
+
+        // 4. Create a bundler client
+        let bundlerClient = BundlerClient(
+            chain: PolygonAmoy,
+            transport: modularTransport
+        )
+
+        // 5. Create smart account (CircleSmartAccount)
+        //    and set the WebAuthn account as the owner
+        let smartAccount =
+            try await toCircleSmartAccount(
+                client: bundlerClient,
+                owner: webAuthnAccount
+            )
+```
+
+```java Android SDK
+val CLIENT_KEY = "xxxxxxx:xxxxx"
+
+CoroutineScope(Dispatchers.IO).launch {
+    try {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        val transport = toPasskeyTransport(context, CLIENT_KEY, clientUrlWithoutChain)
+
+        val credential = toWebAuthnCredential(
+            context,
+            transport,
+            "MyExampleName", // userName
+            WebAuthnMode.Register // or WebAuthnMode.Login
+        )
+        // 2. Create a WebAuthn owner account from the credential
+        val webAuthnAccount = toWebAuthnAccount(
+            credential,
+        )
+
+        // 3. Create modular transport from client url and client key
+        val modularTransport = toModularTransport(
+            context,
+            CLIENT_KEY,
+            clientUrl
+        )
+
+        // 4. create a bundlerClient
+        val bundlerClient = BundlerClient(
+            PolygonAmoy,
+            modularTransport,
+        )
+
+        // 5. Create smart account (CircleSmartAccount)
+        //    and set the WebAuthn account as the owner
+        val smartAccount = toCircleSmartAccount(
+            bundlerClient,
+            webAuthnAccount,
+        )
+```
+
+```java Android SDK (Java)
+final String CLIENT_KEY = "xxxxxxx:xxxxx";
+try {
+    // 1. Register or login with a passkey and
+    //    Create a Passkey Transport with client key
+    HttpTransport transport = toPasskeyTransport(
+        context,
+        CLIENT_KEY,
+        clientUrlWithoutChain
+    );
+    CompletableFuture<WebAuthnCredential> suspendResult = new CompletableFuture<>();
+    toWebAuthnCredential(
+        context,
+        transport,
+        "MyExampleName",
+        WebAuthnMode.Register, // or WebAuthnMode.Login
+        new CustomContinuation<>(suspendResult)
+    ); // see CustomContinuation in "Creating a Custom Continuation" from Android SDK
+    WebAuthnCredential credential = suspendResult.join();
+    // 2. Create a WebAuthn owner account from the credential
+    WebAuthnAccount webAuthnAccount = toWebAuthnAccount(credential);
+    // 3. Create modular transport from chain and client key
+    Transport modularTransport = toModularTransport(
+        context,
+        CLIENT_KEY,
+        clientUrl
+    );
+    // 4. Create a bundler client
+    BundlerClient bundlerClient = new BundlerClient(PolygonAmoy.INSTANCE, modularTransport);
+    // 5. Create Smart Account (CircleSmartAccount)
+    //    and set the WebAuthn account as the owner
+    CompletableFuture<CircleSmartAccount> suspendAccount = new CompletableFuture<>();
+    toCircleSmartAccount(pubClient, webAuthnAccount, new CustomContinuation<>(suspendAccount));
+    CircleSmartAccount smartAccount = suspendSmartAccount.join();
+} catch (Exception e) {
+    e.printStackTrace()
+}
+```
+
+</CodeGroup>
+
+## Send a Transaction
+
+The sample code below demonstrates how to send a transaction, also known as a
+User Operation (**userOp**) in the context of **Account Abstraction (AA)**, to
+the Bundler.
+
+<CodeGroup>
+
+```javascript Web SDK
+// 5. send a user operation
+const userOpHash = await bundlerClient.sendUserOperation({
+  calls: [
+    {
+      to: "0x...abc",
+      value: parseEther("1"),
+    },
+  ],
+});
+
+// 6. wait for transaction receipt
+const { receipt } = await bundlerClient.waitForUserOperationReceipt({
+  userOpHash,
+});
+```
+
+```swift iOS SDK
+        // 6. Send a User Operation to the Bundler.
+        //    Here we send 1 ETH to a random address.
+        let userOpHash = try await bundlerClient.sendUserOperation(
+            account: smartAccount,
+            calls: [
+                EncodeCallDataArg(
+                    to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+                    value: UnitUtils.parseEtherToWei("1")
+                )
+            ]
+        )
+        // 7. wait for transaction receipt
+        let receipt = try await bundlerClient.waitForUserOperationReceipt(userOpHash: userOpHash)
+    }
+    catch {
+        print(error)
+    }
+}
+```
+
+```java Android SDK
+        // 6. Send a User Operation to the Bundler.
+        //    Here we send 1 ETH to a random address.
+        val userOpHash = bundlerClient.sendUserOperation(
+            context,
+            smartAccount,
+            arrayOf(
+                EncodeCallDataArg(
+                    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // to
+                    parseEther("1"), // value
+                )
+            )
+        )
+        // 7. wait for transaction receipt
+        val receipt = bundlerClient.waitForUserOperationReceipt(userOpHash)
+    }
+    catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+```
+
+```java Android SDK (Java)
+        // 6. Send an User Operation to the Bundler.
+        //    Here we send 1 ETH to a random address.
+        EncodeCallDataArg ethTransfer = new EncodeCallDataArg(
+            "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // to
+            parseEther("1") // value
+        );
+        UserOperationV07 partialUserOp = new UserOperationV07();
+        CompletableFuture<String> suspendUserOpHash = new CompletableFuture<>();
+        bundlerClient.sendUserOperation(
+            context,
+            smartAccount,
+            new EncodeCallDataArg[] {
+                ethTransfer
+            },
+            partialUserOp,
+            new CustomContinuation<>(suspendUserOpHash)
+        );
+        String userOpHash = suspendUserOpHash.join();
+        // 7. wait for transaction receipt
+        CompletableFuture<UserOperationReceipt> suspendReceipt = new CompletableFuture<>();
+        bundlerClient.waitForUserOperationReceipt(userOpHash, new CustomContinuation<>(suspendReceipt));
+        UserOperationReceipt receipt = suspendReceipt.join();
+    }
+    catch (Exception e) {
+        e.printStackTrace()
+    }
+}
+```
+
+</CodeGroup>
+
+## Send a Gasless Transaction
+
+Gasless transactions, in the context of **Account Abstraction (AA)**, allow
+users to perform blockchain operations without needing to hold native tokens for
+gas fees. Circle provides the **Gas Station** service, enabling developers to
+sponsor network fees on behalf of users. This feature addresses the common
+challenge of requiring native tokens for onchain activities, simplifying
+blockchain interactions for end users by eliminating the need to manage token
+balances.
+
+<Note>
+**Info:**
+
+To use Gas Station on the mainnet:
+
+- Set up a policy in the Circle Console.
+- Sponsored fees are charged to the payment method on file.
+
+To enable Gas Station in your app, set the `paymaster` parameter to `true` when
+invoking any applicable `*userOperation*()` method. See sample code below that
+sponsors gas fees.
+
+</Note>
+
+<CodeGroup>
+
+```javascript Web SDK
+import { http, parseEther } from "viem";
+import {
+  createBundlerClient,
+  createPaymasterClient,
+} from "viem/account-abstraction";
+import { polygonAmoy } from "viem/chains";
+import { toModularTransport } from "@circle-fin/modular-wallets-core";
+
+const clientUrl = "your-client-url";
+const clientKey = "your-client-key";
+
+// 1. Create modular transport from client url and clientKey
+const modularTransport = toModularTransport(clientUrl, clientKey);
+
+// 2. Create a bundler client
+const bundlerClient = createBundlerClient({
+  chain: polygonAmoy,
+  transport: modularTransport,
+});
+
+// 3. Specify `paymaster: true` to sponsor gas fees
+const userOpHash = await bundlerClient.sendUserOperation({
+  smartAccount, // Assume `smartAccount` is an instance of `toCircleSmartAccount`
+  calls: [
+    {
+      to: "0x1234567890123456789012345678901234567890",
+      value: parseEther("0.1"),
+    },
+  ],
+  paymaster: true,
+});
+```
+
+```swift iOS SDK
+import CircleModularWalletsCore
+
+let CLIENT_KEY = "xxxxxxx:xxxxx"
+
+Task {
+    do {
+        // 1. Create modular transport from clientKey and client url
+        let modularTransport = toModularTransport(
+            clientKey: CLIENT_KEY,
+            url: clientUrl
+        )
+
+        // 2. Create a bundler client
+        let bundlerClient = BundlerClient(
+            chain: PolygonAmoy,
+            transport: modularTransport
+        )
+
+        // 3. Pass Paymaster.True() as paymaster parameter to sendUserOperation() /
+        //    estimateUserOperationGas() / prepareUserOperation() to sponsor gas fees
+        let userOpHash = bundlerClient.sendUserOperation(
+            account: smartAccount,
+            calls: [
+                EncodeCallDataArg(
+                    to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+                    value: BigInt.zero
+                )
+            ],
+            paymaster: Paymaster.True()
+        )
+    } catch {
+        print("Error: ...")
+    }
+}
+```
+
+```java Android SDK
+val CLIENT_KEY = "xxxxxxx:xxxxx"
+
+CoroutineScope(Dispatchers.IO).launch {
+    try {
+        // 1. Create modular transport from client url and clientKey
+        val modularTransport = toModularTransport(
+            context,
+            CLIENT_KEY,
+            clientUrl
+        )
+
+        // 2. create a bundlerClient
+        val bundlerClient = BundlerClient(
+            PolygonAmoy,
+            modularTransport,
+        )
+
+        // 3. Pass Paymaster.True() as paymaster parameter to sendUserOperation() /
+        //    estimateUserOperationGas() / prepareUserOperation() to sponsor gas fees
+        val userOpHash = bundlerClient.sendUserOperation(
+            context,
+            smartAccount,
+            arrayOf(
+                EncodeCallDataArg(
+                    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+                    BigInteger.ZERO
+                )
+            ),
+            paymaster = Paymaster.True()
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+```
+
+```java Android SDK (Java)
+final String CLIENT_KEY = "xxxxxxx:xxxxx";
+try {
+    // 1. Create modular transport with client url and client key
+    Transport modularTransport = toModularTransport(
+        context,
+        CLIENT_KEY,
+        clientUrl
+    );
+    // 2. Create a bundler client
+    BundlerClient bundlerClient = new BundlerClient(PolygonAmoy.INSTANCE, modularTransport);
+
+    // 3. Pass Paymaster.True() as paymaster parameter to sendUserOperation() /
+    //    estimateUserOperationGas() / prepareUserOperation() to sponsor gas fees
+    EncodeCallDataArg ethTransfer = new EncodeCallDataArg(
+        "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // to
+        BigInteger.ZERO // value
+    );
+    UserOperationV07 partialUserOp = new UserOperationV07();
+    CompletableFuture<String> suspendUserOpHash = new CompletableFuture<>();
+    bundlerClient.sendUserOperation(
+        context,
+        smartAccount,
+        new EncodeCallDataArg[]{
+            ethTransfer
+        },
+        partialUserOp,
+        new Paymaster.True(),
+        new CustomContinuation<>(suspendUserOpHash)
+    );
+    String hash = suspendUserOpHash.join();
+} catch (Exception e) {
+    e.printStackTrace()
+}
+```
+
+</CodeGroup>
+
+## Batch Processing
+
+Modular wallets support sending multiple transactions into a single call. This
+approach simplifies the user experience and improves gas efficiency. For
+instance, users can approve multiple transfers or swaps with a single signature.
+
+See the sample code below for sending batch transactions.
+
+<CodeGroup>
+
+```javascript Web SDK
+import { parseEther } from "viem";
+import { createBundlerClient } from "viem/account-abstraction";
+import { polygonAmoy } from "viem/chains";
+import { toModularTransport } from "@circle-fin/modular-wallets-core";
+
+const clientUrl = "your-client-url";
+const clientKey = "your-client-key";
+
+// 1. Create modular transport from client url and clientKey
+const modularTransport = toModularTransport(clientUrl, clientKey);
+
+// 2. Create a bundler client
+const bundlerClient = createBundlerClient({
+  chain: polygonAmoy,
+  transport: modularTransport,
+});
+
+// 3. Send batch transactions in user operation using the bundler client
+const userOpHash = await bundlerClient.sendUserOperation({
+  smartAccount, // Assume `smartAccount` is an instance of `toCircleSmartAccount`
+  calls: [
+    {
+      to: "0x1234567890123456789012345678901234567890",
+      value: parseEther("1"),
+    },
+    {
+      to: "0x9876543210987654321098765432109876543210",
+      value: parseEther("2"),
+    },
+  ],
+});
+```
+
+```swift iOS SDK
+import CircleModularWalletsCore
+
+let CLIENT_KEY = "xxxxxxx:xxxxx"
+
+Task {
+    do {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        let transport = toPasskeyTransport(clientKey: CLIENT_KEY)
+
+        let credential = try await toWebAuthnCredential(
+            transport: transport,
+            userName: "MyExampleName", // userName
+            mode: WebAuthnMode.register // or WebAuthnMode.login
+        )
+
+        // 2. Create a WebAuthn owner account from the credential.
+        let webAuthnAccount = toWebAuthnAccount(
+            credential
+        )
+
+        // 3. Create modular transport from clientKey and client url
+        let modularTransport = toModularTransport(
+            clientKey: CLIENT_KEY,
+            url: clientUrl
+        )
+
+        // 4. Create a bundler client
+        let bundlerClient = BundlerClient(
+            chain: PolygonAmoy,
+            transport: modularTransport
+        )
+
+        // 5. Create smart account (CircleSmartAccount)
+        //    and set the WebAuthn account as the owner
+        let smartAccount = try await toCircleSmartAccount(
+            client: bundlerClient,
+            owner: webAuthnAccount
+        )
+
+        // 6. Send batch transactions in user operation to the Bundler.
+        //    Here we send 1 and 2 ETH to random addresses.
+        let userOpHash = bundlerClient.sendUserOperation(
+            account: smartAccount,
+            calls: [
+                EncodeCallDataArg(
+                    to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+                    value: UnitUtils.parseEtherToWei("1")
+                ),
+                EncodeCallDataArg(
+                    to: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    value: UnitUtils.parseEtherToWei("2")
+                )
+            ]
+        )
+    } catch {
+        print(error)
+    }
+}
+```
+
+```java Android SDK
+val CLIENT_KEY = "xxxxxxx:xxxxx"
+
+CoroutineScope(Dispatchers.IO).launch {
+    try {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        val transport = toPasskeyTransport(context, CLIENT_KEY, clientUrlWithoutChain)
+
+        val credential = toWebAuthnCredential(
+            context,
+            transport,
+            "MyExampleName", // userName
+            WebAuthnMode.Register // or WebAuthnMode.Login
+        )
+
+        // 2. Create a WebAuthn owner account from the credential.
+        val webAuthnAccount = toWebAuthnAccount(
+            credential,
+        )
+
+        // 3. Create modular transport from client url and client key
+        val modularTransport = toModularTransport(
+            context,
+            CLIENT_KEY,
+            clientUrl
+        )
+
+        // 4. Create a bundlerClient
+        val bundlerClient = BundlerClient(
+            PolygonAmoy,
+            modularTransport,
+        )
+
+        // 5. Create smart account (CircleSmartAccount)
+        //    and set the WebAuthn account as the owner
+        val smartAccount = toCircleSmartAccount(
+            bundlerClient,
+            webAuthnAccount,
+        )
+
+        // 6. Send batch transactions in user operation to the Bundler.
+        //    Here we send 1 and 2 ETH to random addresses.
+        val userOpHash = bundlerClient.sendUserOperation(
+            context,
+            smartAccount,
+            arrayOf(
+                EncodeCallDataArg(
+                    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // to
+                    parseEther("1"), // value
+                ),
+                EncodeCallDataArg(
+                    "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", // to
+                    parseEther("2"), // value
+                )
+            )
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+```
+
+```java Android SDK (Java)
+final String CLIENT_KEY = "xxxxxxx:xxxxx";
+try {
+    // 1. Register or login with a passkey and
+    //    Create a Passkey Transport with client key
+    HttpTransport transport = toPasskeyTransport(
+        context,
+        CLIENT_KEY,
+        clientUrlWithoutChain
+    );
+    CompletableFuture<WebAuthnCredential> suspendResult = new CompletableFuture<>();
+    toWebAuthnCredential(
+        context,
+        transport,
+        "MyExampleName",
+        WebAuthnMode.Register, // or WebAuthnMode.Login
+        new CustomContinuation<>(suspendResult)
+    ); // see CustomContinuation in "Creating a Custom Continuation" from Android SDK
+    WebAuthnCredential credential = suspendResult.join();
+
+    // 2. Create a WebAuthn owner account from the credential.
+    WebAuthnAccount webAuthnAccount = toWebAuthnAccount(credential);
+
+    // 3. Create modular transport with client url and client key
+    Transport modularTransport = toModularTransport(
+        context,
+        CLIENT_KEY,
+        clientUrl
+    );
+
+    // 4. Create a bundler client
+    BundlerClient bundlerClient = new BundlerClient(PolygonAmoy.INSTANCE, modularTransport);
+
+    // 5. Create smart account (CircleSmartAccount)
+    //    and set the WebAuthn account as the owner
+    CompletableFuture<CircleSmartAccount> suspendAccount = new CompletableFuture<>();
+    toCircleSmartAccount(bundlerClient, webAuthnAccount, new CustomContinuation<>(suspendAccount));
+    CircleSmartAccount smartAccount = suspendSmartAccount.join();
+
+    // 6. Send batch transactions in user operation to the Bundler.
+    //    Here we send 1 and 2 ETH to random addresses.
+    EncodeCallDataArg ethTransfer1 = new EncodeCallDataArg(
+                "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // to
+                parseEther("1") // value
+    );
+    EncodeCallDataArg ethTransfer2 = new EncodeCallDataArg(
+                "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", // to
+                parseEther("2") // value
+    );
+    UserOperationV07 partialUserOp = new UserOperationV07();
+    CompletableFuture<String> suspendUserOpHash = new CompletableFuture<>();
+    bundlerClient.sendUserOperation(
+            context,
+            smartAccount,
+            new EncodeCallDataArg[]{
+                    ethTransfer1,
+                    ethTransfer2
+            },
+            partialUserOp,
+            new Paymaster.True(),
+            new CustomContinuation<>(suspendUserOpHash)
+    );
+    String hash = suspendUserOpHash.join();
+} catch (Exception e) {
+    e.printStackTrace()
+}
+```
+
+</CodeGroup>
+
+## Parallel Execution
+
+Traditional **Externally Owned Accounts (EOA)** process transactions
+sequentially using a linear nonce (e.g., 1, 2, 3). This requires each
+transaction to complete before the next begins.
+
+In contrast, **smart accounts** support **2D nonces**, which consist of:
+
+- **Nonce key**
+- **Nonce value**
+
+This two-dimensional approach enables parallel transaction execution for
+independent operations.
+
+### Example Scenario
+
+A user wants to execute three trades:
+
+1. Swap 100 USDT for DAI (transaction 1)
+2. Swap 100 DAI for USDC (transaction 2)
+3. Swap 1 WETH for USDC (transaction 3)
+
+Transactions 1 and 2 are dependent and must execute sequentially. Transaction 3,
+however, is independent and can execute in parallel with the first two.
+
+<Note>
+**Info:**
+
+To enable parallel transactions:
+
+- Ensure the `nonceKey` is greater than 0; a `nonceKey` of 0 defaults to linear
+  nonces.
+- Avoid dependencies between `userOps`.
+- Don't wait for each `userOp` to execute, as this negates the benefits of
+  parallelism.
+
+</Note>
+
+To send parallel transactions through `userOps`, use "nonce keys" to compute a
+nonce. See sample code below.
+
+<CodeGroup>
+
+```javascript Web SDK
+// Assume `userOps` is an array of user operations to be sent
+// and `smartAccount` is an instance of `toCircleSmartAccount` to handle signing
+
+const signedUserOps: UserOperation[] = [];
+
+// Sequentially sign each userOp and store the result
+userOps.forEach(async (userOp, index) => {
+    try {
+        const nonce = await smartAccount.getNonce({
+            // Use the nonceKey to compute nonce
+            key: BigInt(userOp.nonce ?? index + 1),
+        });
+        const signature = await smartAccount.signUserOperation({ ...userOp, nonce });
+        signedUserOps.push({ ...userOp, nonce, signature });
+    } catch (error) {
+        // Handle the error (e.g., skip, retry)
+        console.error("Error signing user operation:", error);
+    }
+});
+
+// Send all signed user operations in parallel
+await Promise.all(
+    signedUserOps.map(async (userOp) => {
+        try {
+            return await bundlerClient.sendUserOperation({
+                smartAccount,
+                ...userOp,
+            });
+        } catch (error) {
+            // Handle the error (e.g., retry)
+            console.error("Error sending user operation:", error);
+        }
+    })
+);
+```
+
+```swift iOS SDK
+var signedUserOps: [UserOperationV07] = []
+
+// Sequentially sign each userOp and store the result
+for (index, userOp) in userOps.enumerated() {
+    do {
+        let nonceKey = userOp.nonce ?? BigInt(index + 1)
+        let nonce = try await smartAccount.getNonce(key: nonceKey)
+        var signedUserOp = userOp
+        signedUserOp.nonce = nonce
+        signedUserOp.signature = try await smartAccount.signUserOperation(
+            chainId: smartAccount.client.chain.chainId,
+            userOp: signedUserOp
+        )
+        signedUserOps.append(signedUserOp)
+    } catch {
+        // Handle the error (e.g., skip, retry)
+        print("Error signing user operation: \(error)")
+    }
+}
+
+// Send all signed user operations in parallel
+await withTaskGroup(of: Void.self) { group in
+    for userOp in signedUserOps {
+        group.addTask {
+            do {
+                let sendResult = try await bundlerClient.sendUserOperation(
+                    account: smartAccount,
+                    calls: nil,
+                    partialUserOp: userOp
+                )
+                print(sendResult)
+            } catch {
+                // Handle the error (e.g., retry)
+                print("Error sending user operation: \(error)")
+            }
+        }
+    }
+}
+```
+
+```java Android SDK
+val signedUserOps = mutableListOf<UserOperationV07>()
+
+// Sequentially sign each userOp and store the result
+userOps.forEachIndexed { index, userOp ->
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val chain = PolygonAmoy
+            val nonceKey = userOp.nonce ?: BigInteger("${index + 1}")
+            val nonce = smartAccount.getNonce(key = nonceKey)
+            val signature = smartAccount.signUserOperation(
+                context,
+                chain.chainId,
+                userOp.copy(nonce = nonce)
+            )
+            signedUserOps.add(userOp.copy(nonce = nonce, signature = signature))
+        } catch (error: Exception) {
+            // Handle error (e.g., log or skip operation)
+            Log.e(TAG, "Error signing user operation at index $index: ${error.message}")
+        }
+    }
+}
+
+// Send all signed user operations in parallel
+CoroutineScope(Dispatchers.IO).launch {
+    val sendOperations = signedUserOps.map { userOp ->
+        async {
+            try {
+                bundlerClient.sendUserOperation(
+                    context,
+                    smartAccount,
+                    calls = null,
+                    partialUserOp = userOp
+                )
+            } catch (error: Exception) {
+                // Handle error (e.g., retry logic)
+                Log.e(TAG, "Error sending user operation: ${error.message}")
+            }
+        }
+    }
+    // Wait for all send operations to complete
+    sendOperations.awaitAll()
+}
+```
+
+```java Android SDK (Java)
+List<UserOperationV07> signedUserOps = new ArrayList<>();
+
+// Sequentially sign each userOp and store the result
+for (int i = 0; i < userOps.size(); i++) {
+    try {
+        Chain chain = PolygonAmoy.INSTANCE;
+        UserOperationV07 userOp = userOps.get(i);
+        BigInteger nonceKey = userOp.getNonce() == null ? BigInteger.valueOf(i + 1) : userOp.getNonce();
+        CompletableFuture<BigInteger> suspendNonce = new CompletableFuture<>();
+        smartAccount.getNonce(nonceKey, new CustomContinuation<>(suspendNonce));
+        BigInteger nonce = suspendNonce.join();
+        userOp.setNonce(nonce);
+
+        CompletableFuture<String> suspendSignature = new CompletableFuture<>();
+        smartAccount.signUserOperation(ApplicationProvider.getApplicationContext(), chain.getChainId(), userOp, new CustomContinuation<>(suspendSignature));
+        String signature = suspendSignature.join();
+        userOp.setSignature(signature);
+        signedUserOps.add(userOp);
+    } catch (Exception error) {
+        // Handle error (e.g., log or skip operation)
+        Log.e(TAG, String.format("Error signing user operation at index %d: %s", i, error.message))
+    }
+}
+
+// Send all signed user operations in parallel
+List<CompletableFuture<String>> sendOperations = signedUserOps.stream()
+    .map(userOp -> {
+        try {
+            CompletableFuture<String> suspendUserOpHash = new CompletableFuture<>();
+            bundlerClient.sendUserOperation(
+                context,
+                smartAccount,
+                null, // calls
+                userOp,
+                new Paymaster.True(),
+                new CustomContinuation<>(suspendUserOpHash));
+            return suspendUserOpHash;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    })
+    .collect(Collectors.toList());
+
+    CompletableFuture<Void> all = CompletableFuture.allOf(sendOperations.toArray(new CompletableFuture[0]));
+    // Wait for all send operations to complete
+all.join();
+```
+
+</CodeGroup>
+
+## Secure Signing and Verification
+
+Circle Smart Accounts enable signing and verifying various data types:
+
+- **Message**. Signs a message using a passkey, generating an Ethereum-specific
+  EIP-191 signature.
+- **Typed Data**. Signs typed data using a passkey, generating an
+  Ethereum-specific EIP-712 signature.
+
+See the sample code below for signing and verifying messages.
+
+<CodeGroup>
+
+```javascript Web SDK
+import { createPublicClient } from "viem";
+import { toWebAuthnAccount } from "viem/account-abstraction";
+import { polygonAmoy } from "viem/chains";
+import {
+  toCircleSmartAccount,
+  toModularTransport,
+  toPasskeyTransport,
+  toWebAuthnCredential,
+  WebAuthnMode,
+} from "@circle-fin/modular-wallets-core";
+
+const clientUrl = "your-client-url";
+const clientKey = "your-client-key";
+
+// 1. Register or login with a passkey
+const credential = await toWebAuthnCredential({
+  transport: toPasskeyTransport(clientUrl, clientKey),
+  mode: WebAuthnMode.Register, // or WebAuthnMode.Login
+  username: "my-passkey",
+});
+
+// 2. Create public client
+const client = createPublicClient({
+  chain: polygonAmoy,
+  transport: toModularTransport(clientUrl, clientKey),
+});
+
+// 3. Create Circle Smart Account
+const smartAccount = await toCircleSmartAccount({
+  client,
+  owner: toWebAuthnAccount({ credential }),
+});
+
+// 4. Sign message with Circle Smart Account
+const message = "TestSignMessage";
+const signature = await smartAccount.signMessage(message);
+
+// 5. Verify the signature
+const isValid = await client.verifyMessage({
+  address: smartAccount.address,
+  message,
+  signature,
+});
+```
+
+```swift iOS SDK
+import CircleModularWalletsCore
+
+let CLIENT_KEY = "xxxxxxx:xxxxx"
+
+Task {
+    do {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        let transport = toPasskeyTransport(clientKey: CLIENT_KEY)
+
+        let credential = try await toWebAuthnCredential(
+            transport: transport,
+            userName: "MyExampleName", // userName
+            mode: WebAuthnMode.register // or WebAuthnMode.login
+        )
+
+        // 2. Create a WebAuthn owner account from the credential.
+        let webAuthnAccount = toWebAuthnAccount(
+            credential
+        )
+
+        // 3. Create modular transport from clientKey and client url
+        let modularTransport = toModularTransport(
+            clientKey: CLIENT_KEY,
+            url: clientUrl
+        )
+
+        // 4. Create a bundler client
+        let bundlerClient = BundlerClient(
+            chain: PolygonAmoy,
+            transport: modularTransport
+        )
+
+        // 5. Create smart account (CircleSmartAccount) and set the WebAuthn account as the owner
+        let smartAccount = try await toCircleSmartAccount(
+            client: bundlerClient,
+            owner: webAuthnAccount
+        )
+
+        // 6. Sign message by SmartAccount
+        let message = "TestSignMessage"
+        let signature = smartAccount.signMessage(message)
+
+        // 7. Verify signature
+        let digest = Data(message.utf8).sha3(.keccak256)
+        let functionName = "isValidSignature"
+        let input1 = ABI.Element.InOut(name: "digest", type: .bytes(length: 32))
+        let input2 = ABI.Element.InOut(name: "signature", type: .dynamicBytes)
+        let output = ABI.Element.InOut(name: "magicValue", type: .bytes(length: 4))
+        let function = ABI.Element.Function(
+            name: functionName,
+            inputs: [input1, input2],
+            outputs: [output],
+            constant: false,
+            payable: false
+        )
+        let params: [Any] = [digest, signature]
+        guard let data = function.encodeParameters(params) else {
+            return
+        }
+
+        guard let fromAddress = EthereumAddress(from), let toAddress = EthereumAddress(to) else {
+            return false
+        }
+
+        var transaction = CodableTransaction(to: toAddress, data: data)
+        transaction.from = fromAddress
+
+        guard let callResult = try? await Utils().ethCall(
+            transport: transport,
+            transaction: transaction
+        ) else {
+            return
+        }
+
+        guard let callResultData = hexToData(hex: callResult),
+              let decoded = try? function.decodeReturnData(callResultData) else {
+            return
+        }
+
+        guard let magicValue = decoded["0"] as? Data else {
+            return
+        }
+
+        let isValid = (EIP1271_VALID_SIGNATURE == magicValue.bytes)
+    } catch {
+        print(error)
+    }
+}
+```
+
+```java Android SDK
+val CLIENT_KEY = "xxxxxxx:xxxxx"
+
+CoroutineScope(Dispatchers.IO).launch {
+    try {
+        // 1. Register or login with a passkey and
+        //    Create a Passkey Transport with client key
+        val transport = toPasskeyTransport(context, CLIENT_KEY, clientUrlWithoutChain)
+
+        val credential = toWebAuthnCredential(
+            context,
+            transport,
+            "MyExampleName", // userName
+            WebAuthnMode.Register // or WebAuthnMode.Login
+        )
+
+        // 2. Create a WebAuthn owner account from the credential.
+        val webAuthnAccount = toWebAuthnAccount(
+            credential,
+        )
+
+        // 3. Create modular transport from client url and client key
+        val modularTransport = toModularTransport(
+            context,
+            CLIENT_KEY,
+            clientUrl
+        )
+
+        // 4. Create a bundlerClient
+        val bundlerClient = BundlerClient(
+            PolygonAmoy,
+            modularTransport,
+        )
+
+        // 5. Create smart account (CircleSmartAccount)
+        //    and set the WebAuthn account as the owner
+        val smartAccount = toCircleSmartAccount(
+            bundlerClient,
+            webAuthnAccount,
+        )
+
+        // 6. Sign message by SmartAccount
+        val message = "TestSignMessage"
+        val signature = smartAccount.signMessage(context, message)
+
+        // 7. Verify signature
+        val digest = toSha3Bytes(hashMessage(message.toByteArray()))
+        val function = Function(
+            "isValidSignature",
+            listOf<Type<*>>(Bytes32(digest), DynamicBytes(Numeric.hexStringToByteArray(signature))),
+            listOf<TypeReference<*>>(
+                object : TypeReference<Bytes4>() {})
+        )
+        val data = FunctionEncoder.encode(function)
+        val resp = bundlerClient.call(
+            smartAccount.getAddress(),
+            CIRCLE_WEIGHTED_WEB_AUTHN_MULTISIG_PLUGIN.address,
+            data)
+        val decoded = FunctionReturnDecoder.decode(resp, function.outputParameters)
+        val isValid = EIP1271_VALID_SIGNATURE.contentEquals(decoded[0].value as ByteArray)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+```
+
+```java Android SDK (Java)
+final String CLIENT_KEY = "xxxxxxx:xxxxx";
+try {
+    // 1. Register or login with a passkey and
+    //    Create a Passkey Transport with client key
+    HttpTransport transport = toPasskeyTransport(
+        context,
+        CLIENT_KEY,
+        clientUrlWithoutChain
+    );
+    CompletableFuture<WebAuthnCredential> suspendResult = new CompletableFuture<>();
+    toWebAuthnCredential(
+        context,
+        transport,
+        "MyExampleName",
+        WebAuthnMode.Register, // or WebAuthnMode.Login
+        new CustomContinuation<>(suspendResult)
+    ); // see CustomContinuation in "Creating a Custom Continuation" from Android SDK
+    WebAuthnCredential credential = suspendResult.join();
+
+    // 2. Create a WebAuthn owner account from the credential.
+    WebAuthnAccount webAuthnAccount = toWebAuthnAccount(credential);
+
+    // 3. Create modular transport with client url and client key
+    Transport modularTransport = toModularTransport(
+        context,
+        CLIENT_KEY,
+        clientUrl
+    );
+
+    // 4. Create a bundler client
+    BundlerClient bundlerClient = new BundlerClient(PolygonAmoy.INSTANCE, modularTransport);
+
+    // 5. Create smart account (CircleSmartAccount)
+    //    and set the WebAuthn account as the owner
+    CompletableFuture<CircleSmartAccount> suspendAccount = new CompletableFuture<>();
+    toCircleSmartAccount(bundlerClient, webAuthnAccount, new CustomContinuation<>(suspendAccount));
+    CircleSmartAccount smartAccount = suspendSmartAccount.join();
+
+    // 6. Sign message by SmartAccount
+    String message = "TestSignMessage";
+    CompletableFuture<String> suspendMessage = new CompletableFuture<>();
+    smartAccount.signMessage(
+        ApplicationProvider.getApplicationContext(),
+        message, new CustomContinuation<>(suspendMessage)
+    );
+    String signature = suspendMessage.join();
+
+    // 7. Verify signature
+    byte[] digest = toSha3Bytes(hashMessage(message.getBytes(StandardCharsets.UTF_8)));
+    Function function = new Function(
+        "isValidSignature",
+        Arrays.asList(
+            new Bytes32(digest),
+            new DynamicBytes(Numeric.hexStringToByteArray(signature))
+        ),
+        Arrays.asList(new TypeReference<Bytes4>() {})
+    );
+    String data = FunctionEncoder.encode(function);
+    CompletableFuture<String> suspendSignature = new CompletableFuture<>();
+    bundlerClient.call(
+        smartAccount.getAddress(),
+        CIRCLE_WEIGHTED_WEB_AUTHN_MULTISIG_PLUGIN.INSTANCE.getAddress(),
+        data,
+        new CustomContinuation<>(suspendSignature)
+    );
+    String resp = suspendSignature.join();
+    List<Type> decoded = FunctionReturnDecoder.decode(resp, function.getOutputParameters());
+    boolean isValid = Arrays.equals(
+        MscaConstantsKt.getEIP1271_VALID_SIGNATURE(),
+        ((Bytes4) decoded.get(0)).getValue()
+    );
+} catch (Exception e) {
+    e.printStackTrace()
+}
+```
+
+</CodeGroup>
+
+## EIP-1193
+
+The modular wallets SDK can also function as a provider, enabling third-party
+wallet SDKs to connect to Circle's services. The following example demonstrates
+an **EIP-1193 provider** implementation for the Web SDK.
+
+```javascript
+import Web3 from "web3"
+
+import { polygonAmoy } from "viem/chains"
+import {
+  createClient,
+  createPublicClient,
+  http,
+  type Hex,
+} from "viem"
+import {
+  type P256Credential,
+  type SmartAccount,
+  WebAuthnAccount,
+  createBundlerClient,
+  toWebAuthnAccount,
+} from "viem/account-abstraction"
+
+import {
+  EIP1193Provider,
+  WebAuthnMode,
+  toCircleSmartAccount,
+  toModularTransport,
+  toPasskeyTransport,
+  toWebAuthnCredential,
+} from "w3s-web-core-sdk"
+
+/* ========== Replace these with your values ========== */
+const clientKey = "YOUR_CLIENT_KEY"
+const clientUrl = "YOUR_CLIENT_URL"
+const infuraUrl = "YOUR_INFURA_ENDPOINT_URL" // E.g. "https://polygon-mumbai.infura.io/v3/xxx"
+
+/* ========== Creating Circle Passkey Transport ========== */
+const passkeyTransport = toPasskeyTransport(clientUrl, clientKey)
+const modularTransport = toModularTransport(`${clientUrl}/polygonAmoy`, clientKey)
+
+/* ========== Creating client ========== */
+const client = createClient({
+  chain: polygonAmoy,
+  transport: modularTransport,
+})
+
+let web3            // Web3 instance
+let account         // Circle Smart Account
+let credential      // Passkey credential
+
+/**
+ * Initialize the Web3 instance with Circle Smart Account.
+ */
+export async function init() {
+  try {
+    credential = JSON.parse(localStorage.getItem("credential") || "null")
+    if (!credential) {
+      console.log("No credential found in localStorage. Please register or login first.")
+      return
+    }
+
+    // Create Circle Smart Account
+    account = await toCircleSmartAccount({
+      client,
+      owner: toWebAuthnAccount({ credential }) as WebAuthnAccount,
+    })
+
+    // Create PublicClient and BundlerClient
+    const publicClientInstance = createPublicClient({
+      chain: polygonAmoy,
+      transport: http(infuraUrl),
+    })
+    const bundlerClientInstance = createBundlerClient({
+      account,
+      chain: polygonAmoy,
+      transport: modularTransport,
+    })
+
+    // Transform to EIP1193 provider
+    const provider = new EIP1193Provider(bundlerClientInstance, publicClientInstance)
+
+    // Init Web3
+    web3 = new Web3(provider)
+
+    console.log("Initialized successfully!")
+    console.log("Smart Account Address:", account.address)
+  } catch (err) {
+    console.error("Init Error:", err)
+  }
+}
+
+/**
+ * Register a new account with Passkey (WebAuthn) and store it in localStorage.
+ * @param {string | undefined} username - The username.
+ */
+export async function register(username) {
+  try {
+    const result = await toWebAuthnCredential({
+      transport: passkeyTransport,
+      mode: WebAuthnMode.Register,
+      username,
+    })
+
+    localStorage.setItem("credential", JSON.stringify(result))
+    console.log("Register success:", result)
+    console.log("Call `init()` to initialize your account.")
+  } catch (err) {
+    console.error("Register fail:", err)
+  }
+}
+
+/**
+ * Login with Passkey (WebAuthn) and store it in localStorage.
+ */
+export async function login() {
+  try {
+    const result = await toWebAuthnCredential({
+      transport: passkeyTransport,
+      mode: WebAuthnMode.Login,
+    })
+
+    localStorage.setItem("credential", JSON.stringify(result))
+    console.log("Login success:", result)
+    console.log("Call `init()` to initialize your account.")
+  } catch (err) {
+    console.error("Login fail:", err)
+  }
+}
+
+/* ========== Case 1: Request accounts ========== */
+export async function requestAccounts() {
+  try {
+    if (!web3) {
+      throw new Error("web3 not initialized. Please call `init()` first.")
+    }
+    const accounts = await web3.eth.getAccounts()
+    console.log("Accounts:", accounts)
+    return accounts
+  } catch (err) {
+    console.error("Request Accounts Error:", err)
+  }
+}
+
+/* ========== Case 2: Personal sign ========== */
+export async function personalSign() {
+  try {
+    if (!web3) {
+      throw new Error("web3 not initialized. Please call `init()` first.")
+    }
+    const accounts = await web3.eth.getAccounts()
+
+    const signature = await web3.eth.personal.sign(
+      "Hello World",
+      accounts[0],
+      "passphrase"
+    )
+
+    console.log("Personal Sign Result:", signature)
+    return signature
+  } catch (err) {
+    console.error("Personal Sign Error:", err)
+  }
+}
+
+/* ========== Case 3: Sign typed data (EIP-712 / v4) ========== */
+export async function signTypedData() {
+  try {
+    if (!web3) {
+      throw new Error("web3 not initialized. Please call `init()` first.")
+    }
+    const accounts = await web3.eth.getAccounts()
+    const from = accounts[0]
+
+    // Prepare the typed Data
+    const domain = {
+      name: "MyDApp",
+      version: "1.0",
+      chainId: 80002,
+      verifyingContract: "0x1111111111111111111111111111111111111111",
+    }
+    const message = {
+      content: "Hello from typed data!",
+      sender: from,
+      timestamp: Math.floor(Date.now() / 1000),
+    }
+    const dataToSign = {
+      domain,
+      message,
+      primaryType: "Message",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" },
+        ],
+        Message: [
+          { name: "content", type: "string" },
+          { name: "sender", type: "address" },
+          { name: "timestamp", type: "uint256" },
+        ],
+      },
+    }
+
+    const signature = await web3.eth.signTypedData(from, dataToSign)
+
+    console.log("Signature", signature)
+
+    return signature
+  } catch (err) {
+    console.error("Sign Typed Data Error:", err)
+  }
+}
+
+/* ========== Case 4: Sign transaction (sendTransaction) ========== */
+export async function sendTransaction(to, value) {
+  try {
+    if (!web3) {
+      throw new Error("web3 not initialized. Please call `init()` first.")
+    }
+    if (!to || !value) {
+      throw new Error("Please provide `to` address and `value` in ETH.")
+    }
+
+    const accounts = await web3.eth.getAccounts()
+    const suggestedGasPrice = ((await web3.eth.getGasPrice()) * 11n) / 10n
+
+    const txResult = await web3.eth.sendTransaction({
+      from: accounts[0],
+      to,
+      value: web3.utils.toWei(value, "ether"),
+      gas: 53638, // Estimated gas limit for a simple transaction
+      gasPrice: suggestedGasPrice,
+    })
+
+    console.log("Transaction:", txResult)
+    return txResult.transactionHash
+  } catch (err) {
+    console.error("SendTx Error:", err)
+  }
+}
+
+register("your-name")
+
+// Or you have registered already:
+login()
+
+init()
+
+// Request accounts
+requestAccounts()
+
+// Personal sign
+personalSign()
+
+// sign typed data
+signTypedData()
+
+// Send transaction
+sendTransaction("0xRecipientAddress", "0.01")
+```

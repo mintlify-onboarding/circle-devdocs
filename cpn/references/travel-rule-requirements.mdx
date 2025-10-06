@@ -1,0 +1,61 @@
+---
+title: "Travel Rule Requirements"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Travel Rule Requirements"
+---
+
+Travel rule information is required during payment creation to provide
+appropriate regulatory information to the BFI. The following sections outline
+the required data that must be securely transmitted to the BFI when a payment is
+created. See [JSON Schema](/cpn/references/json-schema) for more information on
+how to validate your API response to the travel rule requirements.
+
+<Note>
+**Note:** Depending on the geography of the payment route, additional travel
+rule information may be required to initiate the payment. This additional data
+are specified in the data object returned by the
+[payment creation endpoint](/api-reference/cpn/cpn-platform/create-payment).
+</Note>
+
+## OFI
+
+| Field                                      | Description            |
+| ------------------------------------------ | ---------------------- |
+| `ORIGINATOR_FINANCIAL_INSTITUTION_NAME`    | OFI's business name    |
+| `ORIGINATOR_FINANCIAL_INSTITUTION_ADDRESS` | OFI's business address |
+
+## Individual
+
+| Field                                        | Description                                                                                                             |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ORIGINATOR_NAME`                            | Sender's full name                                                                                                      |
+| `ORIGINATOR_ACCOUNT_NUMBER`                  | Sender's account number reference (originator's wallet address or account number for an OFI virtual or funding account) |
+| `ORIGINATOR_ADDRESS`                         | Sender's address                                                                                                        |
+| `ORIGINATOR_DATE_OF_BIRTH`                   | Sender's date of birth                                                                                                  |
+| `ORIGINATOR_NATIONALITY`                     | Sender's nationality                                                                                                    |
+| `ORIGINATOR_NATIONAL_IDENTIFICATION_NUMBER`  | Sender's national ID or passport number                                                                                 |
+| `BENEFICIARY_NAME`                           | Recipient's full name                                                                                                   |
+| `BENEFICIARY_ADDRESS`                        | Recipient's address                                                                                                     |
+| `BENEFICIARY_DATE_OF_BIRTH`                  | Recipient's date of birth                                                                                               |
+| `BENEFICIARY_NATIONALITY`                    | Recipient's nationality                                                                                                 |
+| `BENEFICIARY_NATIONAL_IDENTIFICATION_NUMBER` | Recipient's national ID or passport number                                                                              |
+
+## Business
+
+| Field                                        | Description                                                                                                             |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ORIGINATOR_NAME`                            | Sender's legal registered business name                                                                                 |
+| `ORIGINATOR_ACCOUNT_NUMBER`                  | Sender's account number reference (originator's wallet address or account number for an OFI virtual or funding account) |
+| `ORIGINATOR_ADDRESS`                         | Sender's registered place of business                                                                                   |
+| `ORIGINATOR_DATE_OF_FORMATION`               | Sender's date of company formation                                                                                      |
+| `ORIGINATOR_COUNTRY_OF_FORMATION`            | Sender's country where the entity was formed                                                                            |
+| `ORIGINATOR_NATIONAL_IDENTIFICATION_NUMBER`  | Sender's business registration or tax ID                                                                                |
+| `BENEFICIARY_NAME`                           | Recipient's legal registered business name                                                                              |
+| `BENEFICIARY_ADDRESS`                        | Recipient's registered place of business                                                                                |
+| `BENEFICIARY_DATE_OF_FORMATION`              | Recipient's date of company formation                                                                                   |
+| `BENEFICIARY_COUNTRY_OF_FORMATION`           | Recipient's country where the entity was formed                                                                         |
+| `BENEFICIARY_NATIONAL_IDENTIFICATION_NUMBER` | Recipient's business registration or tax ID                                                                             |

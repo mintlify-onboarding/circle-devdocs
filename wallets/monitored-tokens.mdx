@@ -1,0 +1,113 @@
+---
+title: Monitored Tokens
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The Monitored Tokens feature in the Programmable Wallet aims to empower
+developers with enhanced control over viewing token balances and transactions.
+This feature enables developers to easily manage and filter out tokens unrelated
+to their use case from Circle API responses, thereby selectively screening which
+tokens end-users can see, providing a more streamlined and personalized
+experience.
+
+By utilizing the API endpoint
+[`POST config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/create-monitored-tokens),
+developers can easily add tokens via their unique token IDs. This guide walks
+you through the steps to interact with the Monitored Tokens feature, including
+retrieving token IDs, adding tokens, and using API endpoints to get transaction
+and wallet balances for specific tokens.
+
+<Note>
+By default, there are no Monitored Tokens. This means that the system monitors
+all tokens as no filter exists. Calling
+[`GET /entity/config/monitoredTokens`](/api-reference/w3s/programmable-wallets/list-monitored-tokens)
+before configuring, returns 204, a no-content response.
+</Note>
+
+## Update Monitored Token List
+
+To add tokens to the monitored token list, follow these steps:
+
+1. Retrieve the Token ID: Circle Wallets support native coins, ERC-20, ERC-721,
+   and ERC-1155.
+
+   - Each token deposited into the Circle Wallet generates a specific token ID,
+     which developers can obtain through the following methods:
+     - **Documentation**: Consult the table below for the USDC token ID.
+     - **Deposit Callback:** The callback response includes the corresponding
+       token ID when a token is deposited.
+     - **Querying Wallet Balance:**
+       [`GET /wallets/{id}/balances`](/api-reference/wallets/developer-controlled-wallets/list-wallet-balance)
+       or
+       [`GET /wallets/{id}/nfts`](/api-reference/wallets/developer-controlled-wallets/list-wallet-nfts)
+       retrieves the tokens in the wallet and their related token IDs.
+     - **Querying Transaction:**
+       [`GET /transactions`](/api-reference/wallets/developer-controlled-wallets/list-transactions)
+       also retrieves the token IDs for inbound or outbound transactions.
+
+2. Add tokens into the monitored token list: Once you have the token ID, make a
+   [`POST config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/create-monitored-tokens)
+   request with the token IDs specified in the required field.
+
+### USDC token IDs
+
+| Blockchain       | Chain code    | Token ID                               | Token address                                                                                                                                                                                            |
+| ---------------- | ------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Aptos            | APTOS         | `298eebe2-3131-5183-b528-f925f70848d0` | [`0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b`](https://explorer.aptoslabs.com/fungible_asset/0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b?network=mainnet) |
+| Aptos Testnet    | APTOS-TESTNET | `e3cbdafc-42c3-58cc-ae4c-b31dbb10354c` | [`0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832`](https://explorer.aptoslabs.com/fungible_asset/0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832?network=testnet) |
+| Arbitrum         | ARB           | `c87ffcb4-e2cf-5e67-84c6-388c965d2a66` | [`0xaf88d065e77c8cc2239327c5edb3a432268e5831`](https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831)                                                                                     |
+| Arbitrum Sepolia | ARB-SEPOLIA   | `4b8daacc-5f47-5909-a3ba-30d171ebad98` | [`0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d`](https://sepolia.arbiscan.io/address/0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d)                                                                           |
+| Avalanche        | AVAX          | `7efdfdbf-1799-5089-a588-31beb97ba755` | [`0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e`](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E)                                                                                    |
+| Avalanche Fuji   | AVAX-FUJI     | `ff47a560-9795-5b7c-adfc-8f47dad9e06a` | [`0x5425890298aed601595a70ab815c96711a31bc65`](https://testnet.snowtrace.io/token/0x5425890298aed601595a70ab815c96711a31bc65)                                                                            |
+| Base             | BASE          | `915ce944-32df-5df5-a6b1-daa9b5069f96` | [`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`](https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)                                                                                    |
+| Base Sepolia     | BASE-SEPOLIA  | `bdf128b4-827b-5267-8f9e-243694989b5f` | [`0x036CbD53842c5426634e7929541eC2318f3dCF7e`](https://base-sepolia.blockscout.com/address/0x036CbD53842c5426634e7929541eC2318f3dCF7e)                                                                   |
+| Ethereum         | ETH           | `b037d751-fb22-5f0d-bae6-47373e7ae3e3` | [`0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48`](https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48)                                                                                    |
+| Ethereum Sepolia | ETH-SEPOLIA   | `5797fbd6-3795-519d-84ca-ec4c5f80c3b1` | [`0x1c7d4b196cb0c7b01d743fbc6116a902379c7238`](https://sepolia.etherscan.io/address/0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238)                                                                          |
+| Polygon          | MATIC         | `db6905b9-8bcd-5537-8b08-f5548bdf7925` | [`0x3c499c542cef5e3811e1192ce70d8cc03d5c3359`](https://polygonscan.com/token/0x3c499c542cef5e3811e1192ce70d8cc03d5c3359)                                                                                 |
+| Polygon Amoy     | MATIC-AMOY    | `36b6931a-873a-56a8-8a27-b706b17104ee` | [`0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582`](https://www.oklink.com/amoy/address/0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582)                                                                           |
+| Solana           | SOL           | `33ca4ef6-2500-5d79-82bf-e3036139cc29` | [`EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`](https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)                                                                                  |
+| Solana Devnet    | SOL-DEVNET    | `8fb3cadb-0ef4-573d-8fcd-e194f961c728` | [`4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU`](https://explorer.solana.com/address/4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU?cluster=devnet)                                                        |
+
+## Remove Monitored Tokens
+
+To remove tokens from Monitored Tokens, use
+[`POST /config/entity/monitoredTokens/delete`](/api-reference/w3s/programmable-wallets/delete-monitored-tokens)
+to remove specific tokens. Specify the token IDs you want to delete, and they
+are excluded from the list.
+
+## Update Monitor
+
+To replace tokens with Monitored Tokens, use
+[`PUT /config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/update-monitored-tokens)
+to entirely replace the existing monitored token list by specifying the tokens
+you want to monitor. The previous list is overwritten with the new tokens
+provided.
+
+## Change scope for Monitored Tokens
+
+By default, all ERC-20, ERC-721, and ERC-1155 tokens deposited into your wallets
+are monitored and returned in
+[`GET /wallets/{id}/balances`](/api-reference/wallets/developer-controlled-wallets/list-wallet-balance),
+[`GET /wallets/{id}/nfts`](/api-reference/wallets/developer-controlled-wallets/list-wallet-nfts),
+[`GET /transactions`](/api-reference/wallets/developer-controlled-wallets/list-transactions)
+APIs, and webhook callbacks.
+
+However, after adding tokens to Monitored Tokens, the Monitored Tokens scope is
+set to SELECTED by default, which means only the provided tokens are returned in
+the preceding APIs and callbacks. To revert to monitoring all tokens, call
+[`PUT /config/entity/monitoredTokens/scope`](/api-reference/w3s/programmable-wallets/update-monitored-tokens-scope)
+and set the scope to MONITOR_ALL.
+
+It's important to note that even when the monitored token scope is set with
+SELECTED, developers can view all tokens in the wallet balance and transactions.
+This can be achieved by setting the `includeAll` field to `True` (default value
+is `False`) in the
+[`GET /wallets/{id}/balances`](/api-reference/wallets/developer-controlled-wallets/list-wallet-balance),
+[`GET /wallets/{id}/nfts`](/api-reference/wallets/developer-controlled-wallets/list-wallet-nfts),
+[`GET /transactions`](/api-reference/wallets/developer-controlled-wallets/list-transactions)
+APIs. By doing so, the API responses include details for all tokens in the
+wallet, irrespective of whether they are part of the monitored token list.

@@ -1,0 +1,720 @@
+---
+title: Gateway Contract Interfaces and Events
+description: Learn about the Circle Gateway smart contracts
+sideNav: ""
+documentationItems: 
+- title: Documentation
+tableOfContents: true
+sidebarTitle: "Contract Interfaces and Events"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+The wallet and minter smart contracts have a set of interfaces and events that
+you can use to build with Circle Gateway. This page describes the user-facing
+methods of these contracts.
+
+## Interfaces
+
+This section provides information on the public methods of the GatewayWallet and
+GatewayMinter smart contracts. The full ABIs are available on GitHub.
+
+### GatewayWallet
+
+#### deposit
+
+Deposit tokens after approving this contract for the token. The resulting
+balance belongs to the function caller.
+
+```solidity
+function deposit(address token, uint256 value) external;
+```
+
+**Parameters**
+
+| Name    | Type      | Description                         |
+| ------- | --------- | ----------------------------------- |
+| `token` | `address` | The address of the token to deposit |
+| `value` | `uint256` | The amount of tokens to deposit     |
+
+#### depositFor
+
+Deposit tokens on behalf of another address after approving this contract for
+the token. The resulting balance belongs to the address specified by the
+`depositor` parameter, not the function caller.
+
+```solidity
+function depositFor(address token, address depositor, uint256 value) external;
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                       |
+| ----------- | --------- | ------------------------------------------------- |
+| `token`     | `address` | The address of the token to deposit               |
+| `depositor` | `address` | The address that should own the resulting balance |
+| `value`     | `uint256` | The amount of tokens to deposit                   |
+
+#### depositWithPermit
+
+Deposit tokens with an EIP-2612 permit. The resulting balance belongs to the
+`owner` specified in the permit. The permit's `spender` must be the address of
+the GatewayWallet contract. The full permitted `value` is always deposited.
+
+```solidity
+function depositWithPermit(address token, address owner, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+```
+
+**Parameters**
+
+| Name       | Type      | Description                                                                                       |
+| ---------- | --------- | ------------------------------------------------------------------------------------------------- |
+| `token`    | `address` | The address of the token to deposit                                                               |
+| `owner`    | `address` | The depositor's address                                                                           |
+| `value`    | `uint256` | The amount of tokens to deposit                                                                   |
+| `deadline` | `uint256` | The unix timestamp at which the signature expires, or max `uint256` value to signal no expiration |
+| `v`        | `uint8`   | `v` of the signature                                                                              |
+| `r`        | `bytes32` | `r` of the signature                                                                              |
+| `s`        | `bytes32` | `s` of the signature                                                                              |
+
+#### depositWithPermit
+
+Deposit tokens with an EIP-2612 permit (using the EIP-7597 extension), passing
+the signature as bytes to allow for SCA deposits. The resulting balance belongs
+to the `owner` specified in the permit. The permit's `spender` must be the
+address of the GatewayWallet contract. The full permitted `value` is always
+deposited. EOA wallet signatures should be packed in the order of r, s, v.
+
+```solidity
+function depositWithPermit(address token, address owner, uint256 value, uint256 deadline, bytes calldata signature) external;
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                                                                  |
+| ----------- | --------- | -------------------------------------------------------------------------------------------- |
+| `token`     | `address` | The address of the token to deposit                                                          |
+| `owner`     | `address` | The depositor's address                                                                      |
+| `value`     | `uint256` | The amount of tokens to deposit                                                              |
+| `deadline`  | `uint256` | The unix time at which the signature expires, or max `uint256` value to signal no expiration |
+| `signature` | `bytes`   | Signature bytes signed by an EOA wallet or a contract wallet                                 |
+
+#### depositWithAuthorization
+
+Deposit tokens with an ERC-3009 authorization. The resulting balance in this
+contract belongs to the `from` specified in the authorization. The
+authorization's `to` must be the address of the GatewayWallet contract.
+
+```solidity
+function depositWithAuthorization(address token, address from, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external;
+```
+
+**Parameters**
+
+| Name          | Type      | Description                                                |
+| ------------- | --------- | ---------------------------------------------------------- |
+| `token`       | `address` | The address of the token to deposit                        |
+| `from`        | `address` | The depositor's address                                    |
+| `value`       | `uint256` | The amount of tokens to deposit                            |
+| `validAfter`  | `uint256` | The unix timestamp after which the authorization is valid  |
+| `validBefore` | `uint256` | The unix timestamp before which the authorization is valid |
+| `nonce`       | `bytes32` | Unique nonce                                               |
+| `v`           | `uint8`   | v of the signature                                         |
+| `r`           | `bytes32` | r of the signature                                         |
+| `s`           | `bytes32` | s of the signature                                         |
+
+#### depositWithAuthorization
+
+Deposit tokens with an ERC-3009 authorization (using the ERC-7598 extension),
+passing the signature as bytes to allow for SCA deposits. The resulting balance
+in this contract belongs to the `from` specified in the authorization. The
+authorization's `to` must be the address of this contract. The transfer will be
+done via `receiveWithAuthorization`. EOA wallet signatures should be packed in
+the order of r, s, v.
+
+```solidity
+function depositWithAuthorization(address token, address from, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, bytes calldata signature) external;
+```
+
+**Parameters**
+
+| Name          | Type      | Description                                                  |
+| ------------- | --------- | ------------------------------------------------------------ |
+| `token`       | `address` | The address of the token to deposit                          |
+| `from`        | `address` | The depositor's address                                      |
+| `value`       | `uint256` | The amount of tokens to deposit                              |
+| `validAfter`  | `uint256` | The unix timestamp after which the authorization is valid    |
+| `validBefore` | `uint256` | The unix timestamp before which the authorization is valid   |
+| `nonce`       | `bytes32` | Unique nonce                                                 |
+| `signature`   | `bytes`   | Signature bytes signed by an EOA wallet or a contract wallet |
+
+#### totalBalance
+
+Returns the total balance of a depositor for a given token. This will always be
+equal to the sum of `availableBalance` and `withdrawingBalance`.
+
+```solidity
+function totalBalance(address token, address depositor) public view returns (uint256);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `token`     | `address` | The address of the token to check |
+| `depositor` | `address` | The depositor to check            |
+
+**Returns**
+
+| Name     | Type      | Description                                      |
+| -------- | --------- | ------------------------------------------------ |
+| `<none>` | `uint256` | The total balance of the depositor for the token |
+
+#### availableBalance
+
+Returns the balance that is available to the depositor, subject to deposits
+being observed by Circle in a finalized block and excepting in-flight transfers.
+
+```solidity
+function availableBalance(address token, address depositor) public view returns (uint256);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `token`     | `address` | The address of the token to check |
+| `depositor` | `address` | The depositor to check            |
+
+**Returns**
+
+| Name     | Type      | Description                                          |
+| -------- | --------- | ---------------------------------------------------- |
+| `<none>` | `uint256` | The available balance of the depositor for the token |
+
+#### withdrawingBalance
+
+Returns the balance that is in the process of being withdrawn from the
+GatewayWallet contract.
+
+```solidity
+function withdrawingBalance(address token, address depositor) public view returns (uint256);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `token`     | `address` | The address of the token to check |
+| `depositor` | `address` | The depositor to check            |
+
+**Returns**
+
+| Name     | Type      | Description                                            |
+| -------- | --------- | ------------------------------------------------------ |
+| `<none>` | `uint256` | The withdrawing balance of the depositor for the token |
+
+#### withdrawableBalance
+
+Returns the balance that is withdrawable as of the current block. This will
+either be 0 or `withdrawingBalance`.
+
+```solidity
+function withdrawableBalance(address token, address depositor) public view returns (uint256);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `token`     | `address` | The address of the token to check |
+| `depositor` | `address` | The depositor to check            |
+
+**Returns**
+
+| Name     | Type      | Description                                             |
+| -------- | --------- | ------------------------------------------------------- |
+| `<none>` | `uint256` | The withdrawable balance of the depositor for the token |
+
+#### balanceOf
+
+Returns the balance of a depositor for a given token and balance type,
+compatible with ERC-1155. The "token" `id` is encoded as
+`uint256(bytes32(abi.encodePacked(uint96(BALANCE_TYPE), address(token))))`,
+where `BALANCE_TYPE` is 0 for `Total`, 1 for `Available`, 2 for `Withdrawing`,
+and 3 for `Withdrawable`.
+
+```solidity
+function balanceOf(address depositor, uint256 id) public view returns (uint256 balance);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `depositor` | `address` | The depositor to check            |
+| `id`        | `uint256` | The packed token and balance type |
+
+**Returns**
+
+| Name      | Type      | Description                                                 |
+| --------- | --------- | ----------------------------------------------------------- |
+| `balance` | `uint256` | The balance of the depositor for the token and balance type |
+
+#### balanceOfBatch
+
+The batch version of `balanceOf`, compatible with ERC-1155. `depositors` and
+`ids` must be the same length. See the documentation for `balanceOf` for the
+format of `ids`.
+
+```solidity
+function balanceOfBatch(address[] calldata depositors, uint256[] calldata ids) external view override returns (uint256[] memory balances);
+```
+
+**Parameters**
+
+| Name         | Type        | Description                         |
+| ------------ | ----------- | ----------------------------------- |
+| `depositors` | `address[]` | The depositors to check             |
+| `ids`        | `uint256[]` | The packed tokens and balance types |
+
+**Returns**
+
+| Name       | Type        | Description                                                     |
+| ---------- | ----------- | --------------------------------------------------------------- |
+| `balances` | `uint256[]` | The balances of the depositors for the tokens and balance types |
+
+#### addDelegate
+
+Allow a delegate to transfer the caller's balance of the specified token. This
+acts as a full allowance for `delegate` on the `token` balance of the function
+caller.
+
+```solidity
+function addDelegate(address token, address delegate) external;
+```
+
+**Parameters**
+
+| Name       | Type      | Description                                                       |
+| ---------- | --------- | ----------------------------------------------------------------- |
+| `token`    | `address` | The address of the token that `delegate` should be authorized for |
+| `delegate` | `address` | The address being authorized                                      |
+
+#### removeDelegate
+
+Stop allowing a delegate to transfer the caller's balance of the specified
+token. This revocation is not respected for burn intents that have already been
+signed, so that burns cannot be prevented by removing the delegate.
+
+```solidity
+function removeDelegate(address token, address delegate) external;
+```
+
+**Parameters**
+
+| Name       | Type      | Description                                                              |
+| ---------- | --------- | ------------------------------------------------------------------------ |
+| `token`    | `address` | The address of the token the delegate should no longer be authorized for |
+| `delegate` | `address` | The address that should no longer be authorized                          |
+
+#### isAuthorizedForBalance
+
+Returns whether an address is authorized to transfer tokens on behalf of a
+depositor.
+
+```solidity
+function isAuthorizedForBalance(address token, address depositor, address addr) public view returns (bool);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `token`     | `address` | The address of the token to check |
+| `depositor` | `address` | The depositor to check            |
+| `addr`      | `address` | The address to check              |
+
+**Returns**
+
+| Name     | Type   | Description                                            |
+| -------- | ------ | ------------------------------------------------------ |
+| `<none>` | `bool` | `true` if the address is authorized, `false` otherwise |
+
+#### withdrawalDelay
+
+Returns the number of blocks that must pass after calling `initiateWithdrawal`
+before a withdrawal can be completed.
+
+```solidity
+function withdrawalDelay() public view returns (uint256);
+```
+
+**Returns**
+
+| Name     | Type      | Description                         |
+| -------- | --------- | ----------------------------------- |
+| `<none>` | `uint256` | The number of blocks that must pass |
+
+#### withdrawalBlock
+
+Returns the block height at which an in-progress withdrawal is withdrawable, or
+0 if there is no in-progress withdrawal.
+
+```solidity
+function withdrawalBlock(address token, address depositor) public view returns (uint256);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                                |
+| ----------- | --------- | ---------------------------------------------------------- |
+| `token`     | `address` | The address of the token of the in-progress withdrawal     |
+| `depositor` | `address` | The address of the depositor of the in-progress withdrawal |
+
+**Returns**
+
+| Name     | Type      | Description                                                   |
+| -------- | --------- | ------------------------------------------------------------- |
+| `<none>` | `uint256` | The block number at which the withdrawal will be withdrawable |
+
+#### initiateWithdrawal
+
+Starts the withdrawal process. After `withdrawalDelay` blocks, `withdraw` may be
+called to complete the withdrawal. Once a withdrawal has been initiated, that
+amount can no longer be used. Repeated calls will add to the amount and reset
+the timer.
+
+```solidity
+function initiateWithdrawal(address token, uint256 value) external;
+```
+
+**Parameters**
+
+| Name    | Type      | Description                                           |
+| ------- | --------- | ----------------------------------------------------- |
+| `token` | `address` | The address of the token to initiate a withdrawal for |
+| `value` | `uint256` | The amount to be withdrawn                            |
+
+#### withdraw
+
+Completes a withdrawal that was initiated at least `withdrawalDelay` blocks ago.
+The funds are sent to the depositor (who must be the caller of this function).
+The full amount that is in the process of being withdrawn is always withdrawn.
+
+```solidity
+function withdraw(address token) external;
+```
+
+**Parameters**
+
+| Name    | Type      | Description                          |
+| ------- | --------- | ------------------------------------ |
+| `token` | `address` | The address of the token to withdraw |
+
+### GatewayMinter
+
+#### gatewayMint
+
+Mint funds via a signed attestation from the Gateway API. Emits an event
+containing the `keccak256` hash of the encoded `TransferSpec` (which is the same
+for the corresponding burn that will happen on the source domain), to be used as
+a cross-chain identifier and for replay protection.
+
+```solidity
+function gatewayMint(bytes memory attestationPayload, bytes memory signature) external;
+```
+
+**Parameters**
+
+| Name                 | Type    | Description                                                           |
+| -------------------- | ------- | --------------------------------------------------------------------- |
+| `attestationPayload` | `bytes` | The byte-encoded attestation(s)                                       |
+| `signature`          | `bytes` | The signature from a valid attestation signer on `attestationPayload` |
+
+### Common
+
+These methods are supported by both the `GatewayWallet` and `GatewayMinter`
+contracts.
+
+#### domain
+
+The domain assigned to the chain this contract is deployed on.
+
+```solidity
+function domain() public view returns (uint32);
+```
+
+**Returns**
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `<none>` | `uint32` | The Circle-issued identifier for the current chain |
+
+#### isTokenSupported
+
+Whether or not a token is supported.
+
+```solidity
+function isTokenSupported(address token) public view returns (bool);
+```
+
+**Parameters**
+
+| Name    | Type      | Description                       |
+| ------- | --------- | --------------------------------- |
+| `token` | `address` | The address of the token to check |
+
+**Returns**
+
+| Name     | Type   | Description                                         |
+| -------- | ------ | --------------------------------------------------- |
+| `<none>` | `bool` | `true` if the token is supported, `false` otherwise |
+
+#### isTransferSpecHashUsed
+
+Whether or not a transfer spec hash has been used.
+
+```solidity
+function isTransferSpecHashUsed(bytes32 transferSpecHash) public view returns (bool);
+```
+
+**Parameters**
+
+| Name               | Type      | Description                     |
+| ------------------ | --------- | ------------------------------- |
+| `transferSpecHash` | `bytes32` | The transfer spec hash to check |
+
+**Returns**
+
+| Name     | Type   | Description                                                       |
+| -------- | ------ | ----------------------------------------------------------------- |
+| `<none>` | `bool` | `true` if the transfer spec hash has been used, `false` otherwise |
+
+#### isDenylisted
+
+Whether or not a given address is denied from interacting with the contract.
+
+```solidity
+function isDenylisted(address addr) public view returns (bool);
+```
+
+**Parameters**
+
+| Name   | Type      | Description          |
+| ------ | --------- | -------------------- |
+| `addr` | `address` | The address to check |
+
+**Returns**
+
+| Name     | Type   | Description                                            |
+| -------- | ------ | ------------------------------------------------------ |
+| `<none>` | `bool` | `true` if the address is denylisted, `false` otherwise |
+
+## Events
+
+### GatewayWallet
+
+#### Deposited
+
+Emitted when a deposit is made. The `sender` will always be the same as
+`depositor`, except when a deposit is made using `depositFor`.
+
+```solidity
+event Deposited(address indexed token, address indexed depositor, address indexed sender, uint256 value);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                           |
+| ----------- | --------- | ----------------------------------------------------- |
+| `token`     | `address` | The address of the token that was deposited           |
+| `depositor` | `address` | The address that the resulting balance is credited to |
+| `sender`    | `address` | The address that the funds were deposited from        |
+| `value`     | `uint256` | The amount that was deposited                         |
+
+#### DelegateAdded
+
+Emitted when a delegate is authorized for a depositor's balance.
+
+```solidity
+event DelegateAdded(address indexed token, address indexed depositor, address delegate);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                                      |
+| ----------- | --------- | ---------------------------------------------------------------- |
+| `token`     | `address` | The address of the token that the delegate is now authorized for |
+| `depositor` | `address` | The depositor who added the delegate                             |
+| `delegate`  | `address` | The delegate that was added                                      |
+
+#### DelegateRemoved
+
+Emitted when a delegate's authorization is revoked.
+
+```solidity
+event DelegateRemoved(address indexed token, address indexed depositor, address delegate);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                                       |
+| ----------- | --------- | ----------------------------------------------------------------- |
+| `token`     | `address` | The address of the token the delegate is no longer authorized for |
+| `depositor` | `address` | The depositor who removed the delegate                            |
+| `delegate`  | `address` | The delegate that was removed                                     |
+
+#### WithdrawalInitiated
+
+Emitted when a withdrawal is initiated.
+
+```solidity
+event WithdrawalInitiated(
+    address indexed token,
+    address indexed depositor,
+    uint256 value,
+    uint256 remainingAvailable,
+    uint256 totalWithdrawing,
+    uint256 withdrawalBlock
+);
+```
+
+**Parameters**
+
+| Name                 | Type      | Description                                                    |
+| -------------------- | --------- | -------------------------------------------------------------- |
+| `token`              | `address` | The address of the token that is being withdrawn               |
+| `depositor`          | `address` | The owner of the funds being withdrawn                         |
+| `value`              | `uint256` | The value that was added to the in-progress withdrawal         |
+| `remainingAvailable` | `uint256` | The remaining available balance after the withdrawal           |
+| `totalWithdrawing`   | `uint256` | The total value that is now being withdrawn                    |
+| `withdrawalBlock`    | `uint256` | The block number at which the full withdrawal can be completed |
+
+#### WithdrawalCompleted
+
+Emitted when a withdrawal is completed and funds have been transferred to the
+depositor.
+
+```solidity
+event WithdrawalCompleted(address indexed token, address indexed depositor, uint256 value);
+```
+
+**Parameters**
+
+| Name        | Type      | Description                                 |
+| ----------- | --------- | ------------------------------------------- |
+| `token`     | `address` | The address of the token that was withdrawn |
+| `depositor` | `address` | The owner of the withdrawn funds            |
+| `value`     | `uint256` | The value that was withdrawn                |
+
+#### GatewayBurned
+
+Emitted when Circle burns tokens that have been minted on another domain
+
+```solidity
+event GatewayBurned(
+    address indexed token,
+    address indexed depositor,
+    bytes32 indexed transferSpecHash,
+    uint32 destinationDomain,
+    bytes32 destinationRecipient,
+    address signer,
+    uint256 value,
+    uint256 fee,
+    uint256 fromAvailable,
+    uint256 fromWithdrawing
+);
+```
+
+**Parameters**
+
+| Name                   | Type      | Description                                          |
+| ---------------------- | --------- | ---------------------------------------------------- |
+| `token`                | `address` | The address of the token that was burned             |
+| `depositor`            | `address` | The depositor who owned the balance                  |
+| `transferSpecHash`     | `bytes32` | The `keccak256` hash of the `TransferSpec`           |
+| `destinationDomain`    | `uint32`  | The domain the corresponding attestation was used on |
+| `destinationRecipient` | `bytes32` | The recipient of the funds at the destination        |
+| `signer`               | `address` | The address that authorized the transfer             |
+| `value`                | `uint256` | The value that was burned                            |
+| `fee`                  | `uint256` | The fee charged for the burn                         |
+| `fromAvailable`        | `uint256` | The value burned from the `available` balance        |
+| `fromWithdrawing`      | `uint256` | The value burned from the `withdrawing` balance      |
+
+### GatewayMinter
+
+#### AttestationUsed
+
+Emitted when an attestation is used.
+
+```solidity
+event AttestationUsed(
+    address indexed token,
+    address indexed recipient,
+    bytes32 indexed transferSpecHash,
+    uint32 sourceDomain,
+    bytes32 sourceDepositor,
+    bytes32 sourceSigner,
+    uint256 value
+);
+```
+
+**Parameters**
+
+| Name               | Type      | Description                                                             |
+| ------------------ | --------- | ----------------------------------------------------------------------- |
+| `token`            | `address` | The address of the token that was minted                                |
+| `recipient`        | `address` | The recipient of the funds                                              |
+| `transferSpecHash` | `bytes32` | The `keccak256` hash of the `TransferSpec`, shared with the burn intent |
+| `sourceDomain`     | `uint32`  | The domain the funds came from                                          |
+| `sourceDepositor`  | `bytes32` | The depositor on the source domain                                      |
+| `sourceSigner`     | `bytes32` | The signer that authorized the transfer                                 |
+| `value`            | `uint256` | The amount that was minted                                              |
+
+### Common
+
+These events are emitted by both the `GatewayWallet` and `GatewayMinter`
+contracts.
+
+#### Denylisted
+
+Emitted when an address is added to the denylist.
+
+```solidity
+event Denylisted(address indexed addr);
+```
+
+**Parameters**
+
+| Name   | Type      | Description                                                             |
+| ------ | --------- | ----------------------------------------------------------------------- |
+| `addr` | `address` | The address that is now being denied from interacting with the contract |
+
+#### UnDenylisted
+
+Emitted when an address is removed from the denylist.
+
+```solidity
+event UnDenylisted(address indexed addr);
+```
+
+**Parameters**
+
+| Name   | Type      | Description                                                     |
+| ------ | --------- | --------------------------------------------------------------- |
+| `addr` | `address` | The address that is allowed to interact with the contract again |
+
+#### TokenSupported
+
+Emitted when a token is added to the set of supported tokens.
+
+```solidity
+event TokenSupported(address token);
+```
+
+**Parameters**
+
+| Name    | Type      | Description                                    |
+| ------- | --------- | ---------------------------------------------- |
+| `token` | `address` | The address of the token that is now supported |

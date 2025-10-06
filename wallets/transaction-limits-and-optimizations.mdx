@@ -1,0 +1,113 @@
+---
+title: Transaction Rate Limits and Optimizations
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transaction Rate Limits"
+---
+
+In this guide, you’ll learn about the transaction rate limits imposed by
+supported blockchains and Circle Wallets. You’ll also get client-side
+optimization tips to ensure smooth transaction processing within your
+applications.
+
+## Transaction Queue Limits
+
+### Blockchain Account Queue Limit
+
+EVM-compatible blockchains typically use a Mempool system. The Mempool queues
+transactions sent from a wallet up to a certain limit defined by the full node.
+If you exceed this limit, you receive an error from the full node. All queued
+transactions in the Mempool can potentially be included in a single block.
+Therefore, you can estimate the theoretical transaction throughput as
+`queueLimit` / `blockTime`. However, various factors can influence whether your
+transaction gets included in a block, such as priority fees, network congestion,
+and network liveness. In contrast, the Solana blockchain does not use a Mempool
+system and, thus, does not have a queue limit. This contributes to its
+transaction throughput being significantly higher.
+
+#### Account queue limit in different blockchains
+
+| Blockchain          | EOA wallet      | SCA wallet          |
+| ------------------- | --------------- | ------------------- |
+| Ethereum            | 32 transactions | 1 transaction       |
+| Polygon             | 16 transactions | 1 transaction       |
+| Avalanche           | 32 transactions | 1 transaction       |
+| Solana (no Mempool) | Unlimited       | Not supported by PW |
+
+#### Circle Wallets Transaction Queue Limit
+
+The overall transaction throughput is fundamentally constrained by the
+blockchain account queue limit and the blockchain's inherent throughput. To
+mitigate the impact of these limitations, Circle Wallets provide a queuing
+mechanism for transactions that exceed the blockchain limit for a certain
+duration. There is a limit on the number of transactions your wallet can queue
+in the Circle Wallets service to prevent resource wastage and false
+expectations. This limit affects the user experience when too many transaction
+requests are made. When you reach this limit, you receive an error message:
+
+<Danger>
+
+"Wait for pending transactions to be included on the blockchain before
+submitting new requests. EVM chains restrict the number of queued transactions
+per sender address." (Error code 155264)
+
+</Danger>
+
+More detailed error descriptions and suggestions can be found in the
+[Transaction error codes](/w3s/synchronous-errors#transaction-error-codes-155201---155299)
+section.
+
+To check the number of pending transactions and their status, use the
+`listTransaction` API endpoint. The transaction state should be one of the
+following: `INITIATED`, `CLEARED`, `QUEUED`, `SENT`.
+
+## Client-side Optimizations
+
+While transaction queuing provides a convenient feature, fee fluctuations and
+network congestion can still impact transaction processing times. Below are some
+tips to ensure a smooth experience, especially when dealing with a high volume
+of transaction requests.
+
+### Higher Fees
+
+Consider setting the `fee_level` parameter to at least MEDIUM or HIGH. This
+ensures that your transactions are processed with higher priority in a
+reasonable timeframe, reducing delays for subsequent transactions.
+
+### Managing Transactions
+
+1. **Monitor Transaction Status**: Use the list transactions API to query the
+   status of your transactions.
+2. **Cancellation and Acceleration**: Use the cancellation and acceleration API
+   to expedite transactions that have been pending for an extended period.
+3. **Transaction Notifications**: Implement transaction notifications to confirm
+   the completion of transactions before sending more requests.
+
+### Multiple Sender Wallets
+
+Using multiple sender wallets can help bypass the per-wallet queue limit and
+increase the level of parallel processing. This strategy is generally effective
+across various blockchains.
+
+### Batch Transactions with Smart Contracts
+
+Leveraging smart contracts for batch transactions can significantly reduce the
+number of transactions needed for repetitive tasks. For instance, instead of
+sending 1,000,000 transfer transactions individually, you can deploy an airdrop
+contract that processes transfers to 500 wallets in a single execution call,
+requiring only 2,000 transactions in total. Although a single contract execution
+call may incur higher gas costs than a simple transfer, it is often more gas and
+time-efficient for batch transactions.
+
+For more details, please refer to our
+[Airdrop template for Circle Contracts](/contracts/airdrop) .
+
+## Summary
+
+By understanding the transaction queue limits and exploiting the above
+optimization tips, you can improve the transaction throughput of your
+applications, thereby increasing their overall efficiency when interacting with
+blockchain networks.

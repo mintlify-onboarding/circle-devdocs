@@ -1,0 +1,82 @@
+---
+title: Blockchain Infrastructure
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The **Programmable Wallet** platform provides comprehensive blockchain
+infrastructure support, alongside key management and smart accounts, eliminating
+the need to integrate with third-party blockchain infrastructure providers.
+Circle's all-in-one offering includes features such as broadcasting, indexing,
+gas management, and bundling.
+
+## Features
+
+Circle's blockchain infrastructure simplifies key aspects of blockchain
+interactions by offering the following features:
+
+### Broadcasting
+
+For transactions signed on Circle's platform, the platform handles broadcasting
+to the blockchain. You can also use Circle's
+[Signing APIs](/wallets/signing-apis) to integrate with your preferred node
+service providers for broadcasting, offering flexibility and control.
+
+### Indexing
+
+Reading directly from blockchains often results in high latency, which can
+negatively impact the user experience. Circle addresses this by:
+
+- Indexing all inbound and outbound transfer events and wallet balances in real
+  time.
+- Providing access to blockchain data via low-latency APIs, simulating the
+  performance of a fast database.
+- Offering webhook notifications for deposits and withdrawals to keep you
+  informed of wallet balance changes.
+
+To configure or update your webhooks, go to
+[Manage webhook subscriptions](/circle-mint/webhook-subscription-management).
+
+### Gas Station
+
+Circle's **Gas Station** simplifies the management of native tokens for gas
+fees, abstracting this complexity from your end users. This feature eliminates
+the need to integrate with third-party paymasters or fee-payers.
+
+To set up and configure policies, see
+[Manage Gas Station policies](/wallets/gas-station/policy-management).
+
+### Bundler
+
+Circle's **Bundler** supports **Smart Contract Accounts (ERC-4337)** by bundling
+user operations (userOps) for signing. With Circle's blockchain infrastructure,
+you can:
+
+- Create modular smart contract account wallets.
+- Initiate transactions without manually constructing and bundling userOps.
+
+## Support
+
+For blockchains where full infrastructure support is not available, you can use
+Circle's [Signing APIs](/wallets/signing-apis) to integrate with your preferred
+blockchain infrastructure providers.
+
+The table below shows the blockchains supported by Circle and the availability
+of full infrastructure support.
+
+| Blockchain Network | Full Blockchain Infrastructure Support |
+| ------------------ | -------------------------------------- |
+| Aptos              | ✅                                     |
+| Arbitrum           | ✅                                     |
+| Avalanche          | ✅                                     |
+| Base               | ✅                                     |
+| Ethereum           | ✅                                     |
+| Near               | ❌                                     |
+| Optimism           | ✅                                     |
+| Polygon            | ✅                                     |
+| Solana             | ✅                                     |
+| Unichain           | ✅                                     |
+| Other EVM Chains   | ❌                                     |

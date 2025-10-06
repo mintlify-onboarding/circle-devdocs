@@ -1,0 +1,173 @@
+{/* <!-- markdownlint-disable --> */}
+
+Now that you have a wallet that contains some Testnet tokens, let's dive into
+initiating your first transaction. It's simpler than you might think, especially
+with our streamlined approach.
+
+<Note>
+  **Cross-Blockchain Transfers:** Tokens are native to specific blockchains,
+  meaning they can't be sent directly across different chains. For instance,
+  Ethereum tokens stay on the Ethereum network unless other mechanisms, like
+  bridges, are used.
+</Note>
+
+### Getting the tokenId
+
+Before we can proceed, we need to determine the `tokenId`. You can do this by
+retrieving the token balances for your wallet.
+
+<Playground
+  title="Get your wallet balance"
+  url="/quickstarts/api/dev-controlled/balance"
+  config={{
+    url: "/v1/w3s/wallets/__WALLET_ID__/balances",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    method: "GET",
+  }}
+  copy={[
+    {
+      path: "data.tokenBalances[1].token.id",
+      key: "devCTokenId",
+    },
+  ]}
+/>
+
+### **Key Transaction Parameters:**
+
+<Parameters
+  title="Request Parameters"
+  linkToDocs="/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer"
+>
+  <Parameter name="idempotencyKey">
+    A unique string that ensures your transaction isn 't processed more than
+    once even if sent multiple times. A critical measure to prevent duplicates.
+  </Parameter>
+  <Parameter name="amounts">
+    Specify the amount of tokens you're transferring.
+  </Parameter>
+  <Parameter name="destinationAddress">
+    The wallet address where you're sending the tokens.
+  </Parameter>
+  <Parameter name="entitySecretCiphertext">
+    A crucial security layer, this encrypted string ensures only authorized
+    transactions go through.
+  </Parameter>
+  <Parameter name="tokenId">
+    This is the id we just extract from your wallet balance. It is the unique
+    identifier for the specific token type you're moving. This id is unique.
+  </Parameter>
+  <Parameter name="walletId">
+    Indicates the source of the transaction, i.e., from which wallet you're
+    sending the tokens.
+  </Parameter>
+</Parameters>
+
+The preceding parameters are just the essentials for initiating a transaction.
+The endpoint offers a richer, more detailed configuration to cater to a variety
+of transaction types. For a comprehensive list of the supported parameters, see
+the
+[official documentation](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer).
+
+<Playground
+  title="Initiate your transaction"
+  url="/quickstarts/api/dev-controlled/create-transaction"
+  config={{
+    url: "/v1/w3s/developer/transactions/transfer",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      idempotencyKey: "<UNIQUE_UUID>",
+      entitySecretCipherText: "<GENERATED_ENTITY_SECRET_CIPHERTEXT>",
+      amounts: ["<AMOUNT_1>"],
+      feeLevel: "HIGH",
+      tokenId: "<ID_OF_THE_TOKEN_YOU_WANT_TO_TRANSFER>",
+      walletId: "<ID_OF_PREVIOUSLY_GENERATED_WALLET>",
+    },
+  }}
+/>
+
+<Note>
+  Blockchain transactions pose a challenge with gas fees. Gas fees are charges
+  in blockchain networks, typically paid with native assets like Ether (ETH) on
+  Ethereum. This complicates the user experience as it requires users to hold
+  these assets. However, with **Developer-Controlled smart contract wallets**,
+  you can sponsor gas fees, removing the need to possess native assets. The
+  **Gas Station** acts as an intermediary, allowing you to cover fees for your
+  users, improving their transaction experience. In testnet, the Gas Station is
+  already setup for you, ready for testing. In the Production phase, you gain
+  more control with spending limits and configuration options. Learn more
+  [here](/wallets/gas-station).
+</Note>
+
+Once you've validated your transaction and everything checks out, you're all
+set. Transactions on the blockchain are immutable, meaning once they're
+validated, they cannot be reversed or altered. So, always double-check before
+sending!
+
+After initiating a transaction through our API, you can look up the transaction
+hash on the
+[Dev Controlled Wallets Transactions](https://console.circle.com/wallets/dev/transactions)
+page for in the Developer Services Console. The transaction hash is a unique
+identifier for your transaction.
+
+You can validate transactions in multiple ways:
+
+<Tabs>
+  <Tab title="Developer Services Console">
+    This is the preferred method. It enables you to inspect the transaction state directly.
+
+    <OrderedList>
+      <OrderedListStep title="Log in to the Console">
+
+        Make sure you're logged in to our Developer Services Console.
+
+      </OrderedListStep>
+      <OrderedListStep title="Open the transactions page">
+
+        Open the <Link path="/wallets/dev/transactions" type="console">Dev Controlled Wallets Transactions</Link> page.
+
+        You can see the state of your transaction directly in the table.
+
+        <Image src="/interactive-quickstarts/dev-controlled-wallets/images/transactions.png" alt="List of transactions" />
+
+      </OrderedListStep>
+      <OrderedListStep title="Open Transaction Details">
+
+        For more details about your transaction, click on the relevant line in the transaction details.
+
+      </OrderedListStep>
+    </OrderedList>
+
+  </Tab>
+  <Tab title="Blockchain Explorer">
+    By using the transaction hash or wallet id, you can view the transaction state on a blockchain explorer.
+
+    <OrderedList>
+      <OrderedListStep title="Choose a Blockchain Explorer">
+        Depending on the blockchain your token resides on, select a suitable explorer:
+
+        - Ethereum: <Link type="external" path="https://sepolia.etherscan.io/">Etherscan</Link>
+        - Polygon: <Link type="external" path="https://amoy.polygonscan.com/">Polygonscan</Link>
+        - Avalanche: <Link type="external" path="https://testnet.snowtrace.io/">Snowtrace</Link>
+
+      </OrderedListStep>
+      <OrderedListStep title="Input your Transaction Hash or Wallet Id">
+        On the explorer's main page, there's a search bar. Paste your transaction hash or wallet id
+        there and search. You can find the transactionHash or the wallet id in your <Link type="console" path="/wallets/dev/transactions">list of transactions</Link>.
+      </OrderedListStep>
+      <OrderedListStep title="Review Details">
+        Whether you provide a wallet ID or transaction hash, details regarding your wallet and the associated transactions will be visible. This includes particularities of each transaction such as the number of confirmations and the gas used, letting you verify that all aligns with your expectations.
+
+        <Image src="/interactive-quickstarts/dev-controlled-wallets/images/explorer.png" alt="Blockchain explorer" />
+
+      </OrderedListStep>
+    </OrderedList>
+
+  </Tab>
+</Tabs>

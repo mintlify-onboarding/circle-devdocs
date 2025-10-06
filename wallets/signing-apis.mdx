@@ -1,0 +1,111 @@
+---
+title: Signing APIs
+description:
+  "You can use Circle's API platform's signing APIs on blockchains where Wallets
+  do not have full blockchain infrastructure support."
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Wallets offers key signing capabilities to a broader range of blockchains where
+there isn't full blockchain infrastructure support, such as NEAR and other EVM
+chains. You can leverage Circle's advanced MPC key management for signing, and
+integrate with your own node and data service of choice. Circle offers SDKs and
+APIs to manage user authentication, wallet creation, and signing capabilities
+that integrate with your blockchain infrastructure.
+
+<Note>
+Developer-controlled wallets support signing on NEAR and other EVM chains.
+User-controlled wallets support signing on other EVM chains.
+</Note>
+
+<Frame>
+  <img src="/w3s/images/signing-sa-walletssign01.png" />
+</Frame>
+
+See our step-by-step tutorials for how to sign transactions on different
+blockchains:
+
+- [Sign Transactions on Solana](/wallets/sign-tx-solana)
+- [Sign Transactions on EVM chains](/wallets/sign-tx-evm)
+- [Sign Transactions on NEAR](/wallets/sign-tx-near)
+
+## Signing endpoints
+
+You can use the following API endpoints for signing capabilities such as sign
+transaction, sign typed data, or sign message.
+
+- `POST` `/developer/sign/message`
+- `POST` `/developer/sign/typedData`
+- `POST` `/developer/sign/transaction`
+- `POST` `/developer/sign/delegateAction`
+- `POST` `/user/wallets`
+- `POST` `/user/sign/message`
+- `POST` `/user/sign/typedData`
+- `POST` `/user/sign/transaction`
+
+<Warning>
+**Lazy Deployment on Smart Contract Accounts (SCAs):**
+
+Circle's Smart Contract Accounts (SCAs) use a **lazy deployment** strategy. This
+means that the wallet contract is only deployed to the blockchain upon the first
+transaction.
+
+If you attempt to use signing endpoints such as `/sign/message` or
+`/sign/typedData` before the wallet is deployed, the request will fail with an
+error. You must ensure that the user performs a first onchain transaction (for
+example, sending tokens or interacting with a contract) to deploy the wallet
+before attempting to sign arbitrary messages or typed data.
+
+</Warning>
+
+<Note>
+For unsupported EVM chains, create a wallet with a `blockchain` value of `EVM`
+or `EVM-TESTNET` for signing. These virtual blockchain parameters are not tied
+to specific EVM chains. For details, see
+[Sign transactions on EVM chains](/wallets/sign-tx-evm).
+
+For `EVM-TESTNET` wallets, you can sign transactions on the blockchains listed
+in [Chain IDs for signing transactions](/w3s/sign-tx-chain-id). Once you
+transition to mainnet, you can use your `EVM` wallet to sign transactions on
+any EVM-compatible chains.
+</Note>
+
+## Disclaimer
+
+Using the sign transaction endpoints involves critical actions that can impact
+your assets and transactions.
+
+Signing transactions carries inherent security risks. Malicious actors can trick
+users into signing what appears to be a legitimate transaction message. This
+could potentially allow them to gain unauthorized access to your funds. Always
+ensure that you are signing transactions only from trusted sources and verify
+the legitimacy of transaction requests before proceeding.
+
+<Danger>
+If you have created Wallets on an EVM-compatible chain such as Ethereum,
+Polygon, Avalanche, or Arbitrum, an EVM wallet created under the same wallet
+set maps to the same addresses.
+
+In these cases, it is extremely important that you do not use the EVM wallet to
+sign transactions for existing Wallets on those chains; for example, sign
+transaction with chainID = 137 signs MATIC transaction.
+
+Your Wallet transactions will be stuck and you are responsible for any resulting
+consequences.
+
+</Danger>
+
+## Programmable Wallet capabilities
+
+The following table shows the difference in Programmable Wallet capabilities
+offered on fully managed blockchains vs. Near and other blockchains.
+
+| Capability Category      | Fully managed blockchains                                                                                                                                                                                                                                                 | NEAR and other EVM chains                                                                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wallet Features          | User authentication <br /><br /> Wallet creation <br /><br /> Full transaction lifecycle management: <br />- Signing tx or messages <br />- Broadcast <br />- Monitor deposit <br />- Index tx and balances                                                               | User authentication <br /><br /> Wallet creation <br /><br /> Signing tx or messages                                                                            |
+| Wallet Infrastructure    | Developer-controlled wallets <br /><br /> User-controlled wallets                                                                                                                                                                                                         | Developer-controlled wallets <br /><br /> User-controlled wallets (except NEAR)                                                                                 |
+| Circle Contracts Support | Contracts APIs support for most of the chains that PW APIs support (given that the specified chains support smart contracts)                                                                                                                                              | Not supported                                                                                                                                                   |
+| Gas Station Support      | Access to Gas Station to enable gas sponsorship for all smart contract account wallets <br /><br /> Self-serve ability to set up Paymaster policies <br /><br /> Available for chains supported by PW that supports smart contract accounts or native gas station for EOA | N/A<br /><br /> Supports only EOA wallets. As Gas Station and paymaster policies require the use of SCA Wallets, Gas Station is not supported in this offering. |

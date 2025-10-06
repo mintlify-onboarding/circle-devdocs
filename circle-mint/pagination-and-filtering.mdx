@@ -1,0 +1,210 @@
+---
+title: Date Filtering and Pagination Queries
+description:
+  Quickly locate any transaction using Circle’s date and pagination query
+  parameters.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle’s API query parameters enable you to locate specific transactions
+quickly and confidently. They allow you to query by date range and/or by page
+number within a collection resource. These common query parameters are available
+across most of our collection resources._
+
+## Common Filters
+
+The following section lists and describes common query parameters that are
+available across most of our collection resources.
+
+### Date Ranges
+
+Our collection resources use `createDate DESC` to sort data, placing the most
+recent items at the top of the list.
+
+But if you’re only looking for items in a specific time range, you can specify
+this range via `from` and `to` query parameters:
+
+| Parameter | Description                                                                                       | Default                                                 |
+| --------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| from      | Inclusive start of the date range filer applied to the `createDate` property of the related item. | \* (All historic items are included)                    |
+| to        | Inclusive end of the date range filter applied to the `createDate` property of the related item.  | now() (defaults to the timestamp of request processing) |
+
+The value format for both parameters is defined as an ISO 8601 Coordinated
+Universal Time (UTC) string.
+
+Example: Let’s say you want to review all payments from January 2020. Your
+request would look like this:
+
+<CodeGroup>
+
+```bash
+curl 'https://api-sandbox.circle.com/v1/payments?from=2020-01-01T00:00:00Z&to=2020-01-31T23:59:59Z'
+```
+
+```javascript
+/**
+ * See installation instructions at
+ * https://developers.circle.com/circle-mint/circle-sdks
+ */
+import { Circle, CircleEnvironments } from '@circle-fin/circle-sdk'
+
+const circle = new Circle('<your-api-key>', CircleEnvironments.sandbox)
+
+async function listPayments() {
+  const resp = await circle.payments.listPayments(
+    // Skip defining other query params
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+
+    '2020-01-01T00:00:00Z', // 'from' query param
+    '2020-01-31T23:59:59Z', // 'to' query param
+  )
+  console.log(resp.data)
+}
+listPayments()
+```
+
+</CodeGroup>
+
+### By Page Number
+
+The amount of information accessible via Circle APIs can get quite vast. To keep
+things fresh and snappy all the time, our APIs will automatically paginate the
+returned items on all collection resources.
+
+Example: Let's say you want to fetch some payments via the
+[list all payments](/api-reference/circle-mint/payments/list-payments) API
+endpoint.
+
+### Pagination characteristics
+
+1. Each API collection endpoint has its own defaults regarding the returned page
+   size. You can specify the required page size via the `pageSize` query
+   parameter, but be aware that each resource has a fixed maximum for returned
+   items per page. Consult the appropriate API docs for the applicable values
+   for your specific call.
+2. To navigate through a collection, use the next/previous page cursors.
+3. The pagination cursor is linked to the filter query parameters you provide
+   when requesting the first page. To change a filter parameter, start again
+   from the first page.
+4. Once you reach the last page, the pagination cursor will no longer link to
+   the next page, so your iteration ends there. In the same way, there is no
+   previous page link available on the first page.
+
+### Link relations
+
+Circle APIs provide the pagination cursor information within a single
+[HTTP Link header](https://tools.ietf.org/html/rfc5988). The following link
+relations are used for pagination navigation:
+
+| Relation | Description                                                                        |
+| -------- | ---------------------------------------------------------------------------------- |
+| `self`   | Provides the URL pointing to the current page.                                     |
+| `first`  | Provides the URL pointing to the first page.                                       |
+| `next`   | Provides the URL pointing to the next page. Will be omitted on the last page.      |
+| `prev`   | Provides the URL pointing to the previous page. Will be omitted on the first page. |
+
+<Note>
+  **Note:** It's important to form calls with Link header values instead of
+  constructing your own URLs.
+</Note>
+
+### Tutorial
+
+To familiarize yourself with pagination, try fetching payments via the Get a
+list of payments resource.
+
+In the Circle
+[sandbox environment](/circle-mint/circle-apis-production-sandbox-environments),
+a pagination cursor Link header for a page of payments looks like this:
+
+<CodeGroup>
+
+```bash cURL
+curl -I 'https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageAfter=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e'i
+```
+
+```javascript
+/**
+ * See installation instructions at
+ * https://developers.circle.com/circle-mint/circle-sdks
+ */
+import { Circle, CircleEnvironments } from '@circle-fin/circle-sdk'
+
+const circle = new Circle(
+  '<your-api-key>',
+  CircleEnvironments.sandbox, // API base url
+)
+
+async function listPayments() {
+  const resp = await circle.payments.listPayments(
+    // Skip defining other query params
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+
+    '2020-01-31T23:59:59Z', // 'to' query param
+    undefined, // skip 'pageBefore' query param
+    '5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e', // 'pageAfter' query param
+  )
+  console.log(resp.data)
+}
+listPayments()
+```
+
+</CodeGroup>
+
+Look for the relevant pagination cursor information in the response headers:
+
+```text
+Link: https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e; rel="self", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50; rel="first", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=6f14b84d-7a98-4675-a6b9-d7b0c1912091; rel="next", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageBefore=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e; rel="prev"
+```
+
+For this initial request, we are in the middle of paginating the result set and
+thus receive a previous and next page link. Let's check the first page and see
+what’s different:
+
+<CodeGroup>
+
+```bash cURL
+curl -I 'https://api-sandbox.circle.com/v1/payments
+```
+
+```javascript
+/**
+ * See installation instructions at
+ * https://developers.circle.com/circle-mint/circle-sdks
+ */
+import { Circle, CircleEnvironments } from '@circle-fin/circle-sdk'
+
+const circle = new Circle('<your-api-key>', CircleEnvironments.sandbox)
+
+async function listPayments() {
+  const resp = await circle.payments.listPayments()
+  console.log(resp.data)
+}
+listPayments()
+```
+
+</CodeGroup>
+
+The response Link header differs from the previous example:
+
+```text
+Link: https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:01:00Z&pageSize=50; rel="self", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50; rel="first", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=12cd8527-5270-4acd-a1d4-431bd09f2a0e; rel="next"
+```
+
+Even if not specified in the request, the response pagination links have two
+additional query parameters set: `to` and `pageSize`. This is necessary to keep
+the pagination stable. Let's say other payments are made while you are reviewing
+the result set. The first page will update to contain the new payments, changing
+the pagination.

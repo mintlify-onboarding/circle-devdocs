@@ -1,0 +1,119 @@
+---
+title: "Payment Failure Codes"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Payment Failure Codes"
+---
+
+When a payment fails, CPN provides a
+[failure reason](/cpn/references/payment-and-transaction-failure-reasons) and a
+failure code. Depending on when the failure occurs, this information is returned
+in the synchronous (API) or asynchronous (webhook) response. This failure code
+can help you understand why the payment failed, and take appropriate steps to
+resolve the issue. The following sections outline the specific failure codes for
+failed payments.
+
+## General
+
+These codes apply when the failure reason is `OTHER`.
+
+| Failure code | Description   |
+| ------------ | ------------- |
+| `PM00001`    | General error |
+
+## Travel rule
+
+These codes apply when the failure reason is `TRAVEL_RULE_FAILED`.
+
+| Failure code | Description                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `PM01000`    | A general travel rule failure occurred during travel rule verification                                     |
+| `PM01001`    | The originator address is missing data or doesn't meet required formatting or jurisdictional standards     |
+| `PM01002`    | The beneficiary address is missing data or doesn't meet required formatting or jurisdictional standards    |
+| `PM01003`    | The national ID or passport number provided for the originator is invalid, missing, or fails verification  |
+| `PM01004`    | The national ID or passport number provided for the beneficiary is invalid, missing, or fails verification |
+
+## Bank verification
+
+These codes apply when the failure reason is `BANK_VERIFICATION_FAILED`.
+
+| Failure code | Description                                                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PM02000`    | General bank detail validation failure                                                                                                           |
+| `PM02001`    | The beneficiary bank account details (SWIFT BIC, account alias, account number) are invalid, malformed, or not recognized by the bank or network |
+| `PM02002`    | The beneficiary bank account details provided don't match the registered beneficiary in the bank's records                                       |
+| `PM02003`    | The receiving bank isn't supported                                                                                                               |
+| `PM02004`    | The specified account type (checking, savings) isn't supported                                                                                   |
+
+## RFI verification
+
+These codes apply when the failure reason is `RFI_VERIFICATION_FAILED`.
+
+| Failure code | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `PM03000`    | General RFI verification failure                     |
+| `PM03001`    | Missing or improperly formatted RFI documents        |
+| `PM03002`    | Conflicting data in the RFI submission               |
+| `PM03003`    | Expired or outdated RFI documents                    |
+| `PM03004`    | Rejected after manual compliance review              |
+| `PM03005`    | RFI response or review not completed in allowed time |
+
+## Existing RFI pending
+
+These codes apply when the failure reason is `EXISTING_RFI_PENDING`.
+
+| Failure code | Description                                           |
+| ------------ | ----------------------------------------------------- |
+| `PM04000`    | An RFI exists on the customer in a non-terminal state |
+
+## Onchain settlement
+
+These codes apply when the failure reason is `ONCHAIN_SETTLEMENT_FAILED`.
+
+| Failure code | Description                                                                     |
+| ------------ | ------------------------------------------------------------------------------- |
+| `PM05000`    | General onchain settlement failure                                              |
+| `PM05001`    | Received funds are invalid (wrong asset, insufficient amount, wrong blockchain) |
+
+## Fiat settlement
+
+These codes apply when the failure reason is `FIAT_SETTLEMENT_FAILED`.
+
+| Failure code | Description                                 |
+| ------------ | ------------------------------------------- |
+| `PM06000`    | General fiat settlement or payout failure   |
+| `PM06001`    | Rejected by the receiving bank              |
+| `PM06002`    | Rejected by the sending bank                |
+| `PM06003`    | Destination account invalid or unregistered |
+| `PM06004`    | Destination account blocked                 |
+
+## Compliance check
+
+These codes apply when the failure reason is `COMPLIANCE_CHECK_FAILED`.
+
+| Failure code | Description                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------ |
+| `PM07000`    | General compliance check failure                                                                             |
+| `PM07001`    | Originator blocked or ineligible                                                                             |
+| `PM07002`    | Beneficiary blocked or ineligible                                                                            |
+| `PM07003`    | OFI compliance check failed.<br /><br />You may need to complete KYB before proceeding with further payments |
+| `PM07004`    | The beneficiary bank account failed compliance checks                                                        |
+
+## Canceled
+
+These codes apply when the failure reason is `CANCELLED`.
+
+| Failure code | Description                           |
+| ------------ | ------------------------------------- |
+| `PM08000`    | Funds were canceled by the originator |
+
+## Payment expired
+
+These codes apply when the failure reason is `PAYMENT_EXPIRED`.
+
+| Failure code | Description                                           |
+| ------------ | ----------------------------------------------------- |
+| `PM09000`    | Crypto funds not received in the expected time window |

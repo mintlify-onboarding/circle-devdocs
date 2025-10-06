@@ -1,0 +1,1151 @@
+---
+title: Modular Wallets iOS SDK
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "iOS Mobile SDK"
+---
+
+Welcome to Circle’s modular wallets iOS SDK documentation. The SDK enables
+developers to integrate modular wallets to build secure, scalable Web3
+applications by leveraging tools for key management, smart account interactions,
+gasless transactions, and blockchain communication.
+
+## Installation
+
+Follow the steps provided in the
+[GitHub repository](https://github.com/circlefin/modularwallets-ios-sdk#installation)
+to install and set up the modular wallets iOS SDK.
+
+## API Documentation
+
+The following sections detail the SDK’s transport mechanisms, client
+interactions, account management, utility functions, model structures, and
+supported blockchain networks.
+
+---
+
+### Transports
+
+#### Protocol: `Transport`
+
+- **Description**: Interface representing a transport mechanism for making RPC
+  requests.
+
+##### Methods
+
+###### `request`
+
+- **Description**: Sends an RPC request and returns the response.
+- **Parameters**:
+  - `rpcRequest`: `RpcRequest` - The RPC request to be sent.
+- **Returns**: `RpcResponse`
+
+#### Class: `HttpTransport`
+
+- **Description**: The `HttpTransport` confirms the protocol `Transport` and
+  implements the required methods.
+
+#### Class: `ModularTransport`
+
+- **Description**: The `ModularTransport` inherits `HttpTransport` and confirms
+  the protocol `ModularRpcApi`.
+
+#### Structure: `HttpRpcClientOptions`
+
+- **Description**: Data class representing HTTP RPC client options.
+- **Properties**:
+  - `headers`: `[String: String]` - Headers to include in the HTTP requests.
+
+#### Function: `toModularTransport`
+
+- **Description**: Creates an instance of `ModularTransport` with the provided
+  client key and URL.
+- **Parameters**:
+  - `clientKey`: `String` - The client key for authorization.
+  - `url`: `String` - The URL for the HTTP transport.
+- **Returns**: `HttpTransport` - The configured HTTP transport instance.
+
+#### Function: `toPasskeyTransport`
+
+- **Description**: Creates an instance of `HttpTransport` with the provided
+  client key and URL, setting the authorization header.
+- **Parameters**:
+  - `clientKey`: `String` - The client key for authorization.
+  - `url`: `String` - The URL of the transport endpoint. Defaults to
+    `CIRCLE_BASE_URL`.
+- **Returns**: `HttpTransport` - The configured HTTP transport instance.
+
+#### Function: `http`
+
+- **Description**: Creates an HTTP transport instance.
+- **Parameters**:
+  - `url`: `String` - The URL for the HTTP transport.
+  - `options`: `HttpRpcClientOptions?` - Optional configuration options for the
+    HTTP transport.
+- **Returns**: `HttpTransport` - The configured HTTP transport instance.
+
+---
+
+### Clients
+
+#### Class: `Client`
+
+- **Description**: Represents a client that interacts with a blockchain, with
+  the following derived classes:
+  - `BundlerClient`
+  - `PaymasterClient`
+- **Properties**:
+  - `chain`: `Chain` - The blockchain that the client interacts with.
+  - `transport`: `Transport` - The transport mechanism used for making RPC
+    requests.
+
+#### Class: `BundlerClient`
+
+- **Description**: Client for interacting with the Bundler API. A
+  `BundlerClient` is an interface to interact with ERC-4337 Bundlers and
+  provides the ability to send and retrieve User Operations through Bundler
+  Actions.
+- **Inheritance**: Inherits from `Client`.
+
+##### Methods
+
+###### `estimateUserOperationGas`
+
+- **Description**: Estimates the gas values for a User Operation to be executed
+  successfully.
+- **Parameters**:
+  - `account`: `SmartAccount` - The smart account to use for User Operation
+    execution.
+  - `calls`: `[EncodeCallDataArg]` - The calls to execute in the User Operation.
+  - `paymaster`: `Paymaster?` - Optional, sets Paymaster configuration for the
+    User Operation.
+  - `estimateFeesPerGas`:
+    `((SmartAccount, BundlerClient, UserOperationV07) async -> EstimateFeesPerGasResult)?` -
+    Optional, prepares fee properties for the User Operation request.
+- **Returns**: `EstimateUserOperationGasResult` - The result of the gas
+  estimation.
+
+###### `getChainId`
+
+- **Description**: Returns the chain ID associated with the current network.
+- **Returns**: `Int` - The current chain ID.
+
+###### `getSupportedEntryPoints`
+
+- **Description**: Retrieves the EntryPoints that the bundler supports.
+- **Returns**: `[String]` - A list of supported EntryPoints.
+
+###### `getUserOperation`
+
+- **Description**: Retrieves information about a User Operation given a hash.
+- **Parameters**:
+  - `userOpHash`: `String` - The hash of the User Operation.
+- **Returns**: `GetUserOperationResult` - User Operation information.
+
+###### `getUserOperationReceipt`
+
+- **Description**: Returns the User Operation Receipt given a User Operation
+  hash.
+- **Parameters**:
+  - `userOpHash`: `String` - The hash of the User Operation.
+- **Returns**: `GetUserOperationReceiptResult` - The User Operation receipt.
+
+###### `prepareUserOperation`
+
+- **Description**: Prepares a User Operation for execution and fills in missing
+  properties.
+- **Parameters**:
+  - `account`: `SmartAccount` - The smart account to use for User Operation
+    execution.
+  - `calls`: `[EncodeCallDataArg]?` - The calls to execute in the User
+    Operation.
+  - `partialUserOp`: `UserOperationV07` - The partial User Operation to be
+    completed.
+  - `paymaster`: `Paymaster?` - Optional, sets Paymaster configuration for the
+    User Operation.
+  - `estimateFeesPerGas`:
+    `((SmartAccount, BundlerClient, UserOperationV07) async -> EstimateFeesPerGasResult)?` -
+    Optional, prepares fee properties for the User Operation request.
+- **Returns**: `UserOperationV07` - The prepared User Operation.
+
+###### `sendUserOperation`
+
+- **Description**: Sends a User Operation to the Bundler.
+- **Parameters**:
+  - `account`: `SmartAccount` - The smart account to use for User Operation
+    execution.
+  - `calls`: `[EncodeCallDataArg]?` - The calls to execute in the User
+    Operation.
+  - `partialUserOp`: `UserOperationV07` - The partial User Operation to be
+    completed.
+  - `paymaster`: `Paymaster?` - Optional, sets Paymaster configuration for the
+    User Operation.
+  - `estimateFeesPerGas`:
+    `((SmartAccount, BundlerClient, UserOperationV07) async -> EstimateFeesPerGasResult)?` -
+    Optional, prepares fee properties for the User Operation request.
+- **Returns**: `String?` - Optional, the hash of the sent User Operation, or
+  `null` otherwise.
+
+###### `waitForUserOperationReceipt`
+
+- **Description**: Waits for the User Operation to be included in a block (one
+  confirmation) and then returns the User Operation receipt.
+- **Parameters**:
+  - `userOpHash`: `String` - The User Operation hash.
+  - `pollingInterval`: `Int` (default: `4000`) - The polling interval in
+    milliseconds.
+  - `retryCount`: `Int` (default: `6`) - The number of retries.
+  - `timeout`: `Int?` - Optional timeout in milliseconds to wait before stopping
+    polling.
+- **Returns**: `GetUserOperationReceiptResult` - The result of the User
+  Operation receipt retrieval.
+
+###### `getBalance`
+
+- **Description**: Retrieves the balance of the specified address at a given
+  block tag or block number.
+- **Parameters**:
+  - `address`: `String` - The address to query the balance for. Only wallet
+    addresses registered with the client key can be retrieved.
+  - `blockNumber`: `BlockNumber` - The block number (default: `.latest`).
+- **Returns**: `BigInt` - The balance of the address.
+
+###### `getBlockNumber`
+
+- **Description**: Returns the number of the most recent block seen.
+- **Returns**: `BigInt` - The current block number.
+
+###### `getGasPrice`
+
+- **Description**: Retrieves the current gas price (in wei).
+- **Returns**: `BigInt` - The current gas price (in wei).
+
+###### `call`
+
+- **Description**: Executes a new message call immediately without submitting a
+  transaction to the network.
+- **Parameters**:
+  - `from`: `String?` - Optional, the address to send the call from.
+  - `to`: `String` - The contract address or recipient.
+  - `data`: `Data` - A contract hashed method call with encoded arguments.
+- **Returns**: `String` - The call data.
+
+###### `getCode`
+
+- **Description**: Retrieves the bytecode at an address.
+- **Parameters**:
+  - `address`: `String` - The contract address.
+  - `blockNumber`: `BlockNumber` - The block number (default: `.latest`).
+- **Returns**: `String` - The contract's bytecode.
+
+###### `estimateMaxPriorityFeePerGas`
+
+- **Description**: Returns an estimate for the max priority fee per gas (in wei)
+  for a transaction to likely be included in the next block. The Action will
+  either call `eth_maxPriorityFeePerGas` (if supported) or manually calculate
+  the max priority fee per gas based on the current block base fee per gas + gas
+  price.
+- **Returns**: `BigInt` - An estimate (in wei) for the max priority fee per gas.
+
+###### `getBlock`
+
+- **Description**: Returns information about a block at a specific block number.
+- **Parameters**:
+  - `includeTransactions`: `Boolean` (default: `false`) - Whether or not to
+    include transactions (as a structured array of `Transaction` objects).
+  - `blockNumber`: `BlockNumber` - The block number (default: `.latest`).
+- **Returns**: `Block` - The block information.
+
+###### `getUserOperationGasPrice`
+
+Available only for modular wallets.
+
+- **Description**: Retrieves gas price options for a user operation. You may
+  include the SDK version parameter.
+- **Returns**: `GetUserOperationGasPriceResult` - The gas price options in each
+  tier (low, medium, high) and `verificationGasLimit` (optional).
+
+#### Class: `PaymasterClient`
+
+- **Description**: Client for interacting with the Paymaster API. A
+  `PaymasterClient` is an interface to interact with
+  [ERC-7677 compliant Paymasters](https://eips.ethereum.org/EIPS/eip-7677) and
+  provides the ability to sponsor User Operation gas fees.
+- **Inheritance**: Inherits from `Client`.
+
+##### Methods
+
+###### `getPaymasterData`
+
+- **Description**: Retrieves paymaster-related User Operation properties to be
+  used for sending the User Operation.
+- **Parameters**:
+  - `userOp`: `T` - The User Operation to retrieve Paymaster data for. Type `T`
+    must be a subclass of `UserOperation`.
+  - `entryPoint`: `EntryPoint` - The EntryPoint address to target.
+  - `context`: `[String: AnyEncodable]?` - Optional, paymaster-specific fields.
+- **Returns**: `GetPaymasterDataResult` - Paymaster-related User Operation
+  properties.
+
+###### `getPaymasterStubData`
+
+- **Description**: Retrieves paymaster-related User Operation properties to be
+  used for gas estimation.
+- **Parameters**:
+  - `userOp`: `T` - The User Operation to retrieve Paymaster data for. Type `T`
+    must be a subclass of `UserOperation`.
+  - `entryPoint`: `EntryPoint` - The EntryPoint address to target.
+  - `context`: `[String: AnyEncodable]?` - Optional, paymaster-specific fields.
+- **Returns**: `GetPaymasterStubDataResult` - Paymaster-related User Operation
+  properties.
+
+---
+
+### Accounts
+
+#### Function: `toCircleSmartAccount`
+
+- **Description**: Creates a Circle passkey account.
+- **Parameters**:
+  - `client`: `Client` - The client used to interact with the blockchain.
+  - `owner`: `Account<SignResult>` - The owner account associated with the
+    Circle Passkey account.
+  - `version`: `String` (default: `"circle_passkey_account_v1"`) - The version
+    of the Circle Passkey account.
+  - `name`: `String?` (optional, defaults to the format
+    `passkey-yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`) - The wallet name assigned to the
+    newly registered account.
+- **Returns**: `CircleSmartAccount`
+
+#### Function: `toWebAuthnAccount`
+
+- **Description**: Creates a WebAuthn account.
+- **Parameters**:
+  - `credential`: `WebAuthnCredential` - The WebAuthn credential associated with
+    the account.
+- **Returns**: `WebAuthnAccount` - The created WebAuthn account.
+
+#### Function: `toWebAuthnCredential`
+
+- **Description**: Logs in or registers a user and returns a
+  `WebAuthnCredential`.
+- **Parameters**:
+  - `transport`: `Transport` - The transport used to communicate with the RP
+    API.
+  - `userName`: `String?` (optional, required for `WebAuthnMode.Register`) - The
+    username of the user.
+  - `mode`: `WebAuthnMode` - The mode of the WebAuthn credential.
+- **Returns**: `WebAuthnCredential`
+- **Throws**: `BaseError` if `userName` is `null` for `WebAuthnMode.Register`.
+
+#### Structure: `WebAuthnCredential`
+
+- **Description**: Represents a P-256 WebAuthn credential used for registration
+  and login.
+- **Properties**:
+  - `id`: `String` - The unique identifier for the credential.
+  - `publicKey`: `String` (serialized hex) - The public key associated with the
+    credential.
+  - `raw`: `PublicKeyCredential` - The raw public key credential.
+  - `rpId`: `String` - The relying party identifier.
+
+#### Protocol: `Account`
+
+- **Description**: A protocol defining the required methods for an account.
+- **Type Parameter**: `T` - The type of the signed data.
+
+##### Methods
+
+###### `getAddress`
+
+- **Description**: Retrieves the address of the account.
+- **Returns**: `String` - The account's address.
+
+###### `sign`
+
+- **Description**: Signs the given hex data.
+- **Parameters**:
+  - `hex`: `String` - The hex data to sign.
+- **Returns**: `T` - The signed data.
+
+###### `signMessage`
+
+- **Description**: Signs the given message.
+- **Parameters**:
+  - `message`: `String` - The message to sign.
+- **Returns**: `T` - The signed message.
+
+###### `signTypedData`
+
+- **Description**: Signs the given typed data.
+- **Parameters**:
+  - `typedData`: `String` - The typed data to sign.
+- **Returns**: `T` - The signed typed data.
+
+#### Structure: `WebAuthnAccount`
+
+- **Description**: Represents a WebAuthn account for handling authentication
+  credentials and signing. Commonly used as a
+  [Smart Account](https://viem.sh/account-abstraction/accounts/smart) owner to
+  sign User Operations and messages on behalf of the Smart Account.
+- **Conforms To**: `Account`
+
+##### Methods
+
+###### `getAddress`
+
+- **Description**: Retrieves the public key address associated with the WebAuthn
+  credential.
+- **Returns**: `String` - The associated public key.
+
+###### `sign`
+
+- **Description**: Signs the given hex data.
+- **Parameters**:
+  - `hex`: `String` - The hex string to sign.
+- **Returns**: `SignResult` - The result of the signing operation.
+
+###### `signMessage`
+
+- **Description**: Signs a message.
+- **Parameters**:
+  - `message`: `String` - The message to sign.
+- **Returns**: `SignResult` - The result of the signing operation.
+
+###### `signTypedData`
+
+- **Description**: Signs typed data.
+- **Parameters**:
+  - `jsonData`: `String` - The JSON data to sign.
+- **Returns**: `SignResult` - The result of the signing operation.
+
+#### Protocol: `SmartAccount`
+
+- **Description**: A Smart Account is an account whose implementation resides in
+  a smart contract and implements the
+  [ERC-4337 interface](https://eips.ethereum.org/EIPS/eip-4337#account-contract-interface).
+- **Properties**:
+  - `client`: `Client` - The client used to interact with the blockchain.
+  - `entryPoint`: `EntryPoint` - The entry point for the smart account.
+  - `userOperation`: `UserOperationConfiguration?` - Configuration for the User
+    Operation.
+
+##### Methods
+
+###### `getAddress`
+
+- **Description**: Returns the address of the account.
+- **Returns**: `String` - The account address.
+
+###### `encodeCalls`
+
+- **Description**: Encodes the given call data arguments.
+- **Parameters**:
+  - `args`: `[EncodeCallDataArg]` - The call data arguments to encode.
+- **Returns**: `String` - The encoded call data.
+
+###### `getFactoryArgs`
+
+- **Description**: Retrieves the factory arguments for the smart account.
+- **Returns**: `(String, String)?` - A pair containing the factory address and
+  factory data.
+
+###### `getNonce`
+
+- **Description**: Retrieves the nonce for the smart account.
+- **Parameters**:
+  - `key`: `BigInt?` - Optional key to retrieve the nonce for.
+- **Returns**: `BigInt` - The nonce value.
+
+###### `getStubSignature`
+
+- **Description**: Retrieves the stub signature for a User Operation.
+- **Parameters**:
+  - `userOp`: `T` - The User Operation.
+- **Returns**: `String` - The stub signature.
+
+###### `sign`
+
+- **Description**: Signs the given hex string.
+- **Parameters**:
+  - `hex`: `String` - The hex string to sign.
+- **Returns**: `String` - The signed string.
+
+###### `signMessage`
+
+- **Description**: Signs the given message.
+- **Parameters**:
+  - `message`: `String` - The message to sign.
+- **Returns**: `String` - The signed message.
+
+###### `signTypedData`
+
+- **Description**: Signs the given typed data.
+- **Parameters**:
+  - `typedData`: `String` - The typed data to sign.
+- **Returns**: `String` - The signed typed data.
+
+###### `signUserOperation`
+
+- **Description**: Signs the given user operation.
+- **Parameters**:
+  - `chainId`: `Long` - The chain ID for the user operation. Defaults to the
+    chain ID of the client.
+  - `userOp`: `UserOperationV07` - The user operation to sign.
+- **Returns**: `String` - The signed user operation.
+
+#### Class: `CircleSmartAccount`
+
+- **Description**: Represents a Circle passkey account. A Smart Account
+  implemented via a smart contract that adheres to the ERC-4337 interface.
+- **Properties**:
+  - `client`: `Client` - The blockchain client.
+  - `owner`: `Account<SignResult>` - The associated owner account.
+  - `entryPoint`: `EntryPoint` - The entry point for the account.
+  - `wallet`: Wallet information.
+  - `userOperation`: `UserOperationConfiguration?` - Configuration for the User
+    Operation.
+- **Conforms To**: `SmartAccount`
+
+##### Methods
+
+###### `getAddress`
+
+- **Description**: Retrieves the account address.
+- **Returns**: `String` - The account address.
+
+###### `encodeCalls`
+
+- **Description**: Encodes call data arguments.
+- **Parameters**:
+  - `args`: `[EncodeCallDataArg]` - The call data arguments.
+- **Returns**: `String?` - The encoded call data.
+
+###### `getFactoryArgs`
+
+- **Description**: Retrieves factory arguments.
+- **Returns**: `(String, String)?` - The factory arguments.
+- **Throws**: `BaseError` if there is no initialization code.
+
+###### `getNonce`
+
+- **Description**: Retrieves the account's nonce.
+- **Parameters**:
+  - `key`: `BigInt?` - Optional key.
+- **Returns**: `BigInt` - The nonce value.
+
+###### `getStubSignature`
+
+- **Description**: Retrieves a stub signature for a User Operation.
+- **Parameters**:
+  - `userOp`: `T` - The User Operation.
+- **Returns**: `String` - The stub signature.
+
+###### `sign`
+
+- **Description**: Signs a hex string.
+- **Parameters**:
+  - `hex`: `String` - The hex string to sign.
+- **Returns**: `String` - The signature.
+- **Throws**: `BaseError` if signing fails.
+
+###### `signMessage`
+
+- **Description**: Signs a message.
+- **Parameters**:
+  - `message`: `String` - The message to sign.
+- **Returns**: `String` - The signature.
+- **Throws**: `BaseError` if signing fails.
+
+###### `signTypedData`
+
+- **Description**: Signs typed data.
+- **Parameters**:
+  - `jsonData`: `String` - The JSON data to sign.
+- **Returns**: `String` - The signature.
+- **Throws**: `BaseError` if signing fails.
+
+###### `signUserOperation`
+
+- **Description**: Signs a user operation.
+- **Parameters**:
+  - `chainId`: `Int` - The chain ID.
+  - `userOp`: `UserOperationV07` - The user operation.
+- **Returns**: `String` - The signature.
+- **Throws**: `BaseError` if signing fails.
+
+###### `getInitCode`
+
+- **Description**: Retrieves the initialization code.
+- **Returns**: `String?` - The initialization code.
+
+---
+
+### Utilities
+
+#### Function: `encodeTransfer`
+
+- **Description**: Encodes a transfer function call.
+- **Parameters**:
+  - `to`: `String` - The recipient address.
+  - `token`: `String` - The token contract address or the name of Token enum.
+    Supported tokens and their information are listed below.
+  - `amount`: `BigInt` - The amount to transfer.
+- **Returns**: `EncodeTransferResult` - The encoded transfer ABI and contract
+  address.
+- Supported Tokens:
+
+##### Mainnet USDC
+
+| Blockchain Network | Enum                | Contract Address                                                                                                                    |
+| ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum           | ArbitrumToken.USDC  | [`0xaf88d065e77c8cC2239327C5EDb3A432268e5831`](https://arbiscan.io/token/0xaf88d065e77c8cc2239327c5edb3a432268e5831)                |
+| Avalanche          | AvalancheToken.USDC | [`0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E`](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E?chainid=43114) |
+| Base               | BaseToken.USDC      | [`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`](https://basescan.org/token/0x833589fcd6edb6e08f4c7c32d4f71b54bda02913)               |
+| Optimism           | OptimismToken.USDC  | [`0x0b2c639c533813f4aa9d7837caf62653d097ff85`](https://optimistic.etherscan.io/token/0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85)    |
+| Polygon            | PolygonToken.USDC   | [`0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`](https://polygonscan.com/token/0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359)            |
+| Unichain           | UnichainToken.USDC  | [`0x078D782b760474a361dDA0AF3839290b0EF57AD6`](https://uniscan.xyz/address/0x078D782b760474a361dDA0AF3839290b0EF57AD6)              |
+
+##### Mainnet Native Tokens
+
+| Blockchain Network | Token Name (Symbol) | Enum              | Contract Address                                                                                                                 |
+| ------------------ | ------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum           | Arbitrum (ARB)      | ArbitrumToken.ARB | [`0x912CE59144191C1204E64559FE8253a0e49E6548`](https://arbiscan.io/token/0x912ce59144191c1204e64559fe8253a0e49e6548)             |
+| Optimism           | Optimism (OP)       | OptimismToken.OP  | [`0x4200000000000000000000000000000000000042`](https://optimistic.etherscan.io/token/0x4200000000000000000000000000000000000042) |
+
+##### Testnet USDC
+
+| Blockchain Network | Enum                      | Contract Address                                                                                                                            |
+| ------------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum Sepolia   | ArbitrumSepoliaToken.USDC | [`0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`](https://sepolia.arbiscan.io/token/0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d)                |
+| Avalanche Fuji     | AvalancheFujiToken.USDC   | [`0x5425890298aed601595a70AB815c96711a31Bc65`](https://testnet.snowtrace.io/token/0x5425890298aed601595a70AB815c96711a31Bc65?chainid=43113) |
+| Base Sepolia       | BaseSepoliaToken.USDC     | [`0x036CbD53842c5426634e7929541eC2318f3dCF7e`](https://base-sepolia.blockscout.com/address/0x036CbD53842c5426634e7929541eC2318f3dCF7e)      |
+| Optimism Sepolia   | OptimismSepoliaToken.USDC | [`0x5fd84259d66Cd46123540766Be93DFE6D43130D7`](https://sepolia-optimism.etherscan.io/address/0x5fd84259d66Cd46123540766Be93DFE6D43130D7)    |
+| Polygon Amoy       | PolygonAmoyToken.USDC     | [`0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582`](https://amoy.polygonscan.com/token/0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582)               |
+| Unichain Sepolia   | UnichainSepoliaToken.USDC | [`0x31d0220469e10c4E71834a79b1f276d740d3768F`](https://unichain-sepolia.blockscout.com/address/0x31d0220469e10c4E71834a79b1f276d740d3768F)  |
+
+#### Function: `encodeCallData`
+
+- **Description**: Encodes the arguments into calldata for executing a User
+  Operation.
+- **Overloaded Methods**:
+  - **Parameters**:
+    - `arg`: `EncodeCallDataArg` - A single call data argument.
+  - **Returns**: `String` - The encoded call data.
+  - **Parameters**:
+    - `args`: `[EncodeCallDataArg]` - An array of call data arguments.
+  - **Returns**: `String` - The encoded call data.
+
+#### Function: `encodeFunctionData`
+
+- **Description**: Encodes the function name and parameters into an ABI-encoded
+  value (4-byte selector and arguments).
+- **Parameters**:
+  - `functionName`: `String` - The name of the ABI function.
+  - `abiJson`: `String` - The ABI JSON.
+  - `args`: `[Any]` - The input arguments for the ABI function.
+- **Returns**: `String?` - Optional encoded ABI function data.
+
+#### Function: `encodeContractExecution`
+
+- **Description**: Encodes a contract execution into calldata for executing a
+  User Operation.
+- **Parameters**:
+  - `to`: `String` - The target address.
+  - `abiSignature`: `String` - The ABI signature of the function.
+  - `args`: `[Any]` - The arguments for the function.
+  - `value`: `BigInt` - The value to send.
+- **Returns**: `String` - The encoded contract execution function data.
+
+#### Function: `parseGweiToWei`
+
+- **Description**: Parses a positive Gwei value to Wei.
+- **Parameters**:
+  - `value`: `String` - The Gwei value as a string.
+- **Returns**: `BigInt` - The Wei value.
+
+#### Function: `parseEtherToWei`
+
+- **Description**: Parses a positive Ether value to Wei.
+- **Parameters**:
+  - `value`: `String` - The Ether value as a string.
+- **Returns**: `BigInt` - The Wei value.
+
+---
+
+### Models
+
+#### Structure: `SignResult`
+
+- **Description**: Represents the result of a signing operation.
+- **Properties**:
+  - `signature`: `String` - The signature generated by the signing operation.
+  - `webAuthn`: `WebAuthnData` - The WebAuthn data associated with the signing
+    operation.
+  - `raw`: `AuthenticationCredential` - The raw authentication credential used
+    in the signing operation.
+
+#### Structure: `WebAuthnData`
+
+- **Description**: Represents WebAuthn data.
+- **Properties**:
+  - `authenticatorData`: `String` - The authenticator data in hexadecimal
+    format.
+  - `challengeIndex`: `Int` - The index of the challenge in the client data
+    JSON.
+  - `clientDataJSON`: `String` - The client data JSON.
+  - `typeIndex`: `Int` - The index of the type in the client data JSON.
+  - `userVerificationRequired`: `Boolean` - Indicates whether user verification
+    is required.
+
+#### Structure: `EncodeCallDataArg`
+
+- **Description**: A struct used to encode call data for smart contracts.
+- **Conforms to**: Encodable
+- **Properties**:
+  - `to`: `String` - The target address for the call (required).
+  - `value`: `BigInt?` - The amount of value to send with the call (optional,
+    defaults to 0).
+  - `data`: `String?` - The call data to be sent (optional, defaults to `"0x"`
+    if not provided).
+  - `abiJson`: `String?` - The ABI JSON of the smart contract function
+    (optional).
+  - `args`: `[AnyEncodable]?` - The arguments for the ABI function (optional).
+  - `functionName`: `String?` - The name of the function to be called
+    (optional).
+
+#### Structure: `EstimateUserOperationGasResult`
+
+- **Description**: Represents the result of estimating gas for a User Operation.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `preVerificationGas`: `BigInt?` - The gas used for pre-verification.
+  - `verificationGasLimit`: `BigInt?` - The gas limit for verification.
+  - `callGasLimit`: `BigInt?` - The gas limit for the call.
+  - `paymasterVerificationGasLimit`: `BigInt?` - The gas limit for paymaster
+    verification.
+  - `paymasterPostOpGasLimit`: `BigInt?` - The gas limit for paymaster
+    post-operation.
+
+#### Structure: `EstimateFeesPerGasResult`
+
+- **Description**: Represents the result of estimating fees per gas.
+- **Properties**:
+  - `maxFeePerGas`: `BigInt?` - Maximum fee per gas (EIP-1559).
+  - `maxPriorityFeePerGas`: `BigInt?` - Maximum priority fee per gas (EIP-1559).
+  - `gasPrice`: `BigInt?` - Legacy gas price.
+
+#### Structure: `GetUserOperationReceiptResult`
+
+- **Description**: Response model for getting a User Operation receipt.
+- **Properties**:
+  - `userOpHash`: `String?` - The hash of the User Operation.
+  - `sender`: `String?` - The sender address.
+  - `nonce`: `String?` - The nonce value.
+  - `actualGasCost`: `String?` - The actual gas cost in hexadecimal format.
+  - `actualGasUsed`: `String?` - The actual gas used in hexadecimal format.
+  - `success`: `Boolean?` - Indicates whether the operation was successful.
+  - `paymaster`: `String?` - The paymaster address.
+  - `logs`: `[Log]?` - The list of logs.
+  - `receipt`: `UserOperationReceipt` - The User Operation receipt details.
+
+#### Structure: `GetUserOperationResult`
+
+- **Description**: Represents the result of retrieving a User Operation.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `blockHash`: `String?` - The hash of the block containing the operation.
+  - `blockNumber`: `BigInt?` - The number of the block containing the operation.
+  - `transactionHash`: `String?` - The hash of the transaction for the
+    operation.
+  - `entryPoint`: `String?` - The entry point of the operation.
+  - `userOperation`: `UserOperationType?` - The User Operation.
+
+#### Structure: `UserOperationReceipt`
+
+- **Description**: Represents the receipt of a User Operation.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `transactionHash`: `String?` - The transaction hash.
+  - `transactionIndex`: `String?` - The transaction index.
+  - `blockHash`: `String?` - The block hash.
+  - `blockNumber`: `String?` - The block number.
+  - `from`: `String?` - The sender's address.
+  - `to`: `String?` - The recipient's address.
+  - `cumulativeGasUsed`: `String?` - The cumulative gas used.
+  - `gasUsed`: `String?` - The gas used.
+  - `logs`: `[Log]?` - The list of logs.
+  - `logsBloom`: `String?` - The bloom filter for logs.
+  - `status`: `String?` - The status of the operation.
+  - `effectiveGasPrice`: `String?` - The effective gas price.
+
+#### Structure: `Log`
+
+- **Description**: Represents a log entry.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `removed`: `Boolean?` - Indicates whether the log was removed.
+  - `logIndex`: `String?` - The index of the log.
+  - `transactionIndex`: `String?` - The index of the transaction.
+  - `transactionHash`: `String?` - The transaction hash.
+  - `blockHash`: `String?` - The block hash.
+  - `blockNumber`: `String?` - The block number.
+  - `address`: `String?` - The address of the contract generating the log.
+  - `data`: `String?` - The log data.
+  - `topics`: `[String]?` - The list of topics.
+
+#### Structure: `GetPaymasterDataResult`
+
+- **Description**: Represents the result of retrieving Paymaster data.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `paymaster`: `String?` - The Paymaster address for entry point version 0.7.
+  - `paymasterData`: `String?` - The Paymaster data for entry point version 0.7.
+  - `paymasterPostOpGasLimit`: `BigInt?` - The gas limit for the Paymaster
+    post-operation for entry point version 0.7.
+  - `paymasterVerificationGasLimit`: `BigInt?` - The gas limit for the Paymaster
+    verification for entry point version 0.7.
+  - `paymasterAndData`: `String?` - The Paymaster and associated data for entry
+    point version 0.6.
+
+#### Structure: `GetPaymasterStubDataResult`
+
+- **Description**: Represents the result of retrieving Paymaster stub data.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `paymaster`: `String?` - The Paymaster address for entry point version 0.7.
+  - `paymasterData`: `String?` - The Paymaster data for entry point version 0.7.
+  - `paymasterPostOpGasLimit`: `BigInt?` - The gas limit for the Paymaster
+    post-operation for entry point version 0.7.
+  - `paymasterVerificationGasLimit`: `BigInt?` - The gas limit for the Paymaster
+    verification for entry point version 0.7.
+  - `paymasterAndData`: `String?` - The Paymaster and associated data for entry
+    point version 0.6.
+  - `isFinal`: `Boolean?` - Indicates whether the caller does not need to call
+    `getPaymasterData`.
+  - `sponsor`: `SponsorInfo?` - Sponsor information associated with the
+    Paymaster.
+
+#### Structure: `Block`
+
+- **Description**: Represents a block in the Ethereum blockchain.
+- **Conforms to**: `Codable`
+- **Properties**:
+  - `number`: `BigUInt` - The block number.
+  - `hash`: `Data` - The block hash.
+  - `parentHash`: `Data` - The parent block hash.
+  - `nonce`: `Data?` - The block nonce (optional).
+  - `sha3Uncles`: `Data` - The SHA3 hash of the uncles.
+  - `logsBloom`: `EthereumBloomFilter?` - The bloom filter for the logs
+    (optional).
+  - `transactionsRoot`: `Data` - The root of the transactions trie.
+  - `stateRoot`: `Data` - The root of the state trie.
+  - `receiptsRoot`: `Data` - The root of the receipts trie.
+  - `miner`: `EthereumAddress?` - The address of the miner.
+  - `difficulty`: `BigUInt` - The difficulty of the block.
+  - `totalDifficulty`: `BigUInt?` - The total difficulty of the chain up to this
+    block.
+  - `extraData`: `Data` - Extra data included in the block.
+  - `size`: `BigUInt` - The size of the block.
+  - `gasLimit`: `BigUInt` - The gas limit of the block.
+  - `gasUsed`: `BigUInt` - The gas used in the block.
+  - `baseFeePerGas`: `BigUInt?` - The base fee per gas (optional, present in
+    EIP-1559 blocks).
+  - `timestamp`: `Date` - The timestamp of the block.
+  - `transactions`: `[TransactionInBlock]` - The list of transactions in the
+    block.
+  - `uncles`: `[Data]` - The list of uncle blocks.
+
+#### Structure: `GetUserOperationGasPriceResult`
+
+- **Description**: Represents the result of the `getUserOperationGasPrice`
+  method.
+- **Conforms to**: `Decodable`
+- **Properties**:
+  - `low`: `GasPriceOption` - The low-priority gas price option.
+  - `medium`: `GasPriceOption` - The medium-priority gas price option.
+  - `high`: `GasPriceOption` - The high-priority gas price option.
+  - `deployed`: `BigInt?` - The verification gas for a deployed smart account
+    (optional).
+  - `notDeployed`: `BigInt?` - The verification gas for a non-deployed smart
+    account (optional).
+
+#### Structure: `GasPriceOption`
+
+- **Description**: Represents a gas price option.
+- **Conforms to**: `Decodable`
+- **Properties**:
+  - `maxFeePerGas`: `BigInt` - The maximum fee per gas.
+  - `maxPriorityFeePerGas`: `BigInt` - The maximum priority fee per gas.
+
+#### Structure: `EncodeTransferResult`
+
+- **Description**: The return type for `encodeTransfer`.
+- **Properties**:
+  - `data`: `String` - The encoded data.
+  - `to`: `String` - The token address.
+
+#### Enum: `EntryPoint`
+
+- **Description**: Represents entry points with their respective addresses.
+- **Properties**:
+  - `address`: `String` - The address of the entry point.
+- **Entries**:
+  - `v07` - Represents the entry point version 0.7 with its respective address.
+
+#### Class: `Paymaster`
+
+- **Description**: A sealed class for setting User Operation Paymaster
+  configuration.
+  - If the Paymaster is a `PaymasterClient`, it uses the provided Paymaster
+    Client for sponsorship.
+  - If the Paymaster is `true`, it assumes that the Bundler Client supports
+    Paymaster RPC methods (e.g. `getPaymasterData`) and uses them for
+    sponsorship.
+
+##### Subclasses
+
+###### `True`
+
+- **Description**: Represents a Paymaster configuration where the Bundler Client
+  supports Paymaster RPC methods.
+- **Properties**:
+  - `paymasterContext`: `[String: AnyEncodable]?` - Optional context for the
+    Paymaster.
+
+###### `Client`
+
+- **Description**: Represents a Paymaster configuration using a provided
+  Paymaster Client for sponsorship.
+- **Properties**:
+  - `client`: `PaymasterClient` - The Paymaster Client used for sponsorship.
+  - `paymasterContext`: `[String: AnyEncodable]?` - Optional context for the
+    Paymaster.
+
+#### Protocol: `PublicKeyCredential`
+
+- **Description**: Represents a public key credential, with the following
+  derived structures:
+  - `RegistrationCredential`
+  - `AuthenticationCredential`
+- **Properties**:
+  - `id`: `String` - The unique identifier for the credential.
+  - `type`: `String` - The type of the credential.
+  - `authenticatorAttachment`: `String` - The attachment type of the
+    authenticator.
+  - `response`: `AuthenticatorResponse` - The response from the authenticator.
+  - `clientExtensionResults`: `AuthenticationExtensionsClientOutputs?` -
+    Optional client extension results.
+
+#### Structure: `RegistrationCredential`
+
+- **Description**: Represents a registration credential.
+- **Conforms To**: `PublicKeyCredential`
+- **Properties**:
+  - `rawId`: `String` - The raw identifier for the credential.
+  - `authenticatorAttachment`: `String` - The attachment type of the
+    authenticator.
+  - `type`: `String` - The type of the credential.
+  - `id`: `String` - The unique identifier for the credential.
+  - `response`: `AuthenticatorAttestationResponse` - The attestation response
+    from the authenticator.
+  - `clientExtensionResults`: `AuthenticationExtensionsClientOutputs?` -
+    Optional client extension results.
+
+#### Structure: `AuthenticationCredential`
+
+- **Description**: Represents an authentication credential.
+- **Conforms To**: `PublicKeyCredential`
+- **Properties**:
+  - `rawId`: `String` - The raw identifier for the credential.
+  - `authenticatorAttachment`: `String` - The attachment type of the
+    authenticator.
+  - `type`: `String` - The type of the credential.
+  - `id`: `String` - The unique identifier for the credential.
+  - `response`: `AuthenticatorAssertionResponse` - The assertion response from
+    the authenticator.
+  - `clientExtensionResults`: `AuthenticationExtensionsClientOutputs?` -
+    Optional client extension results.
+
+#### Protocol: `UserOperation`
+
+- **Description**: Represents a user operation, with the following derived
+  classes:
+  - `UserOperationV07`
+- **Properties**:
+  - `sender`: `String?` - The address of the sender.
+  - `nonce`: `BigInt?` - The nonce of the operation.
+  - `callData`: `String?` - The data to be sent in the call.
+  - `callGasLimit`: `BigInt?` - The gas limit for the call.
+  - `verificationGasLimit`: `BigInt?` - The gas limit for verification.
+  - `preVerificationGas`: `BigInt?` - The gas used before verification.
+  - `maxPriorityFeePerGas`: `BigInt?` - The maximum priority fee per gas.
+  - `maxFeePerGas`: `BigInt?` - The maximum fee per gas.
+  - `signature`: `String?` - The signature of the operation.
+
+#### Class: `UserOperationV07`
+
+- **Description**: Data class representing a user operation for version 0.7.
+- **Conforms To**: `UserOperation`
+- **Properties**:
+  - `sender`: `String?` - The address of the sender.
+  - `nonce`: `BigInt?` - The nonce of the operation.
+  - `callData`: `String?` - The data to be sent in the call.
+  - `callGasLimit`: `BigInt?` - The gas limit for the call.
+  - `verificationGasLimit`: `BigInt?` - The gas limit for verification.
+  - `preVerificationGas`: `BigInt?` - The gas used before verification.
+  - `maxPriorityFeePerGas`: `BigInt?` - The maximum priority fee per gas.
+  - `maxFeePerGas`: `BigInt?` - The maximum fee per gas.
+  - `signature`: `String?` - The signature of the operation.
+  - `factory`: `String?` - The factory address.
+  - `factoryData`: `String?` - The data for the factory.
+  - `paymaster`: `String?` - The Paymaster address.
+  - `paymasterVerificationGasLimit`: `BigInt?` - The gas limit for Paymaster
+    verification.
+  - `paymasterPostOpGasLimit`: `BigInt?` - The gas limit for Paymaster
+    post-operation.
+  - `paymasterData`: `String?` - The data for the Paymaster.
+
+#### Enum: `WebAuthnMode`
+
+- **Description**: Represents the WebAuthn modes.
+- **Entries**:
+  - `Register` - Mode for registering a new credential.
+  - `Login` - Mode for logging in with an existing credential.
+
+#### Enum: `ArbitrumToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+  - `ARB`
+
+#### Enum: `ArbitrumSepoliaToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `AvalancheToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `AvalancheFujiToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `BaseToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `BaseSepoliaToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `OptimismToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+  - `OP`
+
+#### Enum: `OptimismSepoliaToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `PolygonToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `PolygonAmoyToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `UnichainToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Enum: `UnichainSepoliaToken`
+
+- **Description**: Enum representing various tokens supported by
+  `encodeTransfer`. The format is `{chain}_{symbol}`.
+- **Entries**:
+  - `USDC`
+
+#### Structure: `ModularWallet`
+
+- **Description**: Represents a wallet entity within the system.
+- **Conforms To**: `Codable`
+- **Properties**:
+  - `id`: `String?` - The unique identifier of the wallet.
+  - `address`: `String?` - The blockchain address of the wallet.
+  - `blockchain`: `String?` - The blockchain network the wallet is associated
+    with.
+  - `state`: `String?` - The current state of the wallet.
+  - `name`: `String?` - The name of the wallet.
+  - `scaCore`: `String?` - The SCA (Strong Customer Authentication) core
+    identifier.
+  - `scaConfiguration`: `ScaConfiguration?` - The SCA configuration associated
+    with the wallet.
+  - `createDate`: `String?` - The creation date of the wallet.
+  - `updateDate`: `String?` - The last update date of the wallet.
+
+##### Methods
+
+###### `getInitCode`
+
+- **Description**: Retrieves the initialization code for the wallet.
+- **Returns**: `String?` - The initialization code from the SCA configuration,
+  if available.
+
+---
+
+### Chains
+
+#### Protocol: `Chain`
+
+- **Description**: Abstract class representing the necessary definitions of a
+  blockchain for the SDK.
+- **Predefined Chains**:
+  - `Arbitrum`
+  - `ArbitrumSepolia`
+  - `Base`
+  - `BaseSepolia`
+  - `Optimism`
+  - `OptimismSepolia`
+  - `Polygon`
+  - `PolygonAmoy`
+  - `Unichain`
+  - `UnichainSepolia`
+- **Properties**:
+  - `chainId`: `Int` - The unique identifier for the blockchain.

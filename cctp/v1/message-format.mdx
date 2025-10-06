@@ -1,0 +1,67 @@
+---
+title: CCTP Message Format V1
+description: Format arbitrary and application-specific messages using CCTP V1
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Message Format"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+## CCTP V1 Message Header
+
+The top-level message header format is standard for all messages passing through
+CCTP V1.
+
+| Field               | Offset | Solidity Type | Length (bytes) | Description                                                                                                                 |
+| ------------------- | ------ | ------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `version`           | 0      | uint32        | 4              | Version identifier - use 0 for CCTP V1                                                                                      |
+| `sourceDomain`      | 4      | uint32        | 4              | Source domain ID                                                                                                            |
+| `destinationDomain` | 8      | uint32        | 4              | Destination domain ID                                                                                                       |
+| `nonce`             | 12     | uint64        | 8              | Unique message nonce (see [Sequential Nonces](#sequential-nonces))                                                          |
+| `sender`            | 20     | bytes32       | 32             | Address of MessageTransmitter caller on source domain                                                                       |
+| `recipient`         | 52     | bytes32       | 32             | Address to handle message body on destination domain                                                                        |
+| `destinationCaller` | 84     | bytes32       | 32             | Address permitted to call MessageTransmitter on destination domain, or bytes32(0) if message can be received by any address |
+| `messageBody`       | 116    | bytes         | dynamic        | Application-specific message to be handled by recipient                                                                     |
+
+### Sequential Nonces
+
+A message nonce is a unique identifier for a message that can only be used once
+on the destination domain. In CCTP V1, message nonces are implemented using
+**Sequential Nonces**, where the next available nonce on a source domain is an
+integer. On the destination domain, messages can be received in any order, and
+used nonces are stored as a hash of the source domain and nonce integer value.
+
+<Note>
+**Why we use `bytes32` type for addresses**
+
+CCTP V1 is built to support EVM chains, which use 20 byte addresses, and
+non-EVM chains, many of which use 32 byte addresses. We provide a
+[Message.sol library](https://github.com/circlefin/evm-cctp-contracts/blob/40111601620071988e94e39274c8f48d6f406d6d/src/messages/Message.sol#L145-L157)
+as a reference implementation for converting between address and `bytes32` in
+Solidity.
+</Note>
+
+## CCTP V1 Message Body
+
+The message format includes a dynamically sized `messageBody` field, used for
+application-specific messages. For example, TokenMessenger defines a
+[BurnMessage](https://github.com/circlefin/evm-cctp-contracts/blob/master/src/messages/BurnMessage.sol)
+with data related to cross-chain transfers.
+
+| Field           | Offset | Solidity Type | Length (bytes) | Description                                                                            |
+| --------------- | ------ | ------------- | -------------- | -------------------------------------------------------------------------------------- |
+| `version`       | 0      | uint32        | 4              | Version identifier (0, for CCTP V1)                                                    |
+| `burnToken`     | 4      | bytes32       | 32             | Address of burned token on source domain                                               |
+| `mintRecipient` | 36     | bytes32       | 32             | Address to receive minted tokens on destination domain                                 |
+| `amount`        | 68     | uint256       | 32             | Amount of burned tokens                                                                |
+| `messageSender` | 100    | bytes32       | 32             | Address of caller of `depositForBurn` (or `depositForBurnWithCaller`) on source domain |
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP API Hosts and Endpoints V1 <Icon icon="arrow-right" />](/cctp/v1/cctp-apis)

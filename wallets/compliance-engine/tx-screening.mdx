@@ -1,0 +1,96 @@
+---
+title: Transaction Screening
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Transaction Screening_ (available as Beta) is a real-time tool that
+automatically checks blockchain transactions and associated addresses for risks
+related to sanctioned entities, terrorist financing, or other suspicious
+behaviors. This is a core component of the
+[Compliance Engine](/wallets/compliance-engine) and it allows developers to
+configure screening rules to meet the specific compliance requirements of their
+jurisdiction or industry.
+
+Developers can trigger screening evaluations using two methods:
+
+- _Embedded_, where screening occurs implicitly during regular programmable
+  wallet transaction flow.
+- _Standalone_, where screening is triggered explicitly through the Compliance
+  API.
+
+## Features
+
+- **Custom Rules**: Tailor your own screening rules to match your specific use
+  and regulatory requirements.
+- **Blocklist/Whitelist**: Developers can specify blacklisted or whitelisted
+  addresses, enhancing control over transactions and minimizing the chance of
+  interacting with known bad actors.
+- **Real-Time Alerts**: The system provides immediate notifications when a
+  transaction violates pre-set screening rules. Alerts can trigger actions such
+  as blocking a transaction, freezing a wallet, or sending it for further manual
+  review.
+- **Detailed Logs and API Integration**: Developers can access detailed logs and
+  results of screened transactions, enabling easier auditing and review. The
+  system also offers a robust API for integrating screening functionality into
+  existing workflows.
+
+## API Overview
+
+## Embedded screening
+
+For Wallets using embedded screening, the existing
+[Get a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction)
+API endpoint includes a response field, `transactionScreeningEvaluation`, for
+transaction screening result, detailing:
+
+- **Rule** found during screening
+- **Actions** taken for the decision
+- **Reasons** for the decision, related risk signals found during the screening:
+  source, risk score, risk category, etc.
+
+## Standalone screening
+
+For Wallets developers using standalone screening, the Compliance Engine exposes
+a new
+[Screen a blockchain address](/api-reference/w3s/compliance/screen-address) API
+endpoint, enabling you to screen a specific blockchain address on a given
+[supported chain](/w3s/supported-blockchains-and-currencies) independently of
+any transaction flow. The endpoint response returns the following:
+
+- **Screening result**: High level of the screening result, either `APPROVED` or
+  `DENIED`.
+- **Screening decision**: Same information as the
+  `transactionScreeningEvaluation` field above.
+- **Detailed vendor response**: Findings from vendors to provide a deeper
+  understanding of the screening results and their source. Note: values will
+  only be available on testnet for the test cases provided on the
+  [Testing Guide](/wallets/compliance-engine/tx-screening-testing).
+
+## Workflow
+
+On testnet, transaction screening is enabled by default. For mainnet access, you
+will need to request access via the
+[Circle Console](https://console.circle.com/). Then:
+
+1. Customize your screening rules via the console to match your own risk and
+   compliance requirements:  
+   a. Check the
+   [Compliance Engine whitepaper](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/PDFs/Whitepapers/ComplianceEngine_whitepaper.pdf)
+   (Part 3) for some helpful questions to consider when establishing your
+   requirements.  
+   b. Check the
+   [Rule Management](/wallets/compliance-engine/tx-screening-rule-management)
+   guide for possible configurations.
+2. Trigger a screening evaluation:  
+   a. Through the
+   [Screen a blockchain address](/api-reference/w3s/compliance/screen-address)
+   API endpoint.  
+   b. Through generating an on-chain transaction via the
+   [Transactions API](/api-reference/wallets/developer-controlled-wallets/list-transactions).
+
+You can review detailed results for all rule matches and alerts on the
+[Circle Console](https://console.circle.com/).

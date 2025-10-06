@@ -1,0 +1,68 @@
+---
+title: API Logs
+description:
+  View API log entries in the Developer Tab to review transactions and debug any
+  errors.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_[API Logs](https://app-sandbox.circle.com/developer/logs) are transaction logs
+that enable you to view your API transaction history and debug API errors with
+no setup required. They show the most accurate representation of what Circle
+received and sent. When you send an API request, Circle stores it along with its
+associated response. On the API logs page, you can view these API logs for seven
+days after the request is sent and filter them to find the specific request you
+are looking for. You can use the API logs to debug API errors without having to
+log out of your system._
+
+- To access the logs, go to [Circle Sandbox](https://app-sandbox.circle.com) or
+  [Circle Mint](https://app.circle.com) and click the **Developer Tab > Logs**.
+
+## API Log Data Elements
+
+For each API request and response, Circle stores the following information,
+which you can retrieve and review in the Developer tab.
+
+| Field         | Description                                                                                                             |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| HTTP Status   | HTTP Status code for each request such as 200 or 400.                                                                   |
+| Path          | The path excludes the base URL.                                                                                         |
+| Request ID    | The `X-Request-Id` in the header provided in the request or is generated plus by Circle and returned in the response.   |
+| User Agent    | The User-Agent field in the request header. It is common that the HTTP library used will provide this field by default. |
+| Idempotency   | Idempotency Key sent in the request body. This is only found in POST requests.                                          |
+| Origin        | Includes the protocol (HTTP/HTTPS), the domain or IP address, and the port number if applicable.                        |
+| Time          | Timestamp of when the request was received.                                                                             |
+| Request Body  | The full request body.                                                                                                  |
+| Response Body | The full response body.                                                                                                 |
+
+<Frame>
+  <img src="/circle-mint/images/apil-dash01.jpg" />
+</Frame>
+
+## API Log Filtering
+
+To filter your search, use the search fields and popup menus at the top of the
+Circle Sandbox or Circle Mint page.
+
+<Frame>
+  <img src="/circle-mint/images/apil-searchfilters01.jpg" />
+</Frame>
+
+| Filter Name | Description                                                                                                    |
+| :---------- | :------------------------------------------------------------------------------------------------------------- |
+| Search      | Filter by request ID, resource ID, or idempotency key ID.                                                      |
+| Date Range  | Filter results by date range.                                                                                  |
+| Status      | Filter results by `succeeded` and/or `failed`. Succeeded includes all 2## and failed includes all 4## and 5##. |
+| Method      | Filter results by HTTP Method. Supports `POST`, `PUT`, `PATCH`, `DELETE`, and/or `GET`.                        |
+| Path        | Filter results by the URL path such as `/payments`.                                                            |
+
+## Data Redaction
+
+Due to the sensitivity of some data provided to Circle, including financial
+payment methods and PII data, some values will be redacted from the request and
+response payloads. Values that are redacted are replaced with the value
+`“[redacted].”` If you need access to this sensitive data, reach out to your
+Circle customer success manager.

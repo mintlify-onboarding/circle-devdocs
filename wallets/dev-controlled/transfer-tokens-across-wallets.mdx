@@ -1,0 +1,384 @@
+---
+title: Transfer Tokens from Wallet to Wallet
+description:
+  Transfer tokens across two developer-controlled wallets you've already
+  created.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+This guide outlines transferring tokens across two developer-controlled wallets.
+If you do not already have two wallets, go to the
+[create your first wallets](/wallets/dev-controlled/create-your-first-wallet)
+tutorial, where we guide you through it step by step. Also, if you do not have
+any tokens in your wallet, go to the
+[inbound transfer](/wallets/dev-controlled/receive-an-inbound-transfer) guide.
+
+Throughout this guide, you will utilize API requests. These can be made using
+cURL requests inline or Circle's API references. For instructions on navigating
+the API references, please consult this [guide](/w3s/api-references).
+
+**Note:** The following tutorial uses the Polygon Amoy
+[Testnet](https://en.wikipedia.org/wiki/Testnet) for illustration purposes. In
+production, you can create and use Circle Wallets that support crypto tokens
+with the following blockchains and standards:
+
+- Ethereum (ETH), Polygon (MATIC), and Avalanche (AVAX), both Testnet and
+  Mainnet
+- ERC-20 tokens
+- ERC-721 and ERC-1155 NFTs (non-fungible tokens)
+
+## 1. Check the Wallet's Balance
+
+Before sending funds across wallets, you will need to do two more things:
+
+1. Ensure the wallet has received the USDC or MATIC tokens.
+2. Obtain the token ID for the received USDC or MATIC. The token ID is an
+   assigned identifier that will be used for the token transfer in the upcoming
+   step.
+
+This can be done by making a request to
+[`GET /wallets/{id}/balances`](/api-reference/wallets/developer-controlled-wallets/list-wallet-balance)
+providing the ID of Wallet One from the previous step.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+// Import and configure the developer-controlled wallet SDK
+const {
+  initiateDeveloperControlledWalletsClient,
+} = require("@circle-fin/developer-controlled-wallets");
+const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+  apiKey: "<API_KEY>",
+  entitySecret: "<ENTITY_SECRET>",
+});
+
+const response = await circleDeveloperSdk.getWalletTokenBalance({
+  id: "ce714f5b-0d8e-4062-9454-61aa1154869b",
+});
+```
+
+```coffeescript Python SDK
+from circle.web3 import developer_controlled_wallets
+from circle.web3 import utils
+
+client = utils.init_developer_controlled_wallets_client(api_key=key, entity_secret=entitySecret)
+
+# create an api instance
+api_instance = developer_controlled_wallets.WalletsApi(client)
+
+try:
+    resposne = api_instance.list_wallet_ballance(id="ce714f5b-0d8e-4062-9454-61aa1154869b")
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling WalletsApi->list_wallet_ballance: %s\n" % e)
+```
+
+```curl cURL
+curl --request GET \
+     --url 'https://api.circle.com/v1/w3s/wallets/{id}/balances' \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "tokenBalances": [
+      {
+        "token": {
+          "id": "e4f549f9-a910-59b1-b5cd-8f972871f5db", // HERE
+          "blockchain": "MATIC-AMOY",
+          "name": "Polygon-Amoy",
+          "symbol": "MATIC-AMOY",
+          "decimals": 18,
+          "isNative": true,
+          "updateDate": "2023-06-29T02:37:14Z",
+          "createDate": "2023-06-29T02:37:14Z"
+        },
+        "amount": "0",
+        "updateDate": "2023-11-17T16:54:55Z"
+      },
+      {
+        "token": {
+          "id": "7adb2b7d-c9cd-5164-b2d4-b73b088274dc", // HERE
+          "blockchain": "MATIC-AMOY",
+          "tokenAddress": "0x9999f7fea5938fd3b1e26a12c3f2fb024e194f97",
+          "standard": "ERC20",
+          "name": "USD Coin",
+          "symbol": "USDC",
+          "decimals": 6,
+          "isNative": false,
+          "updateDate": "2023-10-18T14:29:44Z",
+          "createDate": "2023-10-18T14:29:44Z"
+        },
+        "amount": "10",
+        "updateDate": "2023-11-17T16:54:55Z"
+      }
+    ]
+  }
+}
+```
+
+## 2. Gas Fees (EOA Wallets Only)
+
+<Accordion title="Details">
+  
+
+{/* prettier-ignore-start */}
+
+In Web3, <Glossary term="Gas fees" /> refers to transaction fees that are always
+paid in the native currency of the blockchain network. For example, if you send
+an ERC-20 token on the Ethereum network, you must pay the transaction fee in
+Ether (ETH). Similarly, on the Polygon network, the fee would be in MATIC. To
+ensure smooth transactions, it is important to have a sufficient amount of the
+native token in your wallet.
+
+To gather tokens for gas and send MATIC from wallet to wallet, we recommend
+using the [Polygon](https://faucet.polygon.technology/)
+<Glossary term="Faucet" />. When you visit the faucet's website, you will be
+prompted to provide your wallet's address. To acquire it, make a request to
+[`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets) as
+shown below noting down Wallet One's address `wallets[0].address`.
+
+{/* prettier-ignore-end */}
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.listWallets({});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.WalletsApi(client)
+
+try:
+    resposne = api_instance.get_wallets()
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling WalletsApi->get_wallets: %s\n" % e)
+```
+
+```curl cURL
+curl --request GET \
+     --url 'https://api.circle.com/v1/w3s/wallets' \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "wallets": [
+      {
+        "id": "17c411ba-7aef-4c5d-a4f8-951a60ce7fb1",
+        "state": "LIVE",
+        "walletSetId": "018b42d3-8934-7ad5-8ec7-a34179a7e6e5",
+        "custodyType": "DEVELOPER",
+        "address": "0x09e768def76316d8f127efb73047a046598fef7b",
+        "blockchain": "MATIC-AMOY",
+        "accountType": "EOA",
+        "updateDate": "2023-10-18T12:48:45Z",
+        "createDate": "2023-10-18T12:48:45Z"
+      },
+      {
+        "id": "8172d817-32b5-4f52-b071-4a8d789e08fc",
+        "state": "LIVE",
+        "walletSetId": "018b42d3-8934-7ad5-8ec7-a34179a7e6e5",
+        "custodyType": "DEVELOPER",
+        "address": "0x48f2d63f13f62ff1e3ab9dbda56f3e5c531557b2",
+        "blockchain": "MATIC-AMOY",
+        "accountType": "EOA",
+        "updateDate": "2023-10-18T12:48:45Z",
+        "createDate": "2023-10-18T12:48:45Z"
+      }
+    ]
+  }
+}
+```
+</Accordion>
+
+## 3. Transfer Tokens
+
+Now, you can make on-chain transfers from wallet to wallet. This is done by
+making a request to
+[`POST /developer/transactions/transfer`](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer)
+with the following request body parameters.
+
+1. **`idempotencyKey`**: Universally unique identifier (UUID v4) idempotency
+   key. This key is utilized to ensure exactly-one execution of a mutating
+   requests.
+2. **`tokenId`**: Token ID for the token that will be transferred. In this case,
+   you will provide the MATIC token ID from the previous step.
+3. **`walletId`**: Wallet ID of the source wallet where the token amount will be
+   transferred from. In this case, you will provide Wallet One's ID
+   `wallets[0].id` from step one.
+4. **`destinationAddress`**: Wallet address that will receive the tokens. In
+   this case, use Wallet Two's address`wallets[1].id` from step one.
+5. **`amounts`**: The amount of tokens to be sent. In this case, we will use a
+   minimal amount.
+6. **`feeLevel`**: A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH)
+   that will be used to pay gas for the transaction. Calculated based on network
+   traffic, supply of validators, and demand for transaction verification.
+   Estimates for each fee level can be obtained through the estimate fee API
+   call.
+7. **`entitySecretCiphertext`**: The Entity Secret Ciphertext is an RSA
+   encryption value generated from your Entity Secret and Circle's public key.
+   This asymmetrically encrypted value is sent in API requests like wallet
+   creation or transaction initiation to ensure secure critical actions. This
+   process enables secure usage of the Entity Secret to ensure it cannot be
+   easily accessed or misused.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.createTransaction({
+  walletId: "ce714f5b-0d8e-4062-9454-61aa1154869b",
+  tokenId: "e4f549f9-a910-59b1-b5cd-8f972871f5db",
+  destinationAddress: "0xc90e058234d4b2db799d787a855ec68d801a53a3",
+  amounts: [".01"],
+  fee: {
+    type: "level",
+    config: {
+      feeLevel: "MEDIUM",
+    },
+  },
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.TransactionsApi(client)
+
+try:
+    request = developer_controlled_wallets.CreateTransferTransactionForDeveloperRequest.from_dict({
+        "walletId": 'ce714f5b-0d8e-4062-9454-61aa1154869b',
+        "tokenId": 'e4f549f9-a910-59b1-b5cd-8f972871f5db',
+        "destinationAddress": '0xc90e058234d4b2db799d787a855ec68d801a53a3',
+        "amounts": ['.01'],
+        "feeLevel": 'MEDIUM'
+    })
+    resposne = api_instance.create_developer_transaction_transfer(request)
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->create_developer_transaction_transfer: %s\n" % e)
+```
+
+```curl
+curl --request POST \
+     --url 'https://api.circle.com/v1/w3s/developer/transactions/transfer' \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header 'authorization: Bearer <API_KEY>' \
+     --data '
+{
+  "idempotencyKey": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+  "walletId": "ce714f5b-0d8e-4062-9454-61aa1154869b",
+  "tokenId": "e4f549f9-a910-59b1-b5cd-8f972871f5db",
+  "destinationAddress": "0xc90e058234d4b2db799d787a855ec68d801a53a3",
+  "amounts": [
+    ".01"
+  ],
+  "feeLevel": "MEDIUM",
+  "entitySecretCiphertext": "XVXDshXQAjJSkDX1+9veL+pRYaPhYIab4os7SoLPwgXfDym6bF5fW7I07WAB4jSzkQombZ3bfDKEcLhg2C296WCuD7kJM8e6UNrzTeC3d6Pkv+BlOf45N8j/6njAGaBFIu9TVbmSSvK/Nxj0IwTOrEAumXyl2os/O0HWcj5xQMRVCx3p1JzJuwyZVgbgcsvMlzqOYuEo+rmAoPHwYQV5wgf0iYt+CHgsA8rLI/jUpQhRkwTxPXpETC//Qytj9nVfkB8YWMFfl5NMyjADiae5tQG20nP9pCR+cL7lRRQx8QUpZWZpo07v5usw7iTyakpDULi2KkKVI6TsoAMgpIyg6UUxIFFoIRVAW91jQTZ+YVGqmDBmX9TeVk+G/9Q2XGGgxsw0kmr7QCTe4asoCnTvGL1cdmwWKZO3ECZjk66MRB/ZF0YeNIb4HmebLvx4o4d6pkkdaGAfziPgz3GNE4Pz6fd3+t0R58Ha3rfd00kvYG04EnRBwM9mB2PXpo+qxLbbmNIIpm3DthbFRSnHALwMlPxNfieD9x2XB49W3JJhnt0gEMTLSG93cIFH2PCdDPET9ZHlyOaqNMJpLVzU//6w8s03QL4Y0D5j+G901hjKubwTafOQmVHRPOblhs8bakFOLprh6j+WePPtqcGC3vVyLKMObb8tOPAdfr700TdMviA="
+}
+'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "id": "1af639ce-c8b2-54a6-af49-7aebc95aaac1",
+    "state": "INITIATED"
+  }
+}
+```
+
+## 4. Check the Transfer State
+
+Transfers are a type of blockchain and, therefore, are asynchronous. To ensure
+the transfer has successfully reached its destination, make a request to
+[`GET /transactions/{id}`](/api-reference/wallets/developer-controlled-wallets/get-transaction)
+using the ID from the transfer in the previous step.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.getTransaction({
+  id: "1af639ce-c8b2-54a6-af49-7aebc95aaac1",
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.TransactionsApi(client)
+
+try:
+    resposne = api_instance.get_transaction(id='1af639ce-c8b2-54a6-af49-7aebc95aaac1')
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
+```
+
+```curl cURL
+curl --request GET \
+     --url 'https://api.circle.com/v1/w3s/transactions/{id}' \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "transaction": {
+      "id": "1af639ce-c8b2-54a6-af49-7aebc95aaac1",
+      "blockchain": "MATIC-AMOY",
+      "tokenId": "e4f549f9-a910-59b1-b5cd-8f972871f5db",
+      "walletId": "ce714f5b-0d8e-4062-9454-61aa1154869b",
+      "sourceAddress": "0xf5c83e5fede8456929d0f90e8c541dcac3d63835",
+      "destinationAddress": "0xc90e058234d4b2db799d787a855ec68d801a53a3",
+      "transactionType": "OUTBOUND",
+      "custodyType": "DEVELOPER",
+      "state": "COMPLETE",
+      "amounts": ["0.01"],
+      "nfts": null,
+      "txHash": "0xc0337cad6164f22eeb37af3e21488f77e7bc5ba4a92a2293e0a8bb8beaa61c88",
+      "blockHash": "0xbcaf5d0dc5d50250a137808ca81eb4abebf13a639398c44660b35e387e5ad2d3",
+      "blockHeight": 38738377,
+      "networkFee": "0.000035910000189",
+      "firstConfirmDate": "2023-08-07T14:41:02Z",
+      "operation": "TRANSFER",
+      "feeLevel": "MEDIUM",
+      "estimatedFee": {
+        "gasLimit": "21000",
+        "baseFee": "0.000000016",
+        "priorityFee": "1.709999993",
+        "maxFee": "1.710000025"
+      },
+      "refId": "",
+      "abiParameters": null,
+      "createDate": "2023-08-07T14:40:54Z",
+      "updateDate": "2023-08-07T14:42:04Z"
+    }
+  }
+}
+```
+
+Once the `transaction.state` is `COMPLETE` you can rest assured that the token
+has moved from wallet one to wallet two.
+
+You can also check the transaction using the `txHash` on
+[Polygon Amoy explorer](https://www.oklink.com/amoy) and inspect the balance of
+each wallet using
+[`GET /wallets/{id}/balances`](/api-reference/wallets/developer-controlled-wallets/list-wallet-balance).

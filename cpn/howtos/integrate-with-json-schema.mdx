@@ -1,0 +1,63 @@
+---
+title: "How-to: Integrate with JSON Schema"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Integrate with JSON Schema"
+---
+
+To facilitate the effective passing of RFI data, CPN provides
+[JSON Schema](/cpn/references/json-schema) that gives a clear, machine-readable
+contract you can validate your response against. This guide provides information
+about how to integrate with the JSON Schema returned by the
+[get details for an RFI endpoint](/api-reference/cpn/cpn-platform/get-rfi).
+
+## Steps
+
+Use the following steps to retrieve JSON Schema for a given quote and respond
+with the required information.
+
+### Step 1: Get the JSON Schema
+
+Call the [get details for an RFI](/api-reference/cpn/cpn-platform/get-rfi)
+endpoint. The API returns a JSON Schema object that defines the fields that must
+be transmitted in the RFI response.
+
+### Step 2: Build a JSON response
+
+Using the schema as a blueprint, construct your RFI data as a JSON object. For
+example, if the schema requires the `address` field, you should create a nested
+JSON object for the address, as defined by the schema's `properties` and
+`$defs`.
+
+### Step 3: Validate the response
+
+Before encrypting the response for transit, CPN expects that you perform
+client-side validation on the data. Using a JSON Schema validation library,
+check your constructed JSON objects against the schemas from Step 1. This should
+catch any structural or formatting errors before you interact with the CPN API.
+
+### Step 4: Encrypt the response
+
+Once validated, convert your JSON objects to strings and encrypt them. The steps
+outlined in
+[How-to: Encrypt Travel Rule and Beneficiary Account Data](/cpn/howtos/encrypt-travel-rule-beneficiary-data)
+also apply to encrypting RFI data for transit.
+
+### Step 5: Transmit the payload
+
+Send the encrypted payload to the
+[submit RFI data endpoint](/api-reference/cpn/cpn-platform/submit-rfi).
+
+The following is an example payload:
+
+```json
+{
+  "rfi": {
+    "version": 1,
+    "data": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhHQ00iLCJlcGsiOnsiY3J2IjoiUC0yNTYiLCJrdHkiOiJFQyIsIngiOiI1TEtTbUtsNmVYV0dQNHlGb2tVaks4RGppU0l5YWpQdzJ6UUp1YVhFbEZzIiwieSI6IlRVT29MTV8wc294b0UzYVFmSExlUzRlRkZ3RU9tZ1VDRUh1eDVRMXdVYTQifX0.kVGnfB8eIqxq3bMvhedxUmZvkCrRfQOy.bTUOc_ilvZjb9VYP.pOS6Ul8Jnp_pijWtaQYC0b1NLN1Nc-t_MTsfj5EZy6s62ijQWGtAoo3enwx3gOpXIQDIIF7c-F3KSrVO33a5RIF8a4tvU7pRk_JDKVgHFVpSzvOaUHNHsMUvvctAncx1SneVE_gnm5ATkWO4_1i7irTkb-cjWLmvJ1vVEyJiC9ZgsEdK_eBAewpZTyyKxvoxBpo8IZ3g7qax712TvMsNpIJ_faQmsyRKwt2kBxDPyrWILcIvS1qij6uVOsEP2R6LXbWfBqVbklsgNPWjndXSmOJmsTdBjFzublMLSHmLxkfaD9gt3DxgD16rqDlKO9KmaRF3r322VumP4hrlfOsZUHHcVGeTpgjZwI9jrj76PiYtyCOeR7-kz97PamqrOQAfWRE8Rcp8QdCO6yFHFe3N2pI5kWakH783DVDAsm_x2VY_V8vCDe-xkIoJOabx3LqaxHq8_x_ATXZ01NX-5F9VqgtE73FOIGhinxt8G-Kfxvdlx6gv-QSfBvigVuoR1OCSPNB3OHirEKXY3IjWnjZuENNnXl9CqrCsHQZS1eb1KcaIkg_2NF6gi54htX6ijpUtyXS03IGZW6Bn6CSWqmmvMStIAIYO-8ZJrrleeCfU6WY5KjFlIvN6th-tE41JNJWS9mVqhjzwPC7GQ5bGkqq2zJKhALOuN_0oG4jXOYo1s3YAn-xw3kpq46fYyUrX4nLSocaKDeKOMMqh57_jcMDmHrXdmjlHGPMrBPdU_deub121c3ofTKgJg4KRC8mcTYcXe71uflARAr24msd9A_IPPVbhfvs06HOVKL2-jK6r_WL_9vWU3q-OPQHU3eWUOhI18vZ0CkGqJjtEKyBBmc4inWEbrsO02P2Zd5VTBCIoAaNrpY6n5mNyKPo6-PyrxNy27d6u2yoZvjG6QSuUO9DaX4AyGsE87agh_XgLW9RPXfcZQ7F5aUCQwEA0cF9YSEaYYBGziS7oQ99D1th1MQqEPcFxD5YPdyaPykU3Zbf5T8HSZz1risMbgQu97eXoarxm801pdw5cuKijqj39BVrgdLUfaQ9P-iGWcVJk8ZVXfHK3JHGaBuIjYNIy5lHF3TsKgV2x-wWxqER9vPdgejAGirkxHQaKPt2rg0rmbk3R7YTibT7yTKwO1PRiewi0lxKWvZqDbCoedyuYZCR0vup4S1ZVYX6uGBn-F5ODrnLoAZTbnV1tjDJgxFpA8EKsXWTrc78XH0715lY2OnbDtBOLMbxFJjK1_YDRU2UMkZTEx5BrhR4YibBd4-BCZT-dWTxanOHMxTKl823tyggY5lBQ8DlsLj1qZpOxKWYTM8WrLCZa7vZo9FmXw38FxYrqbwespe7xdS7onfmlI4Ug92eTtZ31FbZfcqOiAGgH9Etkj1M9scP0is6zVC6cIUQzC3NmHNxNtPv6XjMUWigijosvs7x9-qyVCqzJZlEGck2BJ6Uk7ug9QKcxHtaWgtuHPnA77KVE3Vi_dikYaXzxIdgjrGtqqUhXEhrAFkesvJ0UeH1ac94e-R8UrJX75w4DDoRyaFxQhDFdHVtD0ceVN7ekYJkmoS2eSAzWDwsKUvUrmafcfpQ922tZGq0RvnMh39SWy6I6xRFyYHarra24Gbawa5_THjB8TkHJ180giPC3KQAa_6Vz8CP-fks6_-MdGXPW0SYhNghNi_14ZXQ3rZYHaTICgeHhBfhJ4MQ6OlRkiRCrIkM5WSOTS_H715aeyUCL-dlZ0TiG2DpAIXkN1KMRp0jL_W12pg5SjKFAlOGnQgkgj9rO_C7pLxMyIhgEUKPHXMGN6Q7tpVhAAyTl0tabd7cvyWnf5L4UiyIpvb1qrt1bY6-VNA4KXz6Y5uiiBYFF_FIN3K6YZCT4l0zuh_gxmP9eba7zM5kgas1tr1IxYWI-mQiE9Rb8rX0hqXpMj27h9Mf_Sn56TJeEmW8d8x2Xy2Nb7KU9vQO-6uc_taXP0Lv5LFcSwZkdVe7FOeZD-GoaNDly9MdhXI4ELP4MOZXZFJeN7aCJvJeLRBPWnoM2aazDwtlA_KfhZVFtCsKKjJazv6J9h6CDHAm7NuexVJiPdtS1yknQDWrIBfneaLJasmtuhuAbRPtiTvvhQOXt51q0G7sjCSmmeNMwb5fFphe4wLJNmsbdgMFDcUVzb0ImIArCxqBEEK8uuRGcYaRifaLv0zkk29NAT99Ux580zaeN_x7aIMpJTt7jLP0-HZ-QU3MAGg3PLJ3_Oly6ABoULkEkmRhF0TtpU8z-kmmN6FtmzZK74kYEC75smgVTnnJK1kBdsZw9cxHeUx8aDJGrS3OK-uYN0dPJls2LC7X1rHD7ES179nPVBeJA2REm-jSlhVlV_I7JrVzlcXs0Fhx0hX-OgMKz_yQNHnM6RbgGnSLDcvND7vXqkEMgHeDRomhU1hMeu0DymctTKawtzIkV7MYwoibLDUeMvaXN8MicMs64D8I3Ld7BLtFf9o8rMeeNJ0Om7xdl9SGD2RYAep0cxw2rEIIr859e1vutBuvrrMz09dZKd05t1lu0jRztkQzUW9N-VZh9muTAoh_s3NrF2ZTFnRAfzxohwNLxxmX-Ov94FXBhuRHBQXb931I5m2URglrYcoAZ8RFoiAWW2AkHcyb5PRoQIt-LQhOM-bcn1VB44Okh10jqWpGbLno6AvE5FcoRVcspb0tor9EbksW2cipoypcaat5NhQgvo2rAPmkHGi8iB-z_xWORvUkaA2xknNW59myO6qTvjYQ_1P1ESbRO30nUeqgP3VoZrC1-bi9IbgSi-na31xEhdr-ZGuvtRSzyhWwqfviJgSMZ6_kkGW3gUI4ldurTwss6gDHWYmdV-lHtPMfYuD2KMQk1EyJ-3vZx0syLKDACL37HqAYvkW5GiOxrK9cNrSInQ8rZMDkXsaCZMEtvs03Qw2DyCBdoFeXPvFHJ6Vetou-7Oo6rdlmSkt5KdA-w9KKVIAt9WtYxNc-wjFm-vOMcOHb_xxzacDzYFJj8NxdW8GaVdrCvh3j5Yakr_3vSvRM5rpzQKMqw-B53SWV3oOHYu29qso5zSTz-dvAlZUL8Z1a3s13qdwhUkkRexIi6oTU0Da21pT-gCan2jSY_VKR8JdirKTLocn74JZ3InF8iH8XhOD0X7ySIbB69HqMLYRd9r13q2odfJ3cN1CWSF71zgIuZoYSbkO9DeFvCImA-WEIWrP1kJiYlpJi8VnFNQs8XWIxdCydft-8zvoXZbi0MoNt3kJExbKx7dReHx6B-6iwjuW8-o5RbeMvdTIYTp-y6YPsFhcVCvTlS7IefXqG4G3OrnNc5JIVnvdYXWCWUdWguiKdqB6FL_LSWOtsWrB6nIv69WP1WJJSa0Oa_EkxEwXK1BGH9-QpMqkP6rATSvsbaTywfCxqUqm7SzYH81lSCIvI5J7bWX5blk9rNZbp3aSeEpVRm03vwLrgUHLv9vMAopNnw5fZGKfcg3I5ZWYHNQo5BZk9LVpebMBYGijwNDnuFu08eF7ShlEzy50NsvgeDxZtfUVx8cviYn0MoTJBPlz1mXRSIr3zDIpefxDGnsQ1KK8LTi0Gbnt_ybeiT4yTmajrPLE4566D6AQIdDmCg_RsBtB_lAw.S2qu0MNMu2WNiEYoHh25ww"
+  }
+}
+```

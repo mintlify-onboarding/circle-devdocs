@@ -1,0 +1,1147 @@
+---
+title: Modular Wallets Android SDK
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Android Mobile SDK"
+---
+
+Welcome to Circle's modular wallets Android SDK documentation. The SDK enables
+developers to integrate modular wallets to build secure, scalable Web3
+applications by leveraging tools for key management, smart account interactions,
+gasless transactions, and blockchain communication.
+
+## Installation
+
+Follow the steps provided in the
+[GitHub repository](https://github.com/circlefin/modularwallets-android-sdk#installation)
+to install and set up the modular wallets Android SDK.
+
+<Note>
+**Java Developers:**
+
+If you're building with **Java**, review the integration notes provided in the
+[Calling Kotlin suspending functions from Java](#calling-kotlin-suspending-functions-from-java)
+section before proceeding.
+</Note>
+
+## API Documentation
+
+The following sections detail the SDK's transport mechanisms, client
+interactions, account management, utility functions, and supported blockchain
+networks.
+
+### Transports
+
+#### Interface: HttpTransport
+
+- Description: Interface representing a transport mechanism for making RPC
+  requests.
+
+##### Methods
+
+###### request
+
+- Description: Sends an RPC request and returns the response.
+- Parameters:
+  - req: RpcRequest - The RPC request to be sent.
+  - Returns: Response\<RpcResponse\>
+
+#### Class: HttpRpcClientOptions
+
+- Description: Data class representing HTTP RPC client options.
+- Properties:
+  - headers: Map\<String, String\>? - Optional headers to include in the HTTP
+    requests.
+
+#### Function: toModularTransport
+
+- Description: Creates a modular HTTP transport instance.
+- Parameters:
+  - context: Context - The application context.
+  - clientKey: String - The client key for authorization.
+  - url: String - The URL for the HTTP transport.
+- Returns: HttpTransport - The configured HTTP transport instance.
+
+#### Function: toPasskeyTransport
+
+- Description: Creates an HTTP transport instance.
+- Parameters:
+  - context: Context - The application context.
+  - clientKey: String - The client key for authorization.
+  - url: String - The URL for the HTTP transport.
+- Returns: HttpTransport - The configured HTTP transport instance.
+
+#### Function: http
+
+- Description: Creates an HTTP transport instance.
+- Parameters:
+  - context: Context - The application context.
+  - url: String - The URL for the HTTP transport.
+  - config: HttpRpcClientOptions - The configuration options for the HTTP
+    transport (default is an empty configuration).
+- Returns: HttpTransport - The configured HTTP transport instance.
+
+### Clients
+
+#### Class: Client
+
+- Description: Represents a client that interacts with a blockchain, with the
+  following derived classes:
+  - BundlerClient
+  - PaymasterClient
+- Properties:
+  - chain: Chain - The blockchain that the client interacts with.
+  - transport: Transport - The transport mechanism used for making RPC requests.
+
+#### Class: BundlerClient
+
+- Description: Client for interacting with the Bundler API. A Bundler Client is
+  an interface to interact with ERC-4337 Bundlers and provides the ability to
+  send and retrieve User Operations through Bundler Actions.
+- Inheritance: Inherits from Client
+
+##### Methods
+
+###### estimateUserOperationGas
+
+- Description: Estimates the gas values for a User Operation to be executed
+  successfully.
+- Parameters:
+  - account: SmartAccount - The Account to use for User Operation execution.
+  - calls: Array\<EncodeCallDataArg\> - The calls to execute in the User
+    Operation.
+  - paymaster: Paymaster? - Sets Paymaster configuration for the User Operation.
+  - estimateFeesPerGas: (suspend (SmartAccount, BundlerClient, UserOperationV07)
+    -\> EstimateFeesPerGasResult)? - Prepares fee properties for the User
+    Operation request. Not available in Java.
+- Returns: EstimateUserOperationGasResult
+
+###### getChainId
+
+- Description: Returns the chain ID associated with the current network
+- Returns: Long - The current chain ID.
+
+###### getSupportedEntryPoints
+
+- Description: Returns the EntryPoints that the bundler supports.
+- Returns: ArrayList\<String\> - The EntryPoints that the bundler supports.
+
+###### getUserOperation
+
+- Description: Retrieves information about a User Operation given a hash.
+- Parameters:
+  - userOpHash: String - User Operation hash.
+- Returns: GetUserOperationResult - User Operation information.
+
+###### getUserOperationReceipt
+
+- Description: Returns the User Operation Receipt given a User Operation hash.
+- Parameters:
+  - userOpHash: String - User Operation hash.
+- Returns: UserOperationReceipt - The User Operation receipt.
+
+###### sendUserOperation
+
+- Description: Broadcasts a User Operation to the Bundler.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack
+  - account: SmartAccount - The Account to use for User Operation execution.
+  - calls: Array\<EncodeCallDataArg\>? - The calls to execute in the User
+    Operation
+  - partialUserOp: UserOperationV07- (default: UserOperationV07()) The partial
+    User Operation to be completed .
+  - paymaster: Paymaster? - Sets Paymaster configuration for the User Operation.
+  - estimateFeesPerGas: (suspend (SmartAccount, BundlerClient, UserOperationV07)
+    -\> EstimateFeesPerGasResult)? - Prepares fee properties for the User
+    Operation request. Not available in Java.
+- Returns: String - The hash of the sent User Operation.
+
+###### prepareUserOperation
+
+- Description: Prepares a User Operation for execution and fills in missing
+  properties.
+- Parameters:
+  - account: SmartAccount - The Account to use for User Operation execution.
+  - calls: Array\<EncodeCallDataArg\>? - The calls to execute in the User
+    Operation
+  - partialUserOp: UserOperationV07 - The partial User Operation to be completed
+  - paymaster: Paymaster? - Sets Paymaster configuration for the User Operation.
+  - estimateFeesPerGas: (suspend (SmartAccount, BundlerClient, UserOperationV07)
+    -\> EstimateFeesPerGasResult)? - Prepares fee properties for the User
+    Operation request. Not available in Java.
+- Returns: UserOperationV07- The prepared User Operation.
+
+###### waitForUserOperationReceipt
+
+- Description: Waits for the User Operation to be included on a Block (one
+  confirmation), and then returns the User Operation receipt.
+- Parameters:
+  - userOpHash: String - A User Operation hash.
+  - pollingInterval: Long (default: 4000) - Polling frequency (in ms).
+  - retryCount: Int (default: 6) - The number of times to retry.
+  - timeout: Long? - Optional timeout (in ms) to wait before stopping polling.
+- Returns: UserOperationReceipt - The User Operation receipt.
+
+###### getBalance
+
+- Description: Retrieves the balance of the specified address at a given block
+  tag or block number.
+- Overloaded Methods:
+  - Parameters:
+    - address: String - The address to query the balance for. Only wallet
+      addresses that registered with the using client key can be retrieved
+    - blockNumber: BigInteger - The balance of the account at a block number.
+  - Returns: BigInteger - The balance of the address in wei.
+  - Parameters:
+    - address: String - The address to query the balance for. Only wallet
+      addresses that registered with the using client key can be retrieved
+    - blockTag: String (default: "latest") - The balance of the account at a
+      block tag.
+  - Returns: BigInteger - The balance of the address in wei.
+
+###### getBlockNumber
+
+- Description: Returns the number of the most recent block seen.
+- Returns: BigInteger - The number of the block.
+
+###### getGasPrice
+
+- Description: Returns the current price of gas (in wei).
+- Returns: BigInteger - The gas price (in wei).
+
+###### call
+
+- Description: Executes a new message call immediately without submitting a
+  transaction to the network.
+- Parameters:
+  - from: String? - The Account to call from.
+  - to: String - The contract address or recipient.
+  - data: String - A contract hashed method call with encoded args.
+- Returns: String - The call data.
+
+###### getCode
+
+- Description: Retrieves the bytecode at an address.
+- Overloaded Methods:
+  - Parameters:
+    - address: String - The contract address.
+    - blockNumber: BigInteger - The block number to perform the bytecode read
+      against.
+  - Returns: String - The contract's bytecode.
+  - Parameters:
+    - address: String - The contract address.
+    - blockTag: String (default: "latest") - The block tag to perform the
+      bytecode read against.
+  - Returns: String - The contract's bytecode.
+
+###### estimateMaxPriorityFeePerGas
+
+- Description: Returns an estimate for the max priority fee per gas (in wei) for
+  a transaction to be likely included in the next block. The Action will either
+  call eth_maxPriorityFeePerGas (if supported) or manually calculate the max
+  priority fee per gas based on the current block base fee per gas + gas price.
+- Returns: BigInteger - An estimate (in wei) for the max priority fee per gas.
+
+###### getBlock
+
+- Description: Returns information about a block at a block number, hash or tag.
+- Overloaded Methods:
+  - Parameters:
+    - includeTransactions: Boolean (default: false) - Whether or not to include
+      transactions (as a structured array of Transaction objects).
+    - blockNumber: BigInteger - Information at a given block number.
+  - Returns: Block - Information about the block.
+  - Parameters:
+    - includeTransactions: Boolean (default: false) - Whether or not to include
+      transactions (as a structured array of Transaction objects).
+    - blockTag: String (default: "latest") - Information at a given block tag.
+  - Returns: Block - Information about the block.
+
+#### Class: PaymasterClient
+
+- Description: Client for interacting with the Paymaster API. A Paymaster Client
+  is an interface to interact with
+  [ERC-7677 compliant Paymasters](https://eips.ethereum.org/EIPS/eip-7677) and
+  provides the ability to sponsor User Operation gas fees.
+- Inheritance: Inherits from Client
+
+##### Methods
+
+###### getPaymasterData
+
+- Description: Retrieves paymaster-related User Operation properties to be used
+  for sending the User Operation.
+- Parameters:
+  - userOp: T - The User Operation to retrieve Paymaster data for. Type T must
+    be the subclass of UserOperation.
+  - entryPoint: EntryPoint - EntryPoint address to target.
+  - context: Map\<String, Any\>? - Paymaster specific fields.
+- Returns: GetPaymasterDataResult - Paymaster-related User Operation properties.
+
+###### getPaymasterStubData
+
+- Description: Retrieves paymaster-related User Operation properties to be used
+  for User Operation gas estimation.
+- Parameters:
+  - userOp: T - The User Operation to retrieve Paymaster stub data for. Type T
+    must be the subclass of UserOperation.
+  - entryPoint: EntryPoint - EntryPoint address to target.
+  - context: Map\<String, Any\>? - Paymaster specific fields.
+- Returns: GetPaymasterStubDataResult - Paymaster-related User Operation
+  properties.
+
+### Accounts
+
+#### Functions: toCircleSmartAccount
+
+- Description: Create a Circle smart account.
+- Parameters:
+  - client: Client - The client used to interact with the blockchain.
+  - owner: Account\<SignResult\> - The owner account associated with the Circle
+    smart account.
+  - version: String (default: "circle_passkey_account_v1") - The version of the
+    Circle smart account.
+  - name: String (default: `passkey-{timestamp}`, for example,
+    `2025-01-01T00:00:00.000Z`) - The wallet name assigned to the newly
+    registered account.
+- Returns: CircleSmartAccount
+
+#### Functions: toWebAuthnAccount
+
+- Description: Creates a WebAuthn account.
+- Parameters:
+  - credential: WebAuthnCredential - The WebAuthn credential associated with the
+    account.
+- Returns: WebAuthnAccount - The created WebAuthn account.
+
+#### Functions: toWebAuthnCredential
+
+- Description: Logs in or registers a user and returns a WebAuthnCredential.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack
+  - transport: Transport - The transport used to communicate with the RP API.
+  - userName: String? (required for WebAuthnMode.Register) - The username of the
+    user.
+  - mode: WebAuthnMode - The mode of the WebAuthn credential.
+- Returns: WebAuthnCredential
+
+#### Class: WebAuthnCredential
+
+- Description: Represents a P-256 WebAuthn Credential.
+- Properties:
+  - id: String - The unique identifier for the credential.
+  - publicKey: String - The public key associated with the credential.
+  - raw: PublicKeyCredential - The public key associated with the credential.
+  - rpId: String - The relying party identifier.
+
+#### Abstract Class: Account\<T\>
+
+- Description: Abstract class representing an account.
+- Type Parameter: T - The type of the signed data.
+
+##### Methods
+
+###### getAddress
+
+- Description: Retrieves the address of the account.
+- Returns: The address of the account.
+
+###### sign
+
+- Description: Signs the given hash.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - messageHash: String - The hash to sign.
+- Returns: The signed data of type T.
+
+###### signMessage
+
+- Description: Signs the given message.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - message: String - The message to sign.
+- Returns: The signed message of type T.
+
+###### signTypedData
+
+- Description: Signs the given typed data.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - typedData: String - The typed data to sign.
+- Returns: The signed typed data of type T.
+
+#### Class: WebAuthnAccount
+
+- Description: Represents a WebAuthn account for handling authentication
+  credentials and signing. WebAuthn Accounts are commonly used as
+  [Smart Account](https://viem.sh/account-abstraction/accounts/smart) Owners to
+  sign User Operations and messages on behalf of the Smart Account.
+- Inheritance: Inherits from Account.
+
+##### Methods
+
+###### getAddress
+
+- Description: Retrieves the public key address associated with the WebAuthn
+  credential.
+- Returns: String - The public key associated with the WebAuthn credential.
+
+###### sign
+
+- Description: Signs the given hash.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack
+  - messageHash: String - The hash to sign.
+- Returns: SignResult - The result of the signing operation.
+
+###### signMessage
+
+- Description: Signs the given message.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack
+  - message: String - The message to sign.
+- Returns: SignResult - The result of the signing operation.
+
+###### signTypedData
+
+- Description: Signs the typed data.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack
+  - typedData: String - The typed data to sign.
+- Returns: SignResult - The result of the signing operation.
+
+#### Abstract Class: SmartAccount
+
+- Description: A Smart Account is an account whose implementation resides in a
+  Smart Contract, and implements the
+  [ERC-4337 interface](https://eips.ethereum.org/EIPS/eip-4337#account-contract-interface).
+- Properties:
+  - client: Client - The client used to interact with the blockchain.
+  - entryPoint: EntryPoint - The entry point for the smart account.
+  - userOperation: UserOperationConfiguration? - Configuration for the user
+    operation.
+
+##### Methods
+
+###### getAddress
+
+- Description: Returns the address of the account.
+- Returns: String - The address of the smart account.
+
+###### encodeCalls
+
+- Description: Encodes the given call data arguments.
+- Parameters:
+  - args: Array\<EncodeCallDataArg\> - The call data arguments to encode.
+- Returns: String - The encoded call data.
+
+###### getFactoryArgs
+
+- Description: Returns the factory arguments for the smart account.
+- Returns: Pair\<String, String\>? - A pair containing the factory address and
+  factory data.
+
+###### getNonce
+
+- Description: Returns the nonce for the smart account.
+- Parameters:
+  - key: BigInteger? - Optional key to retrieve the nonce for.
+- Returns: BigInteger - The nonce of the smart account.
+
+###### getStubSignature
+
+- Description: Returns the stub signature for the given user operation.
+- Parameters:
+  - userOp: T - The user operation to retrieve the stub signature for. Type T
+    must be the subclass of UserOperation.
+- Returns: String - The stub signature.
+
+###### sign
+
+- Description: Signs the given hash via the Smart Account's owner.
+- Parameters:
+  - context: Context - The context instance.
+  - messageHash: String - The hash to sign.
+- Returns: String - The signed string.
+
+###### signMessage
+
+- Description: Signs the given message.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - message: String - The message to sign.
+- Returns: String - The signed message.
+
+###### signTypedData
+
+- Description: Signs the given typed data.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - typedData: String - The typed data to sign.
+- Returns: String - The signed typed data.
+
+###### signUserOperation
+
+- Description: Signs the given user operation.
+- Parameters:
+  - context: Context - The context in which the signing operation is performed.
+  - chainId: Long - The chain ID for the user operation. Default is the chain ID
+    of the client.
+  - userOp: UserOperationV07 - The user operation to sign.
+- Returns: String - The signed user operation.
+
+#### Class: CircleSmartAccount
+
+- Description: Represents a Circle smart account.
+- Properties:
+  - client: Client - The client used to interact with the blockchain.
+  - owner: Account\<SignResult\> - The owner account associated with the Circle
+    smart account.
+  - entryPoint: EntryPoint - The entry point for the smart account.
+  - userOperation: UserOperationConfiguration? - Configuration for the user
+    operation.
+- Inheritance: Inherits from SmartAccount.
+
+##### Methods
+
+###### getAddress
+
+- Description: Returns the address of the Circle smart account.
+- Returns: String - The address of the Circle smart account.
+
+###### encodeCalls
+
+- Description: Encodes the given call data arguments.
+- Parameters:
+  - args: Array\<EncodeCallDataArg\> - The call data arguments to encode.
+- Returns: String - The encoded call data.
+
+###### getFactoryArgs
+
+- Description: Returns the factory arguments if the account is not deployed.
+- Returns: Pair\<String, String\>? - The factory arguments or null if already
+  deployed.
+
+###### isDeployed
+
+- Description: Checks if the account is deployed.
+- Returns: Boolean - True if the account is deployed, false otherwise.
+
+###### getNonce
+
+- Description: Returns the nonce for the Circle smart account.
+- Parameters:
+  - key: BigInteger? - Optional key to retrieve the nonce for.
+- Returns: BigInteger -The nonce of the Circle smart account.
+
+###### getStubSignature
+
+- Description: Returns the stub signature for the given user operation.
+- Parameters:
+  - userOp: T -The user operation to retrieve the stub signature for. Type T
+    must be the subclass of UserOperation.
+- Returns: String - The stub signature.
+
+###### sign
+
+- Description: Signs the given hash via the Smart Account's owner.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack.
+  - messageHash: String - The hash to sign.
+- Returns: String - The signed string.
+
+###### signMessage
+
+- Description: Signs the given message using the
+  [EIP-191 signed data standard](https://eips.ethereum.org/EIPS/eip-191).
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack.
+  - message: String - The message to sign.
+- Returns: String - The signed message.
+
+###### signTypedData
+
+- Description: Signs the given typed data.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack.
+  - typedData: String - The typed data to sign.
+- Returns: String - The signed typed data.
+
+###### signUserOperation
+
+- Description: Signs the given user operation.
+- Parameters:
+  - context: Context - The context used to launch framework UI flows; use an
+    activity context to make sure the UI is launched within the same task stack.
+  - chainId: Long - The chain ID for the user operation. Default is the chain ID
+    of the client.
+  - userOp: UserOperationV07 - The user operation to sign.
+- Returns: String - The signed user operation.
+
+###### getInitCode
+
+- Description: Returns the initialization code.
+- Returns: String? - The initialization code.
+
+### Utilities
+
+#### Function: encodeTransfer
+
+- Description: Encodes an ERC20 token transfer into calldata for executing a
+  User Operation.
+- Parameters:
+  - to: String - The recipient address.
+  - token: String - The token contract address or the name of Token enum.
+    Supported tokens and their information are listed below.
+  - amount: BigInteger - The amount to transfer.
+- Returns: EncodeTransferResult - The encoded transfer ABI and contract address.
+- Supported Tokens:
+
+##### Mainnet USDC
+
+| Blockchain Network | Enum                           | Contract Address                                                                                                                    |
+| ------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum           | ContractAddress.Arbitrum_USDC  | [`0xaf88d065e77c8cC2239327C5EDb3A432268e5831`](https://arbiscan.io/token/0xaf88d065e77c8cc2239327c5edb3a432268e5831)                |
+| Avalanche          | ContractAddress.Avalanche_USDC | [`0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E`](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E?chainid=43114) |
+| Base               | ContractAddress.Base_USDC      | [`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`](https://basescan.org/token/0x833589fcd6edb6e08f4c7c32d4f71b54bda02913)               |
+| Optimism           | ContractAddress.Optimism_USDC  | [`0x0b2c639c533813f4aa9d7837caf62653d097ff85`](https://optimism.blockscout.com/address/0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85)  |
+| Polygon            | ContractAddress.Polygon_USDC   | [`0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`](https://polygonscan.com/token/0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359)            |
+| Unichain           | ContractAddress.Unichain_USDC  | [`0x078D782b760474a361dDA0AF3839290b0EF57AD6`](https://unichain.blockscout.com/address/0x078D782b760474a361dDA0AF3839290b0EF57AD6)  |
+
+##### Mainnet Native Tokens
+
+| Blockchain Network | Token Name (Symbol) | Enum                         | Contract Address                                                                                                                 |
+| ------------------ | ------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum           | Arbitrum (ARB)      | ContractAddress.Arbitrum_ARB | [`0x912CE59144191C1204E64559FE8253a0e49E6548`](https://arbiscan.io/token/0x912ce59144191c1204e64559fe8253a0e49e6548)             |
+| Optimism           | Optimism (OP)       | ContractAddress.Optimism_OP  | [`0x4200000000000000000000000000000000000042`](https://optimistic.etherscan.io/token/0x4200000000000000000000000000000000000042) |
+
+##### Testnet USDC
+
+| Blockchain Network | Enum                                 | Contract Address                                                                                                                            |
+| ------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arbitrum Sepolia   | ContractAddress.ArbitrumSepolia_USDC | [`0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`](https://sepolia.arbiscan.io/token/0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d)                |
+| Avalanche Fuji     | ContractAddress.AvalancheFuji_USDC   | [`0x5425890298aed601595a70AB815c96711a31Bc65`](https://testnet.snowtrace.io/token/0x5425890298aed601595a70AB815c96711a31Bc65?chainid=43113) |
+| Base Sepolia       | ContractAddress.BaseSepolia_USDC     | [`0x036CbD53842c5426634e7929541eC2318f3dCF7e`](https://sepolia.basescan.org/token/0x036CbD53842c5426634e7929541eC2318f3dCF7e)               |
+| Optimism Sepolia   | ContractAddress.OptimismSepolia_USDC | [`0x5fd84259d66Cd46123540766Be93DFE6D43130D7`](https://optimism-sepolia.blockscout.com/address/0x5fd84259d66Cd46123540766Be93DFE6D43130D7)  |
+| Polygon Amoy       | ContractAddress.PolygonAmoy_USDC     | [`0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582`](https://amoy.polygonscan.com/token/0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582)               |
+| Unichain Sepolia   | ContractAddress.UnichainSepolia_USDC | [`0x31d0220469e10c4E71834a79b1f276d740d3768F`](https://unichain-sepolia.blockscout.com/address/0x31d0220469e10c4E71834a79b1f276d740d3768F)  |
+
+#### Function: encodeFunctionData
+
+- Description: Encodes the function name and parameters into an ABI encoded
+  value (4 byte selector & arguments).
+- Parameters:
+  - functionName: String - The function to encode from the ABI.
+  - abiJson: String - The ABI definition in JSON format.
+  - args: Array\<Any\> - The arguments for the function call.
+- Returns: String - The encoded function call data.
+
+#### Function: encodeContractExecution
+
+- Description: Encodes a contract execution into calldata for executing a User
+  Operation.
+- Parameters:
+  - to: String - The recipient address.
+  - abiSignature: String - The ABI signature.
+  - args: Array\<Any\> - The arguments for the function call.
+  - value: BigInteger - The value to send with the transaction.
+- Returns: String - The encoded call data.
+
+#### Function: parseEther
+
+- Description: Converts a string representation of gwei to numerical wei.
+- Properties:
+  - value: String - The string representation of gwei.
+  - unit: String - The unit of the value (default is "wei").
+- Returns: BigInteger - The numerical value in wei.
+
+#### Function: parseGwei
+
+- Description: Converts a string representation of ether to numerical wei.
+- Properties:
+  - value: String - The string representation of ether.
+  - unit: String - The unit of the value (default is "wei").
+- Returns: BigInteger - The numerical value in wei.
+
+#### Function: getMinimumVerificationGasLimit
+
+- Description: Gets the minimum verification gas limit for a given chain.
+- Properties:
+  - deployed: Boolean - Whether the smart account is deployed.
+  - chainId: Long - The chain ID.
+- Returns: BigInteger - The chain-specific minimum verification gas limit or the
+  default value if the chain is not supported.
+
+### Models
+
+#### Class: SignResult
+
+- Description: Data class representing the result of a signing operation.
+- Parameters:
+  - signature: String - The signature generated by the signing operation.
+  - webAuthn: WebAuthnData - The WebAuthn data associated with the signing
+    operation.
+  - raw: AuthenticationCredential - The raw authentication credential used in
+    the signing operation.
+
+#### Class: WebAuthnData
+
+- Description: Data class representing WebAuthn data.
+- Parameters:
+  - authenticatorData: String - The authenticator data in hexadecimal format.
+  - challengeIndex: Int - The index of the challenge in the client data JSON.
+  - clientDataJSON: String - The client data JSON.
+  - typeIndex: Int - The index of the type in the client data JSON.
+  - userVerificationRequired: Boolean - Indicates whether user verification is
+    required.
+
+#### Class: EncodeCallDataArg
+
+- Description: Data class representing arguments required for encoding call
+  data.
+- Properties:
+  - to: String - The recipient address.
+  - value: BigInteger? - The value to be sent with the transaction.
+  - data: String? - The call data in hexadecimal format.
+  - abiJson: String? - The ABI definition in JSON format.
+  - args: Array\<Any\>? - The arguments for the function call.
+  - functionName: String? - The function name.
+
+#### Class: EstimateUserOperationGasResult
+
+- Description: Response model for estimating gas usage for user operations.
+- Properties:
+  - preVerificationGas: BigInteger? - Pre-verification gas limit.
+  - verificationGasLimit: BigInteger? - Verification gas limit.
+  - callGasLimit: BigInteger? - Call gas limit.
+  - paymasterVerificationGasLimit: BigInteger? - Paymaster verification gas
+    limit.
+  - paymasterPostOpGasLimit: BigInteger? - Paymaster post-operation gas limit.
+
+#### Class: EstimateFeesPerGasResult
+
+- Description: Response model for estimating fees per gas.
+- Properties:
+  - maxFeePerGas: BigInteger? - Maximum fee per gas (EIP-1559).
+  - maxPriorityFeePerGas: BigInteger? - Maximum priority fee per gas (EIP-1559).
+  - gasPrice: BigInteger? - Legacy gas price.
+
+#### Class: GetUserOperationResult
+
+- Description: Response model for getting user operation details.
+- Properties:
+  - blockHash: String? - Block hash.
+  - blockNumber: BigInteger? - Block number.
+  - transactionHash: String? - Transaction hash.
+  - entryPoint: String? - Entry point address.
+  - userOperation: UserOperationRpc? - User operation details.
+
+#### Class: UserOperationReceiptet
+
+- Description: Data class representing the receipt of a user operation.
+- Properties:
+  - actualGasCost: BigInteger? - Actual gas cost.
+  - actualGasUsed: BigInteger? - Actual gas used.
+  - entryPoint: String? - Entry point address.
+  - logs: List\<Log\>? - List of logs.
+  - nonce: BigInteger? - Nonce.
+  - paymaster: String? - Paymaster address.
+  - reason: String? - Reason for failure (if any).
+  - receipt: TransactionReceipt - Transaction receipt.
+  - sender: String? - Sender address.
+  - success: Boolean? - Success status.
+  - userOpHash: String? - User operation hash.
+
+#### Class: Log
+
+- Description: Data class representing a log entry.
+- Properties:
+  - address: String? - Log address.
+  - blockHash: String? - Block hash for the log.
+  - blockNumber: BigInteger? - Block number for the log.
+  - data: String? - Log data.
+  - logIndex: BigInteger? - Log index.
+  - transactionHash: String? - Transaction hash for the log.
+  - transactionIndex: BigInteger? - Transaction index.
+  - removed: Boolean? - Removed status.
+  - topics: List\<String\>? - List of topics.
+
+#### Class: TransactionReceipt
+
+- Description: Data class representing the receipt of a transaction.
+- Properties:
+  - blobGasPrice: BigInteger? - Blob gas price.
+  - blobGasUsed: BigInteger? - Blob gas used.
+  - blockHash: String? - Block hash.
+  - blockNumber: BigInteger? - Block number.
+  - contractAddress: String? - Contract address.
+  - cumulativeGasUsed: BigInteger? - Cumulative gas used.
+  - effectiveGasPrice: BigInteger? - Effective gas price.
+  - from: String? - Sender address.
+  - gasUsed: BigInteger? - Gas used.
+  - logs: List\<Log\>? - List of logs.
+  - logsBloom: String? - Logs bloom.
+  - root: String? - Root.
+  - status: String? - Transaction status.
+  - to: String? - Receiver address.
+  - transactionHash: String? - Transaction hash.
+  - transactionIndex: BigInteger? - Transaction index.
+  - type: String? - Transaction type.
+
+#### Class: GetPaymasterDataResult
+
+- Description: Data class representing the result of getting paymaster data.
+- Properties:
+  - paymasterAndData: String? - Combined paymaster and data.
+  - paymasterData: String? - Paymaster data.
+  - paymaster: String? - Paymaster address.
+  - paymasterPostOpGasLimit: BigInteger? - Gas limit for post-operation of
+    paymaster.
+  - paymasterVerificationGasLimit: BigInteger? - Gas limit for verification of
+    paymaster.
+
+#### Class: GetPaymasterStubDataResult
+
+- Description: Data class representing the result of getting paymaster stub
+  data.
+- Properties:
+  - paymasterAndData: String? - Combined paymaster and data.
+  - paymaster: String? - Paymaster address.
+  - paymasterData: String? - Paymaster data.
+  - paymasterPostOpGasLimit: BigInteger? - Gas limit for post-operation of
+    paymaster.
+  - paymasterVerificationGasLimit: BigInteger? - Gas limit for verification of
+    paymaster.
+  - isFinal: Boolean? - Indicates if the data is final.
+  - sponsor: Sponsor? - Sponsor information.
+
+#### Class: Block
+
+- Description: Data class representing a block.
+- Properties:
+  - baseFeePerGas: BigInteger? - Base fee per gas.
+  - blobGasUsed: BigInteger? - Total used blob gas by all transactions in this
+    block.
+  - difficulty: BigInteger? - Difficulty for this block.
+  - excessBlobGas: BigInteger? - Excess blob gas.
+  - extraData: String? - "Extra data" field of this block.
+  - gasLimit: BigInteger? - Maximum gas allowed in this block.
+  - gasUsed: BigInteger? - Total used gas by all transactions in this block.
+  - hash: String? - Block hash or null if pending.
+  - logsBloom: String? - Logs bloom filter or null if pending.
+  - miner: String? - Address that received this block’s mining rewards.
+  - mixHash: String? - Unique identifier for the block.
+  - nonce: String? - Proof-of-work hash or null if pending.
+  - number: BigInteger? - Block number or null if pending.
+  - parentBeaconBlockRoot: String? - Root of the parent beacon chain block.
+  - parentHash: String? - Parent block hash.
+  - receiptsRoot: String? - Root of this block’s receipts trie.
+  - sealFields: List\<String\>? - List of seal fields.
+  - sha3Uncles: String? - SHA3 of the uncles data in this block.
+  - size: BigInteger? - Size of this block in bytes.
+  - stateRoot: String? - Root of this block’s final state trie.
+  - timestamp: BigInteger? - Unix timestamp of when this block was collated.
+  - totalDifficulty: BigInteger? - Total difficulty of the chain until this
+    block.
+  - transactions: Array\<String\>? - List of transaction objects or hashes.
+  - transactionsRoot: String? - Root of this block’s transaction trie.
+  - uncles: Array\<String\>? - List of uncle hashes.
+  - withdrawals: Array\<Withdrawal\>? - List of withdrawal objects.
+  - withdrawalsRoot: String? - Root of this block’s withdrawals trie.
+
+#### Class: EncodeTransferResult
+
+- Description: The return type for encodeTransfer.
+- Properties:
+  - data: String - The encoded data.
+  - to: String - The token address.
+
+#### Enum Class: EntryPoint
+
+- Description: Enum class representing entry points with their respective
+  addresses.
+- Properties:
+  - address: String - The address of the entry point.
+- Entries
+  - V07 - Represents the entry point version 0.7 with its respective address.
+
+#### Sealed Class: Paymaster
+
+- Description: Sealed class for setting User Operation Paymaster configuration.
+  - If paymaster is PaymasterClient, it will use the provided Paymaster Client
+    for sponsorship.
+  - If paymaster is true, it will be assumed that the Bundler Client also
+    supports Paymaster RPC methods (e.g. getPaymasterData), and uses them for
+    sponsorship.
+- Subclasses
+  - True
+    - Description: Represents a Paymaster configuration where the Bundler Client
+      supports Paymaster RPC methods.
+    - Properties:
+      - paymasterContext: Map\<String, Any\>? - Optional context for the
+        paymaster.
+  - Client
+    - Description: Represents a Paymaster configuration using a provided
+      Paymaster Client for sponsorship.
+    - Properties:
+      - client: PaymasterClient - The Paymaster Client used for sponsorship.
+      - paymasterContext: Map\<String, Any\>? - Optional context for the
+        paymaster.
+
+#### Abstract Class: PublicKeyCredential
+
+- Description: Abstract class representing a public key credential, with the
+  following derived classes:
+  - RegistrationCredential
+  - AuthenticationCredential
+- Properties:
+  - id: String - The unique identifier for the credential.
+  - type: String - The type of the credential.
+  - authenticatorAttachment: String - The attachment type of the authenticator.
+  - response: AuthenticatorResponse - The response from the authenticator.
+  - clientExtensionResults: AuthenticationExtensionsClientOutputs? - Optional
+    client extension results.
+
+#### Class: RegistrationCredential
+
+- Description: Data class representing a block.
+- Properties:
+  - rawId: String - The raw identifier for the credential.
+  - authenticatorAttachment: String - The attachment type of the authenticator.
+  - type: String - The type of the credential.
+  - id: String - The unique identifier for the credential.
+  - response: AuthenticatorAttestationResponse - The attestation response from
+    the authenticator.
+  - clientExtensionResults: AuthenticationExtensionsClientOutputs? - Optional
+    client extension results.
+- Inheritance: Inherits from PublicKeyCredential.
+
+#### Class: AuthenticationCredential
+
+- Description: Data class representing a registration credential.
+- Properties:
+  - rawId: String - The raw identifier for the credential.
+  - authenticatorAttachment: String - The attachment type of the authenticator.
+  - type: String - The type of the credential.
+  - id: String - The unique identifier for the credential.
+  - response: AuthenticatorAssertionResponse - The assertion response from the
+    authenticator.
+  - clientExtensionResults: AuthenticationExtensionsClientOutputs? - Optional
+    client extension results.
+- Inheritance: Inherits from PublicKeyCredential.
+
+#### Abstract Class: UserOperation
+
+- Description: Abstract class representing a user operation, with the following
+  derived classes:
+  - UserOperationV07
+- Properties:
+  - sender: String? - The address of the sender.
+  - nonce: BigInteger? - The nonce of the operation.
+  - callData: String? - The data to be sent in the call.
+  - callGasLimit: BigInteger? - The gas limit for the call.
+  - verificationGasLimit: BigInteger? - The gas limit for verification.
+  - preVerificationGas: BigInteger? - The gas used before verification.
+  - maxPriorityFeePerGas: BigInteger? - The maximum priority fee per gas.
+  - maxFeePerGas: BigInteger? - The maximum fee per gas.
+  - signature: String? - The signature of the operation.
+
+#### Class UserOperationV07
+
+- Description: Data class representing a user operation for version 0.7.
+- Properties:
+  - sender: String? - The address of the sender.
+  - nonce: BigInteger? - The nonce of the operation.
+  - callData: String? - The data to be sent in the call.
+  - callGasLimit: BigInteger? - The gas limit for the call.
+  - verificationGasLimit: BigInteger? - The gas limit for verification.
+  - preVerificationGas: BigInteger? - The gas used before verification.
+  - maxPriorityFeePerGas: BigInteger? - The maximum priority fee per gas.
+  - maxFeePerGas: BigInteger? - The maximum fee per gas.
+  - signature: String? - The signature of the operation.
+  - factory: String? - The factory address.
+  - factoryData: String? - The data for the factory.
+  - paymaster: String? - The paymaster address.
+  - paymasterVerificationGasLimit: BigInteger? - The gas limit for paymaster
+    verification.
+  - paymasterPostOpGasLimit: BigInteger? - The gas limit for paymaster
+    post-operation.
+  - paymasterData: String? - The data for the paymaster.
+- Inheritance: Inherits from UserOperation.
+
+#### Class: UserOperationRpc
+
+- Description: Data class representing a user operation in RPC format.
+- Properties:
+  - sender: String? - The address of the sender.
+  - nonce: String? - The nonce of the operation.
+  - callData: String? - The data to be sent in the call.
+  - callGasLimit: String? - The gas limit for the call.
+  - verificationGasLimit: String? - The gas limit for verification.
+  - preVerificationGas: String? - The gas used before verification.
+  - maxPriorityFeePerGas: String? - The maximum priority fee per gas.
+  - maxFeePerGas: String? - The maximum fee per gas.
+  - signature: String? - The signature of the operation.
+  - factory: String? - The factory address.
+  - factoryData: String? - The data for the factory.
+  - paymaster: String? - The paymaster address.
+  - paymasterVerificationGasLimit: String? - The gas limit for paymaster
+    verification.
+  - paymasterPostOpGasLimit: String? - The gas limit for paymaster
+    post-operation.
+  - paymasterData: String? - The data for the paymaster.
+  - initCode: String? - The initialization code.
+  - paymasterAndData: String? - The paymaster and data.
+
+#### Function: UserOperationV07.toRpcUserOperation
+
+- Description: Converts a UserOperationV07 instance to a UserOperationRpc
+  instance.
+- Returns: A UserOperationRpc instance with the corresponding properties from
+  the UserOperationV07 instance.
+
+#### Function: UserOperation.toRpcUserOperation
+
+- Description: Converts a UserOperation instance to a UserOperationRpc instance.
+- Returns: A UserOperationRpc instance with the corresponding properties from
+  the UserOperation instance.
+
+#### Function: UserOperationRpc.toUserOperationV07
+
+- Description: Converts a UserOperationRpc instance to a UserOperationV07
+  instance.
+- Returns: A UserOperationV07 instance with the corresponding properties from
+  the UserOperationRpc instance.
+
+#### Enum Class: WebAuthnMode
+
+- Description: Enum class representing the WebAuthn modes.
+- Entries
+  - Register - Mode for registering a new credential.
+  - Login - Mode for logging in with an existing credential.
+
+#### Enum Class: Token
+
+- Description: Enum representing various tokens supported by encodeTransfer. The
+  format is `{chain}_{symbol}`.
+- Entries
+  - Arbitrum_ARB
+  - Arbitrum_USDC
+  - ArbitrumSepolia_USDC
+  - Avalanche_USDC
+  - AvalancheFuji_USDC
+  - Base_USDC
+  - BaseSepolia_USDC
+  - Optimism_USDC
+  - OptimismSepolia_USDC
+  - Polygon_USDC
+  - PolygonAmoy_USDC
+  - Unichain_USDC
+  - UnichainSepolia_USDC
+
+### Chains
+
+#### Abstract Class: Chain
+
+- Description: Abstract class representing the necessary definition of a
+  blockchain for the SDK, with the following derived object classes as
+  predefined chains:
+  - Arbitrum
+  - ArbitrumSepolia
+  - Avalanche
+  - AvalancheFuji
+  - Base
+  - BaseSepolia
+  - Optimism
+  - OptimismSepolia
+  - Polygon
+  - PolygonAmoy
+  - Unichain
+  - UnichainSepolia
+- Properties:
+  - chainId: Long - The unique identifier for the blockchain.
+
+## Calling Kotlin Suspending Functions from Java
+
+The **modular wallets Android SDK** uses suspending functions for asynchronous
+operations. However, calling Kotlin's suspend functions from Java requires a
+different approach due to Java's lack of built-in coroutine support. This
+section explains how to invoke suspend functions from Java and demonstrates the
+use of a custom continuation for managing coroutine execution.
+
+### Creating a Custom Continuation
+
+When calling a suspend function from Java, you must handle the coroutine's
+**Continuation** parameter manually. A custom **Continuation** class can
+implement Kotlin's **Continuation** interface to manage coroutine resumption,
+handling both successful results and exceptions.
+
+Below is the suggested approach for creating and using a custom continuation in
+Java:
+
+```java Example: Custom Continuation
+public class CustomContinuation<T> implements Continuation<T> {
+
+    private final CompletableFuture<T> future;
+
+    public CustomContinuation(CompletableFuture<T> future) {
+        this.future = future;
+    }
+
+    @Override
+    public void resumeWith(@NotNull Object o) {
+        if (o instanceof Result.Failure)
+            future.completeExceptionally((((Result.Failure) o).exception));
+        else
+            future.complete((T) o);
+    }
+
+    @NotNull
+    @Override
+    public CoroutineContext getContext() {
+        return EmptyCoroutineContext.INSTANCE;
+    }
+}
+```
+
+### Using the Custom Continuation
+
+Below is an example of how to use `CustomContinuation` to call the
+`getChainId()` suspend function, which returns a `Long` value representing the
+blockchain's chain ID.
+
+```java Example: Suspend Function
+try {
+    // Create a CompletableFuture to hold the result of the asynchronous operation
+    CompletableFuture<Long> suspendResult = new CompletableFuture<>();
+    // Call getChainId, passing in a CustomContinuation that will handle the result
+    bundlerClient.getChainId(new CustomContinuation<>(suspendResult));
+    // Wait for the CompletableFuture to complete and retrieve the result
+    Long chainId = suspendResult.join();
+} catch(Exception e) {
+    e.printStackTrace;
+}
+```
+
+### Key Points
+
+- Suspend functions in Kotlin require a Continuation for resumption, which Java
+  lacks natively.
+- A custom continuation class in Java allows you to handle suspend function
+  results and exceptions effectively.
+- This approach ensures compatibility between Java and Kotlin while leveraging
+  the asynchronous capabilities of the modular wallets Android SDK.
+
+This approach can be used in your Java code for invoking Kotlin suspending
+functions.

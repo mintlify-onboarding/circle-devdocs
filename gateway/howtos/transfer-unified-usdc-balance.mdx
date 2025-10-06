@@ -1,0 +1,292 @@
+---
+title: "How-to: Transfer a Unified USDC Balance Instantly"
+description: ""
+sideNav: ""
+documentationItems: 
+- title: Documentation
+tableOfContents: true
+sidebarTitle: "Transfer a Unified USDC Balance Instantly"
+---
+
+Once you have established a unified USDC balance, you can transfer it instantly
+to any supported destination chain.
+
+This guide demonstrates how to transfer your unified balance.
+
+## Prerequisites
+
+Before you begin, ensure that you've:
+
+- Installed **Node.js** and **npm** on your development machine
+- Created a testnet wallet on Ethereum Sepolia, Base Sepolia, and Avalanche Fuji
+  and have the private key available
+- Funded your testnet wallet with native tokens on the destination chain
+  (Avalanche Fuji)
+- [Deposited 10 USDC into the Gateway Wallet](/gateway/howtos/create-unified-usdc-balance)
+  contracts on Ethereum Sepolia and Base Sepolia (creating a unified balance of
+  20 USDC)
+- Created a new Node project and have the following dependencies installed:
+  - `viem`
+  - `dotenv`
+- Set up a `.env` file with the following variables:
+
+  ```text
+  PRIVATE_KEY=<your_private_key>
+  ```
+
+## Steps
+
+Follow these steps to transfer a unified USDC balance. This example uses a
+unified balance split between Ethereum Sepolia and Base Sepolia. You can adapt
+it for any chains where you hold a unified balance.
+
+### Step 1. Create burn intents for the source chains
+
+Create a new file called `index.js` in the root of your project and add the
+following code to it. This code creates
+[burn intents](/gateway/concepts/technical-guide#burn-intent) for 5 USDC on
+Ethereum Sepolia and 5 USDC on Base Sepolia.
+
+```javascript
+import "dotenv/config";
+import { randomBytes } from "node:crypto";
+import { http, maxUint256, zeroAddress } from "viem";
+
+// Gateway contract addresses (same across all networks)
+const gatewayWalletAddress = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9";
+const gatewayMinterAddress = "0x0022222ABE238Cc2C7Bb1f21003F0a260052475B";
+
+// USDC contract addresses
+const usdcAddresses = {
+  sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+  baseSepolia: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  avalancheFuji: "0x5425890298aed601595a70ab815c96711a31bc65",
+};
+
+const account = privateKeyToAccount(process.env.PRIVATE_KEY);
+
+// Construct burn intents
+const ethereumBurnIntent = {
+  maxBlockHeight: maxUint256,
+  maxFee: 1_010000n,
+  spec: {
+    version: 1,
+    sourceDomain: 0,
+    destinationDomain: 1,
+    sourceContract: gatewayWalletAddress,
+    destinationContract: gatewayMinterAddress,
+    sourceToken: usdcAddresses.sepolia,
+    destinationToken: usdcAddresses.avalancheFuji,
+    sourceDepositor: account.address,
+    destinationRecipient: account.address,
+    sourceSigner: account.address,
+    destinationCaller: zeroAddress,
+    value: 5_000000n,
+    salt: "0x" + randomBytes(32).toString("hex"),
+    hookData: "0x",
+  },
+};
+
+const baseBurnIntent = {
+  maxBlockHeight: maxUint256,
+  maxFee: 1_010000n,
+  spec: {
+    version: 1,
+    sourceDomain: 6,
+    destinationDomain: 1,
+    sourceContract: gatewayWalletAddress,
+    destinationContract: gatewayMinterAddress,
+    sourceToken: usdcAddresses.baseSepolia,
+    destinationToken: usdcAddresses.avalancheFuji,
+    sourceDepositor: account.address,
+    destinationRecipient: account.address,
+    sourceSigner: account.address,
+    destinationCaller: zeroAddress,
+    value: 5_000000n,
+    salt: "0x" + randomBytes(32).toString("hex"),
+    hookData: "0x",
+  },
+};
+```
+
+<Note>
+**Note:** For production apps, verifying the balance on each chain before
+creating burn intents is best practice. For this how-to, it's assumed that the
+balances are created per the [prerequisites](#prerequisites). For a complete
+end-to-end example that includes checking and error handling, see the
+[Gateway Quickstart](/gateway/quickstarts/unified-balance).
+</Note>
+
+### Step 2. Sign the burn intents
+
+Add the following code to `index.js`. This code constructs the signed burn
+intents for submission to the Gateway API.
+
+<Note>
+**Note:** The additional imports should be added at the top of the file.
+</Note>
+
+```javascript
+import { pad } from "viem";
+
+const domain = { name: "GatewayWallet", version: "1" };
+
+const EIP712Domain = [
+  { name: "name", type: "string" },
+  { name: "version", type: "string" },
+];
+
+const TransferSpec = [
+  { name: "version", type: "uint32" },
+  { name: "sourceDomain", type: "uint32" },
+  { name: "destinationDomain", type: "uint32" },
+  { name: "sourceContract", type: "bytes32" },
+  { name: "destinationContract", type: "bytes32" },
+  { name: "sourceToken", type: "bytes32" },
+  { name: "destinationToken", type: "bytes32" },
+  { name: "sourceDepositor", type: "bytes32" },
+  { name: "destinationRecipient", type: "bytes32" },
+  { name: "sourceSigner", type: "bytes32" },
+  { name: "destinationCaller", type: "bytes32" },
+  { name: "value", type: "uint256" },
+  { name: "salt", type: "bytes32" },
+  { name: "hookData", type: "bytes" },
+];
+
+const BurnIntent = [
+  { name: "maxBlockHeight", type: "uint256" },
+  { name: "maxFee", type: "uint256" },
+  { name: "spec", type: "TransferSpec" },
+];
+
+function addressToBytes32(address) {
+  return pad(address.toLowerCase(), { size: 32 });
+}
+
+function burnIntentTypedData(burnIntent) {
+  return {
+    types: { EIP712Domain, TransferSpec, BurnIntent },
+    domain,
+    primaryType: "BurnIntent",
+    message: {
+      ...burnIntent,
+      spec: {
+        ...burnIntent.spec,
+        sourceContract: addressToBytes32(burnIntent.spec.sourceContract),
+        destinationContract: addressToBytes32(
+          burnIntent.spec.destinationContract,
+        ),
+        sourceToken: addressToBytes32(burnIntent.spec.sourceToken),
+        destinationToken: addressToBytes32(burnIntent.spec.destinationToken),
+        sourceDepositor: addressToBytes32(burnIntent.spec.sourceDepositor),
+        destinationRecipient: addressToBytes32(
+          burnIntent.spec.destinationRecipient,
+        ),
+        sourceSigner: addressToBytes32(burnIntent.spec.sourceSigner),
+        destinationCaller: addressToBytes32(
+          burnIntent.spec.destinationCaller ?? zeroAddress,
+        ),
+      },
+    },
+  };
+}
+
+const ethereumTypedData = burnIntentTypedData(ethereumBurnIntent);
+const ethereumSignature = await account.signTypedData(ethereumTypedData);
+const ethereumRequest = {
+  burnIntent: ethereumTypedData.message,
+  signature: ethereumSignature,
+};
+
+const baseTypedData = burnIntentTypedData(baseBurnIntent);
+const baseSignature = await account.signTypedData(baseTypedData);
+const baseRequest = {
+  burnIntent: baseTypedData.message,
+  signature: baseSignature,
+};
+```
+
+### Step 3. Submit the burn intents to the Gateway API to obtain an attestation
+
+Add the following code to `index.js`. This code constructs a Gateway API request
+to the /transfer endpoint and obtains the attestation from that endpoint.
+
+```javascript
+const request = [ethereumRequest, baseRequest];
+
+const response = await fetch(
+  "https://gateway-api-testnet.circle.com/v1/transfer",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request, (_key, value) =>
+      typeof value === "bigint" ? value.toString() : value,
+    ),
+  },
+);
+
+const json = await response.json();
+```
+
+### Step 4. Transfer USDC to the destination chain
+
+Add the following code to `index.js`. This code performs a call to the Gateway
+Minter contract on Avalanche to instantly mint the USDC to your account on that
+chain.
+
+<Note>
+**Note:** The additional imports should be added at the top of the file.
+</Note>
+
+```javascript
+import { createPublicClient, getContract } from "viem";
+import * as chains from "viem/chains";
+
+// Partial Minter ABI for the methods we need
+const gatewayMinterAbi = [
+  {
+    type: "function",
+    name: "gatewayMint",
+    inputs: [
+      {
+        name: "attestationPayload",
+        type: "bytes",
+        internalType: "bytes",
+      },
+      {
+        name: "signature",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+];
+
+const avalancheClient = createPublicClient({
+  chain: chains["avalancheFuji"],
+  account,
+  transport: http(),
+});
+
+const { attestation, signature } = json;
+const avalancheGatewayMinterContract = getContract({
+  address: gatewayMinterAddress,
+  abi: gatewayMinterAbi,
+  client: avalancheClient,
+});
+const mintTx = await avalancheGatewayMinterContract.write.gatewayMint([
+  attestation,
+  signature,
+]);
+```
+
+### Step 3. Run the script
+
+Once you have added the code to your `index.js` file, run it with the following
+command:
+
+```shell
+node index.js
+```

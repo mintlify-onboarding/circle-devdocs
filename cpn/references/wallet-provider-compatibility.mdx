@@ -1,0 +1,53 @@
+---
+title: "Wallet Provider Compatibility"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Wallet Provider Compatibility"
+---
+
+CPN allows you to bring your own wallet provider when integrating with the
+network. Circle Wallets is an option for your integration, but not a
+requirement. When bringing your own wallet provider, you should make sure that
+they support the features and signing methods that are required to interact with
+CPN.
+
+## Requirements
+
+The following features and signing methods are required for a wallet provider to
+be able to integrate with CPN:
+
+- **Custodial wallet support:** The provider must be able to sign transactions
+  for wallets without requiring user interaction.
+- **Ethereum virtual machine (EVM) raw transaction signing:** The provider must
+  be able to sign raw EVM transactions without broadcasting them to the
+  blockchain.
+- **EIP-712 signing:** The provider must support EIP-712 typed data. The
+  resulting signature can be used in one of the following ways:
+
+  - The signature can be verified by recovering the signer’s address with the
+    hash of the typed data (on behalf of an EOA).
+  - The signature can be validated by the `isValidSignature` method defined in
+    EIP-1271 with the hash of the typed data (on behalf of an SCA).
+
+<Note>
+    > **Note:** USDC implements EIP-3009 with the EIP-7598 extension, enabling
+    > both EOAs and SCAs to authorize transfers via the EIP-3009 mechanism.
+</Note>
+
+- **Solana signing:** The provider must support signing raw Solana transaction
+  using `Ed25519`, without broadcasting them to the blockchain.
+- **Solana memo field:** The provider must support a memo field for Solana
+  transactions.
+
+<FeatureFlaggedSection flag='cpnWalletValidatorEnabled'>
+## Quick Compatibility Test
+
+Use this interactive tool to test whether your wallet provider supports the
+signing methods required for CPN integration. Test payloads are designed to be
+safe, but always verify what you're signing.
+
+<WalletCompatibilityValidator />
+</FeatureFlaggedSection>

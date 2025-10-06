@@ -1,0 +1,45 @@
+---
+title: CCTP Limits V1
+description: Limits for CCTP V1 burning and minting
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Limits"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+## Minter Allowance
+
+The USDC smart contract (or module) on each blockchain specifies a limit for how
+much USDC can be minted before the limit needs to be increased by the master
+minter, Circle. This limit is called the "minter allowance" and it is
+individually set for each authorized minter, such as CCTP V1.
+
+Minter allowance is decremented each time the authorized minter mints, by the
+amount of USDC that is minted. A transaction attempting to mint in excess of the
+minter allowance will fail, but may succeed on a subsequent retry after the
+minter allowance is reset. Minter allowance can be queried from the USDC
+contract on EVM-compatible chains using the public
+[minterAllowance](https://github.com/centrehq/centre-tokens/blob/0d3cab14ebd133a83fc834dbd48d0468bdf0b391/contracts/v1/FiatTokenV1.sol#L153)
+function. For CCTP V1 on Noble, minter allowance can be queried via the
+[fiattokenfactory module minters API](https://github.com/circlefin/noble-fiattokenfactory/blob/33b30a6cf87eba20874df84fa93dd100f71ed512/proto/fiattokenfactory/query.proto#L49-L52).
+
+## Per-Message Burn Limit
+
+CCTP V1 defines per-message burn limits. This value is configurable by Circle.
+This limit prevents the situation where a user burns an amount of USDC on a
+source chain that could never be minted on a destination chain without
+increasing minter allowance thresholds. Per-message burn limits can be queried
+on the TokenMinter contract on EVM-compatible chains, using the public
+[burnLimitsPerMessage](https://github.com/circlefin/evm-cctp-contracts/blob/master/src/roles/TokenController.sol#L69)
+mapping. For CCTP V1 on Noble, the per-message burn limit can be queried via the
+[cctp module per_message_burn_limits API](https://github.com/circlefin/noble-fiattokenfactory/blob/master/proto/fiattokenfactory/query.proto#L49-L52).
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on testnet from Ethereum to Avalanche using CCTP V1 <Icon icon="arrow-right" />](/cctp/v1/transfer-usdc-on-testnet-from-ethereum-to-avalanche)

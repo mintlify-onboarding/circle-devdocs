@@ -1,0 +1,148 @@
+{/* <!-- markdownlint-disable --> */}
+
+Circle's Cross-Chain Transfer Protocol (CCTP) facilitates the transfer of USDC
+between distinct blockchains, providing a more streamlined experience. By
+integrating CCTP with Circle Wallets in your applications, you enable seamless
+USDC transactions across multiple chains. This reduces the need for users to
+manage separate wallets for different blockchains, potentially broadening your
+audience and providing increased liquidity and adaptability. It's designed to
+provide users with a cohesive and efficient digital currency experience.
+
+<Features>
+  <Features.Feature icon="LightningBoltSolid">
+    <Features.Feature.Title>
+      Leverage Blockchain-Specific Attributes
+    </Features.Feature.Title>
+    <Features.Feature.Description>
+      Use blockchain-specific characteristics to optimize your user experience.
+      For instance, by bridging your ETH from Ethereum Mainnet to an Ethereum
+      Layer 2 rollup, such as Polygon, you gain access to lower transaction fees
+      while still enjoying the benefits of USDC.
+    </Features.Feature.Description>
+  </Features.Feature>
+  <Features.Feature icon="SwitchHorizontalOutline">
+    <Features.Feature.Title>Cross-Chain Swaps</Features.Feature.Title>
+    <Features.Feature.Description>
+      Enable cross-chain swaps, allowing users to exchange digital assets that
+      reside on different chains. For example, users can swap AVAX for USDC on
+      Avalanche, route it to Polygon Mainnet, and further swap it for MATIC
+      token, expanding liquidity across multiple chains.
+    </Features.Feature.Description>
+  </Features.Feature>
+  <Features.Feature icon="CurrencyDollarOutline">
+    <Features.Feature.Title>Cross-Chain Purchases</Features.Feature.Title>
+    <Features.Feature.Description>
+      Facilitate cross-chain purchases with minimal effort. Users can utilize
+      USDC on Avalanche to buy an NFT on Uniswap on Ethereum, then list it for
+      sale on OpenSea. CCTP effortlessly routes the USDC from Avalanche to
+      Ethereum for the purchase.
+    </Features.Feature.Description>
+  </Features.Feature>
+  <Features.Feature icon="CubeTransparentOutline">
+    <Features.Feature.Title>Solve Fragmented Liquidity</Features.Feature.Title>
+    <Features.Feature.Description>
+      Remove liquidity fragmentation barriers. If a user needs to send USDC to
+      an address on Avalanche but only holds USDC on Ethereum, the solution
+      becomes seamless. By bridging the USDC from Ethereum to Avalanche through
+      CCTP, users can transact across different blockchains.
+    </Features.Feature.Description>
+  </Features.Feature>
+</Features>
+
+### Outcomes of this Interactive Quickstart Guide
+
+By the conclusion of this interactive guide, you will learn how to facilitate a
+transfer of USDC across blockchains using a Circle Wallet. Specifically, the
+guide will demonstrate a scenario wherein a user conducts a USDC transfer
+leveraging the Cross-Chain Transfer Protocol, CCTP V1. You will follow
+step-by-step instructions to create and execute a USDC transfer from Sepolia, an
+Ethereum testnet, to Mumbai, the Polygon Testnet, via a Circle Wallet. This
+practical walkthrough is designed to equip you with the knowledge to implement
+CCTP V1 in your own applications.
+
+**Completing a Cross-Blockchain Transfer: Step-By-Step Process**
+
+<OrderedList>
+  <OrderedListStep title="Approve USDC Contract to Initiate Transfers">
+    To utilize CCTP V1 effectively, it's necessary to authorize the USDC
+    contract to conduct transfers on a user's behalf. In this guide, we approve
+    only a small amount of USDC for demonstration. However, for operational
+    efficiency, you might want to approve a larger amount to minimize the
+    frequency of this action in a production environment.
+  </OrderedListStep>
+  <OrderedListStep title="Initiate the Burning of USDC">
+    <Grid>
+      <GridItem colSpan="12">
+        Following the user's request to move USDC from Ethereum to Polygon,
+        leverage the provided tools to initiate burning the specified amount of
+        USDC from the Ethereum wallet created for this transaction.
+      </GridItem>
+      <GridItem colSpan="12">
+        <Image
+          src="/interactive-quickstarts/cctp/introduction/images/burn-usdc.png"
+          alt="Burn USDC"
+        />
+      </GridItem>
+    </Grid>
+  </OrderedListStep>
+  <OrderedListStep title="Obtain Circle’s Attestation">
+    <Grid>
+      <GridItem colSpan="12">
+        Circle monitors the burn event on the Ethereum blockchain and issues an
+        attestation. Retrieve this attestation using the relevant procedures,
+        which serves as the authorization required to mint the corresponding
+        USDC amount on the Polygon blockchain.
+      </GridItem>
+      <GridItem colSpan="1"></GridItem>
+      <GridItem colSpan="10">
+        <Image
+          src="/interactive-quickstarts/cctp/introduction/images/fetch-attestation.png"
+          alt="Fetch Attestation"
+        />
+      </GridItem>
+      <GridItem colSpan="1"></GridItem>
+    </Grid>
+  </OrderedListStep>
+  <OrderedListStep title="Trigger USDC Minting">
+    <Grid>
+      <GridItem colSpan="12">
+        Utilize the retrieved attestation to start the minting process. The
+        attestation confirms the amount of USDC to mint on the Polygon
+        blockchain, and the amount to allocate to the specified Polygon wallet.
+      </GridItem>
+      <GridItem colSpan="12">
+        <Image
+          src="/interactive-quickstarts/cctp/introduction/images/mint-usdc.png"
+          alt="Mint USDC"
+        />
+      </GridItem>
+    </Grid>
+  </OrderedListStep>
+</OrderedList>
+
+### Understanding Smart Contracts
+
+Smart contracts are computer protocols that automate the execution of
+agreements, operating under a set of predefined conditions. Once deployed onto a
+blockchain, they follow an "if-then" logic to perform actions automatically when
+specific conditions are met. The immutable nature of blockchain ensures that the
+smart contract code cannot be changed once established, which reinforces their
+reliability as they always execute exactly as programmed. A smart contract
+typically consists of code that defines its operations, a data storage area,
+memory, and a unique public address that can be interacted with through its
+functions. For a comprehensive exploration of smart contracts, you are
+encouraged to read further on the dedicated
+[resource](https://ethereum.org/en/developers/docs/smart-contracts/).
+
+### Exploring CCTP
+
+CCTP serves as an integral tool in blockchain infrastructure to guarantee the
+secure and seamless transfer of USDC across various blockchain networks. By
+adopting CCTP, users can benefit from a protected and efficient means of
+transferring USDC between [supported chains](/cctp/cctp-supported-blockchains).
+To learn more about CCTP, see the [CCTP Overview](/cctp) in the Circle Developer
+Documentation.
+
+To get started,
+[create a Circle Developer Services account](https://console.circle.com/signup)
+in the console.

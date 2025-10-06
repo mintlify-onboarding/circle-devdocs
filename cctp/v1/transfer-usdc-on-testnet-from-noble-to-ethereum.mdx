@@ -1,0 +1,42 @@
+---
+title: Transfer USDC on testnet between Noble and Ethereum using CCTP V1
+description: 
+sideNav: ""
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on testnet between Noble and Ethereum"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+To transfer USDC between Noble testnet and Ethereum Sepolia, follow the
+tutorials provided
+[here](https://github.com/circlefin/noble-cctp/tree/master/examples).
+Specifically, follow the instructions for the
+[DepositForBurn script](https://github.com/circlefin/noble-cctp/blob/master/examples/depositForBurn.ts)
+to test transferring USDC from Noble testnet to Ethereum Sepolia, and the
+instructions for the
+[ReceiveMessage script](https://github.com/circlefin/noble-cctp/blob/master/examples/receiveMessage.ts)
+to transfer USDC from Ethereum Sepolia to Noble testnet.
+
+As a security measure, these scripts should only be used for testnet testing. It
+is not recommended to reuse private keys across mainnet and testnet.
+
+<Note>
+**Note:**
+
+This tutorial relies on the Strangelove Ventures
+[Noble CCTP V1 relayer](https://github.com/strangelove-ventures/noble-cctp-relayer),
+which is a service that automatically calls `receiveMessage()` for messages
+transmitted to and from Noble domains. To avoid relying on this relayer, you
+can submit this `receiveMessage()` transaction directly. (If you do not want
+your transaction relayed automatically, you can specify a `destinationCaller`
+via `depositForBurnWithCaller()`.)
+</Note>
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on testnet between Sui and Ethereum using CCTP V1 <Icon icon="arrow-right" />](/cctp/v1/transfer-usdc-on-testnet-from-sui-to-ethereum)

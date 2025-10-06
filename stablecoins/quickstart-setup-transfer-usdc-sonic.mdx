@@ -1,0 +1,366 @@
+---
+title: "Quickstart: Set up and transfer USDC on Sonic"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on Sonic"
+---
+
+USDC provides the ability to transfer digital dollars over public blockchains
+using smart contracts. The USDC smart contract allows you to send, receive, and
+store digital dollars onchain with a wallet. This quickstart guide provides
+step-by-step instructions to build a React app that allows users to connect
+their wallet and send USDC transactions over Sonic Blaze Testnet.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Installed **[Node.js](https://nodejs.org/en)** and
+  **[npm](https://www.npmjs.com/)**. You can download and install `Node.js` from
+  [Nodejs.org](http://nodejs.org). `npm` comes with `Node.js`.
+- Installed [**Metamask**](https://metamask.io/)
+- Some Sonic testnet tokens in your wallet to cover transaction fees. You can
+  use the [Sonic Faucet](https://testnet.soniclabs.com/account).
+- Testnet USDC tokens in your wallet for the transfer. You can use the
+  [CCTP Sample App](https://replit.com/@buildoncircle/cctp-v2-web-app) to move
+  testnet USDC from Ethereum Sepolia to Sonic Blaze.
+
+### Contract address
+
+You will need the following contract address for the USDC token on Sonic Blaze
+Testnet:
+
+- USDC contract -
+  [`0xA4879Fed32Ecbef99399e5cbC247E533421C4eC6`](https://blaze.soniclabs.com/address/0xA4879Fed32Ecbef99399e5cbC247E533421C4eC6)
+
+## Part 1: Set up your project
+
+Perform the following installation and setup steps:
+
+1. Create a new project directory and initialize it with `npm`:
+
+```shell
+mkdir usdc-transfer-app
+cd usdc-transfer-app
+npm init -y
+```
+
+2. Install the required dependencies:
+
+```shell
+npm install react@latest \
+  react-dom@latest \
+  @types/react@latest \
+  @types/react-dom@latest \
+  @vitejs/plugin-react@latest \
+  typescript@latest \
+  vite@latest \
+  viem@latest
+```
+
+3. Verify the installation by checking the `package.json` file. It should look
+   like this:
+
+```json
+{
+  "name": "usdc-transfer-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "typescript": "^5.8.3",
+    "viem": "^2.28.0",
+    "vite": "^6.3.2"
+  }
+}
+```
+
+If your `package.json` file does not contain the scripts section, copy and paste
+it from the above code into your file. Test that you can run the project with
+the command:
+
+```shell
+npm run dev
+```
+
+## Part 2: Import clients and set up helpers
+
+Perform the following steps to import code and set up helpers for the
+application.
+
+1. Create a new file `src/client.ts` and copy the following code into it. This
+   code imports required libraries and sets up the network configuration.
+
+```typescript
+import { http, createPublicClient, createWalletClient, custom } from "viem";
+import { sonicBlazeTestnet } from "viem/chains";
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+
+export const publicClient = createPublicClient({
+  chain: sonicBlazeTestnet,
+  transport: http(),
+});
+
+export const walletClient = createWalletClient({
+  chain: sonicBlazeTestnet,
+  transport: custom(window.ethereum),
+});
+```
+
+2. Define the USDC testnet token contract details in a new file
+   `src/constants.ts`. This file contains the contract address and Application
+   Binary Interface (ABI) for the USDC token on Sonic Blaze.
+
+```typescript
+export const USDC_CONTRACT_ADDRESS =
+  "0xA4879Fed32Ecbef99399e5cbC247E533421C4eC6";
+
+export const USDC_ABI = [
+  {
+    constant: false,
+    inputs: [
+      { name: "_to", type: "address" },
+      { name: "_value", type: "uint256" },
+    ],
+    name: "transfer",
+    outputs: [{ name: "", type: "bool" }],
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [{ name: "_owner", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ name: "balance", type: "uint256" }],
+    type: "function",
+  },
+];
+```
+
+## Part 3: Create the main application component
+
+The following steps create the main application component and show the steps to
+connect a wallet and transfer USDC.
+
+1. Create a new file `src/App.tsx` and copy the following code into it. This
+   code contains the main application component that allows users to connect
+   their wallet and transfer USDC.
+
+```typescript
+import React, { useEffect, useState } from 'react';
+import { publicClient, walletClient } from './clients';
+import { USDC_CONTRACT_ADDRESS, USDC_ABI } from './constants';
+import { type Address, encodeFunctionData, type Hash, type TransactionReceipt, stringify } from 'viem';
+
+function USDCApp() {
+  const [account, setAccount] = useState<Address>();
+  const [balance, setBalance] = useState<string>();
+  const [hash, setHash] = useState<Hash>();
+  const [receipt, setReceipt] = useState<TransactionReceipt>();
+  const [recipient, setRecipient] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
+  const [isTransferring, setIsTransferring] = useState(false);
+
+  const addressInput = React.createRef<HTMLInputElement>();
+  const valueInput = React.createRef<HTMLInputElement>();
+
+  // Fetch USDC balance
+  const fetchBalance = async (address: Address) => {
+    const balance = await publicClient.readContract({
+      address: USDC_CONTRACT_ADDRESS,
+      abi: USDC_ABI,
+      functionName: "balanceOf",
+      args: [address],
+    }) as bigint;
+    setBalance((Number(balance) / 10 ** 6).toFixed(2));
+  };
+
+  // Connect Wallet
+  const connect = async () => {
+    const [address] = await walletClient.requestAddresses();
+    setAccount(address);
+    fetchBalance(address);
+  };
+
+  // Transfer USDC
+  const transferUSDC = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!account || !recipient || !amount) return;
+
+    try {
+      setIsTransferring(true);
+      const amountInWei = BigInt(Math.floor(Number(amount) * 10 ** 6));
+
+      const { request } = await publicClient.simulateContract({
+        account,
+        address: USDC_CONTRACT_ADDRESS,
+        abi: USDC_ABI,
+        functionName: 'transfer',
+        args: [recipient as Address, amountInWei],
+      });
+
+      const hash = await walletClient.writeContract(request);
+      setHash(hash);
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      setReceipt(receipt);
+
+      // Refresh balance after transfer
+      await fetchBalance(account);
+
+      // Clear form
+      setRecipient('');
+      setAmount('');
+    } catch (error) {
+      console.error('Transfer failed:', error);
+    } finally {
+      setIsTransferring(false);
+    }
+  };
+
+  return (
+    <div>
+      <h1>USDC Transfer Sample App</h1>
+      {account ? (
+        <>
+          <p><strong>Connected Wallet:</strong> {account}</p>
+          <p><strong>USDC Balance:</strong> {balance ? `${balance} USDC` : "Fetching..."}</p>
+
+          <form onSubmit={transferUSDC} style={{ marginTop: '20px' }}>
+            <div style={{ marginBottom: '10px' }}>
+              <label>
+                Recipient Address:
+                <input
+                  type="text"
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                  placeholder="0x..."
+                  style={{ marginLeft: '10px', width: '300px' }}
+                />
+              </label>
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <label>
+                Amount (USDC):
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                  style={{ marginLeft: '10px' }}
+                />
+              </label>
+            </div>
+            <button type="submit" disabled={isTransferring}>
+              {isTransferring ? 'Transferring...' : 'Transfer USDC'}
+            </button>
+          </form>
+
+          {hash && (
+            <div style={{ marginTop: '20px' }}>
+              <p><strong>Transaction Hash:</strong> {hash}</p>
+            </div>
+          )}
+
+          {receipt && (
+            <div style={{ marginTop: '10px' }}>
+              <p><strong>Transaction Status:</strong> {receipt.status === 'success' ? 'Success' : 'Failed'}</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <button onClick={connect}>Connect Wallet</button>
+      )}
+    </div>
+  );
+}
+
+export default USDCApp;
+```
+
+2. Create your application entrypoint by creating a new file `src/main.tsx` and
+   copying the following code into it. This code sets up the React application
+   and renders the `USDCApp` component.
+
+```typescript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import USDCApp from './App';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <USDCApp />
+  </React.StrictMode>
+);
+```
+
+3. Create a new file `index.html` in the root directory and copy the following
+   code into it. This code sets up the HTML structure for the application.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>USDC Transfer Sample App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+4. Run your application using the following command:
+
+```shell
+npm run dev
+```
+
+{/* <!-- markdownlint-disable MD034 --> */}
+
+You can open http://localhost:5173 in your browser to view the application.
+
+{/* <!-- markdownlint-enable MD034 --> */}
+
+## Connecting your wallet
+
+- In the application, click the **Connect Wallet** button. This will prompt you
+  to connect your wallet using Metamask.
+- Select your Sonic wallet address from the available options.
+- Approve the connection request in Metamask.
+
+## Transferring USDC
+
+- In the app, enter the amount of USDC to send, and the recipient's wallet
+  address.
+- Click **Send Tokens**
+- Review the transaction details in the Metamask pop-up and approve the
+  transaction.
+- Wait for the transaction to be confirmed. The app displays the transaction
+  hash and status once the transfer is complete.
+- You can check the transaction status on the
+  [Sonic Explorer](https://blaze.soniclabs.com/).

@@ -1,0 +1,89 @@
+---
+title: OpenAPI
+description:
+  Use our OpenAPI spec to easily view APIs, create code and mock servers, and
+  more.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_[OpenAPI Specification](https://swagger.io/specification/) (OAS) OpenAPI
+Specification (OAS) is an API description format for REST APIs. Our OpenAPI 3.0
+files allow you to view our APIs with your preferred tool, generate code, create
+mock servers and generate Postman collections._
+
+- If you work regularly in Postman, Circle offers a pre-packaged
+  [Postman](/circle-mint/postman) collection for your convenience.
+
+## OpenAPI Files
+
+Circle offers you an OpenAPI file for each of the products we offer. To acquire
+any or all of them, visit
+[Circle’s OpenAPI repository](https://github.com/circlefin/openapi) at Github.
+
+## Alternate Viewers
+
+Would you rather view Circle’s OpenAPI files within your own API viewer rather
+than the provided API References? Here are some viewers that we recommend:
+
+Whatever the reason may be, if you prefer your own API viewer over the provided
+API References you can use Circle’s
+[OpenAPI](https://github.com/circlefin/openapi) files to view them in your tool
+of choice.
+
+Here are some great viewers that we like:
+
+1. [Swagger Editor/Viewer](https://editor.swagger.io)
+2. [Swagger Hub](https://swagger.io/tools/swaggerhub/) (Requires an account)
+3. Visual Studio Code:
+   [OpenAPI (Swagger) Editor](https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi)
+   by 42Crunch or
+   [Swagger Viewer](https://marketplace.visualstudio.com/items?itemName=Arjun.swagger-viewer)
+   by Arjun G
+
+## Generate Code
+
+Use [Circle’s OpenAPI files](https://github.com/circlefin/openapi), to
+auto-generate client code in your chosen programming language. Try using an
+OPenAPI generator like [Swagger](https://swagger.io/).
+
+## Mock Server
+
+To reduce time in development and testing, use Circle’s OpenAPI to run a mock
+server of Circle’s APIs locally and in your CI environments. A mock API server
+allows you to emulate a real API (such as Circle) locally, in your test
+environments, and/or publicly. This mock server can receive requests and will
+respond to them with static or dynamic data that simulates what the real API
+would return.
+
+### Getting started
+
+Use the open-source tool [Prism](https://github.com/stoplightio/prism) to
+generate a mock server from Circle’s OpenAPI specification. Prism is an
+open-source HTTP mock server that can mimic an API’s behavior as if it were a
+real server. Prism generates mock HTTP servers from your OpenAPI v2/v3 (aka
+Swagger) documents.
+
+To Install Prism, run either of these two commands:
+
+```text
+npm install -g @stoplight/prism-cli
+
+## OR
+
+yarn global add @stoplight/prism-cli
+```
+
+Next, feed a specification file to Prism so that it can generate the desired
+mock API server.
+
+```text
+prism mock https://raw.githubusercontent.com/circlefin/openapi/master/openapi/json/payments.json
+```
+
+At this point you should see a trace ending with the word `start` in green.
+
+Now you can send requests via cURL or Postman to the destination Prism is
+listening on.

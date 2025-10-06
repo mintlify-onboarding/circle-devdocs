@@ -1,0 +1,339 @@
+---
+title: "Quickstart: Exchange Local Currency for USDC"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Exchange Local Currency for USDC"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+The Cross-Currency API lets you swap local currency for USDC. To onramp funds in
+this way, you must first have a fiat account linked to your Circle Mint account.
+
+This guide walks you through how to use the Cross-Currency API to obtain a quote
+for a local currency to USDC exchange and then execute the swap.
+
+## Prerequisites
+
+Before you begin this quickstart, ensure that you have:
+
+- Obtained an API key for Mint from Circle
+- Obtained access to the Cross-Currency API
+- Installed cURL on your development machine
+- Linked a fiat account to your Circle Mint account
+
+This quickstart provides API requests in cURL format, along with example
+responses.
+
+## Part 1: Request a quote
+
+To begin an onramp from fiat to USDC, you must first request a quote. Quotes
+have a rate guarantee until they expire.
+
+<Note>
+**Note:** [Step 1.1.](#11-get-a-list-of-linked-fiat-accounts) and
+[Step 1.2.](#12-specify-which-fiat-account-to-use) only need to be performed
+once. If you want to switch the fiat account attached to your FX trading
+account, you can repeat these two steps.
+</Note>
+
+### 1.1. Get a list of linked fiat accounts
+
+Retrieve a list of the fiat accounts linked to your Circle Mint account using
+the following request:
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/businessAccount/banks/pix' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "id": "763a80d8-9bbb-4876-a67d-e8089389b016",
+      "type": "wire",
+      "status": "complete",
+      "createDate": "2025-09-16T15:53:47.251Z",
+      "updateDate": "2025-09-16T15:53:48.293Z",
+      "description": "Banco Azteca ****7771",
+      "trackingRef": "CIR3A3R7EV",
+      "virtualAccountEnabled": true,
+      "fingerprint": "faf6b92c-4e76-426c-9741-95aed1415715",
+      "billingDetails": {
+        "name": "Satoshi Nakamoto",
+        "line1": "100 Money Street",
+        "line2": "Suite 1",
+        "city": "Boston",
+        "postalCode": "01234",
+        "district": "MA",
+        "country": "US",
+        "valid": true
+      },
+      "bankAddress": {
+        "bankName": "Banco Azteca",
+        "line1": "Iabel la Católica 165",
+        "line2": "Colonia Obrera",
+        "city": "México DF",
+        "district": "México DF",
+        "country": "MX"
+      }
+    }
+  ]
+}
+```
+
+### 1.2. Specify which fiat account to use
+
+Register your local fiat account with the Cross-Currency API to make it the
+account that settles trades. The following is an example request to register
+your fiat account:
+
+```shell
+curl --location --request PUT 'https://api-sandbox.circle.com/v1/exchange/fxConfigs/accounts' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "fiatAccountId": "763a80d8-9bbb-4876-a67d-e8089389b016",
+    "currency": "MXN"
+}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "currency": "MXN",
+    "fiatAccountId": "763a80d8-9bbb-4876-a67d-e8089389b016",
+    "createDate": "2025-01-09T17:50:09.452241Z",
+    "updateDate": "2025-02-28T17:25:15.866900Z"
+  }
+}
+```
+
+### 1.3. Request a quote from the API
+
+Using a UUIDv4 generator, generate a UUID to use as the idempotency key. Using
+the idempotency key, generate a quote for exchanging a specific amount of local
+currency to USDC. You must include an `amount` field on either the `from` or the
+`to` object, but not both. The `type` field must be set to `tradable` to get a
+locked rate quote. The following is an example request for a quote:
+
+<Note>
+**Note:** Quotes are valid for 3 seconds and must be refreshed if not used in
+that time frame.
+</Note>
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quotes' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "type": "tradable",
+  "idempotencyKey": "07c238ad-b144-4607-9b70-51d1ffbb3c7b",
+  "from": {
+    "currency": "MXN",
+    "amount": 100.00
+  },
+  "to": {
+    "currency": "USDC",
+    "amount": null
+  }
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
+    "rate": 0.0597,
+    "from": {
+      "currency": "MXN",
+      "amount": 100.0
+    },
+    "to": {
+      "currency": "USDC",
+      "amount": 5.01
+    },
+    "expiry": "2023-10-26T14:37:20.804786Z",
+    "type": "tradable"
+  }
+}
+```
+
+## Part 2: Initiate the trade
+
+Once you have obtained a quote, you can lock in the rate by accepting it and
+initiating the trade. If you were building a UI for your users, you would
+display the quote to your users and let them confirm the trade.
+
+### 2.1. Create the trade
+
+Generate another idempotency key, and then use it to confirm the quote and lock
+in the rate using the following example request:
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trades' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "idempotencyKey": "7a6cba1e-6b8d-4bb8-b236-5c20a12e88f6",
+  "quoteId": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "7a6cba1e-6b8d-4bb8-b236-5c20a12e88f6",
+    "from": {
+      "currency": "MXN",
+      "amount": 100
+    },
+    "to": {
+      "currency": "USDC",
+      "amount": 5.01
+    },
+    "status": "pending",
+    "createDate": "2023-10-26T14:37:20.804786Z",
+    "updateDate": "2023-10-26T14:37:20.804786Z",
+    "quoteId": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1"
+  }
+}
+```
+
+## Part 3: Send the funds
+
+Once your trade is created, you should send the fiat funds to Circle. Once
+received, the USDC is transferred to the appropriate address.
+
+### 3.1. Get settlement batches
+
+Retrieve unsettled payment batches from the API using the following example
+request:
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "id": "67276b7d-7ea5-4f22-a231-09e2d2891c36",
+      "entityId": "c5692eb6-33f9-431d-9481-2eee38f02081",
+      "status": "pending",
+      "createDate": "2025-09-11T15:45:04.729442Z",
+      "updateDate": "2025-09-11T15:45:04.729443Z",
+      "details": [
+        {
+          "id": "02bd22dc-b40f-49b8-b2d8-6e69f82cfca0",
+          "type": "payable",
+          "status": "pending",
+          "reference": "ezBrwN2nP5Bz18Lu",
+          "amount": {
+            "currency": "MXN",
+            "amount": "100.00"
+          },
+          "expectedPaymentDueAt": "2025-09-11T16:45:00Z",
+          "createDate": "2025-09-11T15:45:04.728466Z",
+          "updateDate": "2025-09-11T15:45:04.728466Z"
+        },
+        {
+          "id": "afbd8d53-34ea-42fa-9691-4a5c0dd96c53",
+          "type": "receivable",
+          "status": "pending",
+          "amount": {
+            "currency": "USDC",
+            "amount": "5.01"
+          },
+          "createDate": "2025-09-11T15:45:04.728479Z",
+          "updateDate": "2025-09-11T15:45:04.728479Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 3.2. Get payment instructions
+
+Retrieve the settlement instructions for the currency you are using with the
+following example request. Note that this step only needs to be performed once,
+as the values are static and can be safely cached.
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements/instructions/MXN' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "currency": "MXN",
+    "fiatAccountType": "wire",
+    "instruction": {
+      "beneficiary": {
+        "name": "PLATAFORMA INTEGRAL DE CRIPTOS Y OTROS A",
+        "address1": "AVENIDA INSURGENTES SUR 3579",
+        "address2": "COLONIA VILLA OLÍMPICA, ALCALDÍA TLALPAN"
+      },
+      "beneficiaryBank": {
+        "swiftCode": "AZTKMXMMXXX",
+        "routingNumber": "322286803",
+        "accountNumber": "127180987654321012",
+        "currency": "MXN",
+        "name": "BANCO AZTECA",
+        "address": "AVENIDA INSURGENTES SUR 3579",
+        "postalCode": "14020",
+        "country": "MX"
+      },
+      "trackingRef": "ezBrwN2nP5Bz18Lu"
+    }
+  }
+}
+```
+
+### 3.3. Create a fiat transfer
+
+Initiate an inbound fiat transfer to the account specified in the instructions.
+You should include the reference to the settlement batch in the transfer
+request. When Circle receives the transfer, Circle updates the settlement batch
+and transfers USDC to your Mint account.
+
+If you were building a UI for your users, you would display instructions on how
+to complete the transfer. In such a scenario, when the USDC is allocated to your
+Mint account, you must then transfer it to the end user that requested the
+trade.
+
+<Warning>
+
+**Warning:** You must only send the fiat transfer on the specified payment rail.
+In this example, for `MXN`, you must send the transfer on the SPEI payment rail.
+Transfers on unsupported payment rails may take significant time and cost to
+recover.
+
+</Warning>

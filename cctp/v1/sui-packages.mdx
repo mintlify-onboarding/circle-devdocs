@@ -1,0 +1,739 @@
+---
+title: CCTP Sui Packages and Interfaces V1
+description: Packages for CCTP V1 support on the Sui blockchain
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Sui Packages and Interfaces"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+## Overview
+
+The CCTP V1 Sui smart contract implementation is written in
+[Move](https://sui.io/move). The Sui CCTP V1 implementation is split into two
+packages: `MessageTransmitter` and `TokenMessengerMinter`.
+`TokenMessengerMinter` encapsulates the functionality of both `TokenMessenger`
+and `TokenMinter` contracts on EVM chains. To ensure alignment with EVM
+contracts logic and state, and to facilitate future upgrades and maintenance,
+the code and state of the Sui packages reflect the EVM counterparts as closely
+as possible.
+
+There are a few key differences with Sui packages from EVM and other CCTP V1
+implementations:
+
+### Receive Message Flow
+
+Since the Move language does not have interfaces, the
+`message_transmitter::receive_message()` function cannot call directly into the
+receiver package (e.g. `TokenMessenger` for USDC transfers). The workaround for
+this limitation is that callers of `receive_message()` must also atomically (in
+the same
+[Programmable Transaction Block (PTB)](https://docs.sui.io/concepts/transactions/prog-txn-blocks))
+call into the receiver package's `handle_receive_message()` function with a
+`Receipt` struct, call `stamp_receipt()` with the `StampReceiptTicket` struct
+returned from `handle_receive_message()`, and then pass the `StampedReceipt`
+back into the `message_transmitter::complete_receive_message()` function to
+complete the message and destroy the `Receipt` object. This flow ensures
+atomicity and guarantees message receipt by the receiver packages. Please see
+the interface and examples below for more information on this flow.
+
+### Interacting with TokenMessengerMinter from other Packages
+
+On Sui, when a package is upgraded, the new version is deployed with a new
+package ID. This means if another package is directly calling a version-gated
+function, when the package is upgraded, the dependent packages must also be
+upgraded. To address this, all CCTP V1 functions that are intended to be called
+from a dependent package follow a `Ticket` struct pattern. In this pattern, the
+dependent package can call non version-gated `create_ticket()` functions with
+the intended function parameters, including an `Auth` struct (used to uniquely
+identify the package), and receive back a `Ticket` struct. This struct can then
+be returned from the dependent package and used in a PTB to call the intended
+CCTP V1 function. This allows integrators to securely integrate with CCTP V1
+functions from their packages, and only have to update PTBs when CCTP V1
+packages are upgraded rather than having to upgrade their packages as well. For
+more information, see the functions below with the `_with_package_auth` suffix.
+
+### Testnet
+
+#### Package IDs
+
+| Package              | [Domain](/cctp/v1/supported-domains) | Address                                                              |
+| :------------------- | :----------------------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | 8                                    | `0x4931e06dce648b3931f890035bd196920770e913e43e45990b383f6486fdd0a5` |
+| TokenMessengerMinter | 8                                    | `0x31cc14d80c175ae39777c0238f20594c6d4869cfab199f40b69f3319956b8beb` |
+
+#### Shared Object IDs
+
+| Object                    | Object ID                                                            |
+| :------------------------ | :------------------------------------------------------------------- |
+| MessageTransmitterState   | `0x98234bd0fa9ac12cc0a20a144a22e36d6a32f7e0a97baaeaf9c76cdc6d122d2e` |
+| TokenMessengerMinterState | `0x5252abd1137094ed1db3e0d75bc36abcd287aee4bc310f8e047727ef5682e7c2` |
+| USDC Treasury Object      | `0x7170137d4a6431bf83351ac025baf462909bffe2877d87716374fb42b9629ebe` |
+
+Branch with testnet
+[Automated Address Management](https://docs.sui.io/concepts/sui-move-concepts/packages/automated-address-management):
+[github.com/circlefin/sui-cctp/tree/testnet](https://github.com/circlefin/sui-cctp/tree/testnet).
+
+### Mainnet
+
+#### Package IDs
+
+| Package              | [Domain](/cctp/v1/supported-domains) | Address                                                              |
+| :------------------- | :----------------------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | 8                                    | `0x08d87d37ba49e785dde270a83f8e979605b03dc552b5548f26fdf2f49bf7ed1b` |
+| TokenMessengerMinter | 8                                    | `0x2aa6c5d56376c371f88a6cc42e852824994993cb9bab8d3e6450cbe3cb32b94e` |
+
+#### Shared Object IDs
+
+| Object                    | Object ID                                                            |
+| :------------------------ | :------------------------------------------------------------------- |
+| MessageTransmitterState   | `0xf68268c3d9b1df3215f2439400c1c4ea08ac4ef4bb7d6f3ca6a2a239e17510af` |
+| TokenMessengerMinterState | `0x45993eecc0382f37419864992c12faee2238f5cfe22b98ad3bf455baf65c8a2f` |
+| USDC Treasury Object      | `0x57d6725e7a8b49a7b2a612f6bd66ab5f39fc95332ca48be421c3229d514a6de7` |
+
+Branch with mainnet
+[Automated Address Management](https://docs.sui.io/concepts/sui-move-concepts/packages/automated-address-management):
+[github.com/circlefin/sui-cctp/tree/mainnet](https://github.com/circlefin/sui-cctp/tree/mainnet).
+
+## Interface
+
+The Sui CCTP V1 source code is
+[available on GitHub](https://github.com/circlefin/sui-cctp/).
+
+The interface below serves as a reference for permissionless messaging functions
+exposed by the programs.
+
+### TokenMessengerMinter
+
+#### [deposit_for_burn](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L106)
+
+Burns passed in tokens from sender to be minted on destination domain. Minted
+tokens will be transferred to `mint_recipient` on the destination chain. The
+`deposit_for_burn` interface and functionality is very similar to the EVM
+implementation. The coins parameter is the key difference due to how passing
+tokens around on Sui works. `message_transmitter_state`, `deny_list`, and
+`treasury` parameters are all shared objects.
+
+**Remarks:**
+
+- Intended to be called directly by EOA (rather than a dependent package). The
+  initiating EOA will be the "owner" (e.g. message sender) of the message and
+  have the ability to call `replace_deposit_for_burn()` to update the
+  `mint_recipient` or `destination_caller`. If the calling EOA is not trusted by
+  the mint recipient or destination caller,
+  `deposit_for_burn_with_package_auth()` should be called instead with the
+  integrating package owning the message.
+- The generic type T is the coin's one-time witness
+  ([OTW](https://docs.sui.io/concepts/sui-move-concepts/one-time-witness)) type
+  for the specific coin type to be burned.
+- `BurnMessage` and `Message` structs are returned, but it is not required to do
+  anything with these structs; they are returned for convenience.
+
+**Parameters**
+
+| Field                     | Type                           | Description                                                                                                                                                                                       |
+| :------------------------ | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| coins                     | `Coin<T>`                      | Coin of type T to be burned. Full amount in coins will be burned.                                                                                                                                 |
+| destination_domain        | `u32`                          | Destination domain identifier.                                                                                                                                                                    |
+| mint_recipient            | `address`                      | Address of mint recipient on destination domain. _Note: If destination is a non-Move chain,_ `mint_recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+| state                     | `&State`                       | Shared State object for the `TokenMessengerMinter` package.                                                                                                                                       |
+| message_transmitter_state | `&mut MessageTransmitterState` | Shared State object for the `MessageTransmitter` package.                                                                                                                                         |
+| deny_list                 | `&DenyList`                    | DenyList shared object for the stablecoin token T. Constant address: `0x403`                                                                                                                      |
+| treasury                  | `&mut Treasury<T>`             | Treasury shared object for the stablecoin token T.                                                                                                                                                |
+| ctx                       | `&TxContext`                   | `TxContext` for the transaction.                                                                                                                                                                  |
+
+#### [deposit_for_burn_with_package_auth](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L143)
+
+Same as `deposit_for_burn()`, but intended to be called with an `Auth` struct
+from a dependent package. The calling package will be the "owner" (e.g.
+message_sender) of the message and have the ability to call
+`replace_deposit_for_burn_with_package_auth()` to update the mint recipient or
+destination caller. This would be similar to a wrapper contract on EVM chains
+calling into `TokenMessenger` and being the message sender. Direct callers
+(where EOAs are trusted and should be the owner) should use `deposit_for_burn()`
+instead.
+
+**Remarks:**
+
+- This function uses a `DepositForBurnTicket` struct for parameters so that the
+  calling package can call `create_deposit_for_burn_ticket()` (not
+  version-gated) from their package with parameters, and call
+  `deposit_for_burn_with_package_auth()` (version-gated) from a PTB so packages
+  don't have to be updated during CCTP V1 package upgrades.
+- `DepositForBurnTicket` also requires an `Auth` parameter. This is required to
+  securely assign a sender address associated with the calling contract to the
+  message. Any struct that implements the drop trait can be used as an
+  authenticator, but it is recommended to use a dedicated `Auth` struct. Calling
+  contracts should be careful to not expose these structs to the public or else
+  messages from their package could be replaced. An example can be found in
+  `TokenMessengerMinter`
+  [on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+- The returned structs - `BurnMessage` and `Message` both have the copy ability.
+  There is also no guarantee of execution ordering, so your package could create
+  5 DepositForBurnTickets in one transaction and they could be executed in any
+  order depending on the PTB. Integrating packages should account for both of
+  these scenarios.
+
+**Parameters**
+
+| Field                     | Type                            | Description                                                                    |
+| :------------------------ | :------------------------------ | :----------------------------------------------------------------------------- |
+| deposit_for_burn_ticket   | `DepositForBurnTicket<T, Auth>` | Struct containing parameters and authenticator struct.                         |
+| state                     | `&State`                        | Shared `State` object for the `TokenMessengerMinter` package.                  |
+| message_transmitter_state | `&mut MessageTransmitterState`  | Shared `State` object for the `MessageTransmitter` package.                    |
+| deny_list                 | `&DenyList`                     | DenyList shared object for the stablecoin token `T`. Constant address: `0x403` |
+| treasury                  | `&mut Treasury<T>`              | Treasury shared object for the stablecoin token `T`.                           |
+| ctx                       | `&TxContext`                    | `TxContext` for the transaction.                                               |
+
+#### [deposit_for_burn_with_caller](https://github.com/circlefin/sui-cctp/blob/649ed8a06840271ddc1ad66bb215d51be8265c31/packages/token_messenger_minter/sources/deposit_for_burn.move#L177)
+
+Same as `deposit_for_burn` but with an additional parameter,
+`destination_caller`. This parameter specifies which address has permission to
+call `receive_message` on the destination domain for the message.
+
+**Remarks:**
+
+- Intended to be called directly by EOA (rather than a dependent package). The
+  initiating EOA will be the "owner" (e.g. message sender) of the message and
+  have the ability to call `replace_deposit_for_burn()` to update the
+  `mint_recipient` or `destination_caller`. If the calling EOA is not trusted by
+  the mint recipient or destination caller,
+  `deposit_for_burn_with_caller_with_package_auth()` should be called instead
+  with the integrating package owning the message.
+
+<Note>
+**Destination Caller Notes**
+
+If the `destination_caller` does not represent a valid address, then it will not
+be possible to broadcast the message on the destination domain. This is an
+advanced feature, and the standard `deposit_for_burn` should be preferred for
+use cases where a specific destination caller is not required.
+
+_Note: If destination is a non-Move chain,_ `destination_caller` _address should
+be converted to hex and passed in using the @0x123 address format._
+
+</Note>
+
+**Parameters**
+
+| Field                     | Type                           | Description                                                                                                                                                                                      |
+| :------------------------ | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| coins                     | `Coin<T>`                      | Coin of type T to be burned. Full amount in coins will be burned.                                                                                                                                |
+| destination_domain        | `u32`                          | Destination domain identifier.                                                                                                                                                                   |
+| mint_recipient            | `address`                      | Address of mint recipient on destination domain _Note: If destination is a non-Move chain,_ `mint_recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+| destination_caller        | `address`                      | Address of caller on destination chain.                                                                                                                                                          |
+| state                     | `&State`                       | Shared `State` object for the `TokenMessengerMinter` package.                                                                                                                                    |
+| message_transmitter_state | `&mut MessageTransmitterState` | Shared `State` object for the `MessageTransmitter` package.                                                                                                                                      |
+| deny_list                 | `&DenyList`                    | DenyList shared object for the stablecoin token T. Constant address: `0x403`                                                                                                                     |
+| treasury                  | `&mut Treasury<T>`             | Treasury shared object for the stablecoin token T.                                                                                                                                               |
+| ctx                       | `&TxContext`                   | `TxContext` for the transaction.                                                                                                                                                                 |
+
+#### [deposit_for_burn_with_caller_with_package_auth](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L212)
+
+The same as `deposit_for_burn_with_caller()`, but intended to be called with an
+`Auth` struct from a dependent package. The calling package will be the "owner"
+(e.g. message_sender) of the message and have the ability to call
+`replace_deposit_for_burn_with_package_auth()` to update the `mint_recipient` or
+`destination_caller`. This would be similar to a wrapper contract on EVM chains
+calling into `TokenMessenger` and being the message sender. Direct callers
+(where EOAs are trusted and should be the owner) should use
+`deposit_for_burn_with_caller()` instead.
+
+**Remarks:**
+
+- This function uses a `DepositForBurnWithCallerTicket` struct for parameters so
+  that the calling package can call
+  `create_deposit_for_burn_with_caller_ticket()` (not version-gated) from their
+  package, and call `deposit_for_burn_with_caller_with_package_auth()`
+  (version-gated) from a PTB so dependent packages don't have to be updated
+  during upgrades.
+- `DepositForBurnWithCallerTicket` also requires an `Auth` parameter. This is
+  required to securely assign a sender address associated with the calling
+  contract to the message. Any struct that implements the drop trait can be used
+  as an authenticator, but it is recommended to use a dedicated struct. Calling
+  contracts should be careful to not expose these structs to the public or else
+  messages from their package could be replaced. An example can be found in
+  `TokenMessengerMinter`
+  [on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+
+<Note>
+**Destination Caller Notes**
+
+If the `destination_caller` does not represent a valid address, then it will not
+be possible to broadcast the message on the destination domain. This is an
+advanced feature, and the standard `deposit_for_burn` should be preferred for
+use cases where a specific destination caller is not required.
+
+_Note: If destination is a non-Move chain,_ `destination_caller` _address should
+be converted to hex and passed in using the @0x123 address format._
+
+</Note>
+
+**Parameters**
+
+| Field                               | Type                                      | Description                                                                  |
+| :---------------------------------- | :---------------------------------------- | :--------------------------------------------------------------------------- |
+| deposit_for_burn_with_caller_ticket | `DepositForBurnWithCallerTicket<T, Auth>` | Struct containing parameters and authenticator struct.                       |
+| state                               | `&State`                                  | Shared `State` object for the `TokenMessengerMinter` package.                |
+| message_transmitter_state           | `&mut MessageTransmitterState`            | Shared `State` object for the `MessageTransmitter` package.                  |
+| deny_list                           | `&DenyList`                               | DenyList shared object for the stablecoin token T. Constant address: `0x403` |
+| treasury                            | `&mut Treasury<T>`                        | Treasury shared object for the stablecoin token T.                           |
+| ctx                                 | `&TxContext`                              | `TxContext` for the transaction.                                             |
+
+#### [replace_deposit_for_burn](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L259)
+
+Replace a `BurnMessage` to change the mint recipient and/or destination caller.
+Allows the sender of a previous `BurnMessage` (created by `deposit_for_burn` or
+`deposit_for_burn_with_caller`) to send a new `BurnMessage` to replace the
+original.
+
+**Remarks:**
+
+- The new `BurnMessage` will reuse the amount and burn token of the original,
+  without requiring a new `Coin<T>` deposit.
+- The resulting mint will supersede the original mint, as long as the original
+  mint has not confirmed yet onchain.
+- A valid attestation is required before calling this function.
+- This is useful in situations where the user specified an incorrect address and
+  has no way to safely mint the previously burned USDC.
+
+**Parameters**
+
+| Field                     | Type                           | Description                                                                                                                                                                                      |
+| :------------------------ | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| original_message          | `vector<u8>`                   | Original message bytes (to replace).                                                                                                                                                             |
+| original_attestation      | `vector<u8>`                   | Original attestation bytes.                                                                                                                                                                      |
+| new_destination_caller    | `Option<address>`              | The new destination caller, which may be the same as the original destination caller, a new destination caller, or an empty destination caller, indicating that any destination caller is valid. |
+| new_mint_recipient        | `Option<address>`              | The new mint recipient, which may be the same as the original mint recipient, or different.                                                                                                      |
+| state                     | `&State`                       | Shared State object for the `TokenMessengerMinter` package.                                                                                                                                      |
+| message_transmitter_state | `&mut MessageTransmitterState` | Shared State object for the `MessageTransmitter` package.                                                                                                                                        |
+| ctx                       | `&TxContext`                   | `TxContext` for the transaction.                                                                                                                                                                 |
+
+#### [replace_deposit_for_burn_with_package_auth](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L282)
+
+Same as `replace_deposit_for_burn()`, but intended to be called when
+`deposit_for_burn_with_package_auth()` or
+`deposit_for_burn_with_caller_with_package_auth()` was called for the original
+message where the calling package is the message sender.
+
+**Remarks:**
+
+- This function uses a `ReplaceDepositForBurnTicket` struct for parameters so
+  that the calling package can call `create_replace_deposit_for_burn_ticket()`
+  (not version-gated) from their package with parameters, and call
+  `deposit_for_burn_with_package_auth()` (version-gated) from a PTB so packages
+  don't have to be updated during CCTP V1 package upgrades.
+
+**Parameters**
+
+| Field                           | Type                                | Description                                                 |
+| :------------------------------ | :---------------------------------- | :---------------------------------------------------------- |
+| replace_deposit_for_burn_ticket | `ReplaceDepositForBurnTicket<Auth>` | Struct containing parameters and authenticator struct.      |
+| state                           | `&State`                            | Shared State object for the `TokenMessengerMinter` package. |
+| message_transmitter_state       | `&mut MessageTransmitterState`      | Shared State object for the `MessageTransmitter` package.   |
+| ctx                             | `&TxContext`                        | `TxContext` for the transaction.                            |
+
+#### [handle_receive_message](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/handle_receive_message.move#L131)
+
+Handles an incoming message from `MessageTransmitter`, and mints USDC to the
+recipient for valid messages. This function can only be called with a mutable
+reference to a `Receipt` object, which can only be created via a call with a
+valid message to the `message_transmitter::receive_message()` function.
+
+`state`, `mt_state`, `deny_list`, and `treasury` parameters are all shared
+objects.
+
+**Remarks:**
+
+- Returns a `StampReceiptTicketWithBurnMessage` struct that can be deconstructed
+  in a dependent package (or in a PTB) via
+  `deconstruct_stamp_receipt_ticket_with_burn_message()`. This struct is
+  returned so that dependent packages can associate the `BurnMessage` and
+  `StampReceiptTicket` together from a PTB call and guarantee that
+  `stamp_receipt()` was called.
+- This must be called in a single PTB after calling `receive_message()` and
+  before calling `complete_receive_message()`. See the
+  [Examples](/cctp/v1/transfer-usdc-on-testnet-from-sui-to-ethereum) page for
+  the entire flow of receiving a message.
+
+**Parameters**
+
+| Field     | Type               | Description                                                                  |
+| :-------- | :----------------- | :--------------------------------------------------------------------------- |
+| receipt   | `Receipt`          | Original message bytes (to replace).                                         |
+| state     | `&State`           | Shared State object for the `TokenMessengerMinter` package.                  |
+| deny_list | `&DenyList`        | DenyList shared object for the stablecoin token T. Constant address: `0x403` |
+| treasury  | `&mut Treasury<T>` | Treasury shared object for the stablecoin token T.                           |
+| ctx       | `&TxContext`       | `TxContext` for the transaction.                                             |
+
+### MessageTransmitter
+
+#### [receive_message](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/receive_message.move#L113)
+
+Receives a message emitted from a source chain. Messages with a given nonce can
+only be received once for a (`sourceDomain`, `destinationDomain`) pair.
+
+**Remarks:**
+
+- This function returns a `Receipt`
+  [Hot Potato](https://medium.com/@borispovod/move-hot-potato-pattern-bbc48a48d93c)
+  struct after validating the attestation and marking the nonce as used.
+- In order to destroy the `Receipt` and complete the message, in a single PTB,
+  `stamp_receipt()` must be called with the `Receipt` and an `Auth` struct (see
+  [message_transmitter_authenticator](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/deposit_for_burn.move#L212)
+  for an example of this), and then `complete_receive_message()` must be called
+  with the `StampedReceipt` to emit the `MessageReceived` event and complete the
+  message.
+- The receipt/stamp pattern is used to enforce atomicity and ensure the intended
+  receiver contract is called.
+- Intended to be called directly from an EOA when a package `destination_caller`
+  is not specified on the message. Please use
+  `receive_message_with_package_auth()` if a package `destination_caller` is
+  specified.
+
+**Parameters**
+
+| Field       | Type         | Description                                                 |
+| :---------- | :----------- | :---------------------------------------------------------- |
+| message     | `vector<u8>` | Message bytes.                                              |
+| attestation | `vector<u8>` | Signed attestation of message.                              |
+| state       | `&mut State` | Shared State object for the `TokenMessengerMinter` package. |
+| ctx         | `&TxContext` | `TxContext` for the transaction.                            |
+
+#### [receive_message_with_package_auth](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/receive_message.move#L146)
+
+Same as `receive_message()`, except intended to be used by a dependent package
+when a package is specified as `destination_caller` (rather than an EOA).
+
+**Remarks:**
+
+- This function is version-gated and should be called from a PTB to prevent
+  breaking changes when an upgrade occurs.
+- This function uses a `ReceiveMessageTicket` for parameters so that the calling
+  package can call `create_receive_message_ticket()` (not version-gated) from
+  their package with parameters, and call `receive_message_with_package_auth()`
+  (version-gated) from a PTB so packages don't have to be upgraded during CCTP
+  V1 package upgrades.
+- `ReceiveMessageTicket` also requires an `Auth` parameter. This is required
+  whenever a package is assigned as a `destination_caller`. `destination_caller`
+  address should be set to the `Auth` identifier returned from the
+  `auth_caller_identifier()` function with the package's `Auth` struct. Any
+  struct that implements the drop trait can be used as an authenticator, but it
+  is recommended to use a dedicated `Auth` struct. Calling contracts should be
+  careful to not expose these structs to the public or else messages intended
+  for their package could be received by others. An example can be found in
+  `TokenMessengerMinter`
+  [on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+
+**Parameters**
+
+| Field                  | Type                         | Description                                                                         |
+| :--------------------- | :--------------------------- | :---------------------------------------------------------------------------------- |
+| receive_message_ticket | `ReceiveMessageTicket<Auth>` | A `Ticket` struct containing the message, attestation, and an authenticator struct. |
+| state                  | `&mut State`                 | Shared State object for the `TokenMessengerMinter` package.                         |
+| ctx                    | `&TxContext`                 | `TxContext` for the transaction.                                                    |
+
+#### [stamp_receipt](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/receive_message.move#L164)
+
+Stamps a `Receipt` struct after verifying the intended package acknowledged the
+message (through the `Auth` struct) by returning a `StampedReceipt` struct that
+can be used to complete the message via `complete_receive_message()`.
+
+**Remarks:**
+
+- This function is version-gated and should be called from a PTB to prevent
+  breaking changes in dependent packages when a CCTP V1 upgrade occurs.
+- `create_stamp_receipt_ticket()` is safe to be called directly from a package
+  (not version-gated), and it's returned `Ticket` struct can be passed into
+  `stamp_receipt()` in a PTB.
+
+<Note>
+**Auth Parameter Notes**
+
+This is required for the `MessageTransmitter` module to approve a `Receipt`
+prior to its deletion. Any struct that implements the drop trait can be used as
+an authenticator, but it is recommended to use a dedicated `Auth` struct.
+Calling contracts should be careful to not expose these `Auth` structs to the
+public to avoid messages being wrongly stamped. An example implementation exists
+in the `token_messenger_minter::message_transmitter_authenticator` module.
+
+</Note>
+
+**Parameters**
+
+| Field                | Type                       | Description                                                                                      |
+| :------------------- | :------------------------- | :----------------------------------------------------------------------------------------------- |
+| stamp_receipt_ticket | `StampReceiptTicket<Auth>` | `Ticket` struct created by `create_stamp_receipt_ticket()` with the `Receipt` and `Auth` struct. |
+| state                | `&mut State`               | Shared State object for the `TokenMessengerMinter` package.                                      |
+| ctx                  | `&TxContext`               | `TxContext` for the transaction.                                                                 |
+
+#### [complete_receive_message](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/receive_message.move#L178)
+
+Completes the message by emitting a `MessageReceived` event for a stamped
+receipt and destroying the receipt. Cannot be called without a `StampedReceipt`
+(returned from `stamp_receipt()`).
+
+**Parameters**
+
+| Field           | Type             | Description                                                 |
+| :-------------- | :--------------- | :---------------------------------------------------------- |
+| stamped_receipt | `StampedReceipt` | A stamped receipt returned from a `stamp_receipt()` call.   |
+| state           | `&State`         | Shared State object for the `TokenMessengerMinter` package. |
+
+#### [send_message](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/send_message.move#L66)
+
+Sends a message to the destination domain and recipient. The created `Message`
+struct is returned, but it is not required to do anything with this struct, it
+is returned for convenience.
+
+**Remarks:**
+
+- This function uses a `SendMessageTicket` for parameters so that the calling
+  package can call `create_send_message_ticket()` (not version-gated) from their
+  package with parameters, and call `send_message()` (version-gated) from a PTB
+  so packages don't have to be updated during CCTP V1 package upgrades.
+- For USDC transfers, this function is called directly by the
+  `TokenMessengerMinter` package in `deposit_for_burn()`.
+- `SendMessageTicket` also requires an `Auth` parameter. This is required in
+  order to assign a `sender` to the message. Any struct that implements the drop
+  trait can be used as an authenticator, but it is recommended to use a
+  dedicated `Auth` struct. Calling contracts should be careful to not expose
+  these objects to the public or else their messages could be replaced. An
+  example can be found in `TokenMessengerMinter`
+  [on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+- The returned struct (`Message`) has the copy ability. There is also no
+  guarantee of execution ordering, so your package could create 5
+  `SendMessageTickets` in one transaction and they could be executed in any
+  order depending on the PTB. Integrating packages should account for both of
+  these scenarios.
+
+**Parameters**
+
+| Field               | Type                      | Description                                                                                                 |
+| :------------------ | :------------------------ | :---------------------------------------------------------------------------------------------------------- |
+| send_message_ticket | `SendMessageTicket<Auth>` | A struct containing the necessary information to send a message created via `create_send_message_ticket()`. |
+| state               | `&mut State`              | Shared State object for the `TokenMessengerMinter` package.                                                 |
+
+### [send_message_with_caller](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/send_message.move#L85)
+
+Same as `send_message()` but with an additional parameter, `destination_caller`.
+This parameter specifies which address has permission to call
+`receive_message()` on the destination domain for the message.
+
+**Parameters**
+
+| Field                           | Type                                | Description                                                                                                             |
+| :------------------------------ | :---------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| send_message_with_caller_ticket | `SendMessageWithCallerTicket<Auth>` | A struct containing the necessary information to send a message created via `create_send_message_with_caller_ticket()`. |
+| state                           | `&mut State`                        | Shared `State` object for the `TokenMessengerMinter` package.                                                           |
+
+### [replace_message](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/message_transmitter/sources/send_message.move#L115https://github.com/circlefin/sui-cctp-private/blob/master/packages/message_transmitter/sources/send_message.move#L146)
+
+Replace a message with a new message body and/or destination caller. The
+`original_attestation` must be a valid attestation of `original_message`,
+produced by Circle's attestation service.
+
+**Remarks:**
+
+- The sender package of the replaced message must be the same as the caller of
+  the original message. This is identified using the `Auth` generic parameter.
+  See [stamp_receipt](#stamp_receipt) for more info on `Auth` structs.
+
+**Parameters**
+
+| Field                  | Type                         | Description                                                                                                    |
+| :--------------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| replace_message_ticket | `ReplaceMessageTicket<Auth>` | A struct containing the necessary information to send a message created via `create_replace_message_ticket()`. |
+| state                  | `&mut State`                 | Shared `State` object for the `TokenMessengerMinter` package.                                                  |
+
+## Additional Notes
+
+### Destination Callers for Sui as Destination Chain
+
+Destination caller is a message field that specifies which address has
+permission to call `receive_message()` on the destination domain for the given
+message. On Sui this can either be an EOA (use `receive_message()`) or an `Auth`
+struct address for a package (use `receive_message_with_package_auth()`). Using
+a package destination caller allows integrators to run any atomic action in the
+same transaction that the message is received in.
+
+In order to determine the address to use for the destination caller field for
+Sui destination messages, please call
+`message_transmitter::auth::auth_caller_identifier()` with your `Auth` struct
+type.
+
+<Note>
+
+In order to use a package destination caller with Sui destination messages,
+integrators must create an `Auth` struct in their own package. Any struct that
+implements the drop trait can be used as an authenticator, but it is recommended
+to use a dedicated `Auth` struct. Integrators should be careful to not expose
+these structs to the public or else messages with their package as destination
+caller could be received by others. An example can be found in
+`TokenMessengerMinter`
+[on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+
+</Note>
+
+### Mint Recipient Addresses for Sui as Source Chain
+
+Outgoing mint recipient addresses from Sui are passed as Sui address types and
+can be treated the same as a `bytes32` mint recipient parameter on EVM
+implementations.
+
+### Mint Recipient Addresses for Sui as Destination Chain
+
+Sui mint recipient addresses from other chains should be treated the same as a
+hex `bytes32` parameter.
+
+### CCTP V1 Package Upgrades and Versioning
+
+CCTP V1 packages on Sui are upgradable. Public functions like
+`deposit_for_burn()`, `receive_message()`, etc. are version-gated. This means if
+the CCTP V1 packages are upgraded, the old versions of these functions will no
+longer be callable. Because of this, we do not recommend calling these functions
+directly from packages, and instead recommend calling the create ticket
+functions (not version-gated) directly from dependent packages, returning the
+created `Ticket` from your package, and then calling the main public function
+(e.g. `deposit_for_burn()` or `receive_message()`) from a PTB. By using the
+create ticket functions, dependent packages can securely set the parameters and
+`Auth` struct for the function call from within the package, and only have to
+update PTBs when CCTP V1 packages are upgraded.
+
+### Integrating with CCTP V1 Sui from other Packages
+
+Integrating with the CCTP V1 Sui packages from other packages is different from
+non-Sui implementations. Rather than directly wrapping the CCTP-Sui packages
+like one would in Solidity, on Sui packages should interact with CCTP V1
+packages in a more composable way. Third party packages should follow the
+`Ticket` pattern with a dedicated and private `Auth` struct as described below.
+
+#### Private Auth Structs
+
+`Auth` structs are used throughout the CCTP V1 packages in functions intended to
+be called from other dependent packages. The `auth_caller_identifier()` function
+is used to uniquely identify other packages by hashing the full object type of
+the type passed in. Any struct that implements the drop trait can be used as an
+authenticator, but it is recommended to use a dedicated auth struct. Calling
+contracts should be careful to not expose these structs to the public or else
+messages from their package could be forged. An example can be found in
+`TokenMessengerMinter`
+[on GitHub](https://github.com/circlefin/sui-cctp/blob/004950f742a161b6acfe2331630233ac3de0f3ad/packages/token_messenger_minter/sources/message_transmitter_authenticator.move).
+
+#### Ticket Pattern
+
+The `Ticket` pattern is a pattern used in CCTP-Sui that enables the
+composability of CCTP V1 with third-party packages. The pattern enables a
+third-party integrator (package) to create a `Ticket` ("hot potato") for a
+designated operation directly in their package without having to upgrade their
+packages with future CCTP V1 upgrades. Only PTBs would need to be updated.
+
+`Ticket` structs contain parameters for specific interactions with CCTP V1
+packages. They can only be created from and consumed by the CCTP V1 packages in
+a specific interaction, and do not have drop or store abilities, so must be used
+in the PTB where they are created. They also contain an `Auth` field that should
+only be created by the third-party package. The calling PTB should handle the
+`Ticket` by calling the relevant CCTP V1 package, which will recognize the
+third-party integrator as the action initiator.
+
+The following public functions (designed for third-party integrators, EOAs
+should use the entry versions) are implemented following the `Ticket` pattern.
+Each of them creates or consumes their own specific `Ticket` type:
+
+**`message_transmitter`:**
+
+- `receive_message_with_package_auth()`
+- `stamp_receipt()`
+
+**`token_messenger_minter`:**
+
+- `deposit_for_burn_with_package_auth()`
+- `deposit_for_burn_with_caller_with_package_auth()`
+- `replace_deposit_for_burn_with_package_auth()`
+
+For example, a typical workflow in a PTB to replace a deposit by an integrator
+would be:
+
+1. The integrating package calls `create_replace_deposit_for_burn_ticket()` with
+   an `Auth` struct it defined, and returns this ticket.
+2. The PTB calls `deposit_for_burn_with_caller_with_package_auth()` with the
+   ticket on behalf of the integrator.
+3. `token_messenger_minter` will validate if the type hash of `Auth` matches the
+   original sender in the burn message.
+
+#### PTB Function Call Ordering
+
+Due to the composability of Sui and PTBs, along with the `Ticket` pattern, there
+is no guarantee of ordering of calls within PTBs. The `Ticket` pattern
+introduces behaviors similar to asynchronous functions in ordinary programming
+contexts: when an integrator creates a ticket and returns it to the PTB, it is
+signaling an intention to execute the logic function, and the properties of the
+Move type system carry the guarantee that the function will indeed be eventually
+executed before the end of the transaction. However, no guarantee is given
+regarding the relative order of execution: the PTB is free to consume the
+tickets in any order it sees fit. While this has no security implications on the
+internal coherence of CCTP V1 itself, integrators should carefully evaluate
+whether their own logic is somehow dependent on a specific order of execution of
+the CCTP V1 functions.
+
+For example, a PTB could create 5 `DepositForBurnTicket` structs and execute
+them in any order. Similarly on the Sui destination side, 5 messages could be
+received in `MessageTransmitter`, and then received (and thus the USDC minted)
+in `TokenMessengerMinter` in a completely different order. If any pre or post
+actions are taken in third party packages, these could also come in an
+unexpected ordering, so this scenario should be handled accordingly in third
+party packages.
+
+#### Ticket Pattern Examples
+
+An example of this with receiving `deposit_for_burn()` messages on Sui can be
+seen below.
+
+This example assumes the `destination_caller` for the message is set to the auth
+address for your package's `Auth` struct.
+
+```javascript
+// Prepare the ReceiveMessageTicket by calling create_receive_message_ticket() from within your package.
+let receive_msg_ticket = your_package::prepare_receive_message_ticket(message, attestation);
+// Receive the message on MessageTransmitter.
+let receipt = message_transmitter::receive_message_with_package_auth(receive_msg_ticket, ...);
+// Pass the Receipt into TokenMessengerMinter to mint the USDC.
+let ticket_with_burn_message = token_messenger_minter::handle_receive_message(receipt, ...);
+// In your package you can call deconstruct_stamp_receipt_ticket_with_burn_message to deconstruct the ticket
+// and burn_message and securely take some action with the burn_message (e.g. swap some tokens, send them somewhere, etc.)
+let stamp_receipt_ticket = your_package::take_some_action(ticket_with_burn_message, ...);
+// Stamp the receipt
+let stamped_receipt = message_transmitter::stamp_receipt(stamp_receipt_ticket);
+// Complete the message and destroy the StampedReceipt
+message_transmitter::complete_receive_message(stamped_receipt);
+```
+
+A similar example can be seen on the `deposit_for_burn()` side:
+
+```javascript
+// Prepare the DepositForBurnWithCallerTicket by calling create_deposit_for_burn_with_caller_with_package_auth
+// directly from your package with the input parameters and your Auth struct. Integrators can also take other
+// actions here as needed.
+let deposit_for_burn_ticket = your_package::prepare_deposit_for_burn_ticket(coins, ...);
+// Call deposit for burn and burn the USDC
+let (burn_message, message) = token_messenger_minter::deposit_for_burn_with_caller_with_package_auth(
+  deposit_for_burn_ticket,
+  ...
+);
+// Optionally, take some other action in your package based on the output message.
+// Note that BurnMessage and Message have the copy ability so the possibility of them being copied should be
+// handled in third party packages if post-actions are needed.
+your_package::post_deposit_for_burn(burn_message, message, ...);
+```
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Aptos Packages and Interfaces V1 <Icon icon="arrow-right" />](/cctp/v1/aptos-packages)

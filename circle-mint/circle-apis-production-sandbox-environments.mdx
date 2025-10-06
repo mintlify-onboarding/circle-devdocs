@@ -1,0 +1,47 @@
+---
+title: Sandbox Environment
+description:
+  Learn about Circle’s sandbox environment for safe development and testing.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle’s sandbox environment is a development tool that allows you to safely
+test prototypes and integration without generating actual financial
+transactions. Sandbox APIs match those in production, making it easy to move
+into the production phase._
+
+## Safe Development
+
+The sandbox environment is perfect for prototyping and integration testing. The
+APIs on sandbox respond authentically to your requests without connecting to the
+live Circle backend.
+
+## Easy Transitions
+
+The sandbox APIs align perfectly with those in production. Once you’ve perfected
+your code in the sandbox environment, you can simply replace the sandbox
+endpoints with the production ones to create working code.
+
+## Simulated Transactions
+
+The APIs on sandbox do not actually charge payment methods or manipulate actual
+money or USDC. The sandbox environment connects safely to
+[USDC using test networks only](/stablecoins/usdc-contract-addresses#testnet).
+
+## API Environments and Hosts
+
+Use these hosts to access APIs on sandbox and production environments.
+
+| Environment | API host                         |
+| :---------- | :------------------------------- |
+| Sandbox     | `https://api-sandbox.circle.com` |
+| Production  | `https://api.circle.com`         |
+
+## Getting Started
+
+Ready to start writing code in sandbox against the API endpoints? To get
+started, take a few moments to
+[create a sandbox account](https://app-sandbox.circle.com/signup/sandbox).

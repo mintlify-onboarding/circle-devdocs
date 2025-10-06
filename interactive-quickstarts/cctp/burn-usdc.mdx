@@ -1,0 +1,226 @@
+{/* <!-- markdownlint-disable --> */}
+
+In the process of transferring USDC from Ethereum to Polygon, you need to give
+the TokenMessenger contract the necessary permissions to execute the USDC
+transfer on your behalf. In essence, you're empowering the TokenMessenger
+contract to access and transfer the specified amount of USDC from your source
+wallet.
+
+For this, we use the Wallets contract execution API:
+
+<Parameters>
+  <Parameter name="contractAddress">
+    You interact with the USDC contract on the source chain, so the `contractAddress` parameter of the request is **0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238**.
+  </Parameter>
+  <Parameter name="abiFunctionSignature">
+    The function called on the USDC contract is **approve(address spender, uint256 value)**. Calling approve allows the `spender` to spend `value` USDC on your behalf. This is necessary in the `depositForBurn` step later on.
+
+    **value** is denominated in the smallest unit of USDC, which is a millionth of a dollar.
+
+    In this case it's `approve(address,uint256)`
+
+  </Parameter>
+  <Parameter name="abiParameters">
+
+    In this case, `address` is the TokenMessenger contract's `address` and value is 100000000 (100 USDC).
+
+    In this case it's `["0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", 100000000]`
+
+  </Parameter>
+
+  <Parameter name="walletId">
+
+    The wallet that performs the contract execution. This is the ID of the developer-controlled wallet you created earlier.
+
+  </Parameter>
+
+  <Parameter name="feeLevel">
+
+    A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. **HIGH** is used for this transaction.
+
+  </Parameter>
+
+  <Parameter name="idempotencyKey">
+
+    Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.
+
+  </Parameter>
+
+  <Parameter name="entitySecretCiphertext">
+
+    A base64 string expression of the entity secret ciphertext. Refer to <Link path="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9" type="external">this helpful tool</Link>.
+
+  </Parameter>
+
+</Parameters>
+
+<Playground
+  title="Approve USDC Sepolia from source wallet"
+  url="/quickstarts/api/cctp/approve-usdc"
+  config={{
+    method: "POST",
+    url: "/v1/w3s/developer/transactions/contractExecution",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      abiFunctionSignature: "approve(address,uint256)",
+      abiParameters: [
+        "0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5",
+        "100000000",
+      ],
+      idempotencyKey: "{{uuidgen}}",
+      contractAddress: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+      feeLevel: "HIGH",
+      walletId: "${WALLET_ID}",
+      entitySecretCiphertext: "${ENTITY_SECRET_CIPHERTEXT}",
+    },
+  }}
+/>
+
+The second step of the process facilitates a burn of the specified amount of
+USDC on Ethereum Sepolia (the source chain) that you are looking to move to
+Polygon Mumbai (the destination chain).
+
+<Note>
+  **Mint** and **Burn** are the terms used to refer to the creation and removal
+  of a token from a blockchain network. During the CCTP V1 transfer, tokens on
+  one blockchain are burnt, removing them from the total supply, before new
+  tokens are minted on the destination blockchain - effectively moving USDC
+  across chains.
+</Note>
+
+To do this, you again use the Wallets contract execution API:
+
+<Parameters>
+  <Parameter name="contractAddress">
+    You interact with the Token Messenger contract on the source chain, so the `contractAddress` parameter of the request is `0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5`.
+  </Parameter>
+  <Parameter name="abiFunctionSignature">
+  The function being called on the TokenMessenger contract is: <br />`depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)`
+
+This will be the abiFunctionSignature property of the request. In this case it's
+**depositForBurn(uint256,uint32,bytes32,address)**
+
+  </Parameter>
+  <Parameter name="abiParameters">
+The abiParameters property defines the values to pass to the function. For the call to depositForBurn, they are amount, destinationDomain, mintRecipient and burnToken.
+
+    - **amount**: the amount of USDC to burn. This amount will be created on the destination chain after the mint. You will burn 1 USDC of the allowance you approved earlier.
+    - **destinationDomain**: a Circle-issued identifier for a network/chain where CCTP V1 contracts are deployed. Since the destination is Polygon, you will use 7. See <Link path="/cctp/v1/supported-domains" type="internal">CCTP V1 Domain List</Link>.
+    - **mintRecipient**: this is the destination address, encoded to a Solidity address representation. This will be the same address as the source wallet.  In your application, you will need to encode the destination address to the correct format using a library like web3js - but we have done it for you here.
+    - **burnToken**: the contract address of the token that is being burnt. In this case, it is the USDC contract on the source chain.
+
+```js
+const encodedDestinationAddress = web3.eth.abi.encodeParameter(
+  "address",
+  destinationAddress,
+);
+```
+
+    Therefore, the complete abiParameters value is **\[1000000, 7, \{encodedDestinationAddress\}, “0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238”\]**.
+    </Parameter>
+
+  <Parameter name="walletId">
+  
+    The wallet that is performing the contract execution. This will be the ID of the developer-controlled wallet you created earlier.
+
+  </Parameter>
+
+  <Parameter name="feeLevel">
+  
+       A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. **HIGH** is used for this transaction.
+
+  </Parameter>
+
+  <Parameter name="idempotencyKey">
+  
+Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.
+
+  </Parameter>
+
+  <Parameter name="entitySecretCiphertext">
+  
+A base64 string expression of the entity secret ciphertext. Refer to <Link path="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9" type="external">this helpful tool</Link>.
+
+  </Parameter>
+
+</Parameters>
+
+Just like your first contract execution request, the other parameters -
+`walletId`, `feeLevel`, `idempotencyKey`, and `EntitySecretCiphertext` - were
+automatically populated in the request.
+
+<Playground
+  title="Deposit for Burn on Ethereum"
+  url="/quickstarts/api/cctp/deposit-burn"
+  config={{
+    method: "POST",
+    url: "/v1/w3s/developer/transactions/contractExecution",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      abiFunctionSignature: "depositForBurn(uint256,uint32,bytes32,address)",
+      abiParameters: [
+        "1000000",
+        "7",
+        "{{encodedDestinationAddress}}",
+        "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+      ],
+      idempotencyKey: "{{uuidgen}}",
+      contractAddress: "0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5",
+      feeLevel: "MEDIUM",
+      walletId: "${WALLET_ID}",
+      entitySecretCiphertext: "${ENTITY_SECRET_CIPHERTEXT}",
+    },
+  }}
+  copy={[
+    {
+      path: "data.id",
+      key: "cctpTransactionId",
+    },
+  ]}
+/>
+
+### Validating the Burn of 1 USDC in your Developer Console
+
+After initiating the burn of USDC through our API, you can check whether it was
+successful in our Developer Console.
+
+<OrderedList>
+  <OrderedListStep title="Login to the Developer Services Console">
+    To begin the process of validating your burn of USDC, log in to the Web3
+    Services Console.
+  </OrderedListStep>
+  <OrderedListStep title="Navigate to the List of Wallets">
+    Within the console, locate the **Wallets** page under **Dev Controlled
+    Wallet**. This page displays all of the wallets you created thus far. Open
+    the{" "}
+    <Link path="/wallets/dev/transactions" type="console">
+      Wallets page
+    </Link>
+    .
+  </OrderedListStep>
+  <OrderedListStep title="Open the Wallet Details Screen">
+    Find and click on the Ethereum Sepolia wallet from which you initiated the
+    USDC burn.
+  </OrderedListStep>
+  <OrderedListStep title="View Your Wallet Balance">
+    On the wallet details screen, scroll down to the bottom to find the section
+    displaying your wallet balances. As you successfully created your Sepolia
+    Wallet, an initial deposit of 10 USDC was made. If you have successfully
+    burned 1 USDC, the total wallet balance should now reflect 9 USDC,
+    indicating the accurate deduction of the burned amount.
+    <Image
+      src="/interactive-quickstarts/cctp/burn-usdc/images/successful-burn.png"
+      alt="Successful Burn Image"
+    />
+  </OrderedListStep>
+</OrderedList>
+
+By following these step-by-step instructions and reviewing your wallet balance
+in the Developer Services Console, you can confidently validate the burn of your
+USDC tokens and verify the correct adjustment in your wallet's overall balance.

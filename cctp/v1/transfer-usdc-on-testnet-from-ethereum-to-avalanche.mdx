@@ -1,0 +1,121 @@
+---
+title: Transfer USDC on testnet from Ethereum to Avalanche using CCTP V1
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on testnet from Ethereum to Avalanche"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+This guide demonstrates how to use the [viem](https://viem.sh/) framework and
+the [CCTP V1 API](/cctp/v1/cctp-apis) in a simple script that enables a user to
+transfer USDC from a wallet address on the **Ethereum Sepolia testnet** to
+another wallet address on the **Avalanche Fuji testnet**.
+
+To get started with CCTP V1, follow the example script provided
+[on GitHub](https://github.com/circlefin/evm-cctp-contracts/blob/d1c24577fb627b08483dc42e4d8a37a810b369f7/docs/index.js).
+The example uses
+[web3.js](https://web3js.readthedocs.io/en/v1.8.1/getting-started.html) to
+transfer USDC from a wallet address on Ethereum Sepolia testnet to another
+wallet address on Avalanche Fuji testnet.
+
+<Note>
+**Interactive Tutorial with Developer Services**
+
+If you are new to building smart contracts, check out our
+[interactive tutorial](/interactive-quickstarts/cctp) where you can transfer
+USDC using Circle's Developer Services: Contracts and Wallets.
+</Note>
+
+The script has five steps:
+
+1. In this first step, you initiate a transfer of USDC from one blockchain to
+   another, and specify the recipient wallet address on the destination chain.
+   This step approves the Ethereum Sepolia **TokenMessenger** contract to
+   withdraw USDC from the provided Ethereum Sepolia wallet address.
+
+```javascript
+const approveTx = await usdcEthContract.methods
+  .approve(ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS, amount)
+  .send({ gas: approveTxGas });
+```
+
+2. In this second step, you facilitate a burn of the specified amount of USDC on
+   the source chain. This step executes the `depositForBurn` function on the
+   Ethereum Sepolia **TokenMessenger** contract deployed on
+   [Sepolia testnet](https://sepolia.etherscan.io/address/0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5).
+
+```javascript
+const burnTx = await ethTokenMessengerContract.methods
+  .depositForBurn(
+    amount,
+    AVAX_DESTINATION_DOMAIN,
+    destinationAddressInBytes32,
+    USDC_ETH_CONTRACT_ADDRESS,
+  )
+  .send();
+```
+
+3. In this third step, you make sure you have the correct message and hash it.
+   This step extracts `messageBytes` emitted by the **MessageSent** event from
+   `depositForBurn` transaction logs and hashes the retrieved `messageBytes`
+   using the **keccak256** hashing algorithm.
+
+```javascript
+const transactionReceipt = await web3.eth.getTransactionReceipt(
+  burnTx.transactionHash,
+);
+const eventTopic = web3.utils.keccak256("MessageSent(bytes)");
+const log = transactionReceipt.logs.find((l) => l.topics[0] === eventTopic);
+const messageBytes = web3.eth.abi.decodeParameters(["bytes"], log.data)[0];
+const messageHash = web3.utils.keccak256(messageBytes);
+```
+
+4. In this fourth step, you request the attestation from Circle, which provides
+   authorization to mint the specified amount of USDC on the destination chain.
+   This step polls the attestation service to acquire the signature using the
+   `messageHash` from the previous step.
+
+<Note>
+**Rate Limit**
+
+The attestation service rate limit is 35 requests per second. If you exceed 35
+requests per second, the service blocks all API requests for the next 5
+minutes and returns an HTTP 429 response.
+</Note>
+
+```javascript
+let attestationResponse = { status: "pending" };
+while (attestationResponse.status != "complete") {
+  const response = await fetch(
+    `https://iris-api-sandbox.circle.com/attestations/${messageHash}`,
+  );
+  attestationResponse = await response.json();
+  await new Promise((r) => setTimeout(r, 2000));
+}
+```
+
+5. In this final step, you enable USDC to be minted on the destination chain.
+   This step calls the `receiveMessage` function on the Avalanche Fuji
+   **MessageTransmitter** contract to receive USDC at the Avalanche Fuji wallet
+   address.
+
+```javascript
+const receiveTx = await avaxMessageTransmitterContract.receiveMessage(
+  receivingMessageBytes,
+  signature,
+);
+```
+
+You have successfully transferred USDC between two EVM-compatible chains using
+CCTP V1 end-to-end!
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on testnet between Noble and Ethereum using CCTP V1 <Icon icon="arrow-right" />](/cctp/v1/transfer-usdc-on-testnet-from-noble-to-ethereum)

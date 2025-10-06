@@ -1,0 +1,167 @@
+---
+title: CCTP Noble Cosmos Module V1
+description: Cosmos SDK Module for CCTP V1 support on Noble
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Noble Cosmos Module and Interface"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+## Overview
+
+Noble is a Cosmos application-specific blockchain (or "appchain") that provides
+native asset issuance for the Cosmos ecosystem. USDC is natively issued on Noble
+and can be transferred via the Inter-Blockchain Communication Protocol (IBC) to
+other supported appchains in Cosmos, or via CCTP V1 to any supported domain (for
+example, Ethereum).
+
+Note that there are key differences between Cosmos appchains like Noble and
+EVM-compatible blockchains. Unlike on EVM chains where CCTP V1 is a set of smart
+contracts, CCTP V1 on Noble is a Cosmos SDK module, which is deployed by Noble
+governance and built into the Noble blockchain. Cosmos appchains can use IBC to
+build composable flows with CCTP V1 on Noble.
+
+## Testnet and Mainnet Module Address
+
+| Chain | [Domain](/cctp/v1/supported-domains) | Address                                      |
+| :---- | :----------------------------------- | :------------------------------------------- |
+| Noble | 4                                    | noble12l2w4ugfz4m6dd73yysz477jszqnfughxvkss5 |
+
+CCTP V1 on Noble source code is
+[available on GitHub](https://github.com/circlefin/noble-cctp). The full message
+spec is defined at
+[noble-cctp/x/cctp/spec/02_messages.md](https://github.com/circlefin/noble-cctp/blob/dc81b3e0d566d195c869a213519fcecd38b020a5/x/cctp/spec/02_messages.md).
+The interface below serves as a reference for permissionless messaging functions
+exposed by the module.
+
+## Module Interface
+
+### depositForBurn
+
+**Message**: `MsgDepositForBurn`
+
+Broadcast a transaction that deposits for burn to a provided domain.
+
+**Arguments**:
+
+- `Amount` - The burn amount
+- `DestinationDomain` - Domain of destination chain
+- `MintRecipient` - address receiving minted tokens on destination chain as a 32
+  length byte array
+- `BurnToken` - The burn token address on source domain
+
+### depositForBurnWithCaller
+
+**Message**:`MsgDepositForBurnWithCaller`
+
+Broadcast a transaction that deposits for burn with caller to a provided domain.
+
+This message wraps `MsgDepositForBurn`. It adds one extra argument,
+`destinationCaller`.
+
+**Arguments**:
+
+- `Amount` - The burn amount
+- `DestinationDomain` - Domain of destination chain
+- `MintRecipient` - address receiving minted tokens on destination chain as a 32
+  length byte array
+- `BurnToken` - The burn token address on source domain
+- `DestinationCaller` - authorized caller as 32 length byte array of
+  receiveMessage() on destination domain
+
+### replaceDepositForBurn
+
+**Message**: `MsgReplaceDepositForBurn`
+
+Broadcast a transaction that replaces a deposit for burn message. Replace the
+mint recipient and/or  
+destination caller.
+
+Allows the sender of a previous BurnMessage (created by depositForBurn or
+depositForBurnWithCaller)  
+to send a new BurnMessage to replace the original. The new BurnMessage will
+reuse the amount and  
+burn token of the original without requiring a new deposit.
+
+**Arguments**:
+
+- `OriginalMessage`- original message bytes to replace
+- `OriginalAttestation`- attestation bytes of `OriginalMessage`
+- `NewDestinationCaller` - the new destination caller, which may be the  
+  same as the original destination caller, a new destination caller, or an
+  empty  
+  destination caller, indicating that any destination caller is valid.
+- `NewMintRecipient` - the new mint recipient. May be the same as the  
+  original mint recipient, or different.
+
+### receiveMessage
+
+**Message**: `MsgReceiveMessage`
+
+Broadcast a transaction that receives a provided message from another domain.
+After validation, it performs a mint.
+
+**Arguments**:
+
+- `message` [Message Format](/cctp/v1/message-format)
+- `attestation` - Concatenated 65-byte signature(s) of `message`, in increasing
+  order  
+   of the attester address recovered from signatures.
+
+### sendMessage
+
+**Message**:`MsgSendMessage`
+
+Broadcast a transaction that sends a message to a provided domain.
+
+**Arguments**:
+
+- `DestinationDomain` - Domain of destination chain
+- `Recipient` - Address of message recipient on destination chain
+- `MessageBody` - Raw bytes content of message
+
+### sendMessageWithCaller
+
+**Message**:`MsgSendMessageWithCaller`
+
+Broadcast a transaction that sends a message with a caller to a provided domain.
+
+Specifying a Destination caller requires that only the specified caller can call
+`receiveMessage()` on destination domain.
+
+This message wraps `SendMessage` It adds one extra argument,
+`DestinationCaller`.
+
+**Arguments**:
+
+- `DestinationDomain` - Domain of destination chain
+- `Recipient` - Address of message recipient on destination chain
+- `MessageBody` - Raw bytes content of message
+- `DestinationCaller` - caller on the destination domain, as 32 length byte
+  array
+
+### replaceMessage
+
+**Message**: `MsgReplaceMessage`
+
+Broadcast a transaction that replaces a provided message. Replace the message
+body and/or destination caller.
+
+**Arguments**:
+
+- `OriginalMessage` - original message bytes to replace
+- `OriginalAttestation` - attestation bytes of `OriginalMessage`
+- `NewMessageBody` - new message body of replaced message
+- `NewDestinationCaller` - the new destination caller, which may be the same as
+  the original destination caller, a new destination caller, or an empty
+  destination caller, indicating that any destination caller is valid.
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Sui Packages and Interfaces V1 <Icon icon="arrow-right" />](/cctp/v1/sui-packages)

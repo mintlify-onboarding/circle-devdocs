@@ -1,0 +1,106 @@
+---
+title: Notifications Data Models
+description: Learn about the events and data models used in Circle Notifications.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Circle API notifications are subscriber endpoints that enable you to receive
+notifications every time the status of a resource changes.
+
+## Common attributes
+
+All notification messages have the following attributes:
+
+| Name               | Type              | Description                   | Sample                                 |
+| :----------------- | :---------------- | :---------------------------- | :------------------------------------- |
+| `clientId`         | `string` (UUIDv4) | Client identifier             | `c60d2d5b-203c-45bb-9f6e-93641d40a599` |
+| `notificationType` | `string`          | The type of notification      | `payouts`                              |
+| `version`          | `int`             | The version of the data model | `1`                                    |
+
+## Implementations
+
+This section lists all notification models.
+
+### Payout
+
+#### Completed
+
+_Completed_ payouts are settled payouts. Therefore, the funds should be
+available in the destination wallet. The following structure represents the
+notifications for completed payouts.
+
+```json Completed Payout Notification Payload
+{
+   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
+   "notificationType": "payouts",
+   "payout": {...}
+}
+```
+
+The `payout` payload is a
+[payout object](/circle-mint/circle-api-resources#payout-object).
+
+#### Failed
+
+Failed payouts notifications are structured as follows:
+
+```json Failed Payout Notification Payload
+{
+   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
+   "notificationType": "payouts",
+   "payout": {...}
+}
+```
+
+The `payout` payload is a
+[payout object](/circle-mint/circle-api-resources#payout-object).
+
+### Transfer
+
+#### Created
+
+A notification with the structure below is sent on transfer creation.
+
+```json Created Transfer Notification Payload
+{
+   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
+   "notificationType": "transfers",
+   "transfer": {...}
+}
+```
+
+The `transfer` payload is a
+[transfer object](/circle-mint/circle-api-resources#transfer-object).
+
+#### Failed
+
+Failed transfers notifications are structured as follows:
+
+```json Failed Transfer Notification Payload
+{
+   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
+   "notificationType": "transfers",
+   "transfer": {...}
+}
+```
+
+The `transfer` payload is a
+[transfer object](/circle-mint/circle-api-resources#transfer-object).
+
+#### Completed
+
+Completed transfers notifications are structured as follows:
+
+```json Completed Transfer Notification Payload
+{
+   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
+   "notificationType": "transfers",
+   "transfer": {...}
+}
+```
+
+The `transfer` payload is a
+[transfer object](/circle-mint/circle-api-resources#transfer-object).

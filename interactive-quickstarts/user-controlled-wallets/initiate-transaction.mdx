@@ -1,0 +1,229 @@
+{/* <!-- markdownlint-disable --> */}
+
+Now that you've set up your wallet and obtained some Testnet tokens, let's dive
+into initiating your first transaction. It's simpler than you might think,
+especially with our streamlined approach.
+
+### Making transaction seamless
+
+From a user experience standpoint, blockchain transactions have a unique
+challenge - gas fees. Gas fees are charges in blockchain networks that ensure
+transactions are processed efficiently and have to be paid with native assets,
+like Ether (ETH) on Ethereum. This requires your end-users to hold these native
+assets in their wallets to be able to transact. When using User-Controlled
+Wallets that are configured as smart contract wallets, you no longer require
+your end-users to hold native assets and pay gas fees, you can sponsor them,
+empowering you to provide your end-users with an improved transaction
+experience. This is made possible through the Gas Station, which acts as a
+middleman, allowing you to pay for your end-users gas fees.
+
+During the testnet phase, the Gas Station is already set up to facilitate
+seamless testing and development. When transitioning to the Production phase
+through the Circle Developer console, you will gain even more control. You will
+be able to set spending limits and configure other aspects according to their
+specific needs. To learn more, see the [Gas Station](/wallets/gas-station) topic
+in Circle Developer Documentation.
+
+### Getting the tokenId
+
+Before we can proceed, we need to determine the `tokenId`. It is the unique
+identifier for the specific token type you're transferring. You can do this by
+retrieving the token balances for your wallet. This step also allows you to
+check whether you received your Testnet tokens.
+
+<Playground
+  title="Get your wallet balance"
+  url="/quickstarts/api/user-controlled/balance"
+  config={{
+    url: "/v1/w3s/wallets/__WALLET_ID__/balances",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    method: "GET",
+  }}
+  copy={[
+    {
+      path: "data.tokenBalances[1].token.id",
+      key: "userCTokenId",
+    },
+  ]}
+/>
+
+### Initiating a transaction
+
+In the next step, we initiate a Testnet transaction, but keep in mind that as a
+developer, you cannot directly execute the transaction. Instead, we create a
+transaction that the end user can approve by entering their PIN. This process,
+known as a _challenge_, prompts the user to validate and authorize the
+transaction by entering their PIN within the mobile app.
+
+To initiate this process, you need to obtain a session token. Using the session
+token, you can then proceed to initiate a transfer and receive a ChallengeID in
+return. The ChallengeID allows you to prompt the user to enter their PIN within
+the app, confirming their approval and ensuring secure transaction execution.
+
+Additionally, blockchain transactions typically require a gas fees to complete.
+Gas fees are similar to bank fees, and help cover the cost of executing
+transactions on the blockchain network. These fees vary based on factors such as
+network congestion and transaction complexity. Circle provides an endpoint where
+you can estimate gas fees, and it returns three fee options: low, medium, and
+high. This way you can balance cost and transaction speed. You can find more
+details in the
+[Estimate fee for a transfer transaction](/api-reference/wallets/user-controlled-wallets/create-transfer-estimate-fee)
+topic. For this example, we automatically set it to high.
+
+<Parameters
+  title="Key transaction parameters"
+  linkToDocs="/api-reference/wallets/user-controlled-wallets/create-user-transaction-transfer-challenge"
+>
+  <Parameter name="idempotencyKey">
+    A unique string that ensures your transaction isn 't processed more than
+    once even if sent multiple times. A critical measure to prevent duplicates.
+  </Parameter>
+  <Parameter name="amounts">
+    Specify the amount of tokens you're transferring.
+  </Parameter>
+  <Parameter name="destinationAddress">
+    The wallet address where you're sending the tokens.
+  </Parameter>
+  <Parameter name="tokenId">
+    This is the id we just extract from your wallet balance. It is the unique
+    identifier for the specific token type you're moving. This id is unique.
+  </Parameter>
+  <Parameter name="walletId">
+    Indicates the source of the transaction, i.e., from which wallet you're
+    sending the tokens.
+  </Parameter>
+</Parameters>
+
+The preceding parameters are just the essentials for initiating a transaction.
+The endpoint offers a richer, more detailed configuration to cater to a variety
+of transaction types and needs. For a comprehensive understanding and to
+leverage advanced features, we recommend referring to the
+[official documentation](/api-reference/wallets/user-controlled-wallets/create-user-transaction-transfer-challenge).
+
+<Note>
+  For demonstration purposes, you can send the tokens to the same wallet that
+  initiates the transaction.
+</Note>
+
+<Playground
+  title="Initiate your transaction"
+  url="/quickstarts/api/user-controlled/create-challenge-for-transaction"
+  config={{
+    url: "/v1/w3s/user/transactions/transfer",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+      "X-User-Token": "<USER_SESSION_TOKEN>",
+    },
+    body: {
+      idempotencyKey: "<UNIQUE_UUID>",
+      userId: "<ID_OF_THE_USER_YOU_WANT_TO_USE>",
+      destinationAddress: "<DESTINATION_WALLET_ADDRESS>",
+      refId: "<ANY_REFERENCE>",
+      amounts: ["<AMOUNT_1>"],
+      feeLevel: "HIGH",
+      tokenId: "<ID_OF_THE_TOKEN_YOU_WANT_TO_TRANSFER>",
+      walletId: "<ID_OF_PREVIOUSLY_GENERATED_WALLET>",
+    },
+  }}
+  copy={[
+    {
+      path: "getSessionTokenResponse.data.userToken",
+      key: "transactionUserToken",
+    },
+    {
+      path: "getSessionTokenResponse.data.encryptionKey",
+      key: "transactionEncryptionKey",
+    },
+    {
+      path: "transactionResponse.data.challengeId",
+      key: "transactionChallengeId",
+    },
+  ]}
+/>
+
+<Warning>
+  It's important to note that the provided code snippet combines all these
+  necessary steps into one, allowing you to create a session and initiate a
+  transfer for testing purposes. Understanding these fundamental concepts, you
+  are now ready to proceed with the implementation and testing of this process.
+</Warning>
+
+After we gathered all necessary parameters, we are now able to use our
+[WebSDK](https://www.npmjs.com/package/@circle-fin/w3s-pw-web-sdk) to enter this
+information and start the set up process that the end user would go through.
+
+<WebSDK
+  title="Confirm transaction"
+  inputKeys={{
+    userToken: "transactionUserToken",
+    encryptionKey: "transactionEncryptionKey",
+    challengeId: "transactionChallengeId",
+  }}
+/>
+
+🎉 Awesome, we now have successfully confirmed a transaction. Let's learn on the
+next page how to check if the transaction was successful!
+
+After initiating a transaction through our API, you'll be able to look up the
+transaction hash in our Developer Services Console. It's a unique identifier for
+your transaction.
+[View transactions](https://console.circle.com/wallets/user/transactions).
+
+You can validate transaction in multiple ways:
+
+- **Developer Services Console**: This is the preferred method. It enables you
+  to inspect the transaction state directly.
+- **Blockchain Explorer**: By using the transaction hash or wallet id, you can
+  view the transaction state on a blockchain explorer.
+
+### Validating via the Developer Services Console
+
+<OrderedList>
+  <OrderedListStep title="Log in to the Console">
+
+    Make sure you're logged in to the Developer Services Console.
+
+  </OrderedListStep>
+  <OrderedListStep title="Navigate to List of Transactions">
+
+    Open the <Link path="/wallets/user/transactions" type="console">User Controlled Wallets Transactions</Link> page.
+
+    You can see the state of your transaction directly in the table.
+
+    <Image src="/interactive-quickstarts/user-controlled-wallets/images/transactions.png" alt="List of transactions" />
+
+  </OrderedListStep>
+  <OrderedListStep title="Open Transaction Details">
+
+    For additional details about your transaction, click on the transaction in the table.
+
+  </OrderedListStep>
+</OrderedList>
+
+### Validating via a blockchain explorer
+
+<OrderedList>
+  <OrderedListStep title="Choose a Blockchain Explorer">
+    Depending on the blockchain your token resides on, select a suitable explorer.
+
+    - Ethereum: <Link type="external" path="https://sepolia.etherscan.io/">Etherscan</Link>
+    - Polygon: <Link type="external" path="https://amoy.polygonscan.com/">Polygonscan</Link>
+    - Avalanche: <Link type="external" path="https://testnet.snowtrace.io/">Snowtrace</Link>
+
+  </OrderedListStep>
+  <OrderedListStep title="Input your Transaction Hash or Wallet Id">
+    On the explorer's main page, there's a search bar. Paste your transaction hash or wallet ID
+    there and search. You can find the transactionHash or the wallet ID in your <Link type="console" path="/wallets/user/transactions">list of transactions</Link>.
+  </OrderedListStep>
+  <OrderedListStep title="Review Details">
+    Whether you provide a wallet ID or transaction hash, the console displays details about your wallet and any associated transactions. This includes details about each transaction, such as the number of confirmations and the gas used, so you can verify that the transaction occurred as expected.
+
+    <Image src="/interactive-quickstarts/user-controlled-wallets/images/explorer.png" alt="Blockchain explorer" />
+
+  </OrderedListStep>
+</OrderedList>

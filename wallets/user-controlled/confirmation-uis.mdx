@@ -1,0 +1,178 @@
+---
+title: Confirmation UIs
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+For the social logins and email authentication methods, by default, Circle
+presents your user with a UI to preview the transaction or signing details
+before sending transactions or signatures onto the blockchain. These
+confirmation UIs are applicable to the following APIs:
+
+- `POST`
+  [`/user/transactions/transfer`](/api-reference/wallets/user-controlled-wallets/create-user-transaction-transfer-challenge)
+- `POST`
+  [`/user/transactions/contractExecution`](/api-reference/wallets/user-controlled-wallets/create-user-transaction-contract-execution-challenge)
+- `POST`
+  [`/user/sign/transaction`](/api-reference/wallets/user-controlled-wallets/sign-user-transaction)
+- `POST`
+  [`/user/sign/message`](/api-reference/wallets/user-controlled-wallets/sign-user-message)
+- `POST`
+  [`/user/sign/typedData`](/api-reference/wallets/user-controlled-wallets/sign-user-typed-data)
+
+You can customize various elements of the UIs, which enables your application to
+deliver context for on-chain actions.
+
+<Note>
+**NOTE**
+
+Confirmation UIs are not available for the PIN authentication method. With PIN,
+you can fully customize the transaction and signing details pages while we
+provide a SDK UI for users to enter a PIN for authorization purposes. For more,
+see [Authentication Methods](/wallets/user-controlled/authentication-methods).
+
+</Note>
+
+## Predefined confirmation UIs
+
+These confirmation UIs are predefined by Circle. The following example shows the
+UI for confirming an outbound transfer on the web app:
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-conftx01.png" />
+</Frame>
+
+There are some nuances to consider in regards to the confirmation UI
+customization:
+
+- **From** and **To** addresses: Circle masks addresses so that only the first
+  and last five digits are displayed. You can pass a string to personalize these
+  addresses, such as “John’s Solana wallet.”
+- **Fiat currency amount**: This field is optional and is only displayed if
+  configured. To configure it, you define the exchange rate to calculate the
+  fiat currency amount, and then pass the amount to the SDK.
+- **Network Fee**: This is an optional field and is only displayed if passed to
+  the SDK. You can send a `POST` request to the `/createtransferestimatefee` or
+  `/createtransactionestimatefee` endpoints to get the estimate fee and pass the
+  fee in the response to the SDK for display. If you offer an SCA wallet with
+  paymaster functionalities, you can pass a string, such as “sponsored by
+  Circle.”
+
+## Example customizations for confirmation UIs
+
+For detailed instructions on customizing UIs for web, iOS, and Android, see the
+following docs:
+
+- [Web SDK UI Customizations API](/wallets/user-controlled/web-sdk-ui-customizations)
+- [iOS SDK UI Customization API](/wallets/user-controlled/ios-sdk-ui-customization-api)
+- [Android SDK UI Customization API](/wallets/user-controlled/android-sdk-ui-customization-api)
+
+Below are examples of customizations for confirmation UIs for an outbound
+transfer, contract execution, and sign message or typed data:
+
+## Outbound Transfer
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-conftx02.png" />
+</Frame>
+
+The following table shows which UI elements can be customized based on the
+example:
+
+| UI Element               | Example                                                                                                                                            | Customization options                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `x` icon                 | `x` icon in the top-left                                                                                                                           | Icon image                                |
+| Title                    | Confirm transaction                                                                                                                                | Text, color, size, font                   |
+| Subtitle                 | Please click confirm to proceed with the transaction.                                                                                              | Text, color, size, font                   |
+| Token symbol             | USDC token image                                                                                                                                   | Image                                     |
+| Token name               | USDC                                                                                                                                               | Text, color, size, font                   |
+| Fiat currency and amount | USD 20                                                                                                                                             | Text, color, size, font                   |
+| From address             | 0x391…e4r43                                                                                                                                        | Text, color, size, font                   |
+| To address               | 0x391...0244i                                                                                                                                      | Text, color, size, font                   |
+| Network fee              | 0.0002 ETH                                                                                                                                         | Text, color, size, font                   |
+| Network fee hint         | `!` icon <br /> <br />Hover text: Please note this is an estimated fee. Network fees may vary based on network traffic and transaction complexity. | Icon image, hover text, color, size, font |
+| Confirmation button      | CONFIRM                                                                                                                                            | Text, color, size, font                   |
+
+## Contract Execution
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-conftx03.png" />
+</Frame>
+
+The following table shows which UI elements can be customized based on the
+example:
+
+| UI Element               | Example                                                                                                                                            | Customization options                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `x` icon                 | `x` icon in the top-left                                                                                                                           | Icon image, location                      |
+| Title                    | Contract interaction                                                                                                                               | Text, color, size, font                   |
+| Subtitle                 | Please click confirm to proceed with the contract execution.                                                                                       | Text, color, size, font                   |
+| Token symbol             | USDC token image                                                                                                                                   | Image                                     |
+| Token name               | USDC                                                                                                                                               | Text, color, size, font                   |
+| Fiat currency and amount | USD 20                                                                                                                                             | Text, color, size, font                   |
+| From address             | 0x391...e4r43                                                                                                                                      | Text, color, size, font                   |
+| Contract address         | Fi0x2...c1380                                                                                                                                      | Text, color, size, font                   |
+| Network fee              | 0.0002 ETH                                                                                                                                         | Text, color, size, font                   |
+| Network fee hint         | `!` icon <br /> <br />Hover text: Please note this is an estimated fee. Network fees may vary based on network traffic and transaction complexity. | Icon image, hover text, color, size, font |
+| Function type            | burn(uint256)                                                                                                                                      | Text, color, size, font                   |
+| ABI Parameters           | 10000                                                                                                                                              | Text, color, size, font                   |
+| Confirmation button      | CONFIRM                                                                                                                                            | Text, color, size, font                   |
+
+## Sign Message or Typed Data
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-signreq.png" />
+</Frame>
+
+The following table shows which UI elements can be customized based on the
+example:
+
+| UI Element          | Example                                                                                                                                                | Customization options   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `x` icon            | `x` icon in the top-left                                                                                                                               | Icon image              |
+| Title               | Signature Request                                                                                                                                      | Text, color, size, font |
+| Contract name       | koalla.org                                                                                                                                             | Text, color, size, font |
+| Contract address    | `https://koalla.org`                                                                                                                                   | Text, color, size, font |
+| Description         | Click on sign button to provide a signature for verification <br /> <br />You are signing: <br />I own a KOALLA Membership NFT to claim this promotion | Text, color, size, font |
+| Confirmation button | SIGN                                                                                                                                                   | Text, color, size, font |
+
+## Sign Transaction
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-signtx.png" />
+</Frame>
+
+## Sign Raw Transaction
+
+<Frame>
+  <img src="/w3s/images/ucw-cui-signrawtx.png" />
+</Frame>
+
+## Full UI Customization
+
+To use your own UIs, you can opt out of Circle’s predefined confirmation UIs.
+
+1. From the Circle Developer Console sidebar, select **Configurator > Wallet
+   Security Settings**.
+2. Toggle the **Confirmation UIs** setting off to disable confirmation UIs.
+
+<Warning>
+**CAUTION**
+
+You may want to opt out of Circle’s confirmation UIs to further streamline your
+application’s user experience. Perhaps signature details are difficult for your
+users to understand or transaction confirmations, which are required for every
+transaction, interrupt your application’s flow. This can especially be the case
+for gaming applications.
+
+</Warning>
+
+While you may want to opt out of Circle’s confirmation UIs, it is highly
+recommended that you enable them to strengthen the security of your application
+for your users. If you decide to disable it, it means you can submit
+transactions on behalf of your users without their consent; therefore, you must
+provide context or disclaimers on your application that your users must
+acknowledge.

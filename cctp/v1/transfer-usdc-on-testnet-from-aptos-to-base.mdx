@@ -1,0 +1,119 @@
+---
+title: Transfer USDC on testnet between Aptos and Base using CCTP V1
+description: 
+sideNav: ""
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on testnet between Aptos and Base"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+To get started with CCTP V1 on Aptos testnet, follow the example scripts
+provided
+[here](https://github.com/circlefin/aptos-cctp/tree/master/typescript/example).
+The examples use the
+[Aptos SDK](https://www.npmjs.com/package/@aptos-labs/ts-sdk), to transfer USDC
+to and from an address on Aptos testnet and an address on an external
+blockchain.
+
+<Warning>
+  **Do not reuse keys** As a security measure, these scripts should only be used
+  on a testnet for testing purposes. It is not recommended to reuse private keys
+  across mainnet and testnet.
+</Warning>
+
+Summary of calling `deposit_for_burn()` (full runnable script can be found in
+the aptos-cctp repository):
+
+```ts
+// Aptos Testnet Stablecoin object
+const BURN_TOKEN =
+  "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832";
+
+const aptosClient = new Aptos(new AptosConfig({ network: Network.TESTNET }));
+const userAccount = Account.fromPrivateKey({
+  privateKey: new Ed25519PrivateKey(APTOS_PRIVATE_KEY),
+});
+
+// Create a transaction with deposit for burn script
+const buffer = readFileSync(
+  "typescript/example/precompiled-move-scripts/testnet/deposit_for_burn.mv",
+);
+const bytecode = Uint8Array.from(buffer);
+const amount = new U64(1);
+const destinationDomain = new U32(6);
+const burnToken = AccountAddress.from(BURN_TOKEN);
+const mintRecipient = AccountAddress.from(evmSigner.address);
+const functionArguments: Array<any> = [
+  amount,
+  destinationDomain,
+  mintRecipient,
+  burnToken,
+];
+const transaction = await aptosClient.transaction.build.simple({
+  sender: userAccount.accountAddress,
+  data: {
+    bytecode,
+    functionArguments,
+  },
+});
+const pendingTxn = await aptosClient.signAndSubmitTransaction({
+  signer: userAccount,
+  transaction,
+});
+const depositForBurnTx = await aptosClient.waitForTransaction({
+  transactionHash: pendingTxn.hash,
+});
+console.log(
+  `Deposit for burn transaction completed successfully: https://explorer.aptoslabs.com/txn/${depositForBurnTx.hash}`,
+);
+
+// Fetch the event data from the transaction
+const messageSentEvent = (
+  depositForBurnTx as UserTransactionResponse
+).events.find(
+  (e: any) =>
+    e.type ===
+    `${MESSAGE_TRANSMITTER_PACKAGE_ID}::message_transmitter::MessageSent`,
+);
+```
+
+Summary of calling `receive_message()` (full runnable script can be found in the
+aptos-cctp repository):
+
+```ts
+const bytecode = Uint8Array.from(
+  fs.readFileSync(
+    "typescript/example/precompiled-move-scripts/testnet/handle_receive_message.mv",
+  ),
+);
+const functionArguments: Array<any> = [
+  MoveVector.U8(messageBytes as Buffer),
+  MoveVector.U8(attestationSignature),
+];
+const transaction = await aptosClient.transaction.build.simple({
+  sender: userAccount.accountAddress,
+  data: {
+    bytecode,
+    functionArguments,
+  },
+});
+const pendingTxn = await aptosClient.signAndSubmitTransaction({
+  signer: userAccount,
+  transaction,
+});
+const receiveMessageTx = await aptosClient.waitForTransaction({
+  transactionHash: pendingTxn.hash,
+});
+console.log(
+  `Receive message transaction completed successfully: https://explorer.aptoslabs.com/txn/${receiveMessageTx.hash}`,
+);
+```
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on devnet between Solana and other chains using CCTP V1 <Icon icon="arrow-right" />](/cctp/v1/transfer-testnet-usdc-between-solana-devnet)

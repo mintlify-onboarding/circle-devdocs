@@ -1,0 +1,88 @@
+{/* <!-- markdownlint-disable --> */}
+
+To mint USDC on the destination blockchain, we're using the `messageBytes` from
+the `depositForBurn` event and the attestation signature
+(`attestationResponse.attestation`). We're fetching both from Circle's
+attestation services and calling the `receiveMessage` function on the Message
+Transmitter contract in the destination blockchain network.
+
+Using the Wallets smart contract execution API:
+
+<Parameters>
+  <Parameter name="contractAddress">
+    You interact with the Message Transmitter contract on the destination chain, so the `contractAddress` parameter of the request is **0x7865fAfC2db2093669d92c0F33AeEF291086BEFD**
+  </Parameter>
+  <Parameter name="abiFunctionSignature">
+The function being called on the Message Transmitter contract is: <br/>
+ `receiveMessage(bytes message, ,bytes attestation)`
+
+This is the `abiFunctionSignature` property of the request
+**receiveMessage(bytes,bytes)**
+
+  </Parameter>
+  <Parameter name="abiParameters">
+For the call to receiveMessage, the abiParameters are 
+    - **message**: the bytes emitted by MessageSent event from the depositForBurn transaction logs. This is messageBytes from the attestation steps earlier.
+    - **Attestation**: The signature from Circle's attestation service. This is attestationResponse.attestation from earlier.
+    </Parameter>
+    <Parameter name="walletId">
+    The wallet that is performing the contract execution. This will be the ID of the developer-controlled wallet you created earlier.
+    </Parameter>
+    <Parameter name="feeLevel">
+       A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. **HIGH** is used for this transaction.
+    </Parameter>
+    <Parameter name="idempotencyKey">
+    Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.
+    </Parameter>
+    <Parameter name="entitySecretCiphertext">
+    A base64 string expression of the entity secret ciphertext. Refer to <Link path="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9" type="external">this helpful tool</Link>.
+    </Parameter>
+</Parameters>
+
+Once the message has been received, the specified amount of USDC is minted at
+the recipient's address on the destination blockchain.
+
+<Playground
+  title="Mint on Polygon"
+  url="/quickstarts/api/cctp/receive-message"
+  config={{
+    method: 'POST',
+    url: '/v1/w3s/developer/transactions/contractExecution',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer <YOUR_API_KEY>',
+    },
+    body: {
+      abiFunctionSignature: 'receiveMessage(bytes,bytes)',
+      abiParameters: ['{{messageBytes}}', '{{attestationResponse.attestaion}}'],
+      idempotencyKey: '{{uuidgen}}',
+      contractAddress: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
+      feeLevel: 'MEDIUM',
+      walletId: '${WALLET_ID}',
+      entitySecretCiphertext: '${ENTITY_SECRET_CIPHERTEXT}',
+    },
+  }}
+/>
+
+This returns a `transactionId` after you submit the `receiveMessage` request.
+You can use this `transactionId` to look up the status and details of the final
+transaction.
+
+<Playground
+  title="Check transaction"
+  url="/quickstarts/api/cctp/check-transaction"
+  config={{
+    method: 'GET',
+    url: '/v1/w3s/transactions/__TRANSACTION_ID__',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer <YOUR_API_KEY>',
+    },
+  }}
+  copy={[
+    {
+      path: 'data.id',
+      key: 'cctpTransactionId',
+    },
+  ]}
+/>

@@ -1,0 +1,49 @@
+---
+title: Idempotent Requests
+description:
+  Ensure that your transactions are executed only once in case they need to be
+  retried.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle APIs support
+[idempotent requests](https://en.wikipedia.org/wiki/Idempotence), which are a
+type of request method that executes only once no matter how many times the
+request is sent. Result: you can safely retry API calls when things go wrong
+during a transaction (such as a network connection issue) before you receive a
+response._
+
+To ensure success, please note the following:
+
+- To be sure a request is idempotent, you must generate and provide an
+  idempotency key formatted as a GUID.
+- Subsequent requests with the same idempotencyKey parameter value will produce
+  the same result as the initial request.
+- The `idempotencyKey` body parameter must be sent in
+  [UUID format](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+
+## Operations that support idempotency
+
+The following Circle API operations support idempotent requests. Check the API
+reference for more details.
+
+- **Core Functionality**
+
+  - [Create a payout.](/api-reference/circle-mint/account/create-business-payout)
+  - [Create a wire bank account.](/api-reference/circle-mint/account/create-business-wire-account)
+  - [Create a business transfer.](/api-reference/circle-mint/account/create-business-transfer)
+  - [Create a deposit address.](/api-reference/circle-mint/account/create-business-deposit-address)
+  - [Create a recipient address.](/api-reference/circle-mint/account/create-business-recipient-address)
+
+- **Payments API**
+
+  - [Create a payment intent.](/api-reference/circle-mint/payments/create-payment-intent)
+  - [Expire a payment intent.](/api-reference/circle-mint/payments/expire-payment-intent)
+  - [Refund a payment intent.](/api-reference/circle-mint/payments/refund-payment-intent)
+
+- **Payouts API**
+  - [Create a payout.](/api-reference/circle-mint/payouts/create-payout)
+  - [Create a recipient address.](/api-reference/circle-mint/payouts/create-address-book-recipient)

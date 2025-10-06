@@ -1,0 +1,135 @@
+---
+title: Passkey
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Passkeys"
+---
+
+Circle's **Passkey** enables the integration of secure smart contract
+functionality through the **WebAuthn** standard. By using the Passkey as a
+signer, it simplifies user onboarding and enhances the signing experience.
+Passkey also offers a secure and seamless way to manage private keys, allowing
+your users to interact with smart contracts safely and efficiently.
+
+## Passkeys Overview
+
+Passkeys simplify private key management in Web3, improving user experience.
+Users no longer need to handle private keys directly or worry about losing their
+12-word seed phrase, which could result in lost funds.
+
+### What is a Passkey?
+
+A passkey is a cryptographic key pair generated and **securely stored on user
+devices**, such as laptops, phones, or password managers like 1Password. Unlike
+passwords, passkeys cannot be shared and are resistant to phishing and breaches.
+
+<Note>
+Passkey adoption is growing, with Apple and Google promoting this standard. Passkeys are now available on many devices, including:
+- **Apple**: iPhones, iPads, MacBooks
+- **Android**: Phones and tablets
+- **Browsers**: Chrome, Edge, Firefox (on Windows, Mac, and Android)
+- **FIDO2 security keys**: YubiKey and similar devices
+
+See the full
+[passkey support matrix](https://passkeys.dev/device-support/#matrix) for device
+and platform compatibility across various operating systems and browsers.
+
+</Note>
+
+### Benefits of Passkeys
+
+- **Faster Registration and Login**. Users can register and log in using
+  biometric authentication, such as Face ID or fingerprints.
+- **Ease of Use**. Passkeys sync with password managers like iCloud Keychain,
+  Google Password Manager, or 1Password, allowing seamless access across devices
+  within the same ecosystem.
+- **Cross-Device Usage**. Passkeys can be used across different ecosystems via
+  **Bluetooth**. For example, users can sign in on another device by scanning a
+  QR code with their phone, as long as the phone is near the laptop and the user
+  approves the sign-in on their phone.  
+  **Note:** If you sign in on the same device where the passkey was created, the
+  device will prompt you to authenticate using biometrics — no Bluetooth
+  required. For more details, see
+  [this guide](https://blog.1password.com/passkeys-faqs/#do-you-need-a-bluetooth-connection-to-use-a-passkey).
+
+## Passkey Implementation
+
+Circle’s **Passkey** feature is built using **Smart Contract Passkey** alongside
+**webAuthnAccount**. A dedicated **Passkey Server** is implemented to enable
+secure registration and authentication processes through the **WebAuthn**
+standard.
+
+- **Smart Contract Passkey**. A digital key that authorizes blockchain
+  transactions, ensuring only authorized users can execute actions.
+- **WebAuthnAccount**. WebAuthn is a web standard for secure authentication
+  using public key cryptography instead of passwords. WebAuthnAccount connects
+  to Circle’s Passkey Server to retrieve passkeys registration and login
+  credentials, enabling the generation of passkeys and performing signing
+  operations.
+
+Passkeys use the **secp256r1** curve for generating signatures. When invoking
+**webAuthnAccount**, the signing methods return both the signature and the
+associated **WebAuthn** data.
+
+## Passkey Backup and Recovery
+
+As passkeys replace traditional private keys in Web3 authentication, having a
+reliable backup and recovery strategy becomes essential. This section explains
+how passkeys are synchronized across user devices and what fallback options
+Circle provides in case users lose access to their original passkey, including
+support for recovery keys with secure, self-custodial properties.
+
+Passkeys are natively synchronized across user devices via secure cloud storage
+services like **Apple iCloud Keychain** or
+[Google Password Manager](https://developers.google.com/identity/passkeys/supported-environments),
+ensuring convenience and accessibility. However, **device-bound passkeys** (for
+example, YubiKey) do not support synchronization, as they remain exclusive to
+the device where they were created. This offers higher security but less
+convenience:
+
+- **Apple iCloud Keychain**. Syncs passkeys across Apple devices as long as the
+  user is signed in with their Apple ID.
+- **Google Password Manager**. Enabled by default as a passkey provider on
+  Android, and accessible in Chrome and other supported browsers.
+
+Despite these measures, users may accidentally erase their passkey setup or lose
+a hardware security key. To address this risk, Circle provides an additional
+recovery method to ensure continued account access. For more details and sample
+code, visit the
+[How to set up passkey recovery](/wallets/modular/recover-passkey) guide.
+
+<Note>
+**Key Benefits:**
+
+- **Self-Custodial**: No central authority required for recovery
+- **Equivalent Permissions**: Recovery keys have the same permissions as
+  passkeys at the contract level
+- **Standard Compatibility**: Recovery keys use standard ECDSA signatures,
+  compatible with Ethereum tooling
+- **Multiple Recovery Keys**: Support for registering multiple recovery keys
+  for added flexibility and security
+</Note>
+
+<Warning>
+**Caution:**
+
+The passkey and any recovery methods that users set up are the only ways to
+access their wallets. Neither Circle nor developers can possibly recover user
+wallets under any circumstances.
+
+</Warning>
+
+## How to Use Passkey
+
+Explore the following resources to integrate the Passkey functionality into your
+Web3 applications:
+
+- [Modular Wallets Quickstart](/wallets/modular/create-a-wallet-and-send-gasless-txn)
+  showcases how your app users can authenticate using a passkey.
+- [Sample App](https://github.com/circlefin/modularwallets-web-sdk/tree/master/examples/circle-smart-account)
+  in the [Modular Wallet Web SDK](/wallets/modular/web-sdk) (and the
+  [Android](/wallets/modular/android-sdk) and [iOS](/wallets/modular/ios-sdk)
+  SDKs) provide implementation examples.

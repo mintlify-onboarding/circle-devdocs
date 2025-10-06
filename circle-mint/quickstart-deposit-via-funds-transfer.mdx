@@ -1,0 +1,224 @@
+---
+title: "Quickstart: Deposit via Funds Transfer"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Quickstart: Deposit via Funds Transfer"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+_Sending funds to your Circle Account from an external bank account is one of
+the basic primitives (building blocks) enabled by the APIs. This quickstart
+walks through depositing USDC USD from an external bank account. You can follow
+the same steps when sending EURC EUR as well._
+
+## 1. Get an API key
+
+Circle's APIs use [API keys](/circle-mint/api-keys) as the mechanism to
+authenticate client requests. The API key must be set in the Authorization
+header of the request sent from your backend server. The format of the header is
+Bearer secret-key-value.
+
+To obtain an API key for the sandbox environment,
+[create an account](https://app.circle.com/get-started/create-account) and
+generate a new key in settings.
+
+[Get an API key](https://app-sandbox.circle.com/)
+
+Once you have generated your API key, record it in a secure place.
+
+## 2. Link a bank account
+
+To send account funds from an external bank account, you need to add the bank
+account that can send funds to your Circle Mint Account. To that end, you can
+use the
+[create a wire bank account](/api-reference/circle-mint/account/create-business-wire-account)
+API endpoint.
+
+<Note>
+**Note**: The parameters listed below are slightly different for US Bank
+accounts, non-US bank accounts that are IBAN supported and non-US bank
+accounts that aren't IBAN supported. Please see the preceding link for
+details.
+</Note>
+
+**REQUEST**
+
+Replace `${YOUR_API_KEY}` with your API key.
+
+```shell
+curl --request POST \
+--url https://api-sandbox.circle.com/v1/businessAccount/banks/wires \
+--header 'accept: application/json' \
+--header 'authorization: Bearer ${YOUR_API_KEY}' \
+--header 'content-type: application/json' \
+--data '
+
+{
+  "billingDetails": {
+    "name": "Satoshi Nakamoto",
+    "city": "Boston",
+    "country": "US",
+    "line1": "100 Money Street",
+    "district": "MA",
+    "postalCode": "01234"
+  },
+  "bankAddress": {
+    "bankName": "SAN FRANCISCO",
+    "city": "SAN FRANCISCO",
+    "country": "US",
+    "line1": "100 Money Street",
+    "district": "CA"
+  },
+  "idempotencyKey": "ba943ff1-ca16-49b2-ba55-1057e70ca5c7",
+  "accountNumber": "12340010",
+  "routingNumber": "121000248"
+}
+
+'
+```
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "id": "9d1fa351-b24d-442a-8aa5-e717db1ed636",
+    "status": "pending",
+    "description": "WELLS FARGO BANK, NA ****0010",
+    "trackingRef": "CIR2GKYL4B",
+    "fingerprint": "a9a71b77-d83d-4fbc-997f-41a33550c594",
+    "virtualAccountEnabled": true,
+    "billingDetails": {
+      "name": "Satoshi Nakamoto",
+      "line1": "100 Money Street",
+      "city": "Boston",
+      "postalCode": "01234",
+      "district": "MA",
+      "country": "US"
+    },
+    "bankAddress": {
+      "bankName": "WELLS FARGO BANK, NA",
+      "line1": "100 Money Street",
+      "city": "SAN FRANCISCO",
+      "district": "CA",
+      "country": "US"
+    },
+    "createDate": "2023-11-04T20:02:21.062Z",
+    "updateDate": "2023-11-04T20:02:21.062Z"
+  }
+}
+```
+
+## 3. Get wire instructions
+
+You can easily retrieve all necessary details to make a deposit from your bank
+account by using the
+[get wire instructions](/api-reference/circle-mint/account/get-business-wire-account-instructions)
+API endpoint. The endpoint returns the beneficiary details, bank details, and a
+confirmation of the currency.
+
+**REQUEST**
+
+Replace `${YOUR_API_KEY}` with your API key.
+
+Replace `${TRANSFER_ID}` with the ID of the transfer you created earlier.
+
+```curl
+curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
+-X GET https\://api-sandbox.circle.com/v1/businessAccount/banks/wires/${TRANSFER_ID}/instructions?currency=USD
+```
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "trackingRef": "CIR22FEP33",
+    "beneficiary": {
+      "name": "CIRCLE INTERNET FINANCIAL INC",
+      "address1": "1 MAIN STREET",
+      "address2": "SUITE 1"
+    },
+    "virtualAccountEnabled": true,
+    "beneficiaryBank": {
+      "name": "CRYPTO BANK",
+      "address": "1 MONEY STREET",
+      "city": "NEW YORK",
+      "postalCode": "1001",
+      "country": "US",
+      "swiftCode": "CRYPTO99",
+      "routingNumber": "999999999",
+      "accountNumber": "123815146304",
+      "currency": "USD"
+    }
+  }
+}
+```
+
+## 4. Deposit to your account
+
+You can only initiate a wire deposit from your bank account so this part of the
+deposit process takes place outside of Circle's API on production.
+
+Using the wire deposit details in the previous step, send funds from your bank
+account to your Circle Mint Account.
+
+You must confirm the wire details are correct to avoid any delays or bank
+returns.
+
+## Testing
+
+For testing purposes, you can send a mock wire to your sandbox account using the
+[mock wire API endpoint](/api-reference/circle-mint/account/create-mock-wire-payment)
+with the account number returned in step 3.
+
+**REQUEST**
+
+Replace `${YOUR_API_KEY}` with your API key.
+
+```shell
+curl --request POST \
+--url https://api-sandbox.circle.com/v1/businessAccount/banks/wires \
+--header 'accept: application/json' \
+--header 'authorization: Bearer ${YOUR_API_KEY}' \
+--header 'content-type: application/json' \
+--data '
+
+{
+  "amount": {
+    "amount": "50.00",
+    "currency": "USD"
+  },
+  "beneficiaryBank": {
+    "accountNumber": "123815146304"
+  }
+}
+'
+```
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "trackingRef": "CIR22FEP33",
+    "amount": {
+      "amount": "50.00",
+      "currency": "USD"
+    },
+    "beneficiaryBank": {
+      "accountNumber": "123815146304"
+    },
+    "status": "pending"
+  }
+}
+```
+
+<Note>
+**Note**: The sandbox environment processes mock wire deposits in batches. A
+mock wire may take up to 15 minutes to complete.
+</Note>

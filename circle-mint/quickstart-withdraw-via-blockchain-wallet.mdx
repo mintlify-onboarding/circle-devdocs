@@ -1,0 +1,320 @@
+---
+title: "Quickstart: Withdraw via Blockchain Wallet"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Quickstart: Withdraw via Blockchain Wallet"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+_Sending funds from your Circle Account to external blockchain wallets is one of
+the most basic primitives (building blocks) enabled by the APIs. This quickstart
+walks through sending USDC USD externally. You can follow the same steps when
+sending EURC EUR as well._
+
+## 1. Get an API key
+
+Circle's APIs use [API keys](/circle-mint/api-keys) as the mechanism to
+authenticate client requests. The API key must be set in the Authorization
+header of the request sent from your backend server. The format of the header is
+Bearer secret-key-value.  
+To obtain an API key for the sandbox environment, create an account and generate
+a new key in settings.
+
+Once you have generated your API key, record it in a secure place.
+
+## 2. Fund Your Account
+
+If you haven't done so already, make sure you fund your account for testing. You
+can do this one of two ways: by using the Circle Payments API to accept a
+payment, or by receiving an external USDC transfer from a faucet or other
+source.
+
+## 3. Add Recipient Address
+
+To send account funds externally, you need to allowlist a blockchain address to
+send to (destination). Adding an external wallet address via the API requires
+manual validation by an administrator. A notification to confirm the address is
+sent to all administrators when the API call is made.
+
+The sandbox environment uses the Ethereum Sepolia testing network, so the
+destination blockchain address has to be a valid Sepolia address.
+
+<Note>
+
+USDC is available on testing networks on other blockchains as well. This guide
+focuses on Ethereum but works similarly for other blockchains. For information
+on other testing networks see
+[Test USDC](/stablecoins/usdc-contract-addresses#testnet).
+
+</Note>
+
+<Warning>
+
+**For France and Singapore customers**
+
+Circle Mint France and Singapore customers must verify all transfer recipients
+using the UI in the Circle Console, as transfers from unverified addresses will
+be held in pending status. Please see Help Center articles below for details:
+
+- [Circle Mint France Travel Rule](https://help.circle.com/s/article/Circle-Mint-France-Travel-Rule)
+- [Circle Mint France wallet verification](https://help.circle.com/s/article/Circle-Mint-France-wallet-verification)
+- [Circle Mint Singapore Travel Rule](https://help.circle.com/s/article/Circle-Mint-Singapore-Travel-Rule)
+- [Circle Mint Singapore wallet verification](https://help.circle.com/s/article/Circle-Mint-Singapore-wallet-verification1)
+
+</Warning>
+
+**REQUEST**
+
+<CodeGroup>
+
+```curl
+curl --request POST \
+     --url https://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/recipient \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer ${YOUR_API_KEY}' \
+     --header 'content-type: application/json' \
+     --data '
+{
+  "chain": "ETH",
+  "idempotencyKey": "2a308497-e66e-4c42-ac1e-7bedab86d958",
+  "address": "0x493A9869E3B5f846f72267ab19B76e9bf99d51b1",
+  "currency": "USD",
+  "description": "https://usdcfaucet.com/"
+}
+'
+```
+
+```javascript
+const options = {
+  method: "POST",
+  headers: {
+    accept: "application/json",
+    "content-type": "application/json",
+    authorization: "Bearer ${YOUR_API_KEY}",
+  },
+  body: JSON.stringify({
+    chain: "ETH",
+    idempotencyKey: "2a308497-e66e-4c42-ac1e-7bedab86d958",
+    address: "0x493A9869E3B5f846f72267ab19B76e9bf99d51b1",
+    currency: "USD",
+    description: "https://usdcfaucet.com/",
+  }),
+};
+
+fetch(
+  "https://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/recipient",
+  options,
+)
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err));
+```
+
+</CodeGroup>
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "id": "cfa01bb0-d166-5506-a48a-56f2beab559f",
+    "address": "0x493a9869e3b5f846f72267ab19b76e9bf99d51b1",
+    "chain": "ETH",
+    "currency": "USD",
+    "description": "https://usdcfaucet.com/"
+  }
+}
+```
+
+## 4. Send Funds
+
+To keep things simple, we'll transfer funds to the deposit address of the USDC
+faucet service on Sepolia. That address is
+`0x493A9869E3B5f846f72267ab19B76e9bf99d51b1`.
+
+<Warning>
+**Balance Requirement**
+
+You can transfer any amount you want, provided your account has sufficient
+balance to cover the transfer. To send funds externally, you will use the create
+account transfer endpoint.
+
+</Warning>
+
+<Note>
+**Specify your blockchain**
+
+Because Circle's APIs are designed for multiple chains and currencies, you must
+specify the currency and chain you want to utilize. You can create a transfer by
+using the command below.
+
+</Note>
+
+**REQUEST**
+
+<CodeGroup>
+
+```curl
+curl --request POST \
+     --url https://api-sandbox.circle.com/v1/businessAccount/transfers \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer ${YOUR_API_KEY}' \
+     --header 'content-type: application/json' \
+     --data '
+{
+  "destination": {
+    "type": "verified_blockchain",
+    "addressId": "cfa01bb0-d166-5506-a48a-56f2beab559f"
+  },
+  "amount": {
+    "currency": "USD",
+    "amount": "3.14"
+  },
+  "idempotencyKey": "6ec3827d-15bb-442e-9d4c-32e73e61cbf4"
+}
+'
+```
+
+```javascript
+const options = {
+  method: "POST",
+  headers: {
+    accept: "application/json",
+    "content-type": "application/json",
+    authorization: "Bearer ${YOUR_API_KEY}",
+  },
+  body: JSON.stringify({
+    destination: {
+      type: "verified_blockchain",
+      addressId: "cfa01bb0-d166-5506-a48a-56f2beab559f",
+    },
+    amount: { currency: "USD", amount: "3.14" },
+    idempotencyKey: "6ec3827d-15bb-442e-9d4c-32e73e61cbf4",
+  }),
+};
+
+fetch("https://api-sandbox.circle.com/v1/businessAccount/transfers", options)
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err));
+```
+
+</CodeGroup>
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "id": "21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",
+    "source": {
+      "type": "wallet",
+      "id": "1016875042"
+    },
+    "destination": {
+      "type": "blockchain",
+      "address": "0x493a9869e3b5f846f72267ab19b76e9bf99d51b1",
+      "chain": "ETH"
+    },
+    "amount": {
+      "amount": "3.14",
+      "currency": "USD"
+    },
+    "status": "pending",
+    "createDate": "2023-11-15T16:41:12.395Z"
+  }
+}
+```
+
+## 5. Check the Status of the Transfer
+
+You can use the get transfer endpoint to retrieve details about the status of
+the transaction. You can use it as in the command below.  
+**REQUEST**
+
+<CodeGroup>
+
+```curl
+curl --request GET \
+     --url https://api-sandbox.circle.com/v1/businessAccount/transfers/21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer ${YOUR_API_KEY}'
+Javascript Request
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    authorization: 'Bearer ${YOUR_API_KEY}'
+  }
+};
+```
+
+```javascript
+fetch(
+  "https://api-sandbox.circle.com/v1/businessAccount/transfers/21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",
+  options,
+)
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err));
+```
+
+</CodeGroup>
+
+**RESPONSE**
+
+```json
+{
+  "data": {
+    "id": "21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",
+    "source": {
+      "type": "wallet",
+      "id": "1016875042"
+    },
+    "destination": {
+      "type": "blockchain",
+      "address": "0x493a9869e3b5f846f72267ab19b76e9bf99d51b1",
+      "chain": "ETH"
+    },
+    "amount": {
+      "amount": "3.14",
+      "currency": "USD"
+    },
+    "transactionHash": "0x0654eee4f609f9c35e376cef9455dd9fc1546c482c5c32c8f8d434ead14fcf97",
+    "status": "complete",
+    "createDate": "2023-11-15T16:41:12.395Z"
+  }
+}
+```
+
+<Check>
+**Notes about the process**
+
+The first state transition for a transfer sets the `status` to `created` and the
+`transactionHash` to `null`. At this point Circle has just started processing
+the onchain send.
+
+When Circle broadcasts the transfer a few seconds later, its `status` will
+change to `running`. It will also display a `transactionHash` you can use to
+track the transfer onchain, which you can look up on Etherscan's tracker on
+Sepolia.
+
+</Check>
+
+Though not yet settled, you can consider the transaction complete because it has
+been successfully broadcast to the network. Circle's systems will continue to
+track the transfer until it has reached finality, at which point its status will
+change to complete.
+
+🎉 Congratulations. You have successfully sent cryptocurrency using Circle's
+APIs.
+
+## 6. Ready for the next step?
+
+After experimenting with our APIs, you’ll want to start building test
+integrations in sandbox prior to moving into production. Start by applying for a
+Circle Mint account. We'll be happy to walk you through the next steps.

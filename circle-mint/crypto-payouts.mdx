@@ -1,0 +1,360 @@
+---
+title: "Send USDC from your Circle Mint Account"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Send USDC from your Circle Mint Account"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+The Crypto Payouts API allows you to send USDC and EURC. To use the Crypto
+Payouts API, you should add the recipient blockchain address to the Address Book
+directory before using that address to perform an onchain send.
+
+This guide walks you through how to create an active recipient, create a payout
+to that recipient, and verify that the payout completed successfully.
+
+## Prerequisites
+
+Before you begin this quickstart, ensure that you have:
+
+- Obtained an API key for Mint from Circle
+- Obtained access to the Crypto Payouts API
+- Installed cURL on your development machine
+- (Optional) configured a webhook notification endpoint
+
+This quickstart provides API requests in cURL format, along with example
+responses.
+
+## Part 1: Create an active recipient
+
+Before sending a payout, you must first create a recipient your Mint address
+book. Depending on your Mint configuration, new recipients may either be active
+immediately or inactive for the first 24 hours.
+
+<Note>
+**Note:** You have the option to turn on delayed withdrawals in the Circle
+Mint console. When turned on, all new addresses are inactive for the first 24
+hours, during which you can't make a payout. When turned off, all new
+addresses are available for payouts immediately.
+</Note>
+
+### 1.1. Add a recipient to your address book
+
+The
+[`/v1/addressBook/recipients`](/api-reference/circle-mint/payouts/create-address-book-recipient)
+endpoint creates a new recipient address in your Mint address book. Use the
+following example request to create a new recipient.
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/addressBook/recipients' \
+--header 'Accept: application/json' \
+--header 'X-Request-Id: fb7980ad-fd01-468b-98ff-2d9ecff67f86' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "idempotencyKey": "9352ec9e-5ee6-441f-ab42-186bc71fbdde",
+  "chain": "ETH",
+  "address": "0x65BFCf1a6289a0b77b4D3F7d12005a05949FD8C3",
+  "metadata": {
+    "email": "satoshi@circle.com",
+    "bns": "testbns",
+    "nickname": "test nickname desc"
+  }
+}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
+    "chain": "ETH",
+    "address": "0x65bfcf1a6289a0b77b4d3f7d12005a05949fd8c3",
+    "metadata": {
+      "nickname": "test nickname desc",
+      "email": "satoshi@circle.com",
+      "bns": "testbns"
+    },
+    "status": "pending",
+    "updateDate": "2022-09-22T14:16:34.985353Z",
+    "createDate": "2022-09-22T14:16:34.985353Z"
+  }
+}
+```
+
+### 1.2. Check recipient status
+
+Prior to sending the payout you must ensure the recipient is active. You can't
+send a payout to an inactive recipient. You can check if the recipient is active
+through the API in two ways:
+[webhook notifications](#121-webhook-notifications-optional) or
+[polling the endpoint](#122-polling).
+
+If you have turned on delayed withdrawals, you should set up one of these
+methods to check when the new recipient changes status from `inactive` to
+`active`. If you have turned off inactive withdrawals, you should use the
+[polling](#122-polling) example to verify that the recipient is in the active
+state on creation.
+
+You should not continue this guide until you've verified the new recipient is in
+the `active` state.
+
+#### 1.2.1. Webhook notifications (optional)
+
+Webhook notifications allow you to receive updates from Mint on events on your
+account. If configured, you'll receive updates when address book recipients are
+created or change status. An example notification showing the recipient status
+change is shown below.
+
+```json
+{
+  "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802",
+  "notificationType": "addressBookRecipients",
+  "version": 1,
+  "customAttributes": {
+    "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802"
+  },
+  "addressBookRecipient": {
+    "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
+    "chain": "ETH",
+    "address": "0x65bfcf1a6289a0b77b4d3f7d12005a05949fd8c3",
+    "metadata": {
+      "nickname": "test nickname desc",
+      "email": "satoshi@circle.com",
+      "bns": "testbns"
+    },
+    "status": "active",
+    "updateDate": "2022-09-22T14:16:34.985353Z",
+    "createDate": "2022-09-22T14:16:34.985353Z"
+  }
+}
+```
+
+#### 1.2.2. Polling
+
+If you don't have webhook notifications set up, or you have delayed withdrawals
+turned off, you can poll the
+[`/v1/addressBook/recipients/{id}`](/api-reference/circle-mint/payouts/get-address-book-recipient)
+endpoint until the response contains the `"status": "active"` parameter.
+
+Polling consists of calling the endpoint on a regular interval until the desired
+response is returned. The following example is a manual request to the endpoint:
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/addressBook/recipients/dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe' \
+--header 'Accept: application/json' \
+--header 'X-Request-Id: 55990729-c59f-4cda-9edd-838cefaa1e42' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
+    "chain": "ETH",
+    "address": "0x65bfcf1a6289a0b77b4d3f7d12005a05949fd8c3",
+    "metadata": {
+      "nickname": "test nickname desc",
+      "email": "satoshi@circle.com",
+      "bns": "testbns"
+    },
+    "status": "active",
+    "updateDate": "2022-09-22T14:16:34.985353Z",
+    "createDate": "2022-09-22T14:16:34.985353Z"
+  }
+}
+```
+
+## Part 2: Create a payout
+
+Once you have successfully created a recipient, create a payout using the
+[`/v1/payouts`](/api-reference/circle-mint/payouts/create-payout) endpoint. The
+request should include the recipient address ID, originating funds, and the
+currency the recipient would like to receive.
+
+<Warning>
+
+If `toAmount.currency` is not provided, `amount.currency` is used as receiving
+currency.
+
+The `source.identities` object is required for payouts >= $3,000. The object
+refers to the organization sending the funds, not the recipient. This is to
+ensure compliance with the FINCEN
+[Travel Rule](/circle-mint/travel-rule-on-chain).
+
+</Warning>
+
+Use the following command to create a payout:
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/payouts' \
+--header 'Accept: application/json' \
+--header 'X-Request-Id: ff422eab-52fa-4a6e-bf07-b6b522786468' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "idempotencyKey": "ba943ff1-ca16-49b2-ba55-1057e70ca5c7",
+  "source": {
+    "type": "wallet",
+    "id": "12345",
+    "identities": [
+    {
+      "type": "individual",
+      "name": "Satoshi Nakamoto",
+      "addresses": [
+        {
+          "line1": "100 Money Street",
+          "line2": "Suite 1",
+          "city": "Boston",
+          "district": "MA",
+          "postalCode": "01234",
+          "country": "US"
+        }
+      ]
+    }
+   ]
+  },
+  "destination": {
+    "type": "address_book",
+    "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
+  },
+  "amount": {
+    "amount": "3000.14",
+    "currency": "USD"
+  },
+  "toAmount": {
+    "currency": "USD"
+  }
+}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "b8627ae8-732b-4d25-b947-1df8f4007a29",
+    "sourceWalletId": "12345",
+    "destination": {
+      "type": "address_book",
+      "id": "b8627ae8-732b-4d25-b947-1df8f4007a29"
+    },
+    "amount": {
+      "amount": "3000.14",
+      "currency": "USD"
+    },
+    "toAmount": {
+      "currency": "USD"
+    },
+    "status": "pending",
+    "updateDate": "2020-04-10T02:13:30.000Z",
+    "createDate": "2020-04-10T02:13:30.000Z"
+  }
+}
+```
+
+## Part 3: Check payout status
+
+As a best practice, you should always check that the funds were sent and
+delivered onchain.
+
+### 3.1. Webhook notifications (optional)
+
+If you have configured webhook notifications you'll receive a notification for
+each payout status update. The following is an example notification:
+
+```json
+{
+  "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802",
+  "notificationType": "payout",
+  "version": 1,
+  "customAttributes": {
+    "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802"
+  },
+  "payout": {
+    "id": "b8627ae8-732b-4d25-b947-1df8f4007a29",
+    "sourceWalletId": "12345",
+    "destination": {
+      "type": "address_book",
+      "id": "b8627ae8-732b-4d25-b947-1df8f4007a29"
+    },
+    "amount": {
+      "amount": "3000.14",
+      "currency": "USD"
+    },
+    "toAmount": {
+      "amount": "3000.14",
+      "currency": "USD"
+    },
+    "fees": {
+      "amount": "0.00",
+      "currency": "USD"
+    },
+    "networkFees": {
+      "amount": "0.30",
+      "currency": "USD"
+    },
+    "status": "complete",
+    "createDate": "2020-04-10T02:13:30.000Z",
+    "updateDate": "2020-04-10T02:13:30.000Z"
+  }
+}
+```
+
+### 3.2: Polling (optional)
+
+If you don't have webhook notifications set up you can poll the
+[`/v1/payouts/{id}`](/api-reference/circle-mint/payouts/get-payout) endpoint
+until the response contains the `"status": "complete"` parameter.
+
+Polling consists of calling the endpoint on a regular interval until the desired
+response is returned. The following example is a manual request to the endpoint:
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/payouts/b8627ae8-732b-4d25-b947-1df8f4007a29' \
+--header 'Accept: application/json' \
+--header 'X-Request-Id: d36f3c00-9c98-4610-bfea-83995379995e' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "2f3bca9a-2d0e-4aef-a511-026eefd3cc6f",
+    "destination": {
+      "type": "address_book",
+      "id": "eaca84eb-69fb-53d3-9dac-f69cb5f1541a"
+    },
+    "amount": {
+      "amount": "500.00",
+      "currency": "USD"
+    },
+    "toAmount": {
+      "amount": "500.00",
+      "currency": "USD"
+    },
+    "externalRef": "0x41f8f2cd555e247716f3e9bc97366ac04a848fd2fde76732c894c6843fc6f8db",
+    "createDate": "2023-08-14T20:30:19.145913Z",
+    "updateDate": "2023-08-14T22:05:55.406292Z",
+    "sourceWalletId": "1000594146",
+    "fees": {
+      "amount": "1.00",
+      "currency": "USD"
+    },
+    "networkFees": {
+      "amount": "0.01",
+      "currency": "USD"
+    },
+    "status": "complete"
+  }
+}
+```

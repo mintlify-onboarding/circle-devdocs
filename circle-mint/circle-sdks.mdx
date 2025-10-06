@@ -1,0 +1,276 @@
+---
+title: Circle SDKs
+description:
+  Use our SDKs to quickly get your codebase up and running with Circle APIs.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Circle's SDKs are developer tools that enable you to integrate your code with
+Circle APIs. Because Circle SDKs are open source, you can contribute to them
+directly. If you find bugs or missing features,file an issue or contribute back
+to the [`node-sdk`](https://github.com/circlefin/circle-nodejs-sdk).
+
+**Note:** This page contains code snippets and examples that can be run as is or
+incorporated into your apps.
+
+Circle offers SDKs for Typescript, Java and Python.
+
+## Installing the SDK
+
+You can run one of the two commands below from your project directory to install
+the SDK.
+
+<CodeGroup>
+
+```shell Node
+npm install @circle-fin/circle-sdk --save
+# or
+yarn add @circle-fin/circle-sdk
+```
+
+```xml Java (Beta)
+//Add the following dependency to your pom.xml. Make sure to specify the version of the artifact.
+<dependency>
+    <groupId>com.circle</groupId>
+    <artifactId>circle</artifactId>
+    <version>replace-me-with-latest-artifact-ver</version>
+</dependency>
+```
+
+```shell Python (Beta)
+python3 -m pip install circle-sdk
+```
+
+</CodeGroup>
+
+## Configuration
+
+<CodeGroup>
+
+```typescript
+import { Circle, CircleEnvironments } from "@circle-fin/circle-sdk";
+
+const circle = new Circle(
+  "<your-api-key>",
+  CircleEnvironments.sandbox, // API base url
+);
+```
+
+```java Java (Beta)
+import com.circle.client.Circle;
+
+Circle.getInstance()
+            .setBasePath(Circle.SANDBOX_BASE_URL)
+            .setApiKey("<replace-me-with-your-api-key>");
+```
+
+```python Python (Beta)
+import circle
+
+# Configure global settings
+circle.base_url = circle.Environment.SANDBOX_BASE_URL
+circle.api_key = '<replace-me-with-your-api-key>'
+```
+
+</CodeGroup>
+
+## List balances
+
+<CodeGroup>
+
+```typescript
+async function listBalances() {
+  const balancesRes = await circle.balances.listBalances();
+}
+```
+
+```java Java (Beta)
+import com.circle.client.ApiException;
+import com.circle.client.api.BalancesApi;
+import com.circle.client.model.ListBalancesResponse;
+
+
+// Create API driver
+BalancesApi api = new BalancesApi();
+
+// Send request
+try {
+  ListBalancesResponse resp = api.listBalances();
+  System.out.println(resp);
+}
+catch (ApiException e) {
+  System.out.println("Failed to fetch balances");
+  System.out.println(e);
+}
+```
+
+```python Python (Beta)
+import circle
+from circle.apis.tags import balances_api
+
+# Choose API driver
+api_instance = balances_api.BalancesApi()
+
+# Send request
+try:
+    api_response = api_instance.list_balances()
+    pprint(api_response)
+except circle.ApiException as e:
+    print("Exception when calling BalancesApi->list_balances: %s\n" % e)
+
+```
+
+</CodeGroup>
+
+## Create a crypto payment
+
+<CodeGroup>
+
+```typescript
+async function createCryptoPayment() {
+  const createCryptoPaymentRes =
+    await circle.paymentIntents.createPaymentIntent({
+      idempotencyKey: "5c6e9b91-6563-47ec-8c6d-0ce1103c50b3",
+      amount: {
+        amount: "3.14",
+        currency: "USD",
+      },
+      settlementCurrency: "USD",
+      paymentMethods: [
+        {
+          chain: "ETH",
+          type: "blockchain",
+        },
+      ],
+    });
+}
+```
+
+```java Java (Beta)
+import com.circle.client.ApiException;
+import com.circle.client.Circle;
+import com.circle.client.api.CryptoPaymentIntentsApi;
+import com.circle.client.model.Chain;
+import com.circle.client.model.CreatePaymentIntentRequest;
+import com.circle.client.model.CreatePaymentIntentResponse;
+import com.circle.client.model.CryptoPaymentsMoney;
+import com.circle.client.model.PaymentIntentCreationRequest;
+import com.circle.client.model.PaymentMethodBlockchain;
+
+
+import java.util.Arrays;
+import java.util.UUID;
+
+
+
+// Create API driver
+CryptoPaymentIntentsApi api = new CryptoPaymentIntentsApi();
+
+// Prepare request data
+CreatePaymentIntentRequest reqBody = new CreatePaymentIntentRequest(new PaymentIntentCreationRequest()
+    .idempotencyKey(UUID.randomUUID())
+    .amount(
+        new CryptoPaymentsMoney()
+        .amount("45.19")
+        .currency(CryptoPaymentsMoney.CurrencyEnum.USD)
+    )
+    .settlementCurrency(PaymentIntentCreationRequest.SettlementCurrencyEnum.USD)
+    .paymentMethods(
+        Arrays.asList(
+            new PaymentMethodBlockchain()
+            .chain(Chain.ETH)
+            .type(PaymentMethodBlockchain.TypeEnum.BLOCKCHAIN)
+        )
+    ));
+
+// Make API request and print response
+try {
+    CreatePaymentIntentResponse resp = api.createPaymentIntent(reqBody);
+    System.out.println(resp);
+    // Print error if API request failed
+} catch (ApiException e) {
+    System.out.println("Failed to make API call");
+    System.out.println(e);
+}
+```
+
+```python Python (Beta)
+from uuid import uuid4
+import circle
+from circle.apis.tags import crypto_payment_intents_api
+from circle.model.create_payment_intent_request import CreatePaymentIntentRequest
+from circle.model.crypto_payments_money import CryptoPaymentsMoney
+from circle.model.currency import Currency
+from circle.model.payment_method_blockchain import PaymentMethodBlockchain
+from circle.model.chain import Chain
+
+# Configure global settings
+circle.base_url = circle.Environment.SANDBOX_BASE_URL
+circle.api_key = '<replace-me-with-your-api-key>'
+
+# Choose API driver
+api_instance = crypto_payment_intents_api.CreatePaymentIntent()
+
+# body param
+req_body = CreatePaymentIntentRequest(amount=CryptoPaymentsMoney(amount='35.14',currency=Currency.USD),idempotencyKey=str(uuid4()),settlementCurrency=Currency.USD,paymentMethods=[PaymentMethodBlockchain(chain=Chain.ETH,type="blockchain")])
+
+
+try:
+    api_response = api_instance.create_payment_intent(body=req_body)
+    print(api_response)
+except circle.ApiException as ex:
+        print("Exception when calling payment_intents_api->create_payment_intent: %s\n" % ex)
+
+```
+
+</CodeGroup>
+
+## Get a crypto payment
+
+<CodeGroup>
+
+```typescript
+async function getCryptoPayment(id: string) {
+  const cryptoPayment = await circle.paymentIntents.getPaymentIntent(id);
+}
+```
+
+```java Java (Beta)
+import com.circle.client.ApiException;
+import com.circle.client.api.CryptoPaymentIntentsApi;
+import com.circle.client.model.PaymentIntent;
+
+CryptoPaymentIntentsApi api = new CryptoPaymentIntentsApi();
+UUID paymentIntetntId = replace_with_payment_intent_id;
+// Send request
+try {
+  PaymentIntent resp = api.getPaymentIntent(id);
+  System.out.println(resp);
+}
+catch (ApiException e) {
+  System.out.println("Failed to fetch payment intent");
+  System.out.println(e);
+}
+
+```
+
+```python Python (Beta)
+import circle
+from circle.apis.tags import payment_intents_api
+
+api_instance = payment_intents_api.PaymentIntentsApi()
+
+payment_intent_id = replace_with_payment_intent_id
+
+# Send request
+try:
+    api_response = api_instance.get_payment_intent(path_params={'id':payment_intent_id})
+    pprint(api_response)
+except circle.ApiException as e:
+    print("Exception when calling PaymentIntentsApi->get_payment_intent: %s\n" % e)
+```
+
+</CodeGroup>

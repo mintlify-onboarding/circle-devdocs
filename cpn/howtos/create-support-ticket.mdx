@@ -1,0 +1,83 @@
+---
+title: "How-to: Create a Support Ticket"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Create a Support Ticket"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+The CPN support ticket API allows you to raise and manage transaction-related
+issues including but not limited to:
+
+- Settlement delays
+- Missing information
+- Refunds
+
+These tickets are stored and managed in the CPN platform, and Circle routes them
+to the appropriate party for resolution. This guide provides information on how
+to create a support ticket using the CPN API.
+
+## Steps
+
+Use the following steps to create a support ticket.
+
+### Step 1: Gather information
+
+Gather the appropriate information for your support ticket, including:
+
+- Payment ID to be associated with the support ticket
+- The type of support ticket:
+  - Settlement delay
+  - Wrong recipient
+  - Incorrect payment amount
+  - Request for information on the OFI
+  - Request for information on the sender
+  - Funding amount discrepancy
+  - Reverse funds
+  - Other
+- A brief description of the problem
+- Contact information (email) for follow-up
+
+### Step 2: Generate an idempotency key
+
+Using a UUID generator in the language of your choice, create a UUID to act as
+an idempotency key for the API request.
+
+### Step 3: Submit the API request
+
+Make a request to the
+[create a support ticket endpoint](/api-reference/cpn/cpn-platform/create-support-ticket)
+with the information gathered in step 1, as well as the UUID and any additional
+emails that should be included on resolution correspondence. A successful
+response from the API includes an ID for the support ticket, a timestamp for
+creation of the ticket, and the information provided in the original API call.
+
+```json
+{
+  "paymentId": "3f020d62-6cef-4f2c-87e4-b096abc5cac9",
+  "issueType": "PAYMENT_SETTLEMENT_DELAY",
+  "description": "fiat payment is not settled in the stipulated time window",
+  "email": "help@ofi.com",
+  "idempotencyKey": "d7e5cecc-8d6f-44df-97e0-5faddf4ff858",
+  "ccEmails": ["ccsupport01@example.com", "ccsupport02@example.com"]
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "f4b5a8f7-8fca-4d09-ad54-bb4528fe187e",
+  "paymentId": "3f020d62-6cef-4f2c-87e4-b096abc5cac9",
+  "issueType": "PAYMENT_SETTLEMENT_DELAY",
+  "description": "fiat payment is not settled in the stipulated time window",
+  "caseRefId": "CIR-123456",
+  "email": "help@ofi.com",
+  "ccEmails": ["ccsupport01@example.com", "ccsupport02@example.com"],
+  "createDate": "2025-02-01T10:00:00Z"
+}
+```

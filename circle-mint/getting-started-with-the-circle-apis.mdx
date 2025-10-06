@@ -1,0 +1,49 @@
+---
+title: Getting Started
+description:
+  Connect your applications to Circle to use USDC for payments, payouts, and
+  transfers.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle APIs are a set of functions and procedures that allow you to use USDC
+for payments, payouts, and transfers. They enable your applications to connect
+to banks and digital wallets and enable global payments via USDC. By integrating
+with our APIs to automate minting and redemption, you can provide stablecoin
+access directly to your users through your own app or website._
+
+To ensure success, please note the following:
+
+- API requests without authentication will fail.
+- All API requests must be made over HTTPS.
+- Keep API keys secure at all times. Ensure your API key is always stored
+  securely and never share it or record it in a medium that might be publicly
+  accessible such as client-side code, public repositories, etc.
+
+## API key authentication
+
+Set the API key in the `Authorization` header of the request sent from your
+backend server using the format `Bearer secret-key-value`.
+
+```text API Authentication
+Authorization: Bearer YOUR_API_KEY
+```
+
+## API key in Sandbox
+
+By using the Circle
+[sandbox environment](/circle-mint/circle-apis-production-sandbox-environments),
+you can quickly familiarize yourself with the Circle API request and response
+formats and build prototypes. The API key you use in sandbox will be different
+than the one you use in production.
+
+If you don't yet have an API key in the sandbox environment, take a few moments
+to [create a sandbox account](https://app-sandbox.circle.com).
+
+[<Button variant="primary">Create a sandbox account</Button>](https://app-sandbox.circle.com/)
+
+After you create your sandbox account and generate your API key, follow the
+links below to continue exploring Circle APIs.

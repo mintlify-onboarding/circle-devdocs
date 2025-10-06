@@ -1,0 +1,204 @@
+---
+title: Account Types
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The type of account you choose along with the wallet type determine the
+capabilities of the wallets you create. Circle supports three account types:
+
+- **Externally Owned Accounts (EOA)**
+- **Smart Contract Accounts (SCA)**
+- **Modular Smart Contract Accounts (MSCA)**
+
+## Blockchain support
+
+The following table shows the blockchain networks and their support for EOAs,
+SCAs, and MSCAs.
+
+| Blockchain Network       | Externally Owned Account (EOA)                   | Smart Contract Account (SCA)                     | Modular Smart Contract Account (MSCA) |
+| ------------------------ | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------- |
+| Wallet Type              | User-controlled and developer-controlled Wallets | User-controlled and developer-controlled Wallets | Modular Wallet                        |
+| Aptos Mainnet            | ✅                                               | ❌                                               | ❌                                    |
+| Aptos Testnet            | ✅                                               | ❌                                               | ❌                                    |
+| Arbitrum Mainnet         | ✅                                               | ✅                                               | ✅                                    |
+| Arbitrum Sepolia Testnet | ✅                                               | ✅                                               | ✅                                    |
+| Avalanche Mainnet        | ✅                                               | ✅                                               | ✅                                    |
+| Avalanche Fuji Testnet   | ✅                                               | ✅                                               | ✅                                    |
+| Base Mainnet             | ✅                                               | ✅                                               | ✅                                    |
+| Base Sepolia Testnet     | ✅                                               | ✅                                               | ✅                                    |
+| Ethereum Mainnet         | ✅                                               | ✅                                               | ❌                                    |
+| Ethereum Sepolia Testnet | ✅                                               | ✅                                               | ❌                                    |
+| Near                     | ✅ developer-controlled wallets only             | ❌                                               | ❌                                    |
+| Optimism Mainnet         | ✅                                               | ✅                                               | ✅                                    |
+| Optimism Sepolia Testnet | ✅                                               | ✅                                               | ✅                                    |
+| Polygon Mainnet          | ✅                                               | ✅                                               | ✅                                    |
+| Polygon Amoy Testnet     | ✅                                               | ✅                                               | ✅                                    |
+| Solana                   | ✅                                               | ❌                                               | ❌                                    |
+| Solana Devnet            | ✅                                               | ❌                                               | ❌                                    |
+| Unichain Mainnet         | ✅                                               | ✅                                               | ✅                                    |
+| Unichain Sepolia Testnet | ✅                                               | ✅                                               | ✅                                    |
+| Other EVM chains         | ✅                                               | ❌                                               | ❌                                    |
+
+## Externally Owned Accounts (EOA)
+
+EOAs are Ethereum's most commonly used account type and Solana's only supported
+account type. They consist of a private and public key, with the public key
+representing the account address. EOAs require secure management of the private
+key and always require gas tokens to initiate transactions. While EOAs offer the
+flexibility to initiate any transaction, they have certain limitations, such as
+the need for a private key and the inability to control them programmatically
+onchain.
+
+**Benefits:**
+
+- **Zero Cost Creation**. Creating an Externally Owned Account (EOA) does not
+  incur any fees, making it an accessible option for users. This is especially
+  important for networks like Ethereum mainnet, where gas costs are higher.
+- **Versatile Transaction Initiation**. EOAs can initiate any transaction on the
+  Ethereum network, allowing users to interact with various decentralized
+  applications and perform a wide range of operations.
+- **High outbound TPS**. EOAs, given their simplicity, allow for higher outbound
+  TPS than SCAs. This makes them suitable for use cases like mass distribution
+  such as airdrops.
+
+**Limitations:**
+
+- **Private Key Dependency**. EOAs require the secure management of a single
+  private key that’s paired with the EOA. Users must protect their private key
+  to ensure the security and control of their EOA, as it grants access to
+  account functions and funds. When users lose this private key, they lose the
+  ability to transact tokens in the EOA.
+- **Native Token Dependency for Gas (EVM)**. To perform transactions or execute
+  operations on the Ethereum network, EOAs must hold native tokens such as Ether
+  (ETH) to cover gas fees. These tokens must pay for the computational resources
+  utilized during transaction validation and execution. Solana, on the other
+  hand, natively supports gas subsidy with `feePayer`, which means developers
+  can sponsor gas fees on behalf of the EOA from the users.
+- **Advanced Onchain use-cases**. EOAs cannot support any advanced use-cases
+  that involve onchain code. Some examples of these include multi-sig wallets,
+  session keys, onchain spending limits, etc.
+
+## Smart Contract Accounts (SCA)
+
+SCAs are another type of Ethereum account that replaces an EOA with a smart
+contract. SCAs do not have private keys but are controlled by either an EOA, a
+passkey, or multiple keys, which interact with the deployed smart contract. SCAs
+allow developers to write customized logic within the smart contract, enabling
+advanced functionalities. SCAs have been in the Ethereum ecosystem for many
+years but recently gained popularity thanks to a new standard called
+[ERC-4337 (account abstraction)](https://www.erc4337.io/docs) - a trustless
+standard the community could build SCAs around. ERC-4337 also introduced the
+concept of paymaster, which enables simplified gas abstraction, enabling anyone
+to sponsor gas fees for the end user or let the end user pay for gas in any
+ERC-20 token.
+
+**Benefits:**
+
+- **Flexibility of keys**. SCA allows for configuration of the signing key,
+  which can be an EOA, a passkey, or multiple keys, as well as the recovery of
+  such keys if lost.
+- **Gas Abstraction and Fee Sponsorship (EVM)**. SCAs offer gas abstraction,
+  simplifying gas fee management for end-users. Developers can implement
+  mechanisms, such as the paymaster pattern, to sponsor gas fees on behalf of
+  users. This reduces the burden on users to hold and manage native tokens for
+  gas and enhances the overall user experience by providing a seamless gas fee
+  payment process.
+- **Batch Operations**. SCAs allow you to
+  [batch related user operations](/wallets/batch-operations), which can provide
+  a number of important benefits for end-users. With batched operations, the
+  user only has to wait for a single batched transaction, instead of multiple
+  individual transactions. Batched transactions will generally cost less gas
+  than individually submitted transactions. Batched transactions offer
+  atomicity: if any transaction in the batch reverts, the entire batch reverts,
+  ensuring that user operations aren't stuck in an inconsistent state.
+
+**Limitations:**
+
+- **Gas Fees Incurred for Creation**. Gas fees are required when creating SCA
+  wallets. However, emerging solutions like the one implemented in Programmable
+  Wallets address this limitation by introducing a lazy deployment mechanism.
+  This process postpones the gas fee payment until the first outbound
+  transaction, easing the initial cost burden of SCA wallet creation.
+
+| SCA Version                    | Description                                                                                                                                                                                                                                | Available                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **circle_6900_singleowner_v3** | Smart Contract Account compliant with version 0.7 of ERC-6900 and version 0.6 of ERC-4337. The version has the following features: <br /> <br /> • Assign a single address as the owner <br /> • Batch multiple userOps in one transaction | Mainnet factory address: <br /> `0xf61023061ed45fa9eAC4D2670649cE1FD37ce536` <br /> <br /> Mainnet implementation address: <br /> `0xD206aC7fEf53d83ED4563E770b28Dba90D0D9eC8` <br /> <br /> Testnet factory address: <br /> `0xf61023061ed45fa9eAC4D2670649cE1FD37ce536` <br /> <br /> Testnet implementation address: <br /> `0xD206aC7fEf53d83ED4563E770b28Dba90D0D9eC8` |
+
+## Modular Smart Contract Accounts (MSCA)
+
+MSCAs are a type of smart accounts that can be extended with different modules
+to enhance their functionality (similar to how one can install apps on iPhones
+and Android to give the smartphone more functionality). Circle's MSCA adheres to
+both [ERC-4337 (account abstraction)](https://www.erc4337.io/docs) and
+[ERC-6900](https://www.erc6900.io/) - an ERC standard that Circle engineers are
+co-authoring with other ecosystem partners. We enable the creation of MSCAs by
+default in our Modular Wallet SDK.
+
+**Benefits:**
+
+- **Custom Logic and Functionality**. Modular Smart Contract Accounts (MSCAs)
+  allow developers to build custom logic and functionality directly into the
+  account. By deploying smart contracts to control MSCAs, developers can create
+  innovative and customized features, enabling advanced capabilities and
+  automated operations within the wallet.
+- **Flexibility of keys**. MSCA allows for configuration of the signing key,
+  which can be an EOA, a passkey, or multiple keys, as well as the recovery of
+  such keys if lost.
+- **Gas Abstraction and Fee Sponsorship (EVM)**. MSCAs offer gas abstraction,
+  simplifying gas fee management for end-users. Developers can implement
+  mechanisms, such as the paymaster pattern, to sponsor gas fees on behalf of
+  users. This reduces the burden on users to hold and manage native tokens for
+  gas and enhances the overall user experience by providing a seamless gas fee
+  payment process.
+- **Batch Operations**. MSCAs allow you to
+  [batch related user operations](/wallets/batch-operations), which can provide
+  a number of important benefits for end-users. With batched operations, the
+  user only has to wait for a single batched transaction, instead of multiple
+  individual transactions. Batched transactions will generally cost less gas
+  than individually submitted transactions. Batched transactions offer
+  atomicity: if any transaction in the batch reverts, the entire batch reverts,
+  ensuring that user operations aren't stuck in an inconsistent state.
+
+**Limitations:**
+
+- **Gas Fees Incurred for Creation**. Gas fees are required when creating MSCA
+  wallets. However, emerging solutions like the one implemented in Programmable
+  Wallets address this limitation by introducing a lazy deployment mechanism.
+  This process postpones the gas fee payment until the first outbound
+  transaction, easing the initial cost burden of SCA wallet creation.
+
+The following are the versions of MSCAs supported by Wallets today. The exact
+version type is displayed in the successful response when creating a wallet.
+
+| MSCA Version       | Description                                                                                                                                                                                                                                                                                     | Available                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **circle_6900_v1** | Modular Smart Contract Account compliant with version 0.7 of ERC-6900 and version 0.7 of ERC-4337. The version has the following features: <br /> <br /> • Assign any type of ownership (single owner, multiple owners, passkeys, multi-sig) <br /> • Batch multiple userOps in one transaction | Mainnet factory address: <br /> `0x0000000DF7E6c9Dc387cAFc5eCBfa6c3a6179AdD` <br /> <br /> Mainnet implementation address: <br /> `0xA70F1296869DA9D7CB69578123F21888E6dB2B62` <br /> <br /> Testnet factory address: <br /> `0x0000000DF7E6c9Dc387cAFc5eCBfa6c3a6179AdD` <br /> <br /> Testnet implementation address: <br /> `0xA70F1296869DA9D7CB69578123F21888E6dB2B62` |
+
+For a complete list of supported modules visit the
+[Modules](/wallets/modular/modules#supported-modules) page.
+
+## Choosing your account type
+
+SCAs generally provide a more straightforward user experience for most use
+cases. They allow developers to focus on creating innovative functionalities in
+the smart contract. However, the specific needs of each project should be
+carefully considered when choosing between EOA, SCA, or MSCA account types.
+
+<Note>
+**Circle recommends using EOAs if you are building on Ethereum**
+
+Creating an SCA wallet might become expensive. Circle strongly recommends using
+EOAs if you are using Ethereum, and otherwise use SCAs on L2s.
+
+</Note>
+
+|                               | Externally Owned Account (EOA)                                                                                                                                                                                 | Smart Contract Account (SCA)                                                                                                                                                                   | Modular Smart Contract Account (MSCA)                                                                                                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fees for account creation** | No fees                                                                                                                                                                                                        | Yes, creating a wallet incurs gas fees. Note: You don't have to pay the gas fee at the time of wallet creation. Instead, the fee is charged when you initiate your first outbound transaction. | Yes, creating a wallet incurs gas fees. Note: You don't have to pay the gas fee at the time of wallet creation. Instead, the fee is be charged when you initiate your first outbound transaction. |
+| **Gas abstraction**           | Yes, supported on Solana only                                                                                                                                                                                  | Yes, it is supported via Gas Station.                                                                                                                                                          | Yes, it is supported both via Circle's Gas Station or you can plug in any third-party paymaster.                                                                                                  |
+| **Modules**                   | No                                                                                                                                                                                                             | No                                                                                                                                                                                             | Yes, modules that extend the capabilities of the base wallet that include features such as passkey.                                                                                               |
+| **When to use**               | If you are building on Ethereum (since gas costs on Ethereum can be expensive), or Solana <br /> <br /> Also for mass distribution from a single wallet use case, Circle recommends using EOAs for higher TPS. | If you want a web2-type user experience that makes blockchain invisible or want advanced control of your wallets e.g. embedded wallets, payments wallets, developer wallets                    | If you want to create advanced onchain wallets or want to customize the wallet for your use case; for example, passkeys, multisig wallets for a vault, subscriptions for payment wallets, etc.    |

@@ -1,0 +1,111 @@
+---
+title: "Validating Brazilian Tax ID and Bank Account Numbers"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Validating Brazilian Tax ID and Bank Account Numbers"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+When providing beneficiary account data during payment creation or during RFIs,
+OFIs may need to submit tax IDs or bank account numbers that follow a specific
+format. You can often validate these numbers by calculating their check digits.
+This topic describes how to checksum various account and tax ID numbers.
+
+## CNPJ
+
+The CNPJ number is a 14 digit number in the following format:
+
+- First 8 digits: base number
+- Digits 9-12: branch number
+- Last 2 digits: check digits
+
+CNPJ numbers are never all the same digit.
+
+The check digits are calculated in a specific way that you can replicate to
+validate the number.
+
+### First check digit
+
+You can calculate the first check digit (digit 13) of a CNPJ number as follows:
+
+1. Multiply the first 12 digits by the following weights, according to their
+   position: `5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2`
+2. Sum the products
+3. Calculate the remainder of the sum divided by `11`
+4. If the remainder is less than `2`, the check digit is `0`
+5. Otherwise, the check digit is `11 - {remainder}`
+
+### Second check digit
+
+You can calculate the second check digit (digit 14) of a CNPJ number as follows:
+
+1. Multiply the first 13 digits by the following weights, according to their
+   position: `6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2`
+2. Sum the products
+3. Calculate the remainder of the sum divided by `11`
+4. If the remainder is less than `2`, the check digit is `0`
+5. Otherwise, the check digit is `11 - {remainder}`
+
+### Example
+
+The following is an example of validating the CNPJ number `11.444.777/0001-61`:
+
+**First digit**
+
+- Weighting and sum:
+  `((1*5 + 1*4 + 4*3 + 4*2 + 4*9 + 7*8 + 7*7 + 7*6 + 0*5 + 0*4 + 0*3 + 1*2) = 162)`
+- Remainder and check digit: `(11 - (184 % 11) = 1)` (matches 13th digit)
+
+**Second digit**
+
+- Weighting and sum:
+  `((1*6 + 1*5 + 4*4 + 4*3 + 4*2 + 7*9 + 7*8 + 7*7 + 0*6 + 0*5 + 0*4 + 1*3 + 6*2) = 184)`
+- Remainder and check digit: `(11 - (184 % 11) = 1)` (matches 14th digit)
+
+## CPF
+
+The CPF number is an 11 digit number that is not all the same digit. The 10th
+and 11th digits are check digits. The check digits are calculated in a specific
+way that you can replicate to validate the number.
+
+### First check digit
+
+You can calculate the first check digit (digit 10) of a CPF number as follows:
+
+1. Multiply the first 9 digits by the following weights, according to their
+   position: `10, 9, 8, 7, 6, 5, 4, 3, 2`
+2. Sum the products
+3. Calculate the remainder of the sum divided by `11`
+4. If the remainder is less than `2`, the check digit is `0`
+5. Otherwise, the check digit is `11 - {remainder}`
+
+### Second check digit
+
+You can calculate the second check digit (digit 11) of a CPF number as follows:
+
+1. Multiply the first 10 digits by the following weights, according to their
+   position: `11, 10, 9, 8, 7, 6, 5, 4, 3, 2`
+2. Sum the products
+3. Calculate the remainder of the sum divided by `11`
+4. If the remainder is less than 2, the check digit is `0`
+5. Otherwise, the check digit is `11 - {remainder}`
+
+### Example
+
+The following is an example of validating the CPF number `529.982.247-25`:
+
+**First digit**
+
+- Weighting and sum:
+  `((5*10 + 2*9 + 9*8 + 9*7 + 8*6 + 2*5 + 2*4 + 4*3 + 7*2) = 295)`
+- Remainder and check digit: `(11 - (295 % 11) = 2)` (matches 10th digit)
+
+**Second digit**
+
+- Weighting and sum:
+  `((5*11 + 2*10 + 9*9 + 9*8 + 8*7 + 2*6 + 2*5 + 4*4 + 7*3 + 2*2) = 347)`
+- Remainder and check digit: `(11 - (347 % 11) = 5)` (matches 11th digit)

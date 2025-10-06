@@ -1,0 +1,48 @@
+### What we want to achieve
+
+In this section, we create and initalize a new user and then act as that user to
+initiate a transaction. For both steps we need specific parameters. These
+parameters are required to initialize a user session and later confirm the
+transaction. They also serve determine how your app functions.
+
+Here is a quick overview:
+
+<Parameters>
+  <Parameter name="App ID">
+    The App ID is your application's unique identifier. It serves as a distinct
+    label that sets your application apart from others.
+  </Parameter>
+  <Parameter name="Encryption Key and User Token">
+    They are created when you initiate a user session. The user token is the
+    session identifier, and the encryption key is an encryption and decryption
+    key that is randomly generated to ensure the security of the session.
+  </Parameter>
+  <Parameter name="Challenge ID">
+    The Challenge ID acts as an identifier that corresponds to a specific
+    challenge. A challenge prompts your users to take specific actions, such as
+    confirming transactions or executing smart contracts.
+  </Parameter>
+</Parameters>
+
+In the next few steps, we explain what these parameters are and how to acquire
+them!
+
+### Getting your App ID
+
+First up is the App ID. Your App ID serves as a key component that allows you to
+configure and tailor your User-Controlled Wallet integration.
+
+You can make a request to the
+[`GET /config/entity`](/api-reference/wallets/programmable-wallets/get-entity-config)
+API endpoint to obtain your App ID.
+
+<Note>
+  **You can also find the App ID directly in the Developer Services Console.**
+
+Open the Developer Console and navigate to the
+[Wallets: User-Controlled](https://console.circle.com/wallets/user/configurator)
+section of the console. You can view various configuration settings related to
+your user-controlled wallet integration. To view your App ID, click
+**Configurator** in the left pane.
+
+</Note>

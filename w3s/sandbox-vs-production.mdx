@@ -1,0 +1,83 @@
+---
+title: Testnet (Sandbox) vs. Mainnet (Production)
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Testnet vs. Mainnet"
+---
+
+## Testnet Overview
+
+The Circle Testnet environment, similar to a sandbox, allows you to test the
+functionality of Circle's Developer Services. The Circle Testnet is connected to
+applicable blockchain Testnets (the sandboxed versions of a given blockchain),
+allowing you to build your application without the risk of testing in a
+Production environment.
+
+After signing up for a
+[Circle Developer account](/w3s/circle-developer-account), you can create
+Sandbox API keys for deploying on Testnet. Sandbox API keys will have the prefix
+`TEST_API_KEY:`, and can only be used for Testnet.
+
+## Upgrading from Testnet to Mainnet
+
+Congratulations on completing your Testnet implementation! Now that you're ready
+to bring your application to life in Circle’s Production environment, you'll
+need to go through a few more steps.
+
+1. Within your Circle Developer Account, click **UPGRADE TO PROD**.
+2. You’ll be directed to select whether you want to upgrade as an individual or
+   a business.
+3. You’ll now be presented with the following screens:
+
+   1. Confirm personal information
+   2. Pricing and payment
+   3. Account security
+   4. Accept Terms!
+
+4. Once your information is submitted, you'll receive access to Circle's
+   Production environment within minutes!
+
+Have questions? Reach out to one of our team members at
+[customer-support@circle.com](mailto:customer-support@circle.com).
+
+Continue reading for more information on transitioning your application from
+Testnet to Mainnet.
+
+## Migrating your code from Testnet to Mainnet
+
+To move your application into Circle's Production environment, you must obtain a
+Production API Key through the Circle Developer Account. Before being able to
+access a Production API Key, you will need to follow the steps outlined earlier
+in [this guide](/w3s/sandbox-vs-production#upgrading-from-testnet-to-mainnet).
+Production API keys will have the prefix "LIVE_API_KEY:", and can only be used
+for mainnet.
+
+Once you've received your Production API key, you can replace your Sandbox API
+Key with your Production API Key in your codebase.
+
+## Differences between Testnet and Mainnet
+
+When migrating from the Testnet environment to the Mainnet environment, you
+should be aware of a couple of key differences:
+
+[**Blockchain confirmation**](/w3s/blockchain-confirmations) times may vary
+between a blockchain's Testnet and Mainnet. You may experience longer
+transaction times in Production to ensure stability as you handle your users'
+real-world assets. Make sure you are accounting for Production transaction times
+when building your application.
+
+[**Gas Fees**](/wallets/gas-fees) will differ on a blockchain's Testnet and
+Mainnet. The Mainnet is more congested, as it handles real user transactions and
+interactions. Ensure that the settings you've configured around gas fees in your
+Sandbox environment are updated to your preferred setting in the Production
+environment.
+
+**Testing**: Circle recommends you test your application in both the Testnet and
+Mainnet environments before it goes live to ensure that you account for all
+possible variances.
+
+To review which Testnets are connected to which different blockchains, see
+[Supported Blockchains and Currencies](/w3s/supported-blockchains-and-currencies).

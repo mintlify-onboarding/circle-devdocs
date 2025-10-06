@@ -1,0 +1,79 @@
+---
+title: Authentication
+description:
+  Use API keys to authenticate your client requests when utilizing Circle APIs.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_API keys are unique data strings used to authenticate a user and enable access
+to privileged operations on Circle APIs. All Circle APIs use API keys as the
+mechanism to authenticate client requests. Your API key should be kept
+confidential and secure at all times._
+
+- Authentication is required for all API requests; without it, the requests will
+  fail.
+- All API requests must be made over HTTPS.
+- To obtain the API key, visit the “Developer” section in sandbox and click “get
+  new API key.” Set the key in the Authorization header of the request you send
+  from your backend server. Use the header format:  
+  `Bearer YOUR_API_KEY`.
+
+## API Authentication
+
+```text API Authentication
+Authorization: Bearer YOUR_API_KEY
+```
+
+API requests without authentication will fail. It is also important to note that
+all API requests must be made over HTTPS.
+
+## Testing Authentication
+
+To verify that your API key is correctly set up, you can use the
+[get configuration info](/api-reference/circle-mint/general/get-account-config)
+API endpoint, as below.
+
+<CodeGroup>
+
+```curl cURL
+# Replace ${YOUR_API_KEY} with your API key
+curl -H 'Accept: application/json' \
+  -H "Authorization: Bearer ${YOUR_API_KEY}" \
+  -X GET --url https://api-sandbox.circle.com/v1/configuration
+```
+
+```javascript
+/**
+ * See installation instructions at
+ * https://developers.circle.com/circle-mint/circle-sdks
+ */
+import { Circle, CircleEnvironments } from "@circle-fin/circle-sdk";
+
+const circle = new Circle("<your-api-key>", CircleEnvironments.sandbox);
+
+async function getAccountConfig() {
+  const configResp = await circle.management.getAccountConfig();
+  console.log(configResp.data);
+}
+getAccountConfig();
+```
+
+</CodeGroup>
+
+Successful Response:
+
+```json
+{ "data": { "payments": { "masterWalletId": "1234567890" } } }
+```
+
+Error Response:
+
+```json
+{
+  "code": 401,
+  "message": "Malformed authorization. Are the credentials properly encoded?"
+}
+```

@@ -1,0 +1,31 @@
+---
+title: "Payment Reference"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Payment Reference"
+---
+
+When you
+[create a payment with the CPN API](/api-reference/cpn/cpn-platform/create-payment),
+you should provide the `refCode` field to carry a meaningful reference for the
+transaction. This field can be either an invoice ID or a customer reference. How
+this reference appears on the beneficiary's bank statement depends on the
+capabilities of the payment rail, which is handled as follows:
+
+- **Metadata support by rail and BFI:** The sender's name (OFI's customer name)
+  from the travel rule data appears directly on the recipient's bank statement
+  as the ultimate remitter, and the `refCode` appears in the memo field. This
+  provides the highest level of transparency for the recipient to recognize and
+  reconcile the payments.
+- **Partial metadata support:** If the payment rail doesn't support displaying
+  the sender's name separately but allows a memo/reference field, the BFI
+  populates this memo with a concatenated string in the format
+  `{refCode} + {Sender Name}`
+- **Minimal metadata support:** If neither the sender name or reference field is
+  supported on the rail, Circle returns a `fiatNetworkPaymentRef`, which is a
+  rail-specific transaction reference. This ID is visible to the beneficiary on
+  their bank statement, and is returned to the OFI by webhook and in the
+  [get payment endpoint](/api-reference/cpn/cpn-platform/get-payment).

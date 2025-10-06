@@ -1,0 +1,111 @@
+---
+title: Choosing your wallet type
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Choosing your Wallet Type"
+---
+
+This article describes the supported wallet infrastructure models, or wallet
+types, to help you determine which type best meets the needs of your end-users.
+Each wallet type has specific requirements and provides specific benefits. Use
+the information in this topic to choose the wallet type that best supports your
+business objectives.
+
+{/* <!-- markdownlint-disable MD034 --> */}
+
+<VideoContent
+  url="https://fast.wistia.net/embed/iframe/gm1gn2j7cb?seo=true&videoFoam=true"
+  header="Video Tutorial: Understanding the Types of Circle Wallets"
+>
+  Watch this video for an insightful overview of the infrastructure models
+  (wallet types) available with Circle Wallets. Learn the distinctions and
+  advantages between user-controlled and developer-controlled wallets and how
+  you can leverage each model to meet the requirements for your application.
+</VideoContent>
+
+{/* <!-- markdownlint-enable MD034 --> */}
+
+## Wallet types
+
+Infrastructure models govern who controls the digital assets in a specific
+wallet. Businesses and individuals need to understand the characteristics of
+each type of infrastructure to determine the correct wallet for their needs.
+
+Circle Wallets offer two infrastructure models: **user-controlled wallets** and
+**developer-controlled wallets**. Each model provides distinct advantages to
+suit different requirements.
+
+### User-controlled wallets
+
+User-controlled wallets grant full autonomy to your users. We offer different
+authentication methods and use different encryption mechanisms to ensure the
+uses have complete control over their wallets. The user-controlled wallet setup
+prioritizes security while providing a familiar and seamless Web2-like user
+experience.
+
+There are Web, iOS, Android, and React Native SDKs available for user-controlled
+wallets. To start building, see
+[Quickstarts for Social Logins or Email Authentication](/wallets/user-controlled/create-your-first-wallet-with-social-logins).
+
+### Developer-controlled wallets
+
+Developer-controlled wallets allow developers to retain control over their
+users' wallets while streamlining user interactions with the Web3 ecosystem.
+These wallets facilitate various blockchain interactions on behalf of the users,
+such as sending and receiving digital assets, smart contract interactions, and
+NFT minting. With developer-controlled wallets, users can enjoy the benefits of
+the blockchain without needing to understand its complexities or manage private
+keys.
+
+To start building developer-controlled wallets, see
+[Create Your First Developer-Controlled Wallet](/wallets/dev-controlled/create-your-first-wallet).
+
+## Choosing your wallet type
+
+The critical distinction between user-controlled and developer-controlled
+wallets is which party controls the ability to access the private key used to
+interact with the blockchain.
+
+User-controlled and developer-controlled wallets can make transactions, interact
+with smart contracts, and sign messages. In the case of a user-controlled
+wallet, the user controls these abilities. In the case of a developer-controlled
+wallet, the developer has this control.
+
+### Why choose user-controlled wallets?
+
+User-controlled wallets give your app's users access and control over the
+underlying private keys of their wallets. Circle provides a Web2-like user
+experience, abstracting the complexity of seed phrases from your users.
+Additionally, Circle uses best-in-class security approaches to power Wallets
+with multi-party computation (MPC) technology.
+
+User-controlled wallets offer three authentication methods for which you can
+design your application’s onboarding UX: social logins, email, or PIN. For more,
+see [Authentication Methods](/wallets/user-controlled/authentication-methods).
+
+With user-controlled wallets, your users have access to the speed and security
+of the blockchain but with a much more familiar user experience.
+
+### Why choose developer-controlled wallets?
+
+Developer-controlled wallets allow you to create and manage asset flows on
+behalf of your users, providing them with easy-to-use access to Web3
+functionality. These wallets allow you to control virtually all blockchain
+interactions for your users, like sending and receiving digital assets, smart
+contract interactions, and NFT minting.
+
+By using developer-controlled wallets, your users do not need to understand the
+complexities of the Web3 ecosystem or worry about losing their assets because of
+a lost seed phrase to access the speed of the blockchain.
+
+## Summary
+
+This article explores the various options available for wallets, taking into
+account both the account type and the infrastructure model. The infrastructure
+model determines who controls the assets in the wallet, while the account type
+determines the underlying structure of the wallet itself. Understanding these
+concepts is essential for developers to make informed decisions that align with
+their specific use cases.

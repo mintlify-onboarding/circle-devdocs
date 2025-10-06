@@ -1,0 +1,263 @@
+---
+title: API Resource Data Models
+description:
+  Discover the many resources used by Circle APIs to enable payouts, payments,
+  and transfers.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Circle APIs are a set of functions and procedures that allow you to use USDC for
+payments, payouts, and transfers. Circle's APIs are built around several
+resources that represent payments, payouts, transfers, and their associated
+objects.
+
+## Primary resources
+
+### Payout object
+
+A `payout` object represents a payout to a customer, vendor, or supplier.
+
+#### Example
+
+```json
+{
+  "id": "df3b8e5f-9579-4c1f-9fa9-deac7f4be55c",
+  "sourceWalletId": "1000038499",
+  "destination": {
+    "id": "4d260293-d17c-4309-a8da-fa7850f95c10",
+    "type": "address_book",
+  },
+  "amount": {
+    "amount": "10.0",
+    "currency": "USD"
+  },
+  "fees": {
+    "amount": 3.0,
+    "currency": "USD"
+  },
+  "status": "complete",
+  "errorCode": "insufficient_funds",
+  "riskEvaluation": {
+    "decision": "denied",
+    "reason": "3000"
+  },
+  "return": { ... },
+  "createDate": "2020-12-24T11:19:20.561Z",
+  "updateDate": "2020-12-24T12:01:00.523Z",
+
+}
+```
+
+#### Attributes
+
+---
+
+**`id`** _string_  
+A `UUID` for the payout.
+
+---
+
+**`sourceWalletId`** _string_  
+The identifier of the source wallet used to fund a payout.
+
+---
+
+**`destination`** _object_  
+The [Destination object](#source-and-destination-objects) the payout is being
+made to.
+
+---
+
+**`amount`** _object_  
+A [Money object](#money-object) representing the total amount that is paid to
+the destination.
+
+---
+
+**`toAmount`** _object_  
+A [Money object](#money-object) representing the amount that is paid to the
+destination currency. Only included for crypto payouts.
+
+---
+
+**`fees`** _object_  
+A [Money object](#money-object) representing fees associated with this payment.
+
+---
+
+**`status`** _string_  
+Status of the payout. `pending` indicates that the payout is in process;
+`complete` indicates it finished successfully; `failed` indicates it failed.
+
+---
+
+**`externalRef`** _string_  
+External network identifier which will be present once provided from the
+applicable network.
+
+---
+
+**`errorCode`** _string_  
+Indicates the failure reason of a payout. Only present for payouts in failed
+state. Possible values are `insufficient_funds`, `transaction_denied`,
+`transaction_failed`, and `transaction_returned`.
+
+---
+
+**`riskEvaluation`** _object_  
+An object with two attributes, `decision` and `reason`.
+
+---
+
+**`return`** _object_  
+A Return object if the payout was returned.
+
+---
+
+**`createDate`** _string_  
+ISO-8601 UTC date/time format.
+
+---
+
+**`updateDate`** _string_  
+ISO-8601 UTC date/time format.
+
+### Transfer object
+
+A `transfer` object represents a transfer of funds from a Circle wallet to a
+blockchain address, from a blockchain address to a Circle wallet, or between two
+Circle wallets.
+
+#### Example
+
+```json
+{
+  "id": "0d46b642-3a5f-4071-a747-4053b7df2f99",
+  "source": {
+    "type": "blockchain",
+    "chain": "ETH",
+    "address": "0x8381470ED67C3802402dbbFa0058E8871F017A6F"
+  },
+  "destination": {
+    "type": "wallet",
+    "id": "12345"
+  },
+  "amount": {
+    "amount": "3.14",
+    "currency": "USD"
+  },
+  "transactionHash": "0x4cebf8f90c9243a23c77e4ae20df691469e4b933b295a73376292843968f7a63",
+  "status": "pending",
+  "riskEvaluation": {
+    "decision": "approved",
+    "reason": "1234"
+  },
+  "createDate": "2020-04-10T02:29:53.888Z"
+}
+```
+
+#### Attributes
+
+---
+
+**`id`** _string_  
+A `UUID` for the transfer.
+
+---
+
+**`source`** _object_  
+A [Source object](#source-and-destination-objects) representing the source of
+the transfer.
+
+---
+
+**`destination`** _object_  
+A [Destination object](#source-and-destination-objects) representing the
+destination of the transfer.
+
+---
+
+**`amount`** _object_  
+A [Money object](#money-object) representing the amount transferred between
+source and destination.
+
+---
+
+**`transactionHash`** _string_  
+A hash that uniquely identifies an onchain transaction. This is only available
+when either `source` or `destination` are of type `blockchain`.
+
+---
+
+**`status`** _string_  
+Status of the transfer. Status `pending` indicates that the transfer is in the
+process of running; `complete` indicates it finished successfully; `failed`
+indicates it failed.
+
+---
+
+**`createDate`** _string_  
+ISO-8601 UTC date/time format.
+
+---
+
+## Nested resources
+
+The following are resources that are commonly used in other objects.
+
+### Source and destination objects
+
+Payments, payouts, and transfers reference `source` and `destination` objects,
+which as the names suggest, tell you where the funds are coming from and where
+they're going.
+
+Sources and destinations can have the following types:
+
+- `wire` for wire payments and payouts
+- `blockchain` for transfers to/from blockchain addresses
+- `wallet` for transfers to/from a Circle `wallet`
+
+```json
+// "blockchain"
+// A "chain" and "address" together represent the blockchain location.
+{
+  "type": "blockchain",
+  "address": "0x8381470ED67C3802402dbbFa0058E8871F017A6F",
+  "chain": "ETH"
+}
+
+// "wallet"
+// The "id" is the id of the Circle wallet.
+{
+  "type": "wallet",
+  "id": "12345"
+}
+```
+
+### Money object
+
+Monetary amounts across Circle APIs are represented as `money` objects, which
+consist of an `amount` and a `currency`. Two currencies are supported, `USD` and
+`EUR`, with the amount represented as a string containing the whole units and
+two decimals. In the example below, the amount is represented as 3.14 and the
+currency as `USD`.
+
+```json
+{
+  "amount": "3.14",
+  "currency": "USD"
+}
+```
+
+### Blockchain addresses
+
+```json
+{
+  "address": "0x8381470ED67C3802402dbbFa0058E8871F017A6F",
+  "currency": "USD",
+  "chain": "ETH"
+}
+```

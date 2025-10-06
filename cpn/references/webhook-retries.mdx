@@ -1,0 +1,33 @@
+---
+title: "Webhook Retries"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Webhook Retries"
+---
+
+When a webhook can't be delivered successfully (2xx status code returned), CPN
+continues to try to deliver the webhook. To avoid encountering the same
+transient error too many times, the retries are sent with a delay between them.
+The number of retries varies between testing and production:
+
+- **Testing:** 6 retries
+- **Production:** 11 retries
+
+The following table outlines the schedule for webhook retries:
+
+| Retry attempt | Delay      |
+| ------------- | ---------- |
+| 1             | 1 second   |
+| 2             | 10 seconds |
+| 3             | 30 seconds |
+| 4             | 1 minute   |
+| 5             | 15 minutes |
+| 6             | 1 hour     |
+| 7             | 3 hours    |
+| 8             | 5 hours    |
+| 9             | 6 hours    |
+| 10            | 10 hours   |
+| 11            | 11 hours   |

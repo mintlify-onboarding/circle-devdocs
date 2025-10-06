@@ -1,0 +1,71 @@
+---
+title: Block Confirmation and Transaction Finality
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+When you submit a transaction to CPN, it is initially in the `pending` state and
+waiting to be broadcast to the blockchain. Once the transaction is broadcast to
+the blockchain, it transitions to the `broadcasted` state, and the transaction
+is waiting to be included in a block.
+
+CPN monitors each block of supported blockchains and the status of CPN
+transactions on those chains, updating the status as necessary.
+
+## Block confirmation
+
+Block confirmation is the process of validating and adding transactions to a
+block on a blockchain. Each time a new block is added to a blockchain, it
+confirms the previous blocks.
+
+Without a sufficient number of confirmations, transactions are vulnerable to
+alteration through blockchain reorganization. Blockchain reorganization occurs
+when validators discard one or more blocks that were previously part of the
+canonical chain and replace them with a different set of blocks, rewriting part
+of the chain.
+
+<Note>
+**Note:** Blockchain reorganizations can happen for a variety of reasons. It's
+an engineering best practice to expect reorganizations and make your system
+resilient to them.
+</Note>
+
+Each additional block confirmation added after a block makes that block less
+likely to be removed in a reorganization. Each block confirmation adds
+confidence that the transaction is permanently included in the blockchain.
+
+## Confirmation number
+
+For a given block, the confirmation number is the number of subsequent blocks
+added to the blockchain.
+
+For a given transaction included in a block, CPN waits for a set number of
+blocks (in addition to the original) to be added to the chain before it
+considers the transaction final. This number varies across supported
+blockchains. When a sufficient number of blocks are appended after the original
+block, CPN updates the status of the transaction to `completed` and notifies
+both the OFI and BFI of the status change.
+
+<Note>
+**Note:** Even if a transaction is visible on a block explorer, it doesn't
+necessarily mean that the transaction is considered `completed` by CPN,
+because it's possible that it hasn't reached the number of block confirmations
+for finality.
+</Note>
+
+## Reorganization risk
+
+Although Circle may broadcast transactions initiated through CPN to the 
+blockchain network, Circle cannot guarantee that the transaction is 
+recorded or permanently confirmed by the network. Transactions over CPN may be 
+dependent on underlying blockchain networks that Circle does not control, and 
+CPN Participants assume all risks associated with the blockchain network 
+operations and any operating changes, including in the unlikely event of a deep 
+reorganization or other invalidation of previously confirmed transactions. 
+
+Circle shall not be liable for any loss or damage arising from issues with, 
+or any delays, reversals, or failures of transactions caused by such operations 
+and operating changes.

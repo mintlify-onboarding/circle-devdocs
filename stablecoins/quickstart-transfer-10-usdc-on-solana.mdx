@@ -1,0 +1,370 @@
+---
+title: "Quickstart: Set up and transfer USDC on Solana"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on Solana"
+---
+
+This step-by-step guide teaches you how to write a script to send 10 USDC
+between two wallets using the Solana Devnet, which is Solana's testing network.
+
+To better understand the process and its components, you will use third-party
+tooling such as Javascript libraries, node services, and wallets. Completing
+this tutorial will help prepare you to integrate USDC payment flows within your
+app. Building with USDC enables you to move money near-instantly around the
+globe using decentralized protocols.
+
+<Note>
+**Note: Use Testnet Scripts as Development Framework**
+
+- As with most of our quickstarts, all API calls and transactions in this guide
+  take place within the testnet environment; no real-world funds will be
+  transferred.
+
+- The sample code in this tutorial can be adapted for real-world transactions
+  and can serve as a framework for your further development.
+
+</Note>
+
+<Check>
+**Tip: Consider the EVM-Compatible Alternative Tutorial**
+
+You can go through this process using an EVM compatible chain with the
+[EVM transfer quickstart](/stablecoins/quickstart-transfer-10-usdc-on-chain).
+
+</Check>
+
+## USDC and Its Token Contract
+
+USDC is a stablecoin backed 1:1 to the U.S dollar and operates natively on
+[many public blockchains](/stablecoins/usdc-contract-addresses). Like many
+currencies, USDC is powered by a token contract, a programmable piece of code
+that manages user balances autonomously across a decentralized network.
+
+As transactions occur, the token contract automatically updates the digital
+ledger, ensuring real-time tracking of funds. This mechanism allows individuals
+and businesses to send and receive dollars seamlessly, capitalizing on the
+transparency, security, and efficiency of blockchain technology.
+
+## Prerequisites
+
+Before you begin this tutorial, you will need the following apps, tools, and
+accounts:
+
+1. [Circle Mint Sandbox Account](https://app-sandbox.circle.com/signup/sandbox):
+   an account that provides access to testnet USDC.
+
+2. [Phantom](https://phantom.app/)**:** An app for creating wallets, which are
+   devices for storing USDC on chain:
+
+   1. Create two wallets, one for sending and one for receiving testnet USDC
+      transactions on the Solana Devnet network. These will serve as your origin
+      wallet, from which one you send USDC, and the destination wallet, which
+      receives USDC. Keep note of the addresses for both.
+
+   2. Make sure you securely record the private key for the origin wallet.
+
+   3. Import the Solana Devnet
+      [USDC token contract](https://explorer.solana.com/address/4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU?cluster=devnet)
+      into your origin wallet to enable it to read the token balance. Note the
+      contract address: `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU`
+
+<Note>
+**Note: Access to the Testnet Scripts**
+
+Refer to our [testnet scripts](/stablecoins/usdc-contract-addresses#testnet).
+
+</Note>
+
+3. [Node.js](https://nodejs.org/en): JavaScript runtime environment to run code
+   locally on your machine.
+
+4. [Web3.js](https://solana-labs.github.io/solana-web3.js/): JavaScript library
+   containing functions to call the USDC token contract and initiate
+   transactions.
+
+5. Code Editor: A source code editor of your choice. One example,
+   [Visual Studio](https://code.visualstudio.com/), is available as a desktop
+   application.
+
+## Tutorial
+
+Follow the steps in this tutorial to transfer USDC on Solana:
+
+## Set up a Circle Mint Sandbox Account to access the USDC testnet
+
+1. Navigate to Circle's
+   [signup page](https://app-sandbox.circle.com/signup/sandbox), enter your
+   information in the required fields, and **click** "Sign Up." Completing the
+   signup process takes you to the sandbox account Home:
+
+2. Navigate to the APIs tab in the sidebar, and **click** the “CREATE A KEY”
+   button:
+
+   1. **Complete** the “Key Name” field.
+
+   2. **Click** the “CREATE KEY” button. A modal title “API Key Created” will
+      populate upon success.
+
+   3. **Click** “SHOW” to view the value of your new key.
+
+   4. You _must_ **click** the key to record a copy of its value.
+
+<Check>
+**Tip: Do not alter the API Key string:**
+
+You must use the entire value of your key, including the first part of the
+string, which is “SAND_API_KEY:”.
+
+</Check>
+
+## Gather Testnet USDC and SOL
+
+You will need to use native gas tokens to pay the transaction (gas) fee:
+
+1. Configure the Circle sample sandbox application by adding your API key:
+
+   1. **Navigate** to
+      [sample-sandbox.circle.com](http://sample-sandbox.circle.com/).
+
+   2. **Click** on the settings (gear) menu in the top right-hand corner.
+
+   3. **Complete** the field for "Your API Key" with the value from your sandbox
+      account.
+
+   4. **Click** on the hamburger button in the top left corner to access API
+      methods.
+
+2. Mint testnet USDC with a simulated bank transfer using methods in the **_Core
+   Functionality_** menu:
+
+   1. **Click** the `POST /businessAccount/banks/wires` menu item.
+
+      1. **Click** the `PREFILL FORM` button and then choose `US BANK ACCOUNT`
+         to add a simulated bank account for testing.
+
+      2. **Click** the `MAKE API CALL` button.
+
+      3. Copy the value for the `id` key.
+
+   2. **Click** the `GET /businessAccount/banks/wires/{id}/instructions` menu
+      item.
+
+      1. **Complete** the `Account Id` field using the value of the `id` key
+         returned from the previous step.
+
+      2. **Click** the `MAKE API CALL` button.
+
+      3. From the successful response, record the value of the `trackingRef` and
+         `accountNumber` fields.
+
+   3. **Click** the `POST /mocks/payments/wire` menu item.
+
+      1. **Complete** the `Tracking Ref` and `Account Number` fields with the
+         values you recorded from the previous step.
+
+      2. **Complete** the `Amount` field with a dollar amount you choose for
+         your mock payment.
+
+      3. **Click** the `MAKE API CALL` button.
+
+3. Add the SOL wallet address to your address book:
+
+   1. You can use a REST client to make a POST request to the address recipients
+      endpoint. The sandbox app does not support `SOL` blockchain:
+
+      ```shell
+      curl -X POST \
+        --url https://api-sandbox.circle.com/v1/addressBook/recipients \
+        --header 'accept: application/json' \
+        --header "Authorization: Bearer <YOUR_SANDBOX_API_KEY>" \
+        --header 'content-type: application/json' \
+        --data '{"idempotencyKey": "<YOUR_IDEMPOTENCY_KEY>", "address": "<YOUR_ADDRESS>", "chain": "SOL", "metadata": {"email": "", "bns": "", "nickname": "" } }'
+      ```
+
+   2. Record the value of the `id` from the successful response.
+
+4. **Click** the `POST /payouts` menu item.
+
+   1. **Complete** the `Amount` field with a dollar amount you choose for your
+      mock payment.
+
+   2. **Complete** the `id` field with the values you recorded from the previous
+      step.
+
+   3. **Click** the `MAKE API CALL` button.
+
+5. Request testnet SOL:
+
+   1. In a new browser tab or window, **navigate** to the
+      [Solana Faucet](https://solfaucet.com/).
+
+   2. **Complete** the `Enter Solana account address` field with your Fantom
+      deposit address from step 2.
+
+   3. Below the wallet address input field, **select** the amount of SOL tokens
+      you want.
+
+   4. **Select** the Devnet environment. Your SOL should automatically be air
+      dropped into your wallet upon success.
+
+6. Make payouts in USDC from the **_Payouts API_** menu:
+
+   1. From [sample-sandbox.circle.com](http://sample-sandbox.circle.com/),
+      **click** the Payounts APIs menu item.
+
+   2. **Click** the `POST /payouts` menu item.
+
+   3. **Complete** the `Amount` field.
+
+   4. **Set** the `Currency` to `USD`.
+
+   5. **Complete** the `Destination` field with the recipient ID that
+      corresponds to your destination wallet address.
+
+   6. **Select** `address_book` from the `Destination Type` drop-down.
+
+   7. **Complete** the `Beneficiary Email` with your recipient email address.
+
+   8. **Click** the `MAKE API CALL` button.
+
+   9. **Record** the value of the `id` for your payout.
+
+7. Monitor your payouts from the **_Payouts API_** menu:
+
+   1. From [sample-sandbox.circle.com](http://sample-sandbox.circle.com/),
+      **click** the Payounts APIs menu item.
+
+   2. **Click**  the `GET /payouts/{id}` menu item.
+
+   3. **Complete** the `Payout Id` field with the value of your payout ID from
+      the previous step.
+
+   4. **Click** the `MAKE API CALL` button to check the status of your payout.
+
+## Install Web3.js library to enable API calls
+
+Install Web3.js by running the command below at the command line.
+
+```javascript javasc
+// Type this command to install libraries
+npm install @solana/web3.js @solana/spl-token bs58
+```
+
+## Customize sample JavaScript code by inputting variables
+
+In your text editor, create a new JavaScript file called `send10.js`. Review the
+commented code below to understand its structure. Copy and paste it into your
+new file:
+
+```javascript
+// Write JavaScript Code
+const bs58 = require("bs58");
+const {
+  Connection,
+  Keypair,
+  PublicKey,
+  clusterApiUrl,
+} = require("@solana/web3.js");
+
+const {
+  getOrCreateAssociatedTokenAccount,
+  transfer,
+} = require("@solana/spl-token");
+// Replace these with your own keys and desired transfer amount
+const PRIVATE_KEY = ""; // Your private key in Base58 encoding
+const RECEIVER_PUBLIC_KEY = ""; // Receiver's public key
+const TRANSFER_AMOUNT = 10000000; // 10 amount of USDC to transfer (in smallest unit)
+// The address of the USDC token on Solana Devnet
+const USDC_DEV_PUBLIC_KEY = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+// Convert the private key from Base58 to a byte array and create a Keypair
+const senderPrivateKeyBytes = bs58.decode(PRIVATE_KEY);
+const senderKeypair = Keypair.fromSecretKey(senderPrivateKeyBytes);
+// Create a new connection to the Solana Devnet
+const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+(async () => {
+  try {
+    // Fetch the sender's USDC token account
+    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      senderKeypair,
+      new PublicKey(USDC_DEV_PUBLIC_KEY),
+      senderKeypair.publicKey,
+    );
+    // Fetch or create the receiver's associated token account for USDC
+    const receiverTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      senderKeypair,
+      new PublicKey(USDC_DEV_PUBLIC_KEY),
+      new PublicKey(RECEIVER_PUBLIC_KEY),
+      true, // Allow creating a token account for the receiver if it doesn't exist
+    );
+    // Perform the transfer
+    const signature = await transfer(
+      connection,
+      senderKeypair,
+      senderTokenAccount.address,
+      receiverTokenAccount.address,
+      senderKeypair.publicKey,
+      TRANSFER_AMOUNT,
+    );
+    // Log the transaction signature
+    console.log(`Transaction signature: ${signature}`);
+    console.log(
+      `You can verify the transaction on https://explorer.solana.com/tx/${signature}?cluster=devnet`,
+    );
+  } catch (error) {
+    console.error("Error performing the transfer:", error);
+  }
+})();
+```
+
+## Modify the Code
+
+Replace the value of the `PRIVATE_KEY` variable with your secure private key,
+which must be in Base58 format. Replace the value of the `RECEIVER_PUBLIC_KEY`
+variable with the receiver’s public key.
+
+<Note>
+**Note: Transfer amount format**
+
+The set transfer amount value of `10000000` is equal to 10 USDC. This setting is
+because ISDC uses a 6 decimal place format, and the amount value should be in
+the smallest unit.
+
+</Note>
+
+Save the Javascript file.
+
+## Execute JavaScript code to initiate USDC transfer
+
+From the terminal command line, enter the following command to execute the code
+and transfer USDC:
+
+```sh
+node filename.js
+```
+
+You should see a similar output to the following example if your file executes
+successfully:
+
+```text
+Transaction signature: dsLFw3rtDEWT2b3vpzournXspeTbeEZvzVAh3bmNaLzrqQB7nWrgj4rdh4j9gVb51p4mkDm1ivFUgkuC6Q7aehT
+You can verify the transaction on https://explorer.solana.com/tx/dsLFw3rtDEWT2b3vpzournXspeTbeEZvzVAh3bmNaLzrqQB7nWrgj4rdh4j9gVb51p4mkDm1ivFUgkuC6Q7aehT?cluster=devnet
+```
+
+Check the status of your USDC transaction by visiting the
+[Solana Devnet block explorer](https://explorer.solana.com/tx/2Uh8RV7afW1zNeyFoSBP6MXRjoVsdt8ZfGWsSQckPrtj14PaDySPxnTjxiHsuybiPRmzjRTvYSjdHVzRKSPUuUR4?cluster=devnet).
+
+## Conclusion
+
+By completing this quickstart guide for USDC, you have started to use the
+essential skills of programmable money. You can adapt the script provided in
+this tutorial to enable real-world transactions and empower your own app
+development.
+
+Now, you can begin to apply this knowledge to create frictionless financial
+experiences to empower users with seamless, secure global transactions.

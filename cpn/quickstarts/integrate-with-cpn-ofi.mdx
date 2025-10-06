@@ -1,0 +1,981 @@
+---
+title: "Quickstart: Integrate with CPN as an OFI"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Integrate with CPN as an OFI"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+This guide walks you through the steps to request, lock, and fulfill your first
+quote using CPN.
+
+## Prerequisites
+
+<Note>
+**Note:** This quickstart uses Circle Wallets to demonstrate how to create and
+execute a payment on CPN. To create and manage a Circle Wallet, you also need
+a Circle Developer account. You don't need to use Circle Wallets (or a Circle
+Developer account) in your production implementation, however. You can bring
+your own wallet provider as long as it meets the
+[requirements for CPN](/cpn/references/wallet-provider-compatibility).
+</Note>
+
+Before you begin this quickstart, ensure you have:
+
+- Obtained an API key for CPN from Circle
+- Created a [Circle Developer](https://console.circle.com/signin) Account
+
+  - [Registered your entity secret](/wallets/dev-controlled/register-entity-secret)
+  - [Created a new wallet set](/wallets/dev-controlled/create-your-first-wallet)
+    using the API
+  - Created at least one EOA wallet on `EVM-TESTNET` in the wallet set (see the
+    link in the previous bullet)
+  - Have access to the wallet ID for the EOA wallet
+  - Funded the wallet with [testnet USDC](https://faucet.circle.com) and
+    [testnet ETH](https://cloud.google.com/application/web3/faucet/ethereum).
+
+- Python installed on your development machine
+  - The latest `jwcrypto`, `web3`, `eth_utils`, `hexbytes`, and `eth_abi`
+    libraries are installed with the `pip` package manager
+- cURL installed on your development machine
+- (Optional) a
+  [configured webhook notification endpoint](/cpn/howtos/setup-webhook-notifications)
+
+This quickstart provides API requests in cURL format, along with example
+responses.
+
+<Note>
+**Note:** The base URL for all API endpoints is
+`https://api-staging.circle.com/v1/cpn` for both sandbox and production
+environments. The API determines if a request is for testnet or mainnet based
+on the key used to authenticate the request.
+</Note>
+
+## Part 1: Request a quote
+
+Request quotes for a USDC to MX payment with the SPEI payment method. Request
+quotes with the [`/quotes`](/api-reference/cpn/cpn-platform/create-quotes)
+endpoint, providing the source currency and destination amount. The endpoint
+returns a list of quotes from various BFIs with the rate, expiration time, USDC
+settlement window, and unique ID.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/cpn/quotes \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+    "paymentMethodType": "SPEI",
+    "senderCountry": "US",
+    "destinationCountry": "MX",
+    "sourceAmount": {
+        "currency": "USDC"
+    },
+    "destinationAmount": {
+        "amount": "200",
+        "currency": "MXN"
+    },
+    "blockchain": "ETH-SEPOLIA",
+    "senderType": "INDIVIDUAL",
+    "recipientType": "INDIVIDUAL"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "id": "922a06cd-ff1e-4ee4-840e-54006893fd1a",
+      "paymentMethodType": "SPEI",
+      "blockchain": "ETH-SEPOLIA",
+      "senderCountry": "US",
+      "destinationCountry": "MX",
+      "createDate": "2025-03-28T16:21:47.089081899Z",
+      "quoteExpireDate": "2025-03-28T16:22:45.713598Z",
+      "cryptoFundsSettlementExpireDate": "2025-03-28T18:21:45.713615Z",
+      "sourceAmount": {
+        "amount": "10.000000",
+        "currency": "USDC"
+      },
+      "destinationAmount": {
+        "amount": "200.23",
+        "currency": "MXN"
+      },
+      "fiatSettlementTime": {
+        "min": "1",
+        "max": "12",
+        "unit": "HOURS"
+      },
+      "exchangeRate": {
+        "rate": "20.040000",
+        "pair": "USDC/MXN"
+      },
+      "fees": {
+        "totalAmount": {
+          "amount": "0.170000",
+          "currency": "USDC"
+        },
+        "breakdown": [
+          {
+            "type": "TAX_FEE",
+            "amount": {
+              "amount": "0.070000",
+              "currency": "USDC"
+            }
+          },
+          {
+            "type": "BFI_TRANSACTION_FEE",
+            "amount": {
+              "amount": "0.100000",
+              "currency": "USDC"
+            }
+          }
+        ]
+      },
+      "senderType": "INDIVIDUAL",
+      "recipientType": "INDIVIDUAL",
+      "certificate": {
+        "id": "201c52fc-8866-44cf-a2e2-3ceae098381c",
+        "certPem": "LS0t...",
+        "domain": "api.circle.com",
+        "jwk": {
+          "kty": "EC",
+          "crv": "P-256",
+          "kid": "263521881931753643998528753619816524468853605762",
+          "x": "YdjOeAmlNfWV0xIryFAivcp9of21s0c-JhyGEOINV2Y",
+          "y": "n621ve_OV_p3jdocxtNkAk4uaKcYR2XWYUu1NMzBei8"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Part 2: Create a payment
+
+Use the API to get the requirements for a payment, accept the quote, and create
+a payment.
+
+### 2.1. Get payment requirements
+
+Call the
+[`/payments/requirements`](/api-reference/cpn/cpn-platform/get-payment-requirements)
+endpoint with the quote ID to get the requirements for a payment. The endpoint
+returns an object describing the required fields for the compliance check. The
+`optional` field for each parameter defines if the parameter must be included in
+the response constructed in the next step.
+
+```shell
+curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
+  -X GET "https://api.circle.com/v1/cpn/payments/requirements?quoteId=${QUOTE_ID}"
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "travelRule": [
+      {
+        "name": "ORIGINATOR_FINANCIAL_INSTITUTION_NAME",
+        "type": "TEXT",
+        "optional": false
+      },
+      {
+        "name": "ORIGINATOR_FINANCIAL_INSTITUTION_ADDRESS",
+        "type": "ADDRESS",
+        "optional": false
+      },
+      {
+        "name": "ORIGINATOR_FINANCIAL_INSTITUTION_ID",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "ORIGINATOR_NAME",
+        "type": "TEXT",
+        "optional": false
+      },
+      {
+        "name": "ORIGINATOR_ACCOUNT_NUMBER",
+        "type": "TEXT",
+        "optional": false
+      },
+      {
+        "name": "ORIGINATOR_ADDRESS",
+        "type": "ADDRESS",
+        "optional": false
+      },
+      {
+        "name": "BENEFICIARY_NAME",
+        "type": "TEXT",
+        "optional": false
+      },
+      {
+        "name": "BENEFICIARY_ADDRESS",
+        "type": "ADDRESS",
+        "optional": false
+      },
+      {
+        "name": "ORIGINATOR_DATE_OF_BIRTH",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "ORIGINATOR_NATIONALITY",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "ORIGINATOR_NATIONAL_IDENTIFICATION_NUMBER",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "BENEFICIARY_DATE_OF_BIRTH",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "BENEFICIARY_NATIONALITY",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "BENEFICIARY_NATIONAL_IDENTIFICATION_NUMBER",
+        "type": "TEXT",
+        "optional": false
+      },
+      {
+        "name": "BENEFICIARY_PHONE_NUMBER",
+        "type": "TEXT",
+        "optional": true
+      },
+      {
+        "name": "BENEFICIARY_EMAIL",
+        "type": "TEXT",
+        "optional": true
+      }
+    ],
+    "beneficiaryAccount": [
+      {
+        "name": "CLABE",
+        "type": "TEXT",
+        "optional": false
+      }
+    ]
+  }
+}
+```
+
+### 2.2. Encrypt the required fields
+
+Construct a JSON object with the information requested in the previous step. For
+each schema, the properties that you must include are outlined by the `optional`
+field. Encrypt the object with the `jwk` certificate provided in the quote
+response.
+
+The correct format for travel rule data and beneficiary account data is a JSON
+array of objects where each object contains two properties: `name` and `value`.
+You can review an example of each field in the
+[encryption how-to](https://learn.circle.com/cpn/howtos/encrypt-travel-rule-beneficiary-data#step-4-prepare-the-payload).
+
+Create a file called `cpn_encryption.py` and put the following code in it,
+replacing the `requirements_response_json` parameter with the contents of the
+response from the previous step, and the `certificate_json` parameter with the
+`jwk` from the quote response. When you run the script, it outputs the encrypted
+beneficiary and travel rule data to the console.
+
+```python
+"""
+CPN Requirements V1 Encryption Quickstart
+
+This script demonstrates how to:
+1. Parse V1 Requirements response
+2. Generate realistic test data matching the fields
+3. Encrypt data using JWE for CPN API integration
+
+Usage:
+1. Replace certificate_json with your JWK from Quote response
+2. Replace requirements_response_json with your Requirements response
+3. Run the script to get encrypted data for creating payment API requests
+"""
+
+import json
+import os
+import base64
+import random
+from typing import Dict, Any, Optional, List
+from jwcrypto import jwk, jwe
+
+# ========================================
+# Test Data Lists for Realistic Generation
+# ========================================
+
+FIRST_NAMES = [
+    "James", "John", "Robert", "Michael", "William", "David", "Joseph", "Thomas",
+    "Charles", "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara",
+    "Susan", "Jessica", "Sarah", "Karen", "Nancy"
+]
+
+LAST_NAMES = [
+    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
+    "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson",
+    "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"
+]
+
+STREET_TYPES = ["St", "Ave", "Blvd", "Rd", "Ln", "Dr", "Way", "Circle", "Court"]
+STREET_NAMES = [
+    "Main", "Oak", "Maple", "Cedar", "Pine", "Elm", "Washington", "Lake", "Hill",
+    "River", "Valley", "Park", "Spring", "Market", "Church", "Bridge", "Highland"
+]
+
+CITIES = [
+    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia",
+    "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville",
+    "Fort Worth", "Columbus", "San Francisco", "Charlotte", "Indianapolis",
+    "Seattle", "Denver", "Washington"
+]
+
+# ========================================
+# Helper Functions
+# ========================================
+
+def generate_random_name() -> str:
+    """Generate a random realistic name."""
+    return f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+
+def generate_random_address() -> Dict[str, str]:
+    """Generate a random realistic address."""
+    street_number = str(random.randint(1, 9999))
+    street_name = random.choice(STREET_NAMES)
+    street_type = random.choice(STREET_TYPES)
+    return {
+        "street": f"{street_number} {street_name} {street_type}",
+        "city": random.choice(CITIES),
+        "country": "US",
+        "postalCode": f"{random.randint(10000, 99999)}"
+    }
+
+def random_string(length: int = 12) -> str:
+    """Generate a random string of given length."""
+    return base64.b64encode(os.urandom(length)).decode()[:length]
+
+def get_originator_name(case: Optional[str] = None) -> str:
+    """Get the originator name based on test case."""
+    if case == 'rfi-failed':
+        return "Failed"
+    return "Alice Johnson"  # Default for success case
+
+# ========================================
+# Core Data Generation
+# ========================================
+
+def generate_group_data(fields: List[Dict[str, Any]], originator_name: str) -> List[Dict[str, Any]]:
+    """
+    Generate test data matching Requirements fields as an array of {name, value}.
+
+    Args:
+        fields: List of field objects from Requirements
+        originator_name: Name to use for originator fields
+
+    Returns:
+        List[{"name": str, "value": Any}] for required fields
+    """
+    items: List[Dict[str, Any]] = []
+
+    for field in fields:
+        name = field["name"]
+        field_type = field["type"].upper()
+        optional = field.get("optional", False)
+
+        if optional:
+            continue  # only include required fields
+
+        # Address fields
+        if field_type == "ADDRESS" or "ADDRESS" in name.upper():
+            items.append({"name": name, "value": generate_random_address()})
+
+        # Text fields
+        elif field_type == "TEXT":
+            if "NAME" in name.upper():
+                if "ORIGINATOR" in name.upper():
+                    items.append({"name": name, "value": originator_name})
+                else:
+                    items.append({"name": name, "value": generate_random_name()})
+            elif "CLABE" in name.upper():
+                items.append({"name": name, "value": ''.join(str(random.randint(0, 9)) for _ in range(18))})
+            elif "ACCOUNT" in name.upper():
+                items.append({"name": name, "value": ''.join(str(random.randint(0, 9)) for _ in range(12))})
+            elif "DATE" in name.upper() or "BIRTH" in name.upper():
+                year = random.randint(1970, 2000)
+                month = random.randint(1, 12)
+                day = random.randint(1, 28)
+                items.append({"name": name, "value": f"{year:04d}-{month:02d}-{day:02d}"})
+            elif "EMAIL" in name.upper():
+                items.append({"name": name, "value": f"{random_string(8)}@example.com"})
+            else:
+                items.append({"name": name, "value": random_string(12)})
+
+    return items
+
+# ========================================
+# Encryption
+# ========================================
+
+def encrypt_data(data: Any, jwk_data: Dict[str, Any]) -> str:
+    """
+    Encrypt data using JWE with provided JWK.
+
+    Args:
+        data: Data to encrypt (will be JSON serialized)
+        jwk_data: JWK from certificate
+
+    Returns:
+        Encrypted JWE string
+    """
+    recipient_key = jwk.JWK(**jwk_data)
+    jwe_obj = jwe.JWE(
+        plaintext=json.dumps(data).encode(),
+        protected=json.dumps({"alg": "ECDH-ES+A128KW", "enc": "A128GCM"})
+    )
+    jwe_obj.add_recipient(recipient_key)
+    return jwe_obj.serialize(True)
+
+# ========================================
+# Configuration - Replace with your data
+# ========================================
+
+# Certificate JWK - copy from Quote response
+# e.g. {"kty":"EC","crv":"P-256","kid":"263...5762","x":"Ydj...2Y","y":"n621...i8"}
+certificate_json = '''certificate_json'''
+
+# Requirements response - copy from Requirements API
+# e.g. {"data": {"travelRule": [...], "beneficiaryAccount": [...]}}
+requirements_response_json = '''requirements_response_json'''
+
+# ========================================
+# Main Execution
+# ========================================
+
+if __name__ == "__main__":
+    # Parse configuration
+    certificate = json.loads(certificate_json)
+    required_fields = json.loads(requirements_response_json)
+
+    # Extract field arrays
+    travel_rule_fields = required_fields['data']['travelRule']
+    beneficiary_account_fields = required_fields['data']['beneficiaryAccount']
+
+    # Generate test data (array of {name, value})
+    test_data = {
+        "travelRuleData": generate_group_data(travel_rule_fields, get_originator_name()),
+        "beneficiaryAccountData": generate_group_data(beneficiary_account_fields, get_originator_name())
+    }
+
+    # Create encrypted data (encrypt arrays directly)
+    travel_rule_encrypted = encrypt_data(test_data["travelRuleData"], certificate)
+    beneficiary_account_encrypted = encrypt_data(test_data["beneficiaryAccountData"], certificate)
+
+    # Output encrypted data ready for API
+    print(f"Travel Rule encryptedData: {travel_rule_encrypted}\n")
+    print(f"Beneficiary Account encryptedData: {beneficiary_account_encrypted}")
+```
+
+### 2.3. Create a payment
+
+After the quote is accepted, create a payment by calling the
+[`/payments`](/api-reference/cpn/cpn-platform/create-payment) endpoint. You need
+to provide the quote ID and encrypted sender and receiver information. The
+endpoint returns a unique payment ID and the initial status of the payment.
+
+<Note>
+**Note:** You must create the payment before the quote expires, otherwise
+you'll need to request a new quote.
+</Note>
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/cpn/payments \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-type: application/json' \
+  --data '
+{
+  "idempotencyKey" : "${randomUUID}",
+  "quoteId" : "${cpn_ofi_quote_id}",
+  "beneficiaryAccountData" : "${encrypted_beneficiary_data}",
+  "travelRuleData" : "${encrypted_travel_rule_data}",
+  "senderAddress" : "${YOUR_WALLET_ADDRESS}",
+  "blockchain" : "ETH-SEPOLIA",
+  "reasonForPayment" : "PMT001",
+  "customerRefId" : "123c7442-e843-4afa-bfad-35f50636d35b",
+  "refCode" : "7b479c5a-3684-4423-9fc6-f7c890c0e816",
+  "useCase" : "B2B"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "07dbe320-6bcb-475b-8d21-17b57263cd3e",
+    "quoteId": "922a06cd-ff1e-4ee4-840e-54006893fd1a",
+    "blockchain": "ETH-SEPOLIA",
+    "paymentMethodType": "SPEI",
+    "sourceAmount": {
+      "amount": "10.000000",
+      "currency": "USDC"
+    },
+    "destinationAmount": {
+      "amount": "200.23",
+      "currency": "MXN"
+    },
+    "status": "CRYPTO_FUNDS_PENDING",
+    "refCode": "7b479c5a-3684-4423-9fc6-f7c890c0e816",
+    "customerRefId": "123c7442-e843-4afa-bfad-35f50636d35b",
+    "useCase": "B2B_INVOICE_PAYMENT",
+    "expireDate": "2025-03-31T20:59:21.211547Z",
+    "createDate": "2025-03-31T18:59:30.183044Z",
+    "fees": {
+      "totalAmount": {
+        "amount": "0.170000",
+        "currency": "USDC"
+      },
+      "breakdown": [
+        {
+          "type": "TAX_FEE",
+          "amount": {
+            "amount": "0.070000",
+            "currency": "USDC"
+          }
+        },
+        {
+          "type": "BFI_TRANSACTION_FEE",
+          "amount": {
+            "amount": "0.100000",
+            "currency": "USDC"
+          }
+        }
+      ]
+    },
+    "fiatSettlementTime": {
+      "min": "1",
+      "max": "12",
+      "unit": "HOURS"
+    },
+    "rfis": [],
+    "onChainTransactions": []
+  }
+}
+```
+
+## Part 3: Create a transaction
+
+Use the API to create a blockchain transaction to transfer USDC. Sign the
+transaction locally, and use the API to broadcast it to the blockchain.
+
+<Note>
+**Note:** This quickstart uses Circle Wallets to act as the originator wallet
+for the onchain payment. This section uses the wallet ID from the EOA wallet
+mentioned in the [prerequisites](#prerequisites) section.
+</Note>
+
+### 3.1. Initiate the onchain transaction
+
+Initiate the onchain funds transfer by calling the
+[`/payments/{paymentId}/transactions`](/api-reference/cpn/cpn-platform/create-transaction)
+endpoint with the payment ID from the previous step, and other
+transaction-related parameters. The endpoint returns an unsigned onchain
+transaction object and a transaction ID.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "idempotencyKey" : "${RANDOM_UUID}",
+  "senderAccountType": "EOA",
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "8e0cc03f-799c-4971-ba41-6b790b4f9548",
+    "status": "CREATED",
+    "paymentId": "0a6973af-3089-4265-812b-0f68a426a4d8",
+    "expireDate": "2025-04-01T17:28:25.198159Z",
+    "senderAddress": "0x140f52a9D27764a51032ebDff7E6352D1640cbfd",
+    "senderAccountType": "EOA",
+    "blockchain": "ETH-SEPOLIA",
+    "amount": {
+      "amount": "10.000000",
+      "currency": "USDC"
+    },
+    "destinationAddress": "0x6e87cdf0b9d2d96232f5c605526cb0e89db7387a",
+    "estimatedFee": {
+      "type": "EIP1559",
+      "payload": {
+        "gasLimit": "150000",
+        "maxFeePerGas": "4829089726",
+        "maxPriorityFeePerGas": "2000000000"
+      }
+    },
+    "messageType": "EIP3009",
+    "messageToBeSigned": {
+      "domain": {
+        "chainId": "11155111",
+        "name": "USDC",
+        "verifyingContract": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+        "version": "2"
+      },
+      "message": {
+        "from": "0x140f52a9D27764a51032ebDff7E6352D1640cbfd",
+        "nonce": "0x75cc053bfcdedd359bfdaaa560fc0c7d3899097dcf6396e65b029df3b1e05a0e",
+        "to": "0x6e87cdf0b9d2d96232f5c605526cb0e89db7387a",
+        "validAfter": "1743519573",
+        "validBefore": "1743527605",
+        "value": "10000000"
+      },
+      "primaryType": "TransferWithAuthorization",
+      "types": {
+        "EIP712Domain": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "name": "verifyingContract",
+            "type": "address"
+          }
+        ],
+        "TransferWithAuthorization": [
+          {
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "name": "validBefore",
+            "type": "uint256"
+          },
+          {
+            "name": "nonce",
+            "type": "bytes32"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+### 3.2. Sign the call data
+
+Using the
+[`/sign/typedData`](/api-reference/w3s/developer-controlled-wallets/sign-typed-data)
+endpoint, input the `messageToBeSigned` object from the previous step along with
+your entity secret and wallet ID. The transaction parameter should be
+[stringified](https://jsonformatter.org/json-stringify-online) from the
+`messageToBeSigned` field from the transaction response.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/w3s/developer/sign/typedData \
+  --header 'Accept: application/json' \
+  --header 'authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "entitySecretCiphertext": "qXnnGgbsU5lBUGiW9kp2/ltuvSSWW4qJ4/9VKuQT7wd6+ge2y7xqYnEc0pHbqLuj+YBDaPMfRUl1X+K1hbyiPTRVjCqHD5x3DyLtj8eTG/GmIimYfXOveXIJjsT95T8bI9uJ9kxygYAQbNev6wX993OYTYZ8D2PfVLUV3BicTSiClqhgSLW1Nh0qJ+TK0p2rOHs2HZkGA/WTv4SQv+uq//wEbUWFmrrD/ToTSuv3tMQvluCMYDF9xO/F6EoQwmP/XJCpPihGZuvrweTnhHbNWe5suvSSKpB+8Yo6f24ttNtCwvHrLBVaF6U9EZrCRpCydHJuuVBf5j7AD0JPC2DPFAG2p/Upq/KdzF1r8GJ4j2SsFLyzQEAw3ZAl623UiB/F3Szu2T/fYeF0rkfNt6tYKqmCmhvlzvn8BBkgIXsdcoEmNsf4x7b7UwPk9EloTibF4MhkGIW7jDHWWXlL3gKpGzMug+A2bIYdwUtqQ+u65pDi4+o+tuEH8MtM9Mmt3YaP2Zr40wj/uMnRv53hc+Apzsvh6UIsmliK2ldPyfXg77eDEzU7E228al/jIi2YQacQLNAAV870v3iKFB0PeWiUNtVlUdnqXmZkMA/bmg4TOo05ROGJWkfPVFWUNoocyEvCfEasj0ZflfbO8W2Q0M9BqhqjU/WHEBrYnF65ytY0A+8=",
+  "data": "{\"domain\":{\"chainId\":\"11155111\",\"name\":\"USDC\",\"verifyingContract\":\"0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238\",\"version\":\"2\"},\"message\":{\"from\":\"0x39fd73b03a01c6230b5e0d946e1960d79db44fd8\",\"nonce\":\"0x854f1f66cb7cb0e266e17a3715c24c8dae1eb540c4eb00a7a1b39f4bfa9bcf09\",\"to\":\"0x6734b39043f1029f8d5f1b6948d5417b75a72cf8\",\"validAfter\":\"1743522751\",\"validBefore\":\"1743530842\",\"value\":\"10000000\"},\"primaryType\":\"TransferWithAuthorization\",\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}],\"TransferWithAuthorization\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"},{\"name\":\"validAfter\",\"type\":\"uint256\"},{\"name\":\"validBefore\",\"type\":\"uint256\"},{\"name\":\"nonce\",\"type\":\"bytes32\"}]}}",
+  "walletId": "${YOUR_CIRCLE_WALLET_ID}"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "signature": "0x905d70de3f1d9e86b982f6aee2755807fcd50a11cd9035bf47845c856be920fc3b7af8d06bf953bfdecdcea4cc9250aeaeb178b50116774d6bfab37bcc3757621c"
+}
+```
+
+Create a file called `cpn_signature.py` and add the following code to it,
+replacing `circle_signature` with the signature returned from the endpoint, and
+replacing the message object values with the corresponding values from the
+response in
+[step 3.1](/cpn/quickstarts/integrate-with-cpn-ofi#31-initiate-the-onchain-transaction).
+
+```python
+from web3 import Web3
+from eth_utils import keccak, to_hex
+from hexbytes import HexBytes
+from eth_abi import encode
+
+def get_function_selector(signature: str) -> str:
+    """Return 4-byte function selector from signature."""
+    hash_bytes = keccak(text=signature)
+    return to_hex(hash_bytes[:4])
+
+def encode_transfer_with_authorization(
+    from_address: str,
+    to_address: str,
+    value: int,
+    valid_after: int,
+    valid_before: int,
+    nonce: str,
+    v: int,
+    r: str,
+    s: str
+) -> str:
+    """Encode callData for transferWithAuthorization (EIP-3009 USDC)."""
+    types = [
+        "address", "address", "uint256", "uint256", "uint256",
+        "bytes32", "uint8", "bytes32", "bytes32"
+    ]
+    args = [
+        Web3.to_checksum_address(from_address),
+        Web3.to_checksum_address(to_address),
+        value,
+        valid_after,
+        valid_before,
+        HexBytes(nonce),
+        v,
+        HexBytes(r),
+        HexBytes(s)
+    ]
+    encoded_args = encode(types, args)
+    selector = get_function_selector(f"transferWithAuthorization({','.join(types)})")
+    return selector + encoded_args.hex()
+
+# === INPUT DATA ===
+
+circle_signature = your_signature
+message = {
+    "from": your_from_address,
+    "to": your_to_address,
+    "value": 10_000_000,  # 10 USDC (6 decimals)
+    "validAfter": your_valid_after,
+    "validBefore": your_valid_before,
+    "nonce": your_nonce
+}
+
+# === SPLIT SIGNATURE ===
+
+sig_bytes = Web3.to_bytes(hexstr=circle_signature)
+r = Web3.to_hex(sig_bytes[0:32])
+s = Web3.to_hex(sig_bytes[32:64])
+v = sig_bytes[64]
+if v < 27:
+    v += 27  # Normalize v for Ethereum
+
+# === ENCODE CALL DATA ===
+
+call_data = encode_transfer_with_authorization(
+    from_address=message["from"],
+    to_address=message["to"],
+    value=message["value"],
+    valid_after=message["validAfter"],
+    valid_before=message["validBefore"],
+    nonce=message["nonce"],
+    v=v,
+    r=r,
+    s=s
+)
+
+print(f"✅ Final Call Data:\n{call_data}")
+```
+
+When run, the script outputs the final call data.
+
+### 3.3. Sign the transaction
+
+In the previous step, you signed the call data to authorize the transaction.
+Next, you must create and sign the raw transaction using the
+[`/sign-transaction`](/api-reference/w3s/developer-controlled-wallets/sign-transaction)
+endpoint. Include the call data from the script as the `data` field and the
+wallet ID from your Circle Wallet.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/w3s/developer/sign/transaction \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "entitySecretCiphertext": "h8R0RizKx0KWX2wpZgfcUoSSFms0Qj/6pkGH3JSKaYJPhSNRl2GpPWba9ZilCRivI42Di9MRAxI5jsGjay1tyQcrasq3o0aC4jNvK6RH7f8DOnoeNQjmL4pFlLzp/R+NduNI/w/JH5rk84JhsAkOy5yXkMmGf9IkQbh4+381VojV3P8FCuVzsJDTI5KDWzzwMR3eExmQN8QmKlIIyxlAm1JSxhS5Y/9GqqMY+jtcSkxzkX965GzkGyODRo0gxPuUZCiES1lHSe9tkLJWs5AgvJ/2MVpaiDmcIXZJ3JNBw2EuAMp6uRiv3OiODrThgP44YSpvTPavfxDtAnxyw7ZrPSUeN8wX8RBsTpqxZaJvy4aJTCgnDjfvqfPcsg90UqhXYI0VBVU5489s89HHKw76AYp4Hz52Iu4FtsA6r2PidN4Cccp7Ges7gOde6vG36mOG0ODcxMwKyWcAkNdZYEPBQ1DK0c1s5dbNYImBHZ+EnfY0TlHroFOKYhMihrhkXTjCTL+HiSboJtoVGvOphmsyvoQMg0fzprJUVhOraH/soQkd61eulETFN6vJq8R5ODFeeBDlOkZny1Om2ZUd8tdobZDlVGiSZFUR4rPlntoUN5g/hPp8lB+25UN2KaIUiX3OR01EvRedA6Xr+kqzVsmgKmkNW1aFuOJFXEAXlMjR2fU=",
+  "transaction": "{\"nonce\":1,\"to\":\"0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238\",\"gas\":\"150000\",\"maxFeePerGas\":\"70000000000\",\"maxPriorityFeePerGas\":\"3000000000\",\"chainId\":11155111,\"data\":\"0xe3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651\"}",
+  "walletId": "${YOUR_CIRCLE_WALLET_ID}"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "signature": "0xe59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a247cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc00",
+  "signedTransaction": "0x02f9019583aa36a70184b2d05e0085104c533c00830249f0941c7d4b196cb0c7b01d743fbc6116a902379c723880b90124e3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651c080a0e59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a24a07cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc",
+  "txHash": "0xc1d5963f87e4a9035eae4e31fe7842a8bc1cd0ebf941d541c0b7ff37b4d1f5df"
+}
+```
+
+### 3.4. Submit the signed transaction
+
+Use the
+[`/payments/{paymentId}/transactions/{transactionId}/submit`](/api-reference/cpn/cpn-platform/submit-transaction)
+endpoint to submit the transaction to be broadcast to the appropriate
+blockchain. You should use the signed transaction and `transactionId` from the
+previous steps to populate the endpoint call.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions/:transactionId/submit \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}' \
+  --header 'Content-type: application/json' \
+  --data '
+{
+  "signedTransaction": "0x02f9019583aa36a70184b2d05e0085104c533c00830249f0941c7d4b196cb0c7b01d743fbc6116a902379c723880b90124e3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651c080a0e59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a24a07cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "1f3ccc13-69e3-4811-9648-755bc9aa26f4",
+    "status": "PENDING",
+    "paymentId": "fed8687a-d911-3682-a6f2-b2474a1016ba",
+    "expireDate": "2025-04-25T19:54:46.230217Z",
+    "senderAddress": "0x39fd73b03a01c6230b5e0d946e1960d79db44fd8",
+    "senderAccountType": "EOA",
+    "blockchain": "ETH-SEPOLIA",
+    "amount": {
+      "amount": "10.000000",
+      "currency": "USDC"
+    },
+    "destinationAddress": "0x3eebc158f254838e2f6275b892e6a0621e3ea321",
+    "estimatedFee": {
+      "type": "EIP1559",
+      "payload": {
+        "gasLimit": "150000",
+        "maxFeePerGas": "27514930294",
+        "maxPriorityFeePerGas": "2000000000"
+      }
+    },
+    "messageType": "EIP3009",
+    "messageToBeSigned": {
+      "domain": {
+        "chainId": "11155111",
+        "name": "USDC",
+        "verifyingContract": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+        "version": "2"
+      },
+      "message": {
+        "from": "0x39fd73b03a01c6230b5e0d946e1960d79db44fd8",
+        "nonce": "0x3a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2",
+        "to": "0x3eebc158f254838e2f6275b892e6a0621e3ea321",
+        "validAfter": "1745603040",
+        "validBefore": "1745610886",
+        "value": "10000000"
+      },
+      "primaryType": "TransferWithAuthorization",
+      "types": {
+        "EIP712Domain": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "name": "verifyingContract",
+            "type": "address"
+          }
+        ],
+        "TransferWithAuthorization": [
+          {
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "name": "validBefore",
+            "type": "uint256"
+          },
+          {
+            "name": "nonce",
+            "type": "bytes32"
+          }
+        ]
+      }
+    },
+    "signedTransaction": "0x02f9019583aa36a70184b2d05e0085104c533c00830249f0941c7d4b196cb0c7b01d743fbc6116a902379c723880b90124e3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651c080a0e59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a24a07cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc",
+    "transactionHash": "0xc1d5963f87e4a9035eae4e31fe7842a8bc1cd0ebf941d541c0b7ff37b4d1f5df"
+  }
+}
+```
+
+Once the onchain transaction is confirmed by the BFI, the BFI initiates a fiat
+payout to the recipient. As the fiat payout progresses, the OFI is notified by
+[webhook notifications](/cpn/howtos/setup-webhook-notifications).

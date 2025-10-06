@@ -1,0 +1,37 @@
+---
+title: Modules
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Modules are the building blocks of modular wallets. Built on smart contract
+accounts (SCAs), they extend the business logic of Web3 applications. Each
+module provides a solution component for a new use case. You can enable specific
+modules in your app to meet specific business needs, such as automated
+transactions, subscription billing, or event-triggered actions when integrated
+with Circle Contracts. This makes USDC more programmable and enhances its role
+as a medium of exchange.
+
+<Note>
+**Note:** Modules are built on Circle's modular smart contract accounts (MSCA)
+technology and support the following standards:
+
+- ERC-4337: Enables account abstraction, allowing operations without an
+  initial Ether balance, improving flexibility.
+- ERC-6900: Provides a framework for modular smart contracts that are
+  customizable and extendable.
+</Note>
+
+You can also create custom modules to expand the ecosystem based on this
+standard.
+
+## Supported modules
+
+The table below lists the modules that are available:
+
+| Module Name      | Description                                                                                                                                                                                                                                                                                                                       | Module Address                                                                                                                                                                                         |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Address Book** | Only allows you to transfer assets to a list of allowlisted addresses that is enforced onchain. Useful if you are building a vault for your treasury. <br /> <br /> • Add a list of address you allow sending ERC20, 721 or 1155 assets too <br /> • Any transfers of these assets outside that list of address will fail onchain | ✅ Available: <br /> MSCA version: **circle_6900_v1** <br /> Mainnet address: <br /> `0x0000000d81083B16EA76dfab46B0315B0eDBF3d0` <br /> Testnet address: `0x0000000d81083B16EA76dfab46B0315B0eDBF3d0` |

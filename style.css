@@ -1,0 +1,14 @@
+table thead {
+  text-align: left;
+  background-color: #f5f5f8;
+}
+
+.dark table thead {
+  text-align: left;
+  background-color: #141414;
+}
+
+table thead th,
+table td {
+  padding: 8px !important;
+}

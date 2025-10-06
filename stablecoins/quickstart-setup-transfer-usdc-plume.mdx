@@ -1,0 +1,291 @@
+---
+title: "Quickstart: Set up and transfer USDC on Plume"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on Plume"
+---
+
+This guide shows you how to transfer USDC on the Plume testnet. You'll write a
+simple script that checks your balance and sends a test transfer.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Installed **[Node.js v18+](https://nodejs.org/)**.
+- Prepared a **Plume testnet wallet** funded with:
+  - Testnet **USDC** for the transfer.
+  - Testnet **PLUME** for gas fees.
+- A **private key** and a **recipient address** stored in a `.env` file.
+
+<Note>
+**To get Plume testnet USDC**  
+Use [Circle's CCTP sample app](https://replit.com/@buildoncircle/cctp-v2-web-app)
+to transfer USDC cross-chain to your Plume wallet.
+
+**To get testnet PLUME**  
+Use the [Plume faucet](https://faucet.plume.org/) to request free testnet
+PLUME for gas fees.
+</Note>
+
+## Step 1: Set up your project
+
+1. Initialize a new Node.js project and install dependencies:
+
+   ```shell
+   npm init -y
+   npm pkg set type=module
+   npm install viem dotenv
+   ```
+
+2. In the project root, create a `.env` file with your private key and recipient
+   address:
+
+   ```shell
+   PRIVATE_KEY=<YOUR_PRIVATE_KEY>
+   RECIPIENT_ADDRESS=0x<RECIPIENT_ADDRESS>
+   ```
+
+3. Create an `index.js` file. You'll add code step by step in the following
+   sections.
+
+## Step 2: Configure chain and contract
+
+In `index.js`, import required modules and define constants for the Plume
+testnet and the USDC contract:
+
+```javascript
+import "dotenv/config";
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  formatUnits,
+  parseUnits,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+
+const plumeTestnet = {
+  id: 98867,
+  name: "Plume Testnet",
+  nativeCurrency: { name: "PLUME", symbol: "PLUME", decimals: 18 },
+  rpcUrls: {
+    default: { http: ["https://testnet-rpc.plume.org"] },
+  },
+  blockExplorers: {
+    default: {
+      name: "Plume Testnet Explorer",
+      url: "https://testnet-explorer.plume.org",
+    },
+  },
+  testnet: true,
+};
+
+const USDC_ADDRESS = "0xcB5f30e335672893c7eb944B374c196392C19D18";
+const USDC_DECIMALS = 6;
+const USDC_ABI = [
+  {
+    name: "balanceOf",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "account", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    name: "transfer",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
+];
+```
+
+<Note>
+<Accordion title="**Learn more:** Chain and contract configuration">
+Here's what this section does:
+
+- Defines a custom chain configuration for the Plume testnet.
+- Specifies RPC and block explorer URLs so your client can connect.
+- Sets the USDC contract address, decimals, and minimal ABI.
+- Only includes the `balanceOf` and `transfer` functions, since they're all
+  that's needed for this guide.
+</Accordion>
+</Note>
+
+## Step 3: Load environment variables
+
+Next, load your private key and recipient address from `.env`:
+
+```javascript
+const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
+const RECIPIENT = process.env.RECIPIENT_ADDRESS;
+
+if (!PRIVATE_KEY_RAW || !RECIPIENT) {
+  console.error("Error: Missing PRIVATE_KEY or RECIPIENT_ADDRESS in .env");
+  process.exit(1);
+}
+
+if (!/^0x[a-fA-F0-9]{40}$/.test(RECIPIENT)) {
+  console.error("Error: Recipient address is invalid");
+  process.exit(1);
+}
+
+const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
+  ? PRIVATE_KEY_RAW
+  : `0x${PRIVATE_KEY_RAW}`;
+```
+
+<Note>
+<Accordion title="**Learn more:** Environment variables">
+This section ensures sensitive values are handled safely:
+
+- Loads values from the `.env` file so you don't hardcode sensitive information.
+- Checks that both the private key and recipient address are set.
+- Validates the recipient address format with a regex.
+- Ensures the private key is properly prefixed with `0x` so Viem can use it.
+</Accordion>
+</Note>
+
+## Step 4: Initialize Viem clients
+
+Create a public client for reading blockchain data and a wallet client for
+sending transactions:
+
+```javascript
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const publicClient = createPublicClient({
+  chain: plumeTestnet,
+  transport: http(),
+});
+
+const walletClient = createWalletClient({
+  account,
+  chain: plumeTestnet,
+  transport: http(),
+});
+```
+
+<Note>
+<Accordion title="**Learn more:** Viem clients">
+These client methods give you read and write access to the Plume testnet:
+
+- `privateKeyToAccount` creates an account object from your private key.
+- `createPublicClient` is used for reading data from the blockchain (no private
+  key needed).
+- `createWalletClient` uses your account to sign and send transactions.
+</Accordion>
+</Note>
+
+## Step 5: Transfer USDC
+
+Now, write the main logic to check your balance and send a transfer:
+
+```javascript
+(async () => {
+  try {
+    // Check balance
+    const balance = await publicClient.readContract({
+      address: USDC_ADDRESS,
+      abi: USDC_ABI,
+      functionName: "balanceOf",
+      args: [account.address],
+    });
+
+    const balanceFormatted = Number(formatUnits(balance, USDC_DECIMALS));
+    const amount = 10; // send 10 USDC
+
+    console.log("Sender:", account.address);
+    console.log("Recipient:", RECIPIENT);
+    console.log("Balance:", balanceFormatted);
+
+    if (amount > balanceFormatted) {
+      console.error("Error: Insufficient balance");
+      process.exit(1);
+    }
+
+    const amountInDecimals = parseUnits(amount.toString(), USDC_DECIMALS);
+
+    // Transfer
+    const hash = await walletClient.writeContract({
+      address: USDC_ADDRESS,
+      abi: USDC_ABI,
+      functionName: "transfer",
+      args: [RECIPIENT, amountInDecimals],
+    });
+
+    console.log("Transfer successful!");
+    console.log("Tx hash:", hash);
+    console.log(
+      "Explorer:",
+      `${plumeTestnet.blockExplorers.default.url}/tx/${hash}`,
+    );
+  } catch (err) {
+    console.error("Transfer failed:", err.message || err);
+    process.exit(1);
+  }
+})();
+```
+
+<Note>
+<Accordion title="**Learn more:** Transfer logic">
+Here's how the transfer process works:
+
+- Reads your USDC balance using the `balanceOf` function.
+- Converts the balance into a human-readable format with `formatUnits`.
+- Sets the transfer amount (10 USDC in this example).
+- Validates that your balance is sufficient.
+- Converts the transfer amount back into smallest units with `parseUnits`.
+- Calls the `transfer` function on the USDC contract to send tokens.
+- Logs the transaction hash and a block explorer link so you can verify the
+  transfer.
+</Accordion>
+</Note>
+
+## Step 6: Run the script
+
+After running the script:
+
+```shell
+node index.js
+```
+
+You'll see output similar to the following:
+
+```
+Sender: 0x1A2b...7890
+Recipient: 0x9F8f...1234
+Balance: 250.0
+Transfer successful!
+Tx hash: 0xabc123...def456
+Explorer: https://testnet-explorer.plume.org/tx/0xabc123...def456
+```
+
+To verify the transfer, copy the transaction hash URL from the `Explorer:` line
+and open it in your browser. This will take you to the Plume testnet explorer,
+where you can view full transaction details.
+
+<Tip>
+**Tip:** If your script doesn't output a full explorer URL, you can manually
+paste the transaction hash into the Plume testnet explorer.
+</Tip>
+
+## Summary
+
+In this quickstart, you learned how to check balances and transfer USDC on the
+Plume testnet using Viem and Node.js. Here are the key points to remember:
+
+- **Testnet only**. Plume testnet USDC has no real value.
+- **Gas fees**. You need a small amount of testnet PLUME for gas.
+- **Security**. Keep your private key in `.env`. Never commit secrets.
+- **Minimal ABI**. The script only uses `balanceOf` and `transfer` for
+  simplicity.
+- **Viem behavior**. `readContract` and `writeContract` handle reads and writes,
+  and Viem automatically prefixes your private key with `0x` if needed.

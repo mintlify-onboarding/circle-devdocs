@@ -1,0 +1,104 @@
+---
+title: Circle Gateway Overview
+description: A unified USDC balance instantly accessible crosschain
+sideNav: ""
+documentationItems: 
+- title: Documentation
+tableOfContents: true
+sidebarTitle: "Gateway Overview"
+---
+
+Circle Gateway allows anyone to deposit USDC to non-custodial smart contracts on
+any supported source chain to create a unified USDC balance. Once deposits are
+finalized, the Gateway system can provide an attestation with a single API call
+that allows the user to mint USDC instantly on a destination chain, allowing
+next-block access to the full balance.
+
+<Note>
+**Want to learn more about how Gateway can address your crosschain use case?**
+
+[Use this form](https://docs.google.com/forms/d/1SRdAb7Z_cDQitaxAyNI9AcNrmEMM6XwFQ93d2Z7ZJfM/viewform)
+to request a meeting with the Circle team.
+</Note>
+
+## Background
+
+The current multichain environment presents fundamental challenges. Blockchains
+operate as isolated systems with no native way to communicate with each other.
+Users holding USDC on Ethereum can't spend their USDC on Solana without a
+bridging step, which can be a barrier for adoption for unfamiliar users. Because
+there is no way to frictionlessly access USDC held across multiple chains, users
+must take extra steps to move their USDC in advance to transact on each
+destination chain.
+
+This fragmentation introduces friction across the ecosystem. For end users, it
+means manually bridging assets, switching networks, managing chain-specific
+balances, and waiting through slow confirmation times—all of which degrade the
+experience of using applications across chains. For businesses, it means
+maintaining liquidity on multiple chains at once, constantly rebalancing
+capital, and dealing with integration and monitoring overhead. These burdens add
+cost, increase operational risk, and slow down development velocity. The outcome
+is a fractured liquidity landscape that limits access and usability, both for
+individual users and for organizations building on the blockchain.
+
+## How it works
+
+Circle Gateway enables a frictionless USDC experience across the multichain
+ecosystem. Users can hold a balance in USDC across multiple chains and use it
+instantly on any supported chain, without manual movement, without relying on
+external liquidity, and while retaining full ownership and control.
+
+The following is a high-level overview of how Gateway unlocks instant crosschain
+transfer of USDC.
+
+<Frame>
+  <img src="/gateway/images/gateway-overview.png" />
+</Frame>
+
+### Setting up a balance
+
+1. A Gateway user deposits USDC in a Circle-deployed Gateway Wallet contract.
+
+   The Gateway system observes the deposit transaction onchain and creates a
+   unified USDC balance. Latency is dependent on
+   [source chain finality](/gateway/references/supported-blockchains#required-block-confirmations).
+
+<Warning>
+
+**Warning:** Directly transferring USDC to the Gateway Wallet contract with a
+standard ERC-20 transfer will result in loss of that USDC. You must use one of
+the deposit methods on the wallet contract to get a unified USDC balance.
+
+</Warning>
+
+### Using the balance
+
+2. When a Gateway user wants to mint USDC from the unified USDC balance to a
+   destination chain, they sign a burn intent. The application that's integrated
+   with Gateway submits the burn intent to the Gateway API.
+
+   The Gateway API responds with a signed attestation if the user's unified USDC
+   balance is sufficient.
+
+3. The application submits the attestation to the Circle-deployed Gateway Minter
+   contract on the destination chain.
+
+   The minter contract mints USDC to the intended recipient's wallet.
+
+   The Gateway system observes the mint transaction onchain, and uses the
+   user-signed burn intent to burn USDC from the source chain wallet contract.
+
+## Related products
+
+Circle Gateway allows you to build a unified USDC crosschain balance across
+multiple chains. If you are interested in a single bridging solution, see
+[CCTP](/cctp).
+
+| Attribute          | CCTP                                                                                                                                                                    | Circle Gateway                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Best for**       | Sending USDC from one chain to another (A -> B, B -> A)<br /><br />Native USDC crosschain transfers or using USDC as deep intermediate liquidity for crosschain actions | Holding a unified USDC balance instantly accessible on supported chains<br /><br />Consolidating native USDC balances across chains to reduce working capital<br /><br />Tapping into on-demand liquidity crosschain instantly                                                                                                                                                       |
+| **Benefits**       | Fast and secure transfers, efficient rebalancing                                                                                                                        | Unified balances, instant and secure transfers, no rebalancing or inventory management                                                                                                                                                                                                                                                                                               |
+| **Architecture**   | Set of onchain contracts with offchain attestation API and Fast Transfer allowance infrastructure                                                                       | Set of onchain contracts with offchain attestation API and balance tracking infrastructure                                                                                                                                                                                                                                                                                           |
+| **Transfer speed** | Dependent on source chain finality for Standard Transfer. ~8-20 seconds for Fast Transfer.                                                                              | Instant (\<500 ms) after balance is established                                                                                                                                                                                                                                                                                                                                      |
+| **Network**        | See [CCTP Supported Blockchains](/cctp/cctp-supported-blockchains).                                                                                                     | See [Supported Blockchains](/gateway/references/supported-blockchains)                                                                                                                                                                                                                                                                                                               |
+| **Custody**        | Non-custodial - users can use any non-custodial wallet to transfer USDC                                                                                                 | Non-custodial - users retain ownership over USDC deposited to the Gateway Wallet contract. Users must always provide a signature to initiate any movement of USDC from the Gateway Wallet contract. Accessing USDC instantly requires both a user signature and a Gateway attestation. USDC can always be withdrawn trustlessly from the Gateway Wallet contract with a 7-day delay. |

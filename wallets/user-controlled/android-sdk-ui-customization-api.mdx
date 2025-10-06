@@ -1,0 +1,1151 @@
+---
+title: Android SDK UI Customization API
+description: Android SDK UI and key mapping reference for customizations.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+This document describes the different customizable sections of the Programmable
+Wallet SDK customization API. To get the most flexibility out of the SDK, use
+this reference with the [SDK API](/wallets/user-controlled/android-sdk).
+
+## Text, Color, and Font Customization
+
+For text-related customization, there are two types of customization, dynamic
+and static:
+
+- For dynamic customization, update the source code's desired string, color, and
+  font (as typeface).
+- For Static customization, add or update the strings.xml file located at
+  `src/main/res/values/strings.xml`. To avoid the static customization being
+  overwritten by the dynamic customization, use the null value for the text
+  argument when initializing with the`TextConfig()` constructor, for example:
+
+<CodeGroup>
+
+```java
+new TextConfig(null, color, typeface);
+```
+
+```kotlin Kotlin
+TextConfig(null, color, typeface)
+```
+
+</CodeGroup>
+
+Please reference the UI screenshots below with each string’s mapping code, then
+use the mapping code to find the `Resource.TextsKey` name in the Index Table for
+more detail of customization support and usage for each text string.
+
+<Note>
+**Note:**
+
+Some strings do not support static or dynamic customization for text, color,
+font and gradientColors using the `TextConfig()` constructor.
+
+The detail of supporting scope can be found in the index table and the note
+column. If the app still customizes those unsupported values, it will give a
+WARN level log printed to logcat, filtered with CustomizeChecker for log
+abstraction.
+
+</Note>
+
+<Frame>
+  <img src="/w3s/images/cea8768-Screenshot_2023-07-24_at_3.11.34_PM.png" />
+</Frame>
+
+The correct usage for unsupported value when initializing with the
+`TextConfig()` constructor is as follows:
+
+<CodeGroup>
+
+```java
+new TextConfig("Your Text Here", null /*gradientColors*/, null); //color is 0 by default.
+new TextConfig("", 0 /*color*/, null);
+new TextConfig("Your Text Here");
+```
+
+```kotlin
+TextConfig("Your Text Here", null /*gradientColors*/, null) //color is 0 by default.
+TextConfig("", 0 /*color*/, null)
+TextConfig("Your Text Here")
+```
+
+</CodeGroup>
+
+## New PIN Code
+
+### A1 / C1~C5
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-newpin01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-newpin02.png" />
+</Frame>
+
+## Confirm PIN Code
+
+### C6~C7
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmpin01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmpin02.png" />
+</Frame>
+
+## Enter PIN Code
+
+### A2 / C8~C9, C5-1, C5-2
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-enterpin01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-enterpin02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-enterpin03.png" />
+</Frame>
+
+## Security Intros
+
+### A3~A4 / C10~C11
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secintros01.png" />
+</Frame>
+
+## Security Questions Customization
+
+Please reference the Security Question section in the
+[SDK](/w3s/android#securityquestion) for how to customize the question by using
+`setSecurityQuestions` method.
+
+### A5 / C12~C25
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secqcus01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secqcus02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secqcus03.png" />
+</Frame>
+
+## Security Summary
+
+### A6 / C26~C32
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secsummary01.png" />
+</Frame>
+
+## Security Confirm
+
+### C33~C37 / B1
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-secconfirm01.png" />
+</Frame>
+
+## Recover PIN Code
+
+### A7 / C39~C60
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin03.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin04.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin05.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-recoverpin06.png" />
+</Frame>
+
+## Alert Pop Window
+
+### C61~C62
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-alert01.png" />
+</Frame>
+
+## Confirm Transaction
+
+### C63~C90
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmtrx01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmtrx02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-ctrctint01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmtrx04.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-confirmtrx05.png" />
+</Frame>
+
+## Signature Request
+
+### C91~C98
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-sigreq01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-sigreq02.png" />
+</Frame>
+
+## Verify OTP
+
+### C99~C105
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-verifyotp01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-verifyotp02.png" />
+</Frame>
+
+<br />
+
+## A Index Table - Resource.TextsKey
+
+| \#  | Resource.TextsKey              | TextConfigs length                   | TextConfig.text | TextConfig.textColor | TextConfig.font | TextConfig.gradientColors | `colors.xml`            | `styles.xml`      | Note🔖                                                                                                                                                        |
+| --- | ------------------------------ | ------------------------------------ | --------------- | -------------------- | --------------- | ------------------------- | ----------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | newPinCodeHeadline             | Free                                 | ✅              | ✅🔖                 | ✅              | ✅🔖                      | circlepw_text_main      | circlepw_heading3 | textColor will be applied if gradientColors is null.                                                                                                          |
+| A2  | enterPinCodeHeadline           | Free                                 | ✅              | ✅🔖                 | ✅              | ✅🔖                      | circlepw_text_main      | circlepw_heading3 | textColor will be applied if gradientColors is null.                                                                                                          |
+| A3  | securityIntroHeadline          | Free                                 | ✅              | ✅🔖                 | ✅              | ✅🔖                      | circlepw_text_main      | circlepw_heading4 | textColor will be applied if gradientColors is null.                                                                                                          |
+| A4  | securityIntroLink              | 2🔖                                  | ✅              | ✅🔖                 | ✅🔖            | ❌                        | circlepw_text_action    | circlepw_body2    | TextConfigs: \[DisplayText, URL]Only display when the array length is not less then 2 and the URL is not empty.Set color / font according to TextConfig\[0].  |
+| A5  | securityQuestionHeaders        | \<= 5🔖                              | ✅              | ✅🔖                 | ✅🔖            | ❌                        | circlepw_text_auxiliary | circlepw_body2    | TextConfigs over the length limit will be ignored.                                                                                                            |
+| A6  | securitySummaryQuestionHeaders | Same as securityQuestionHeaders (A5) | ✅              | ✅                   | ✅              | ❌                        | circlepw_text_main2     | circlepw_heading5 | TextConfigs over the length limit will be ignored.                                                                                                            |
+| A7  | recoverPinCodeHeadline         | Free                                 | ✅              | ✅🔖                 | ✅              | ✅🔖                      | circlepw_text_main      | circlepw_heading3 | textColor will be applied if gradientColors is null.                                                                                                          |
+
+<br />
+
+## B Index Table - Resource.IconTextsKey
+
+Use this Index Table to reference the Dynamic special Icon, Text, Color, and
+Font Customization. Both the **icon image** and the **text** fields are
+dynamically configured together.
+
+Use `RemoteImageSetter` or `LocalImageSetter` for icon images:
+
+- **RemoteImageSetter** constructor:
+  - `RemoteImageSetter(int drawableId, String url)`
+- **LocalImageSetter** constructor:
+  - `LocalImageSetter(int drawableId)`
+
+The SDK uses [glide](https://github.com/bumptech/glide) as the image loader for
+remote images. For the cache strategy, please see
+[DiskCacheStrategy.AUTOMATIC](https://bumptech.github.io/glide/javadocs/420/com/bumptech/glide/load/engine/DiskCacheStrategy.html#AUTOMATIC).
+
+| \#  | Resource.IconTextsKey     | TextConfigs length | TextConfig.text | TextConfig.textColor | TextConfig.font | TextConfig.gradientColors | `colors.xml`       | `styles.xml`   | Note🔖                                             |
+| --- | ------------------------- | ------------------ | --------------- | -------------------- | --------------- | ------------------------- | ------------------ | -------------- | -------------------------------------------------- |
+| B1  | securityConfirmationItems | \<= 4🔖            | ✅              | ✅                   | ✅              | ❌                        | circlepw_text_main | circlepw_body2 | TextConfigs over the length limit will be ignored. |
+
+<br />
+
+## C Index Table - Resource.Key
+
+<Note>
+**Note:**
+
+The `gradientColors` field is not supported for the Keys in this table. If you
+dynamically set the color as `gradientColor`, the effect will be ignored and the
+`WARN` level log will be printed.
+
+</Note>
+
+| #     | Resource.Key                                          | `string.xml`                                         | text | textColor | font | `colors.xml`                        | `styles.xml`                | Note                                                                                                              |
+| ----- | ----------------------------------------------------- | ---------------------------------------------------- | ---- | --------- | ---- | ----------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| C1    | circlepw_new_pincode_subhead                          | circlepw_new_pincode_subhead                         | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C2    | circlepw_pin_digit_config                             | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_pinDigitText       | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_background         |                             | Succeed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_error                      |                             | Failed                                                                                                            |
+| C5    | circlepw_pincode_error_config                         | ❌🔖                                                 | ❌🔖 | ✅        | ✅   | circlepw_error                      | circlepw_body2              | For text, see Error Message:incorrectUserPin(155112)userPinLocked(155119)pinCodeNotMatched(155703)                |
+| C5-1  | circlepw_pin_remain_attemps_template                  | circlepw_pin_remain_attemps_template                 | ✅🔖 | ❌        | ❌   | ❌                                  | ❌                          | e.g. You have %s attempts left.                                                                                   |
+| C5-2  | circlepw_pin_lock_period_template                     | circlepw_pin_lock_period_template                    | ✅🔖 | ❌        | ❌   | ❌                                  | ❌                          | e.g. You’ve used up all PIN attempts. Please wait for %s mins to retry later..                                    |
+| C6    | circlepw_confirm_pincode_headline                     | circlepw_confirm_pincode_headline                    | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           |                                                                                                                   |
+| C7    | circlepw_confirm_pincode_subhead                      | circlepw_confirm_pincode_subhead                     | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C8    | circlepw_enter_pincode_subhead                        | circlepw_enter_pincode_subhead                       | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C9    | circlepw_enter_pincode_forgot_pin                     | circlepw_enter_pincode_forgot_pin                    | ✅   | ✅        | ✅   | circlepw_text_action                | circlepw_actionText         |                                                                                                                   |
+| C10   | circlepw_security_intros_description                  | circlepw_security_intros_description                 | ✅   | ✅        | ✅   | circlepw_text_auxiliary2            | circlepw_body2              |                                                                                                                   |
+| C11   | circlepw_continue                                     | circlepw_continue                                    | ✅   | ✅        | ✅   | circlepw_main_bt_text               | circlepw_mainButtonText     | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_text_pressed       |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_disabled_main_bt_text      |                             | Disabled                                                                                                          |
+| C12   | circlepw_security_questions_title                     | circlepw_security_questions_title                    | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_toolbarTitle       |                                                                                                                   |
+| C13   | circlepw_security_questions_required_mark             | circlepw_security_questions_required_mark            | ✅   | ✅        | ✅   | circlepw_error                      | circlepw_metadata1          |                                                                                                                   |
+| C14   | circlepw_security_questions_question_input_config     | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C15   | circlepw_security_questions_question_placeholder      | circlepw_security_questions_question_placeholder     | ✅🔖 | ✅🔖      | ❌   | circlepw_placeholder                | circlepw_body1              | Set ​​TextView’s textColorHint and hint. Apply circlepw_security_questions_question_input_config (C14)’s font.    |
+| C16   | circlepw_security_questions_answer_header             | circlepw_security_questions_answer_header            | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C17   | circlepw_security_questions_answer_input_config       | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C18   | circlepw_security_questions_answer_placeholder        | circlepw_security_questions_answer_placeholder       | ✅🔖 | ✅🔖      | ❌🔖 | circlepw_placeholder                | circlepw_body1              | Set ​​TextView’s textColorHint and hint. Apply circlepw_security_questions_answer_input_config (C17)’s font.      |
+| C19   | circlepw_security_questions_answer_hint_header        | circlepw_security_questions_answer_hint_header       | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C20   | circlepw_security_questions_answer_hint_input_config  | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C21   | circlepw_security_questions_answer_hint_placeholder   | circlepw_security_questions_answer_hint_placeholder  | ✅🔖 | ✅🔖      | ❌🔖 | circlepw_placeholder                | circlepw_body1              | Set ​​TextView’s textColorHint and hint. Apply circlepw_security_questions_answer_hint_input_config (C20)’s font. |
+| C22   | circlepw_security_questions_error_config              | ❌🔖                                                 | ❌🔖 | ✅        | ✅   | circlepw_error                      | circlepw_metadata1          | For text, see Error Message:hintsMatchAnswers(155705)                                                             |
+| C23   | circlepw_next                                         | circlepw_next                                        | ✅   | ✅        | ✅   | circlepw_main_bt_text               | circlepw_mainButtonText     | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_text_pressed       |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_disabled_main_bt_text      |                             | Disabled                                                                                                          |
+| C24   | circlepw_select_question_title                        | circlepw_select_question_title                       | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_toolbarTitle       |                                                                                                                   |
+| C25   | circlepw_select_question_item_config                  | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C26   | circlepw_security_summary_title                       | circlepw_security_summary_title                      | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_toolbarTitle       |                                                                                                                   |
+| C27   | circlepw_question_label                               | circlepw_question_label                              | ✅   | ✅        | ✅   | circlepw_text_auxiliary2            | circlepw_body2              |                                                                                                                   |
+| C28   | circlepw_security_summary_question_value_config       | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_summary               | circlepw_body2              |                                                                                                                   |
+| C29   | circlepw_answer_label                                 | circlepw_answer_label                                | ✅   | ✅        | ✅   | circlepw_text_auxiliary2            | circlepw_body2              |                                                                                                                   |
+| C30   | circlepw_security_summary_answer_value_config         | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_summary               | circlepw_caption2           |                                                                                                                   |
+| C31   | circlepw_hint_label                                   | circlepw_hint_label                                  | ✅   | ✅        | ✅   | circlepw_text_auxiliary2            | circlepw_body2              |                                                                                                                   |
+| C32   | circlepw_security_summary_hint_value_config           | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_summary               | circlepw_body2              |                                                                                                                   |
+| C33   | circlepw_security_confirm_title                       | circlepw_security_confirm_title                      | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_toolbarTitle       |                                                                                                                   |
+| C34   | circlepw_security_confirm_headline                    | circlepw_security_confirm_headline                   | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading4           |                                                                                                                   |
+| C35   | circlepw_security_confirm_input_headline              | circlepw_security_confirm_input_headline             | ✅   | ✅        | ✅   | circlepw_text_main2                 | circlepw_caption1           |                                                                                                                   |
+| C36   | circlepw_security_confirm_input_placeholder           | circlepw_security_confirm_input_placeholder          | ✅🔖 | ✅🔖      | ❌🔖 | circlepw_placeholder                | circlepw_body1              | Set ​​TextView’s textColorHint and hint. Apply circlepw_security_confirm_input_config (C37)’s font.               |
+| C37   | circlepw_security_confirm_input_config                | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C37-1 | circlepw_security_confirm_input_match                 | circlepw_security_confirm_input_match                | ✅   | ❌        | ❌   | ❌                                  | ❌                          | The text is the answer that requires user type. e.g. I agree                                                      |
+| C38   | circlepw_recover_pincode_error_config                 | ❌🔖                                                 | ❌🔖 | ✅        | ✅   | circlepw_text_main                  | circlepw_body2              | For text, see Error Message:incorrectSecurityAnswers(155115)securityAnswersLocked(155120)                         |
+| C38-1 | circlepw_answer_remain_attemps_template               | circlepw_answer_remain_attemps_template              | ✅🔖 | ❌        | ❌   | ❌                                  | ❌                          | e.g. You have %s attempts left.                                                                                   |
+| C38-2 | circlepw_answer_lock_period_template                  | circlepw_answer_lock_period_template                 | ✅🔖 | ❌        | ❌   | ❌                                  | ❌                          | e.g. Please wait for %s mins to retry later                                                                       |
+| C39   | circlepw_recover_pincode_question_config              | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main2                 | circlepw_body1              |                                                                                                                   |
+| C40   | circlepw_hint_tag                                     | circlepw_hint_tag                                    | ✅   | ✅        | ✅   | circlepw_tag_text                   | circlepw_metadata2          |                                                                                                                   |
+| C41   | circlepw_recover_pincode_answer_hint_config           | ❌                                                   | ❌   | ✅        | ✅   | circlepw_tag_following_text         | circlepw_metadata1          |                                                                                                                   |
+| C42   | circlepw_recover_pincode_answer_input_header          | ✅                                                   | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C43   | circlepw_recover_pincode_answer_input_placeholder     | circlepw_recover_pincode_answer_input_placeholder    | ✅🔖 | ✅🔖      | ❌🔖 | circlepw_placeholder                | circlepw_body1              | Set ​​TextView’s textColorHint and hint. Apply circlepw_recover_pincode_input_config (C44)’s font.                |
+| C44   | circlepw_recover_pincode_input_config                 | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_main                  | circlepw_body1              |                                                                                                                   |
+| C45   | circlepw_confirm                                      | circlepw_confirm                                     | ✅   | ✅        | ✅   | circlepw_main_bt_text               | circlepw_mainButtonText     | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_text_pressed       |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_disabled_main_bt_text      |                             | Disabled                                                                                                          |
+| C46   | circlepw_pin_biometrics_allow_title                   | circlepw_pin_biometrics_allow_title                  | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           |                                                                                                                   |
+| C47   | circlepw_pin_biometrics_allow_subtitle                | circlepw_pin_biometrics_allow_subtitle               | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C48   | circlepw_skip                                         | circlepw_skip                                        | ✅   | ✅        | ✅   | circlepw_second_bt_text             | circlepw_secondButton       | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_second_bt_text             |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_second_bt_text_disabled    |                             | Disabled                                                                                                          |
+| C49   | circlepw_pin_biometrics_disable                       | circlepw_pin_biometrics_disable                      | ✅   | ✅        | ✅   | circlepw_plain_bt_text              | circlepw_plainButton        | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_plain_bt_text              |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_plain_bt_text_disabled     |                             | Disabled                                                                                                          |
+| C50   | circlepw_pin_biometrics_encrypt_title                 | circlepw_pin_biometrics_encrypt_title                | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C51   | circlepw_pin_biometrics_encrypt_negative_text         | circlepw_pin_biometrics_encrypt_negative_text        | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C52   | circlepw_pin_biometrics_encrypt_subtitle              | circlepw_pin_biometrics_encrypt_subtitle             | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C53   | circlepw_pin_biometrics_encrypt_desc                  | circlepw_pin_biometrics_encrypt_desc                 | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C54   | circlepw_pin_biometrics_decrypt_title                 | circlepw_pin_biometrics_decrypt_title                | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C55   | circlepw_pin_biometrics_decrypt_negative_text         | circlepw_pin_biometrics_decrypt_negative_text        | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C56   | circlepw_pin_biometrics_decrypt_subtitle              | circlepw_pin_biometrics_decrypt_subtitle             | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C57   | circlepw_pin_biometrics_decrypt_desc                  | circlepw_pin_biometrics_decrypt_desc                 | ✅   | ❌        | ❌   | ❌                                  | ❌                          |                                                                                                                   |
+| C58   | circlepw_pin_biometrics_update_title                  | circlepw_pin_biometrics_update_title                 | ✅🔖 | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           | After the auto-fill PIN verify fails, the following biometrics setting page title will use this.                  |
+| C59   | circlepw_pin_biometrics_update_subtitle               | circlepw_pin_biometrics_update_subtitle              | ✅🔖 | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              | After the auto-fill PIN verify fails, the following biometrics setting page subtitle will use this.               |
+| C60   | circlepw_enter_pincode_use_biometrics                 | circlepw_enter_pincode_use_biometrics                | ✅   | ✅        | ✅   | circlepw_pressed_assist_text_color  | circlepw_actionText         |                                                                                                                   |
+| C61   | circlepw_alert_pop_window_description_config          | ❌🔖                                                 | ❌🔖 | ✅        | ✅   | circlepw_alert_pop_description_text | circlepw_body2              | For text, see Error Message: <br />biometricsKeyPermanentlyInvalidated(155710)                                    |
+| C62   | circlepw_alert_pop_window_confirm                     | circlepw_alert_pop_window_confirm                    | ✅   | ✅        | ✅   | circlepw_alert_pop_btn_text         | circlepw_actionText         |                                                                                                                   |
+| C63   | circlepw_transaction_request_title                    | circlepw_transaction_request_title                   | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           |                                                                                                                   |
+| C64   | circlepw_transaction_request_subtitle                 | circlepw_transaction_request_subtitle                | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C65   | circlepw_transaction_request_main_currency            | ❌                                                   | ✅🔖 | ✅        | ✅   | circlepw_text_prompt                | circlepw_txAmountMainText   | Append currency name as unit after amount, e.g. 20 USDC                                                           |
+| C66   | circlepw_transaction_request_exchange_value           | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_exchange              | circlepw_txExchangeText     |                                                                                                                   |
+| C67   | circlepw_transaction_request_from_label               | circlepw_transaction_request_from_label              | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C68   | circlepw_transaction_request_from                     | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C69   | circlepw_transaction_request_to_label                 | circlepw_transaction_request_to_label                | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C70   | circlepw_transaction_request_to_config                | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C71   | circlepw_transaction_request_to_contract_name         | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C72   | circlepw_transaction_request_to_contract_url          | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C73   | circlepw_transaction_request_network_fee_label        | circlepw_transaction_request_network_fee_label       | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C74   | circlepw_transaction_request_network_fee              | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C75   | circlepw_transaction_request_exchange_network_fee     | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_exchange              | circlepw_txInfoExchangeText |                                                                                                                   |
+| C76   | circlepw_transaction_request_total_label              | circlepw_transaction_request_total_label             | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C77   | circlepw_transaction_request_total_config             | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C78   | circlepw_transaction_request_exchange_total_value     | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_exchange              | circlepw_txInfoExchangeText |                                                                                                                   |
+| C79   | circlepw_transaction_request_error_config             | ❌                                                   | ❌   | ✅        | ✅   | circlepw_error                      | circlepw_body2              |                                                                                                                   |
+| C80   | circlepw_transaction_request_fee_tip                  | circlepw_transaction_request_fee_tip                 | ✅   | ✅        | ✅   | circlepw_tip_text                   | circlepw_feeTipText         |                                                                                                                   |
+| C81   | circlepw_contract_interaction_contract_address_label  | circlepw_contract_interaction_contract_address_label | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C82   | circlepw_contract_interaction_contract_address_config | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C83   | circlepw_contract_interaction_data_details            | circlepw_contract_interaction_data_details           | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C84   | circlepw_contract_interaction_abi_function_label      | circlepw_contract_interaction_abi_function_label     | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C85   | circlepw_contract_interaction_abi_function_config     | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoValueText    |                                                                                                                   |
+| C86   | circlepw_contract_interaction_abi_parameter_label     | circlepw_contract_interaction_abi_parameter_label    | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C87   | circlepw_contract_interaction_call_data_label         | circlepw_contract_interaction_call_data_label        | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_txInfoText         |                                                                                                                   |
+| C88   | circlepw_contract_interaction_call_data_config        | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_interactive           | circlepw_contractDataText   |                                                                                                                   |
+| C89   | circlepw_transaction_request_raw_tx_description       | circlepw_transaction_request_raw_tx_description      | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C90   | circlepw_transaction_request_raw_tx_config            | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C91   | circlepw_signature_request_title                      | circlepw_signature_request_title                     | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           |                                                                                                                   |
+| C92   | circlepw_signature_request_contract_name              | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_prompt                | circlepw_signNameText       |                                                                                                                   |
+| C93   | circlepw_signature_request_contract_url               | ❌                                                   | ✅   | ✅        | ✅   | circlepw_text_sign_url              | circlepw_signUrlText        |                                                                                                                   |
+| C94   | circlepw_signature_request_subtitle                   | circlepw_signature_request_subtitle                  | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C95   | circlepw_signature_request_description                | circlepw_signature_request_description               | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C96   | circlepw_signature_request_msg_config                 | ❌                                                   | ❌   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C97   | circlepw_sign                                         | circlepw_sign                                        | ✅   | ✅        | ✅   | circlepw_main_bt_text               | circlepw_mainButtonText     | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_text_pressed       |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_disabled_main_bt_text      |                             | Disabled                                                                                                          |
+| C98   | circlepw_try_again                                    | circlepw_try_again                                   | ✅   | ✅        | ✅   | circlepw_main_bt_text               | circlepw_mainButtonText     | Normal                                                                                                            |
+|       |                                                       |                                                      |      |           |      | circlepw_main_bt_text_pressed       |                             | Pressed                                                                                                           |
+|       |                                                       |                                                      |      |           |      | circlepw_disabled_main_bt_text      |                             | Disabled                                                                                                          |
+| C99   | circlepw_email_otp_title                              | circlepw_email_otp_title                             | ✅   | ✅        | ✅   | circlepw_text_main                  | circlepw_heading3           |                                                                                                                   |
+| C100  | circlepw_email_otp_description                        | circlepw_email_otp_description                       | ✅   | ✅        | ✅   | circlepw_text_auxiliary             | circlepw_body2              |                                                                                                                   |
+| C101  | circlepw_email_otp_email                              | ❌                                                   | ✅   | ❌        | ❌   |                                     |                             |                                                                                                                   |
+| C102  | circlepw_email_otp_head_config                        | ❌                                                   | ❌   | ✅        | ✅   |                                     |                             |                                                                                                                   |
+| C103  | circlepw_email_otp_dash                               | circlepw_email_otp_dash                              | ✅   | ✅        | ✅   |                                     |                             |                                                                                                                   |
+| C104  | circlepw_email_otp_send_again_hint                    | circlepw_email_otp_send_again_hint                   | ✅   | ✅        | ✅   |                                     |                             |                                                                                                                   |
+| C105  | circlepw_email_otp_send_again                         | circlepw_email_otp_send_again                        | ✅   | ✅        | ✅   |                                     |                             |                                                                                                                   |
+
+<br />
+
+## Error Messages
+
+When using this table, reference the **ApiError** heading in the
+[WalletSDK section](/wallets/user-controlled/ios-sdk#walletsdk) of the SDK.
+
+| Possible display location | ApiError.ErrorCode                          | Default Value                                                           | Note                                                  |
+| ------------------------- | ------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| C5, C38, C79              | unknown(-1)                                 | Unknown error                                                           |                                                       |
+|                           | success(0)                                  | Success                                                                 |                                                       |
+| C5, C38, C79              | apiParameterMissing(1)                      | API parameter missing                                                   |                                                       |
+| C5, C38, C79              | apiParameterInvalid(2)                      | API parameter invalid                                                   |                                                       |
+| C5, C38, C79              | forbidden(3)                                | Forbidden                                                               |                                                       |
+| C5, C38, C79              | unauthorized(4)                             | Unauthorized                                                            |                                                       |
+| C5, C38, C79              | retry(9)                                    | Retry                                                                   |                                                       |
+| C5, C38                   | customerSuspended(10)                       | Customer suspended                                                      |                                                       |
+| C5, C38                   | pending(11)                                 | Pending                                                                 |                                                       |
+| C5, C38                   | invalidSession(12)                          | Invalid session                                                         |                                                       |
+| C5, C38                   | invalidPartnerId(13)                        | Invalid partner ID                                                      |                                                       |
+| C5, C38                   | invalidMessage(14)                          | Invalid Message published to a SQS queue.                               |                                                       |
+| C5, C38, C79              | invalidPhone(15)                            | Invalid phone number '%s', format should be in E.164.                   |                                                       |
+| C5, C79                   | walletIdNotFound(156001)                    |                                                                         |                                                       |
+| C5, C79                   | tokenIdNotFound(156002)                     |                                                                         |                                                       |
+| C5, C79                   | transactionIdNotFound(156003)               |                                                                         |                                                       |
+| C5, C79                   | entityCredentialNotFound(156004)            |                                                                         |                                                       |
+| C5, C79                   | walletSetIdNotFound(156005)                 |                                                                         |                                                       |
+|                           | userAlreadyExisted(155101)                  | user already existed                                                    |                                                       |
+|                           | userNotFound(155102)                        | user not found                                                          |                                                       |
+| C5, C38, C79              | userTokenNotFound(155103)                   | user token not found                                                    |                                                       |
+| C5, C38, C79              | userTokenExpired(155104)                    | user token expired                                                      |                                                       |
+| C5, C38, C79              | invalidUserToken(155105)                    | invalid user token                                                      |                                                       |
+| C5                        | userWasInitialized(155106)                  | user was initialized                                                    |                                                       |
+| C5                        | userHasSetPin(155107)                       | user has set pin                                                        |                                                       |
+| C38                       | userHasSetSecurityQuestion(155108)          | user has set security question                                          |                                                       |
+| C5, C38, C79              | userWasDisabled(155109)                     | user was disabled                                                       |                                                       |
+| C5, C79                   | userDoesNotSetPinYet(155110)                | user does not set pin yet                                               |                                                       |
+| C38                       | userDoesNotSetSecurityQuestionYet(155111)   | user does not set security questions yet                                |                                                       |
+| C5, C79                   | incorrectUserPin(155112)                    | The PIN you entered is incorrect.                                       |                                                       |
+|                           | incorrectDeviceId(155113)                   | incorrect device id                                                     |                                                       |
+|                           | incorrectAppId(155114)                      | app id not found                                                        |                                                       |
+| C38                       | incorrectSecurityAnswers(155115)            | The answers you entered are incorrect.                                  |                                                       |
+|                           | invalidChallengeId(155116)                  | invalid challenge id                                                    |                                                       |
+| C5, C79                   | invalidApproveContent(155117)               | invalid approve content                                                 |                                                       |
+| C5, C38, C79              | invalidSecretKey(155118)                    | invalid secret key                                                      |                                                       |
+| C5, C79                   | userPinLocked(155119)                       |                                                                         | Just display circlepw_pin_lock_period_template (C5-2) |
+| C38                       | securityAnswersLocked(155120)               | The answers you entered are incorrect.                                  |                                                       |
+| C5, C79                   | walletIsFrozen(155501)                      | Wallet is Frozen                                                        |                                                       |
+| C5, C79                   | maxWalletLimitReached(155502)               | Max wallet limit reached                                                |                                                       |
+| C5, C79                   | walletSetIdMutuallyExclusive(155503)        | WalletSetId can not be used together with blockchain and address filter |                                                       |
+| C5, C79                   | metadataUnmatched(155504)                   | metadata array length does not match wallet count                       |                                                       |
+|                           | userCanceled(155701)                        | User canceled                                                           |                                                       |
+|                           | launchUiFailed(155702)                      |                                                                         |                                                       |
+| C5                        | pinCodeNotMatched(155703)                   | The PIN you entered is not the same as the first one.                   |                                                       |
+| C5                        | insecurePinCode(155704)                     | Your PIN can’t have repeating or consecutive numbers.                   |                                                       |
+| C22                       | hintsMatchAnswers(155705)                   | Your hint can’t be the same as the answer.                              |                                                       |
+|                           | biometricsSettingNotEnabled(155708)         | "Biometrics instead of PIN" is disabled                                 |                                                       |
+|                           | deviceNotSupportBiometrics(155709)          | The device system doesn't support biometrics                            |                                                       |
+| C61                       | biometricsKeyPermanentlyInvalidated(155710) | Failed to decrypt biometrics key                                        |                                                       |
+|                           | biometricsUserSkip(155711)                  | The user has not enabled biometrics yet                                 |                                                       |
+|                           | biometricsUserDisableForPin(155712)         | The user refused to enable biometrics                                   |                                                       |
+|                           | biometricsUserLockout(155713)               | Too many requests. Try again later.                                     |                                                       |
+|                           | biometricsUserLockoutPermanent(155714)      | Too many requests. The biometrics sensor on the device is locked.       |                                                       |
+|                           | biometricsUserNotAllowPermission(155715)    | The user didn't allow to enable biometrics.                             |                                                       |
+|                           | biometricsInternalError(155716)             | Unexpected error for biometrics: %s                                     |                                                       |
+
+<br />
+
+## Using`strings.xml` for Static Customization
+
+The example values in the `strings.xml` file below can be used for Static
+Customization. The fields also show the default string values in the SDK if you
+do not set dynamic customization.
+
+Please reference this example and add/update any desired text string in your
+strings.xml under the `res/values` folder.
+
+To avoid dynamic customization, return a TextConfig that doesn't contain text or
+null in **getTextConfig(String key)** and **getTextConfigs(Resource.TextsKey
+key)** function. For example, a configuration that doesn't have
+`new TextConfig(null, color, typeface)`, return null, or
+`super.getTextConfig(key)` in its switch statement.
+
+```coffeescript XML
+<resources>
+    <!-- [General] -->
+    <string name="circlepw_continue">Continue</string>
+    <string name="circlepw_next">Next</string>
+    <string name="circlepw_skip">Skip</string>
+    <string name="circlepw_question_label">Question:</string>
+    <string name="circlepw_answer_label">Answer:</string>
+    <string name="circlepw_hint_label">Hint:</string>
+    <string name="circlepw_hint_tag">Hint</string>
+    <string name="circlepw_empty"></string>
+    <string name="circlepw_empty_placeholder">-</string>
+    <string name="circlepw_confirm">Confirm</string>
+    <string name="circlepw_pin_remain_attemps_template">You have %s attempts left.</string>
+    <string name="circlepw_pin_lock_period_template">You’ve used up all PIN attempts. Please wait for %s mins to retry later.</string>
+    <string name="circlepw_answer_remain_attemps_template">You have %s attempts left.</string>
+    <string name="circlepw_answer_lock_period_template">Please wait for %s mins to retry later.</string>
+    <string name="circlepw_sign">Sign</string>
+    <string name="circlepw_try_again">Try again</string>
+
+    <!-- [Page] EnterPINCode -->
+    <string name="circlepw_enter_pincode_subhead">Let us know if it’s really you.</string>
+    <string name="circlepw_enter_pincode_forgot_pin">Forgot PIN?</string>
+    <string name="circlepw_enter_pincode_use_biometrics">Use Biometrics</string>
+
+    <!-- [Page] NewPINCode -->
+    <string name="circlepw_new_pincode_subhead">Your PIN can’t have repeating (e.g. 000000) or consecutive (e.g. 123456) numbers.</string>
+    <!-- [Page] ConfirmPINCode -->
+    <string name="circlepw_confirm_pincode_headline">Re-enter your PIN to confirm</string>
+    <string name="circlepw_confirm_pincode_subhead"></string>
+    <!-- [Page] SecurityIntros -->
+    <string name="circlepw_security_intros_description">This is the only way to recover wallet access if you forget your PIN. Pick 2 security questions and provide answers for access recovery.</string>
+
+    <!-- [Page] SecurityQuestions -->
+    <string name="circlepw_security_questions_title">Recovery method</string>
+    <string name="circlepw_security_questions_required_mark">*</string>
+    <string name="circlepw_security_questions_question_placeholder">Select one question</string>
+    <string name="circlepw_security_questions_answer_header">Provide an answer</string>
+    <string name="circlepw_security_questions_answer_placeholder">Type your answer here</string>
+    <string name="circlepw_security_questions_answer_hint_header">Provide an answer hint (optional)</string>
+    <string name="circlepw_security_questions_answer_hint_placeholder">Type your hint here</string>
+
+    <!-- [Page] SelectQuestion -->
+    <string name="circlepw_select_question_title">Select one question</string>
+    <!-- [Page] SecuritySummary -->
+    <string name="circlepw_security_summary_title">Summary</string>
+
+    <!-- [Page] SecurityConfirm -->
+    <string name="circlepw_security_confirm_title">Confirmation</string>
+    <string name="circlepw_security_confirm_headline">Keep your questions safe</string>
+    <string name="circlepw_security_confirm_input_headline">Type \"I agree\" to proceed:</string>
+    <string name="circlepw_security_confirm_input_placeholder">Type \"I agree\" here</string>
+    <string name="circlepw_security_confirm_input_match">I agree</string>
+
+    <!-- [Page] RecoverPINCode -->
+    <string name="circlepw_recover_pincode_answer_input_header">Enter your answer here</string>
+    <string name="circlepw_recover_pincode_answer_input_placeholder">Type your answer here</string>
+
+    <!-- [PageBiometricsAllowFragment] -->
+    <string name="circlepw_pin_biometrics_allow_title">Allow Biometrics for Web3 Access</string>
+    <string name="circlepw_pin_biometrics_allow_subtitle">Elevate your experience with effortless biometrics  recognition</string>
+    <string name="circlepw_pin_biometrics_disable">Don\'t ask me again</string>
+    <string name="circlepw_pin_biometrics_encrypt_title">Verify It\'s Youe</string>
+    <string name="circlepw_pin_biometrics_encrypt_negative_text">Cancel</string>
+    <string name="circlepw_pin_biometrics_encrypt_subtitle"></string>
+    <string name="circlepw_pin_biometrics_encrypt_desc"></string>
+    <string name="circlepw_pin_biometrics_decrypt_title">Verify It\'s Youe</string>
+    <string name="circlepw_pin_biometrics_decrypt_negative_text">Cancel</string>
+    <string name="circlepw_pin_biometrics_decrypt_subtitle"></string>
+    <string name="circlepw_pin_biometrics_decrypt_desc"></string>
+
+    <string name="circlepw_pin_biometrics_update_title">Update Biometrics for Web3 Access</string>
+    <string name="circlepw_pin_biometrics_update_subtitle">Please update your biometrics</string>
+    <string name="circlepw_alert_pop_window_title">Alert</string>
+    <string name="circlepw_alert_pop_window_confirm">OK</string>
+    <!-- [HostSsoPinFragment] -->
+    <string name="circlepw_transaction_request_title">Confirm transaction</string>
+    <!-- [HostSsoPinFragment] -->
+    <string name="circlepw_transaction_request_subtitle">Please click confirm to proceed the transaction</string>
+    <string name="circlepw_transaction_request_from_label">From</string>
+    <string name="circlepw_transaction_request_to_label">To</string>
+    <string name="circlepw_transaction_request_network_fee_label">Network fee</string>
+    <string name="circlepw_transaction_request_total_label">Total</string>
+    <string name="circlepw_transaction_request_fee_tip">Please note this is an estimated fee. Network fees may vary based on network traffic and transaction complexity.</string>
+    <string name="circlepw_transaction_request_raw_tx_description">Transaction details:</string>
+    <string name="circlepw_signature_request_title">Signature Request</string>
+    <string name="circlepw_signature_request_subtitle">Click on sign button to provide a signature for verification.</string>
+    <string name="circlepw_signature_request_description">You are signing:</string>
+    <string name="circlepw_contract_interaction_title">Contract Interaction</string>
+    <string name="circlepw_contract_interaction_subtitle">Please click confirm to proceed the  contract execution.</string>
+    <string name="circlepw_contract_interaction_contract_address_label">Contract address</string>
+    <string name="circlepw_contract_interaction_data_details">Data Details</string>
+    <string name="circlepw_contract_interaction_abi_function_label">ABI Function</string>
+    <string name="circlepw_contract_interaction_abi_parameter_label">ABI Parameters</string>
+    <string name="circlepw_contract_interaction_call_data_label">Call Data</string>
+    <!-- [HostVerifyOtpFragment] -->
+    <string name="circlepw_email_otp_title">Enter verification code</string>
+    <!-- [PageVerifyOtpFragment] -->
+    <string name="circlepw_email_otp_description">The one-time passcode has been sent to %s</string>
+    <string name="circlepw_email_otp_email">your email</string>
+    <string name="circlepw_email_otp_dash">-</string>
+    <string name="circlepw_email_otp_send_again_hint">Don’t receive the code?</string>
+    <string name="circlepw_email_otp_send_again">Send again</string>
+</resources>
+```
+
+## Image Customization
+
+The SDK uses [glide](https://github.com/bumptech/glide) as the image loader for
+remote images. For the cache strategy, please see
+[DiskCacheStrategy.AUTOMATIC](https://bumptech.github.io/glide/javadocs/420/com/bumptech/glide/load/engine/DiskCacheStrategy.html#AUTOMATIC). Use
+`RemoteImageSetter` or `LocalImageSetter` for icon images:
+
+- **RemoteImageSetter** constructor:
+  - `RemoteImageSetter(int drawableId, String url)`
+- **LocalImageSetter** constructor:
+
+  - `LocalImageSetter(int drawableId)`
+
+Each image has its suggested size of **width** and **height** shown in the index
+table's **ImageView size** column. Follow the suggested size to avoid the
+possibility of a broken layout or unexpected display.
+
+## Resource.Icon
+
+### D1~D14
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon03.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon04.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon05.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon06.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon07.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon08.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon09.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon10.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon11.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-icon12.png" />
+</Frame>
+
+## D Index Table
+
+| #   | Resource.Icon        | ImageView size (dp) |        |
+| --- | -------------------- | ------------------- | ------ |
+|     |                      | width               | height |
+| D1  | securityIntroMain    | 144                 | 144    |
+| D2  | selectCheckMark      | 24                  | 24     |
+| D3  | dropdownArrow        | 40                  | 40     |
+| D4  | errorInfo            | 21                  | 21     |
+| D5  | securityConfirmMain  | 144                 | 144    |
+| D6  | biometricsAllowMain  | 80                  | 80     |
+| D7  | showPin              | 20                  | 15     |
+| D8  | hidePin              | 20                  | 15     |
+| D9  | alertWindowIcon      | 24                  | 24     |
+| D10 | transactionTokenIcon | 36                  | 36     |
+| D11 | networkFeeTipIcon    | 16                  | 16     |
+| D12 | showLessDetailArrow  | 20                  | 20     |
+| D13 | showMoreDetailArrow  | 20                  | 20     |
+| D14 | requestIcon          | 72                  | 72     |
+
+<br />
+
+## Resource.ToolbarIcon
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-toolbar01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-img-toolbar02.png" />
+</Frame>
+
+## E Index Table
+
+| \#  | Resource.ToolbarIcon | ImageView size (dp) |            |
+| --- | -------------------- | :-----------------: | ---------- |
+|     |                      |      **width**      | **height** |
+| E1  | close                |         24          | 24         |
+| E2  | back                 |         24          | 24         |
+
+## Color Customization
+
+Colors can be customized in a Static way as a static string; with the UI
+screenshots and Key mapping index table below, the colors of each string can be
+defined in the colors.xml.Note that some keys are not specified in the
+screenshot but can be referenced from the A and C index table in the colors.xml
+column.
+
+## New, Confirm, and Enter PIN Code
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-pin01.png" />
+</Frame>
+
+## Security Intro
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-secintro01.png" />
+</Frame>
+
+## Security Questions
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-secq01.png" />
+</Frame>
+
+## Security Summary
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-secsummary01.png" />
+</Frame>
+
+## Security Confirm
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-secconfirm01.png" />
+</Frame>
+
+## Recover PIN Code
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-recoverpin01.png" />
+</Frame>
+
+## Biometrics Setup
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-biometrics01.png" />
+</Frame>
+
+## Confirm Transaction
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-confirmtrx01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-confirmtrx02.png" />
+</Frame>
+
+## Contract Interaction
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-contractint01.png" />
+</Frame>
+
+## Signature Request
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-sigreq01.png" />
+</Frame>
+
+## Verify Email OTP
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-verifyotp01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-color-verifyotp02.png" />
+</Frame>
+
+## F Index Table
+
+| #   | `colors.xml`                            | Color Code | Note                                  |
+| --- | --------------------------------------- | ---------- | ------------------------------------- |
+| F1  | circlepw_text_main                      | # 1A1A1A   |                                       |
+| F2  | circlepw_text_auxiliary                 | # 3D3D3D   |                                       |
+| F3  | circlepw_text_action                    | # 136FD8   | Normal action text color              |
+| F4  | circlepw_text_action_pressed            | # B3136FD8 | Pressed action text color             |
+| F5  | circlepw_placeholder                    | # A3A3A3   |                                       |
+| F6  | circlepw_error                          | # F55538   |                                       |
+| F7  | circlepw_error_background               | # FDF2F2   |                                       |
+| F8  | circlepw_text_main2                     | # 1C1C1C   |                                       |
+| F9  | circlepw_text_auxiliary2                | # 707070   |                                       |
+| F10 | circlepw_text_summary                   | # 0073C3   |                                       |
+| F11 | circlepw_disabled_main_bt_text          | # 80FFFFFF | Disabled button text color            |
+| F12 | circlepw_main_bt_text                   | # FFFFFF   | Normal button text color              |
+| F13 | circlepw_main_bt_text_pressed           | # FFFFFF   | Pressed button text color             |
+| F14 | circlepw_disabled_main_bt_background    | # 800073C3 | Disabled button background color      |
+| F15 | circlepw_main_bt_background             | # 0073C3   | Normal button background color        |
+| F16 | circlepw_main_bt_background_pressed     | # 1AA3FF   | Pressed button background color       |
+| F17 | circlepw_success                        | # 0B9C4A   |                                       |
+| F18 | circlepw_input_boarder                  | # E8E8E8   | Normal input field border             |
+| F19 | circlepw_input_boarder_focused          | # 46B5FF   | Focused input field border            |
+| F20 | circlepw_tag_text                       | # 005339   | Tag text color                        |
+| F21 | circlepw_tag_background                 | # E1F2FF   | Tag background color                  |
+| F22 | circlepw_tag_following_text             | # 0073C3   |                                       |
+| F23 | circlepw_divider                        | # F0EFEF   |                                       |
+| F24 | circlepw_pin_dot_base                   | # FFFFFF   | PIN dot unfilled color                |
+| F25 | circlepw_pin_dot_base_boarder           | # 707070   | PIN dot unfilled border color         |
+| F26 | circlepw_pin_dot_activated              | # 0073C3   | PIN dot filled color                  |
+| F27 | circlepw_background                     | # FFFFFF   | General background color              |
+| F28 | circlepw_security_confirm_main_bg       | # E9EEFE   |                                       |
+| F29 | circlepw_disabled_input_background      | # F5F5F5   | Disabled input field background color |
+| F30 | circlepw_second_bt_text                 | # 0073C3   |                                       |
+| F31 | circlepw_second_bt_text_disabled        | # 800073C3 |                                       |
+| F32 | circlepw_second_bt_border               | # 0073C3   |                                       |
+| F33 | circlepw_second_bt_border_disabled      | # 800073C3 |                                       |
+| F34 | circlepw_second_bt_background           | # FFFFFF   |                                       |
+| F35 | circlepw_second_bt_background_pressed   | # F1F9FE   |                                       |
+| F36 | circlepw_second_bt_background_disabled  | # 80F1F9FE |                                       |
+| F37 | circlepw_plain_bt_text                  | # 0073C3   |                                       |
+| F38 | circlepw_plain_bt_text_disabled         | # 800073C3 |                                       |
+| F39 | circlepw_plain_bt_background            | # FFFFFF   |                                       |
+| F40 | circlepw_plain_bt_background_pressed    | # F1F9FE   |                                       |
+| F41 | circlepw_plain_bt_background_disabled   | # 80F1F9FE |                                       |
+| F42 | circlepw_text_prompt                    | # 29233B   |                                       |
+| F43 | circlepw_text_interactive               | # 0073C3   |                                       |
+| F44 | circlepw_interactive_bg                 | # F9F9FC   |                                       |
+| F45 | circlepw_text_exchange                  | # F0EFEF   |                                       |
+| F46 | circlepw_tip_text                       | # FFFFFF   |                                       |
+| F47 | circlepw_transaction_request_fee_tip_bg | # 29233B   |                                       |
+| F48 | circlepw_text_sign_url                  | # 8E8E93   |                                       |
+| F49 | circlepw_otp_head_text                  | # 000000   |                                       |
+| F50 | circlepw_otp_hint_text                  | # 6B6580   |                                       |
+| F51 | circlepw_otp_action_text                | # 007AFF   |                                       |
+
+## Using `colors.xml` for Static Customization
+
+The example values in the `colors.xml` file can be used for Static
+Customization. The fields also show the default string values in the SDK if you
+do not set dynamic customization.
+
+Please reference this example and add/update any desired text color in your
+`colors.xml` under the `res/values` folder of the App project.
+
+To avoid dynamic customization, return a TextConfig that contains text only with
+no color value in the **getTextConfig(String key)** and
+**getTextConfigs(Resource.TextsKey key)** functions. For example, use a
+configuration with `new TextConfig(key, 0, typeface)`, return null, or
+`super.getTextConfig(key)` in its switch statement.
+
+```coffeescript XML
+<resources>
+    <color name="circlepw_text_main">#1A1A1A</color>
+    <color name="circlepw_text_auxiliary">#3D3D3D</color>
+    <color name="circlepw_text_action">#136FD8</color>
+    <color name="circlepw_text_action_pressed">#B3136FD8</color>
+    <color name="circlepw_placeholder">#A3A3A3</color>
+    <color name="circlepw_error">#F55538</color>
+    <color name="circlepw_error_background">#FDF2F2</color>
+    <color name="circlepw_text_main2">#1C1C1C</color>
+    <color name="circlepw_text_auxiliary2">#707070</color>
+    <color name="circlepw_text_summary">#0073C3</color>
+    <color name="circlepw_disabled_main_bt_text">#80FFFFFF</color>
+    <color name="circlepw_disabled_main_bt_background">#800073C3</color>
+    <color name="circlepw_main_bt_text">#ffffff</color>
+    <color name="circlepw_main_bt_background">#0073C3</color>
+    <color name="circlepw_main_bt_text_pressed">#ffffff</color>
+    <color name="circlepw_main_bt_background_pressed">#1AA3FF</color>
+    <color name="circlepw_second_bt_text">#0073C3</color>
+    <color name="circlepw_second_bt_text_disabled">#800073C3</color>
+    <color name="circlepw_second_bt_border">#0073C3</color>
+    <color name="circlepw_second_bt_border_disabled">#800073C3</color>
+    <color name="circlepw_second_bt_background">#FFFFFF</color>
+    <color name="circlepw_second_bt_background_pressed">#F1F9FE</color>
+    <color name="circlepw_second_bt_background_disabled">#80F1F9FE</color>
+    <color name="circlepw_plain_bt_text">#0073C3</color>
+    <color name="circlepw_plain_bt_text_disabled">#800073C3</color>
+    <color name="circlepw_plain_bt_background">#FFFFFF</color>
+    <color name="circlepw_plain_bt_background_pressed">#F1F9FE</color>
+    <color name="circlepw_plain_bt_background_disabled">#80F1F9FE</color>
+    <color name="circlepw_success">#0B9C4A</color>
+    <color name="circlepw_input_boarder">#E8E8E8</color>
+    <color name="circlepw_input_boarder_focused">#46B5FF</color>
+    <color name="circlepw_tag_text">#005339</color>
+    <color name="circlepw_tag_background">#E1F2FF</color>
+    <color name="circlepw_tag_following_text">#0073C3</color>
+    <color name="circlepw_divider">#F0EFEF</color>
+    <color name="circlepw_pin_dot_base">#ffffff</color>
+    <color name="circlepw_pin_dot_base_boarder">#707070</color>
+    <color name="circlepw_pin_dot_activated">#0073C3</color>
+    <color name="circlepw_background">#FFFFFF</color>
+    <color name="circlepw_security_confirm_main_bg">#E9EEFE</color>
+    <color name="circlepw_disabled_input_background">#F5F5F5</color>
+    <color name="circlepw_alert_pop_window_background">#B3111827</color>
+    <color name="circlepw_alert_pop_title_text">#1D1B20</color>
+    <color name="circlepw_alert_pop_description_text">#49454F</color>
+    <color name="circlepw_alert_pop_btn_text">#000000</color>
+    <color name="circlepw_pin_dot_focused_boarder">#1894E8</color>
+    <color name="circlepw_text_prompt">#29233B</color>
+    <color name="circlepw_text_exchange">#979797</color>
+    <color name="circlepw_text_sign_url">#8E8E93</color>
+    <color name="circlepw_transaction_request_fee_tip_bg">#29233B</color>
+    <color name="circlepw_tip_text">#FFFFFF</color>
+    <color name="circlepw_interactive_bg">#F9F9FC</color>
+    <color name="circlepw_text_interactive">#0073C3</color>
+    <color name="transparent">#00000000</color>
+    <color name="circlepw_otp_head_text">#000000</color>
+    <color name="circlepw_otp_hint_text">#6B6580</color>
+    <color name="circlepw_otp_action_text">#007AFF</color>
+</resources>
+```
+
+## Style Customization
+
+Styles can be customized in a Static way as a static style by using the UI
+screenshots and Key mapping index table below. The styles of each string can be
+defined in the `styles.xml` file.
+
+To avoid dynamic customization,  return `TextConfig` that contains text only in
+`getTextConfig(String key)` and `getTextConfigs(Resource.TextsKey key)`
+functions. For example, use `new TextConfig(“Your text here”)` or
+`super.getTextConfig(key)` to ignore that key in the switch statement.
+
+<Note>
+**Note:**
+
+Some keys (error message) are not specified in the screenshot but can be
+referenced from the A and C index table at the `styles.xml`file column.
+
+</Note>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style01.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style02.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style03.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style04.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style05.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style06.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style07.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style08.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style09.png" />
+</Frame>
+
+<Frame>
+  <img src="/w3s/images/androidsdk-uic-style10.png" />
+</Frame>
+
+## G Index Table
+
+| #   | `styles.xml`                  |
+| --- | ----------------------------- |
+| G1  | circlepw_heading3             |
+| G2  | circlepw_heading4             |
+| G3  | circlepw_heading5             |
+| G4  | circlepw_body1                |
+| G5  | circlepw_body2                |
+| G6  | circlepw_caption1             |
+| G7  | circlepw_caption2             |
+| G8  | circlepw_metadata1            |
+| G9  | circlepw_metadata2            |
+| G10 | circlepw_actionText           |
+| G11 | circlepw_pinDigitText         |
+| G12 | circlepw_mainButtonText       |
+| G13 | circlepw_toolbarTitle         |
+| G14 | circlepw_datePicker           |
+| G15 | circlepw_secondButtonText     |
+| G16 | circlepw_plainButtonText      |
+| G17 | circlepw_txAmountMainText     |
+| G18 | circlepw_txInfoText           |
+| G19 | circlepw_txInfoValueText      |
+| G20 | circlepw_detailToggleText     |
+| G21 | circlepw_contractDataText     |
+| G22 | circlepw_txExchangeText       |
+| G23 | circlepw_txInfoExchangeText   |
+| G24 | circlepw_feeTipText           |
+| G25 | circlepw_otpHeadText          |
+| G26 | circlepw_otpSendAgainHintText |
+| G27 | circlepw_signNameText         |
+| G28 | circlepw_signUrlText          |
+
+## Using the `styles.xml` file for Static Customization
+
+The example values in the `styles.xml` file can be used for Static
+Customization. The fields also show the default style values in the SDK if you
+do not set dynamic customization.
+
+Please reference this example and add or update any desired text styles in your
+`styles.xml` file under the `res/values` folder of the App project.
+
+The style can be used to define **textSize** and **fontWeight**, and it can also
+be used in conjunction with the static colors key defined in colors.xml, such as
+in the following:
+
+```coffeescript XML
+<item name="colorControlActivated">@color/circlepw_input_boarder_focused</item>
+```
+
+```coffeescript XML
+<resources>
+    <style name="circlepw_heading3">
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="circlepw_heading4">
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="circlepw_heading5">
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="circlepw_body1">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_body2">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="circlepw_caption1">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_caption2">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="circlepw_metadata1">
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="circlepw_metadata2">
+        <item name="android:textSize">10sp</item>
+    </style>
+    <style name="circlepw_actionText">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="circlepw_pinDigitText">
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="circlepw_mainButtonText">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_secondButtonText">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_plainButtonText">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_toolbarTitle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="circlepw_datePicker" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Top background-->
+        <item name="colorAccent">@color/circlepw_main_bt_background</item>
+        <!--selected Item color-->
+        <item name="colorControlActivated">@color/circlepw_main_bt_background</item>
+        <!-- arrow bordercolor(<>)-->
+        <item name="android:selectableItemBackgroundBorderless">@color/circlepw_background</item>
+        <!--Calender Background color -->
+        <item name="android:windowBackground">@color/circlepw_background</item>
+        <!-- Ok Cancel Color-->
+        <item name="colorOnPrimary">@color/circlepw_main_bt_background</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/circlepw_text_main</item>
+        <!-- Calender Number color arrow color (< >) -->
+        <item name="android:textColorPrimary">@color/circlepw_text_main</item>
+        <!--day , month-->
+        <item name="android:textColorPrimaryInverse">@color/circlepw_background</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/circlepw_background</item>
+    </style>
+
+    <style name="circlepw_txAmountMainText">
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="circlepw_txInfoText">
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="circlepw_txInfoValueText">
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="circlepw_detailToggleText">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_contractDataText">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="circlepw_txExchangeText">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="circlepw_txInfoExchangeText">
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="circlepw_feeTipText">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="circlepw_otpHeadText">
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="circlepw_otpSendAgainHintText">
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="circlepw_signName" parent="circlepw_signNameText">
+        <item name="android:textColor">@color/circlepw_text_prompt</item>
+    </style>
+    <style name="circlepw_signUrl" parent="circlepw_signUrlText">
+        <item name="android:textColor">@color/circlepw_text_sign_url</item>
+    </style>
+</resources>
+```

@@ -1,0 +1,173 @@
+---
+title: Gas Fees
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Gas fees are the costs associated with initiating a transaction on a given
+blockchain, allowing network validators to perform the requested function.
+
+Gas fees can fluctuate due to network congestion, the type of transaction you
+request, and the priority placed on your request. You can accelerate a
+transaction by paying additional gas fees.
+
+Each blockchain has its own native asset required to pay these fees. When
+interacting with the blockchain, you'll need to account for the amount of this
+native asset required for the requested transaction.
+
+You can estimate transaction fees and contract execution with Circle's Wallets
+API.
+
+{/* <!-- markdownlint-disable MD034 --> */}
+
+<VideoContent
+  url="https://fast.wistia.net/embed/iframe/gce6b8fneo?seo=true&videoFoam=true"
+  header="Video Tutorial: Estimating Gas Fees for Transactions"
+>
+  Watch this video to learn about gas fees, also known as transaction fees. In
+  the video, you will learn the importance of gas fees, understand how to
+  estimate fees for a transfer transaction using an API and send USDC to other
+  wallets using the estimates.
+</VideoContent>
+
+{/* <!-- markdownlint-disable MD034 --> */}
+
+## Wallets gas fee configurations
+
+When initiating a request via the Wallets APIs that requires gas fees, you have
+two options for configuring your fee tolerance: **fee levels** and **gas
+limits**.
+
+**Fee levels** provide a simple way to configure your gas tolerance. Depending
+on your choice, the speed in which your transaction completes compared to the
+expected [blockchain confirmation](/w3s/blockchain-confirmations) timing may
+vary.
+
+You can choose between three tolerance levels:
+
+1. `low` - a low-priority transaction, expected to take longer than the average
+   amount of time to complete, with lower fees
+2. `medium` - a medium-priority transaction, expected to take the average amount
+   of time to complete, with average fees
+3. `high` - a high-priority transaction, expected to take less than the average
+   amount of time to complete, with higher fees
+
+**Gas limits** allow for a more advanced configuration of your gas tolerance.
+Setting gas limit requires the following parameters, which are all designated in
+wei:
+
+1. `gasLimit` - the base amount of gas required to process the requested
+   transaction
+2. `priorityFee` - an additional “tip” that can be added to the validator to
+   accelerate the requested transaction
+3. `maxFee` - maximum fee that can be used for the requested transaction, if the
+   fee is greater, the transaction will be failed. Note that Solana has no
+   concept of a max fee.
+
+## Differences in gas fee specification
+
+While EVM chains and Solana support fee levels, you can also assign your own gas
+fee. The process differs based on the blockchain and protocols supported.
+
+## EVM chains
+
+When
+[creating a transfer transaction](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer),
+you must specify `gasLimit`, `maxFee`, and `priorityFee`. Your actual fee will
+be _(base fee + priority fee) \* gas used_ . Note that you do not need to
+specify the base fee in your transaction because it is automatically determined
+and adjusted by the network based on its current congestion level.
+
+<Note>
+  `priorityFee` is not applicable to Arbitrum and can be left blank.
+</Note>
+
+- **Base fee**: Fee set by the network based on congestion levels. It is burned
+  with a transaction, which means it is removed from circulation.
+- **Priority fee**: Additional fee paid to miners that expedites your
+  transaction.
+- **Max fee**: Maximum price you're willing to pay per unit of gas for the
+  transaction. This protects against paying excessive prices when the base fee
+  rises unexpectedly.
+
+## Solana
+
+The gas fee mechanism is similar to EIP-1559, where you can specify the
+`priority fee` to incentivize miners to include your transaction in a block.
+However, there's no max fee concept in Solana, and the `gasLimit` is optional as
+Solana defaults to a gas limit of 200,000 micro-lamport (10<sup>-15</sup> SOL).
+
+## Estimated gas fees
+
+The following table shows the estimated gas fees on various blockchains, using a
+trailing six-month average, and includes the date when the data was last
+updated.
+
+| Blockchain | Price of Native Token (USD) | As of Date |
+| ---------- | --------------------------- | ---------- |
+| Aptos      | $4.35                       | Sep 2024   |
+| Arbitrum   | $3,046                      | Sep 2024   |
+| Avalanche  | $28                         | Jul 2025   |
+| Base       | $3,046                      | Sep 2024   |
+| Ethereum   | $3,046                      | Sep 2024   |
+| Optimism   | $3,046                      | Sep 2024   |
+| Polygon    | $0.54                       | Sep 2024   |
+| Solana     | $151                        | Sep 2024   |
+| Unichain   | $3,046                      | Sep 2024   |
+
+### Smart Contact Account (SCA) wallets
+
+SCA wallet creation is unique to EVMs and has a gas cost in deploying the smart
+contract account. Circle uses lazy deployment at the time of the first outbound
+transaction, so there is no gas cost in creation and deposits.
+
+The following table shows the estimated total gas fees in native tokens and USD
+for wallet deployment and fungible token transfers on various blockchains for
+SCA wallets.
+
+| Blockchain | Deploy Fee (native)  | Deploy Fee (USD) | Transfer Fee (native) | Transfer Fee (USD) |
+| ---------- | -------------------- | ---------------- | --------------------- | ------------------ |
+| Arbitrum   | 0.0000034            | $0.010           | 0.0000021             | $0.006             |
+| Avalanche  | 0.00324355           | $0.0518968       | 0.00191335            | $0.0306136         |
+| Base       | 0.000000040589440509 | $0.00012363543   | 0.000000014010345339  | $0.00004267551     |
+| Ethereum   | 0.0020745            | $6.319           | 0.0012237             | $3.727             |
+| Optimism   | 0.000000040624052029 | $0.00012374086   | 0.000000012263512376  | $0.00003735465     |
+| Polygon    | 0.0372023            | $0.020           | 0.0219454             | $0.012             |
+| Unichain   | 0.0000001            | $0.0004          | 0.00000003            | $0.00009           |
+
+### Externally Owned Account (EOA) wallets
+
+Creating an EOA wallet is free. However, both Solana and Aptos charge a one-time
+fee when receiving a non-native token for the first time. On Solana, the fee is
+used to create an associated token account (ATA) and can be recovered by closing
+the account. On Aptos, the fee is used to store the token on the recipient's
+account and is not recoverable.
+
+The following table shows the estimated total gas fees in native tokens and USD
+for account creation and fungible token transfers on various blockchains that
+support EOA wallets.
+
+| Blockchain | Wallet Deployment Fee (native tokens) | Wallet Deployment Fee (USD) | Token Transfer Total Fee (native tokens) | Token Transfer Total Fee (USD) |
+| ---------- | ------------------------------------- | --------------------------- | ---------------------------------------- | ------------------------------ |
+| Aptos      | 0.0004916                             | $0.00213846                 | 0.0005324\*                              | $0.00231594\*                  |
+| Arbitrum   | 0.0000034                             | $0.010                      | 0.0000021                                | $0.006                         |
+| Avalanche  | 0.0122877                             | $0.344                      | 0.0072485                                | $0.203                         |
+| Base       | 0.000000040589440509                  | $0.00012363543              | 0.000000014010345339                     | $0.00004267551                 |
+| Ethereum   | 0.0020745                             | $6.319                      | 0.0012237                                | $3.727                         |
+| Optimism   | 0.000000040624052029                  | $0.00012374086              | 0.000000012263512376                     | $0.00003735465                 |
+| Polygon    | 0.0372023                             | $0.020                      | 0.0219454                                | $0.012                         |
+| Solana     | 0.0020910                             | $0.316                      | 0.0000388                                | $0.0059                        |
+| Unichain   | 0.0000001                             | $0.0004                     | 0.00000003                               | $0.00009                       |
+
+<Note>
+\***Aptos** charges an additional storage creation fee when transferring a
+fungible token to an address for the first time. The approximate total gas
+fees are:
+
+- First transfer to a new address: **0.0005324 APT** (~$0.00232 USD)
+- Subsequent transfers to the same address: **0.0000002 APT** (~$0.00000087
+  USD)
+</Note>

@@ -1,0 +1,180 @@
+---
+title: 'Quickstart: Deposit via Blockchain Wallet'
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Quickstart: Deposit via Blockchain Wallet"
+---
+
+_This quickstart walks through sending USDC or EURC on any of the supported
+blockchain from a wallet to your Circle Mint Account._
+
+## 1. Get an API key
+
+Circle's APIs use [API keys](/circle-mint/api-keys) as the mechanism to
+authenticate client requests. The API key must be set in the Authorization
+header of the request sent from your backend server. The format of the header is
+Bearer secret-key-value.
+
+To obtain an API key for the sandbox environment, simply
+[create an account](https://app.circle.com/get-started/create-account) and
+generate a new key in settings - it only takes a few seconds.
+
+[GET AN API KEY](https://app-sandbox.circle.com/)
+
+Once you have generated your API key, record it in a secure place.
+
+## 2. Create a deposit address
+
+To send funds to your Circle Mint Account on-chain, you will first need to
+generate a deposit address. To that end, you can use the
+[create a deposit address](/api-reference/circle-mint/account/create-business-deposit-address)
+API endpoint.
+
+**Request**:
+
+```curl
+curl --request POST \\
+
+--url https\://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/deposit \\
+--header 'accept: application/json' \\
+--header 'authorization: Bearer SAND\_API\_KEY:' \\
+--header 'content-type: application/json' \\
+--data '
+
+{
+"currency": "USD",
+"chain": "BASE"
+}
+'
+```
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "d51d72d2-9955-4340-b3fd-2f07a82a1e6c",
+    "address": "0xbd01242af414961c25aa72dcae06646fc52e9b92",
+    "currency": "USD",
+    "chain": "BASE"
+  }
+}
+```
+
+{/* <!-- markdownlint-enable 036--> */}
+
+<Note>
+**Note**: You can only create one deposit address per blockchain.
+</Note>
+
+## 3. List all deposit addresses
+
+Each blockchain will have its own deposit address and it is important to ensure
+you always use the correct address. You can always make a GET request to see all
+of your different deposit addresses.
+
+In the following example make substitutions for the following placeholder keys:
+
+- Replace `${YOUR\_API\_KEY}` with your API key.
+- Replace `${TRANSFER\_ID}` with the ID of the transfer you created earlier.
+
+```curl
+curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
+
+-X GET https\://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/deposit
+```
+
+The Get Transfer response should look similar to the following:
+
+```json
+{
+  "data": [
+    {
+      "id": "d51d72d2-9955-4340-b3fd-2f07a82a1e6c",
+      "address": "0xbd01242af414961c25aa72dcae06646fc52e9b92",
+      "currency": "USD",
+      "chain": "BASE"
+    },
+    {
+      "id": "50f79198-4af9-466f-a235-c277d1643403",
+      "address": "0xbd01242af414961c25aa72dcae06646fc52e9b92",
+      "currency": "USD",
+      "chain": "ARB"
+    },
+    {
+      "id": "6d2c6c1a-91a0-49f9-b997-ce78fc9cdc3d",
+      "address": "0xbd01242af414961c25aa72dcae06646fc52e9b92",
+      "currency": "USD",
+      "chain": "ETH"
+    },
+    {
+      "id": "4f8489e4-e039-5e2c-ba6f-078c190dbfbc",
+      "address": "0xbd01242af414961c25aa72dcae06646fc52e9b92",
+      "currency": "USD",
+      "chain": "MATIC"
+    }
+  ]
+}
+```
+
+## 4. Deposit to your account
+
+Blockchain deposits can only be initiated from your respective wallet so this
+part of the deposit process will take place outside of Circle’s API.
+
+Using the wallet address returned in the previous step, you will send funds from
+your blockchain wallet to your Circle Mint Account.
+
+<Warning>
+  **Warning**: You must confirm the blockchain network is consistent with the
+  address you requested from Circle and the wallet you’re using to make this
+  transfer, or you could lose funds.
+</Warning>
+
+## 5. Check the latest balance
+
+You can use the
+[list all balances](/api-reference/circle-mint/account/list-business-balances)
+API endpoint to retrieve the balance of funds available for use in your account.
+
+In the following example make substitutions for the following placeholder keys:
+
+- Replace `${YOUR\_API\_KEY}`with your API key.
+- Replace `${TRANSFER\_ID}` with the ID of the transfer you created earlier.
+
+```curl
+curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
+
+-X GET https\://api-sandbox.circle.com/v1/businessAccount/balances
+```
+
+The response should look similar to the following: this:
+
+```json
+{
+  "data": {
+    "available": [
+      {
+        "amount": "17460.00",
+        "currency": "USD"
+      }
+    ],
+    "unsettled": []
+  }
+}
+```
+
+🎉 Congratulations. You have successfully deposited cryptocurrency from your
+external blockchain wallet to your Circle Mint Account.
+
+## 6. Ready for the next step?
+
+After experimenting with our APIs, you’ll be better prepared to start building
+test integrations in sandbox, prior to moving into production. Start by
+[applying for a Circle Mint account](https://www.circle.com/en/circle-mint).
+We'll be happy to walk you through the next steps.

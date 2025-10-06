@@ -1,0 +1,123 @@
+---
+title: "CPN Component States and Workflows"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Component States and Workflows"
+---
+
+This page contains information about the states that high-level components of
+the CPN system can be in. Your integration should be able to handle and respond
+to each of the various states that a given component may present. In some cases,
+the state of a component requires immediate or rapid action from an OFI.
+Reference these states as a way to confirm your integration is comprehensive.
+
+## Payments
+
+A payment represents the end-to-end CPN payment flow, including the onchain
+transaction and RFI check. It is initiated by locking in a quote and providing
+the required recipient details.
+
+Payments have the following workflow:
+
+<Frame>
+  <img src="/cpn/images/payment-workflow.png" />
+</Frame>
+
+### Payment States
+
+| State                    | Description                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CREATED`                | A quote has been accepted and the payment is initialized.<br /><br />When a payment requires an RFI in the created state the RFI must be resolved before the payment can proceed.<br /><br />A payment can be in the created state without an associated RFI while the BFI completes its compliance check. This can take up to 1 business day to complete. |
+| `CRYPTO_FUNDS_PENDING`   | The payment has passed a compliance check and is waiting for the onchain transaction of crypto.<br /><br />The OFI is required to complete the onchain transaction in order to proceed.                                                                                                                                                                    |
+| `FIAT_PAYMENT_INITIATED` | The BFI has received and validated the crypto transfer and has initiated the fiat payment.                                                                                                                                                                                                                                                                 |
+| `COMPLETED`              | The BFI has completed the fiat transfer. Depending on the transfer method, the receiver may or may not have received the transfer.                                                                                                                                                                                                                         |
+| `FAILED`                 | The payment can't be completed.                                                                                                                                                                                                                                                                                                                            |
+
+When a payment is initiated, the BFI performs an initial payment review, which
+affects the state that the payment is created in:
+
+- If the BFI approves the initial payment review outright, the payment is
+  created in the `CRYPTO_FUNDS_PENDING` state.
+- If the BFI rejects the initial payment review outright, the payment is created
+  in the `FAILED` state.
+- If the BFI needs to take additional steps to review the payment, the payment
+  is created in the `CREATED` state. Final approval or rejection of the payment
+  is sent asynchronously.
+
+## RFIs
+
+Requests for information (RFI) is a process that is initiated by the BFI when
+more detailed information about the sender is required to meet regulatory or
+risk compliance checks.
+
+RFIs have the following workflow:
+
+<Frame>
+  <img src="/cpn/images/rfi-workflow.png" />
+</Frame>
+
+### RFI states
+
+| State                  | Description                                                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `INFORMATION_REQUIRED` | Initial status. OFI is required to submit the requested data to resolve the RFI.                                                 |
+| `IN_REVIEW`            | OFI has submitted the requested data and BFI is reviewing.                                                                       |
+| `APPROVED`             | BFI approves the additional information.                                                                                         |
+| `FAILED`               | BFI rejects the additional information. This is a resolved state where the OFI can't resubmit additional information to the BFI. |
+
+## Refunds
+
+Refunds occur when the BFI can't complete the transfer of fiat to the receiver.
+The BFI creates an onchain transaction to transfer the cryptocurrency back to
+the OFI.
+
+Refunds have the following workflow:
+
+<Frame>
+  <img src="/cpn/images/refund-workflow.png" />
+</Frame>
+
+### Refund states
+
+| State       | Description                                                                                                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CREATED`   | The refund is initialized but the onchain transaction has not been created yet. Some BFIs may skip this status and create the refund directly into the `COMPLETED` or `FAILED` state. |
+| `FAILED`    | The onchain transaction failed.                                                                                                                                                       |
+| `COMPLETED` | The onchain transaction was successfully broadcast and confirmed by the BFI. The transaction hash is available.                                                                       |
+
+## Transactions
+
+A transaction on CPN is a data object that represents a funds transfer
+transaction on the blockchain. When the payment is in the `CRYPTO_FUNDS_PENDING`
+state, the OFI should initiate the onchain transaction with CPN as soon as
+possible.
+
+Transactions have the following workflow:
+
+<Frame>
+  <img src="/cpn/images/transaction-workflow.png" />
+</Frame>
+
+### Transaction states
+
+| State         | Description                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| `CREATED`     | Transaction has been created and the payload returned to the caller, awaiting signature.          |
+| `PENDING`     | OFI has submitted the signed transaction. The transaction is pending broadcast to the blockchain. |
+| `BROADCASTED` | The signed transaction has been broadcast to the blockchain.                                      |
+| `COMPLETED`   | The transaction is confirmed onchain.                                                             |
+| `FAILED`      | The transaction can't be completed.                                                               |
+
+## Support tickets
+
+The CPN support tickets API allows you to raise and manage transaction-related
+issues such as settlement delays, missing information, or refunds. These tickets
+are stored in the CPN platform and routed to the appropriate party for
+resolution.
+
+<Frame>
+  <img src="/cpn/images/support-ticket-workflow.png" />
+</Frame>

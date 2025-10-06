@@ -1,0 +1,58 @@
+---
+title: Manage Webhook Subscriptions
+description:
+  Subscribe to webhook notifications to be notified automatically when a
+  transaction occurs.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle's webhooks are an automated method for apps to receive notifications the
+moment a transaction is completed or fails to complete. Circle will make a
+request to your application when an operation is completed. That means your app
+doesn’t need to poll Circle to know whether an operation has completed in the
+blockchain—the confirmation will arrive automatically._
+
+For configuring a notification subscriber endpoint, see the
+[Notifications Quickstart](/circle-mint/circle-apis-notifications-quickstart).
+
+## Set Up Subscriptions
+
+Through the Circle UI in Sandbox or Production, you can set up webhook
+subscriptions. This can be done by:
+
+1. Navigating to Developer → Subscriptions in Sandbox or Production.
+2. Selecting Add Subscription
+3. Entering an endpoint URL you would like notifications to go to.
+4. Selecting Add Endpoint
+
+<Warning>
+**Automatic subscription removal**
+
+All subscriptions in sandbox are removed after 30 days.
+
+</Warning>
+
+<Frame>
+  <img src="/circle-mint/images/mws-dash-subs01.jpg" />
+</Frame>
+
+## View Subscriptions
+
+Via Circle's UI you can view all subscriptions registered to your account on
+Developer → Subscriptions. Circle's Sandbox environment permits up to three
+subscriptions and the Production environment supports one.
+
+## Remove Subscriptions
+
+While viewing subscriptions you are also provided the option to remove
+subscriptions. This is done by simply selecting kebab on the Endpoint and
+selecting remove.
+
+## API Endpoints
+
+All these actions can also be done using Circle's APIs. See
+[API reference subscriptions](/api-reference/circle-mint/general/create-subscription)
+for more detail.

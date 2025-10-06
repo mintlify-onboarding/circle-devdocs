@@ -1,0 +1,105 @@
+---
+title: "RFI Levels"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "RFI Levels"
+---
+
+Requests for information (RFI) can have one of three levels, which indicate the
+required information that must be passed to satisfy the RFI. The levels vary
+depending on if the sender is an individual or a business.
+
+## Individual
+
+The following sections outline the requirements for each level if the sender is
+an individual (natural person).
+
+### Level 1
+
+Level 1 requires the following information:
+
+| Field                            | Description                                                    |
+| -------------------------------- | -------------------------------------------------------------- |
+| `ADDRESS`                        | Individual's full address                                      |
+| `NAME`                           | Individual's full name                                         |
+| `DATE_OF_BIRTH`                  | Individual's date of birth                                     |
+| `NATIONAL_IDENTIFICATION_NUMBER` | Unique government-issued ID (tax ID, national ID, or other)    |
+| `SOURCE_OF_FUNDS`                | Source of funds for transactions                               |
+| `METHOD_OF_VERIFICATION`         | The method of verification (electronic, by document, or other) |
+
+### Level 2
+
+Level 2 requires all of the information required for level 1, plus the following
+information:
+
+| Field         | Description                         |
+| ------------- | ----------------------------------- |
+| `NATIONALITY` | Nationality of the individual       |
+| `EMAIL`       | Contact email address               |
+| `PHONE`       | Primary phone number                |
+| `OCCUPATION`  | Employment or professional activity |
+
+### Level 3
+
+Level 3 requires all the information required for levels 1 and 2, plus the
+following information:
+
+| Field              | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| `ID_DOC_TYPE`      | Type of ID provided (passport, national ID, or others) |
+| `ID_DOCUMENT`      | Copy of the provided ID                                |
+| `PROOF_OF_ADDRESS` | Utility bill, bank statement, or lease agreement       |
+| `ADDITIONAL_DOCS`  | Any additional documents for enhanced due diligence    |
+
+## Business
+
+The following sections outline the requirements for each level if the sender is
+a business.
+
+### Level 1
+
+Level 1 requires the following information:
+
+| Field                            | Description                                                |
+| -------------------------------- | ---------------------------------------------------------- |
+| `NAME`                           | Legal registered name of the business                      |
+| `TRADE_NAME`                     | Doing Business As (DBA) or trade name                      |
+| `NATIONAL_IDENTIFICATION_NUMBER` | Business identification number (tax ID)                    |
+| `DATE_OF_FORMATION`              | Date of company formation                                  |
+| `COUNTRY_OF_FORMATION`           | Country where the entity was formed                        |
+| `ENTITY_TYPE`                    | Business structure (LLC, corporation, partnership, others) |
+| `INDUSTRY_TYPE`                  | Classification of business activity                        |
+| `ADDRESS`                        | Registered place of business                               |
+| `METHOD_OF_VERIFICATION`         | The method of verification                                 |
+| `SOURCE_OF_FUNDS`                | Business funding sources                                   |
+
+### Level 2
+
+Level 2 requires all of the information required for level 1, plus the following
+information:
+
+| Field                             | Description                                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `AUTHORIZED_SIGNATORIES`          | List of individuals with signature authorization                                                                      |
+| `BENEFICIARY_OWNERSHIP`           | Whether any individuals or entities have significant ownership (directly or indirectly own >= 25%) of the company     |
+| `BENEFICIARY_OWNERS`              | List of individuals with significant ownership (directly or indirectly owning >= 25%) of the company                  |
+| `INTERMEDIARY_BENEFICIARY_OWNERS` | List of intermediary beneficiary owners with significant ownership (directly or indirectly own >= 25%) of the company |
+| `WEBSITE`                         | Business website URL                                                                                                  |
+| `EMAIL`                           | Business contact email                                                                                                |
+| `PHONE`                           | Business contact phone number                                                                                         |
+
+### Level 3
+
+Level 3 requires all the information required for levels 1 and 2, plus the
+following information:
+
+| Field                                  | Description                                            |
+| -------------------------------------- | ------------------------------------------------------ |
+| `FORMATION_DOCUMENT`                   | Articles of incorporation or certificate of formation  |
+| `PROOF_OF_ADDRESS`                     | Utility bill, lease agreement, or bank statement       |
+| `ORG_STRUCTURE`                        | Document of the organization structure of the business |
+| `INVOICE`                              | Underlying invoice for the payment                     |
+| `BENEFICIAL_OWNERS_IDENTITY_DOCUMENTS` | Beneficial owners ID documents                         |

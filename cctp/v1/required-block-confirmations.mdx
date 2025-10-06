@@ -1,0 +1,60 @@
+---
+title: CCTP Block Confirmations V1
+description: Block confirmation requirements for attestations by chain
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Block Confirmations"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+{/* prettier-ignore-start */}
+
+Before signing an attestation for a source chain event, Circle waits for a
+specified number of onchain block confirmations to achieve
+<Glossary term="hard finality" />.
+
+{/* prettier-ignore-end */}
+
+The table below shows the average time required for an attestation to become
+available after a message is emitted onchain.
+
+<Note>
+**Note:** These values are subject to change.
+</Note>
+
+## CCTP V1 Attestation Times
+
+| Source Chain    | Number of Blocks | Average Time        |
+| --------------- | ---------------- | ------------------- |
+| **Ethereum**    | ~65\*            | ~13 to 19 minutes\* |
+| **Avalanche**   | 1                | ~8 seconds          |
+| **OP Mainnet**  | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Arbitrum**    | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Noble**       | 1                | ~20 seconds         |
+| **Base**        | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Polygon PoS** | ~33              | ~75 to 120 seconds  |
+| **Solana**      | 32               | ~25 seconds         |
+| **Sui**         | 1                | ~8 seconds          |
+| **Aptos**       | 1                | ~8 seconds          |
+| **Unichain**    | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+
+<Note>
+**Block confirmations for L2s to Ethereum**
+
+Layer 2 (L2) blockchains publish transaction data in batches to Ethereum L1,
+and the frequency of these posts varies by chain. Some submit batches every
+few minutes, while others are less frequent. After a batch is posted, Circle
+waits for the Ethereum L1 block containing the batch to finalize, which
+typically happens after ~65 blocks, or 13 to 19 minutes, before issuing an
+attestation.
+</Note>
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Chain Domains V1 <Icon icon="arrow-right" />](/cctp/v1/supported-domains)

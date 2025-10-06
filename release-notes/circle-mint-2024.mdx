@@ -1,0 +1,75 @@
+---
+title: Release Notes - Circle Mint - 2024
+description: 2024 release notes for Circle Mint.
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+initiator: 
+sidebarTitle: "Circle Mint"
+---
+
+## December 2024
+
+### 2024.12.23
+
+The Accounts API is no longer supported.
+
+#### Documentation updates
+
+- Removed references to the Accounts API.
+
+#### API updates
+
+- Removed Accounts API endpoints.
+
+---
+
+## October 2024
+
+### 2024.10.23
+
+#### API additions
+
+- Support the CUBIX account type. Added the following endpoints:
+
+  - [`GET /businessAccount/banks/cubix`](/api-reference/circle-mint/account/list-business-cubix-accounts)
+  - [`POST /businessAccount/banks/cubix`](/api-reference/circle-mint/account/create-business-cubix-account)
+  - [`GET /businessAccount/banks/cubix/{id}`](/api-reference/circle-mint/account/get-business-cubix-account)
+  - [`GET /businessAccount/banks/cubix/{id}/instructions`](/api-reference/circle-mint/account/get-business-cubix-account-instructions)
+
+---
+
+### 2024.10.08
+
+Added support for USDC on the Sui blockchain.
+
+#### Documentation Updates
+
+Updated the following documents to reflect USDC on Sui support:
+
+- [Blockchain Confirmations](/circle-mint/blockchain-confirmations#confirmations)
+- [Supported Chains and Currencies](/circle-mint/supported-chains-and-currencies#usdc)
+
+---
+
+## September 2024
+
+### 2024.09.23
+
+#### API additions
+
+- Added the
+  [`GET /fees/redemption/net/dailyReports`](/api-reference/circle-mint/account/list-net-burn-fee-daily-calculations)
+  endpoint.
+
+---
+
+### 2024.09.03
+
+#### API additions
+
+- Add `transferTypesInfo` to the following endpoints:
+
+  - [`GET /account/list-business-wire-accounts`](/api-reference/circle-mint/account/list-business-wire-accounts)
+  - [`GET /account/get-business-wire-account`](/api-reference/circle-mint/account/get-business-wire-account)

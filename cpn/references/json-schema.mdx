@@ -1,0 +1,61 @@
+---
+title: "JSON Schema"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "JSON Schema"
+---
+
+CPN uses [JSON Schema](https://json-schema.org/) to define and validate the
+structure of JSON data used to pass RFI data. A JSON Schema is a blueprint for
+the compliance data that OFIs must provide. CPN uses the
+[Draft 2020-12](https://json-schema.org/draft/2020-12) version of the JSON
+Schema standard.
+
+Using JSON Schema to define the structure of this data has the following
+benefits:
+
+- **Clarity:** the schema defines every requirement programmatically, including
+  required fields, data types, formats, and structures. This eliminates
+  guesswork.
+- **Client-side validation:** OFIs can validate their response against the
+  schema before making the API call, providing instant feedback for developers
+  and preventing common integration errors.
+- **Rich data structures:** schemas support complex requirements like nested
+  address objects and conditional logic.
+
+## Interpreting JSON Schema
+
+When you call the
+[get details for an RFI endpoint](/api-reference/cpn/cpn-platform/get-rfi), the
+API returns the JSON Schema for the required response data. The following are
+key parts of the schemas to understand when reading them:
+
+- `properties`: defines the fields you can provide in your JSON response
+- `required`: contains a list of field names that must be present in the
+  response
+- `$defs` and `$ref`: usable complex objects (defined in `$defs` and referenced
+  using the `$ref` directive)
+
+## Client-side validation
+
+JSON Schema allows you to validate your response before sending it to the API.
+CPN expects that OFIs perform client-side validation against the provided schema
+before submitting a response to CPN. Doing so provides a first line of defense
+to reduce API errors and failed payments.
+
+Common libraries for JSON Schema validation are:
+
+- **Java:**
+  [networknt/json-schema-validator](https://github.com/networknt/json-schema-validator)
+- **Python:** [jsonschema](https://python-jsonschema.readthedocs.io/en/stable/)
+- **Node.js:** [ajv](https://ajv.js.org/)
+
+### Additional validation
+
+JSON Schema validates structure and format only. You are still responsible for
+ensuring the data is contextually correct. The schema ensures that you send the
+data in the correct shape; you ensure the data is accurate. For example, you can
+[validate CNPJ and CPF numbers using their check digits](/cpn/references/validating-brazil-tax-account-id).

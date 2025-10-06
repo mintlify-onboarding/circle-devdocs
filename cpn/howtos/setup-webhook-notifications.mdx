@@ -1,0 +1,81 @@
+---
+title: "How-to: Set up Webhook Notifications"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Set up Webhook Notifications"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+During the payment process, CPN sends notifications using webhooks. These
+asynchronous notifications inform the entities on the progress of the payment
+and any required actions they must take.
+
+This guide demonstrates how to subscribe to CPN notifications as an OFI
+integrator. See [Webhook Events](/cpn/references/webhook-events) for a complete
+list of the notifications that are sent over webhooks.
+
+## Steps
+
+Use the following steps to set up a webhook endpoint and subscribe to
+notifications using the CPN API.
+
+### Step 1: Set up a subscriber endpoint
+
+To receive webhook notifications, you must expose a publicly accessible
+subscriber endpoint. The endpoint must be able to handle both `HEAD` and `POST`
+requests over HTTPS.
+
+<Note>
+**Note:** During OFI integration, Circle works directly with you to configure
+this endpoint.
+</Note>
+
+For testing purposes, you can create an endpoint using
+[webhook.site](https://webhook.site).
+
+### Step 2: Subscribe to notifications
+
+Set up an endpoint to receive notifications instead of polling for event updates
+using the `/v2/subscriptions` endpoint.
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v2/cpn/notifications/subscriptions \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer ${YOUR_API_KEY}:' \
+  --header 'Content-type: application/json' \
+  --data '
+{
+    "endpoint": "${YOUR_WEBHOOK_ENDPOINT}",
+    "name": "Test OFI",
+    "enabled": true,
+    "notificationTypes": ["*"]
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "1609aa1c-510a-448d-b9b9-3a13566ff922",
+    "name": "Test OFI",
+    "endpoint": "https://webhook.site/1fde07a9-8974-42bd-a273-943ffdf0e7d6",
+    "enabled": true,
+    "createDate": "2025-05-08T16:20:02.825689Z",
+    "updateDate": "2025-05-08T16:20:02.825689Z",
+    "notificationTypes": ["*"],
+    "restricted": false
+  }
+}
+```
+
+Webhook notifications are digitally signed with an asymmetric key. You can use
+information in the webhook header to verify that the content of the webhook is
+legitimate. For more information, see
+[How-to: Verify Webhook Signatures](/cpn/howtos/verify-webhook-signatures).

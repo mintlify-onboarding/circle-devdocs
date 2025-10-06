@@ -1,0 +1,937 @@
+---
+title: Testing Guide
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Testing Transaction Screening"
+---
+
+This guide walks you through testing Circle's Transaction Screening service
+using the [Developer Services API](/api-reference/w3s/common/ping) on testnet.
+The service is a real time tool that checks blockchain transactions and
+addresses against predefined rules outlined in your Console.
+
+<Note>
+**Rules in Testnet**
+
+For testnet, nine (9) default rules are already in place. Therefore, you will
+not need to set up rules using this guide. Note that if you remove rules in
+testnet, the testing flows below will no longer work.
+
+</Note>
+
+This guide allows you to trigger hits against each of these rules.
+
+## Setting Up Your Testing Environment with Magic Values
+
+1. **Use Magic Values for Testing**:
+   - You can test different rules by sending transactions between Programmable
+     Wallets and blockchain addresses ending with specific suffixes (referred to
+     as "Magic Values").
+   - For example, sending funds to an address ending in `9999` triggers the
+     _Sanctioned Address_ rule.
+2. **Address Generation**:
+   - Use a vanity address generator like [vanity-eth.tk](https://vanity-eth.tk/)
+     to create an Ethereum address with the required suffix.
+   - Import the generated address into your ETH wallet (e.g. MetaMask) using the
+     private key.
+3. **Funding the Address**:
+   - Add testnet tokens to your generated address. Check the
+     [Testnet Faucets](/w3s/developer-console-faucet) guide for more
+     information.
+
+## Summary of Test Cases
+
+You can test the rules using both existing flows to trigger a screening
+evaluation against the magic value address generated in the previous steps:
+
+1. By initiating transactions as usual using the Wallets APIs
+2. By invoking the address screening endpoint via the Compliance Engine API
+
+You can trigger specific responses and actions using addresses with certain
+suffixes:
+
+- **Circle’s Sanctions Blocklist**: `9999`
+- **Frozen User Wallet**: `8888`
+- **Your blocklist**: `7777`
+- **Severe Sanctions Risk (Owner)**: `8999`
+- **Severe Terrorist Financing (Owner)**: `8899`
+- **Severe CSAM Risk (Owner)**: `8889`
+- **Severe Illicit Behavior (Owner)**: `7779`
+- **High Illicit Behavior Risk (Owner)**: `7666`
+- **High Gambling Risk (Owner)**: `7766`
+
+These addresses will return the appropriate test responses, allowing you to
+verify the functionality of the screening system.
+
+<Note>
+**Note**
+
+This guide helps you test Circle’s transaction screening service thoroughly and
+ensures your applications comply with Circle’s rules for real-time transaction
+risk screening.
+
+</Note>
+
+## Test Cases Example Responses
+
+## 1. Circle’s Sanctions Blocklist
+
+- Magic Value: Address ending in `9999`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Circle’s Sanctions Blocklist",
+    "actions": ["REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "addressValue",
+        "riskScore": "blocklist",
+        "riskCategories": ["Sanctions"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Circle’s Sanctions Blocklist",
+    "actions": ["DENY", "REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "addressValue",
+        "riskScore": "blocklist",
+        "riskCategories": ["Sanctions"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Circle's Sanctions Blocklist",
+      "actions": ["REVIEW", "FREEZE_WALLET", "DENY"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0xed594180baa31cd9cb95c2e55b33b93e983d9999",
+          "riskScore": "blocklist",
+          "riskCategories": ["Sanctions"],
+          "type": "OWNERSHIP",
+          "signalSource": null
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "address": "0xed594180baa31cd9cb95c2e55b33b93e983d9999",
+    "chain": "MATIC",
+    "details": []
+  }
+}
+```
+
+</CodeGroup>
+
+## 2. Frozen User Wallet
+
+- Magic Value: Address ending in `8888`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Frozen User Wallet",
+    "actions": ["REVIEW"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "addressValue",
+        "riskScore": "blocklist",
+        "riskCategories": ["FROZEN"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Frozen User Wallet",
+    "actions": ["DENY", "REVIEW"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "addressValue",
+        "riskScore": "blocklist",
+        "riskCategories": ["FROZEN"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Frozen User Wallet",
+      "actions": ["REVIEW", "DENY"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x111F4247ada509383Ce9f241Ff64Fac6f9E28888",
+          "riskScore": "blocklist",
+          "riskCategories": ["FROZEN"],
+          "type": "OWNERSHIP",
+          "signalSource": null
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "9199c1b2-8499-4cdd-83aa-6d73e696e09f",
+    "address": "0x111F4247ada509383Ce9f241Ff64Fac6f9E28888",
+    "chain": "MATIC",
+    "details": [],
+    "alertId": "6f394f8b-9696-4dbb-a882-6bada11e22ac"
+  }
+}
+```
+
+</CodeGroup>
+
+## 3. Your blocklist
+
+- Magic Value: Address ending in `7777`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Your blocklist",
+    "actions": ["REVIEW"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0xd89e56cba08ee44a9ca9f6c5f2f0e608227b7777",
+        "riskScore": "blocklist",
+        "riskCategories": ["UNSUPPORTED"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Your blocklist",
+    "actions": ["REVIEW", "DENY"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0xd89e56cba08ee44a9ca9f6c5f2f0e608227b7777",
+        "riskScore": "blocklist",
+        "riskCategories": ["UNSUPPORTED"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Your blocklist",
+      "actions": ["DENY", "REVIEW"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x860ba02b2884296Aeab83e216d1e375A831A7777",
+          "riskScore": "blocklist",
+          "riskCategories": ["UNSUPPORTED"],
+          "type": "OWNERSHIP",
+          "signalSource": null
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "21387f8a-809a-401d-8b28-60cbf872a36e",
+    "address": "0x860ba02b2884296Aeab83e216d1e375A831A7777",
+    "chain": "MATIC",
+    "details": [],
+    "alertId": "c062db2a-ea95-47c5-b0c8-a7a967782b0e"
+  }
+}
+```
+
+</CodeGroup>
+
+## 4. Severe Sanctions Risk (Owner)
+
+- Magic Value: Address ending in `8999`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Sanctions Risk (Owner)",
+    "actions": ["REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x21e936783ed3ced968ab083010eb14f359018999",
+        "riskScore": "severe",
+        "riskCategories": ["SANCTIONS"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Sanctions Risk (Owner)",
+    "actions": ["DENY", "REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x21e936783ed3ced968ab083010eb14f359018999",
+        "riskScore": "severe",
+        "riskCategories": ["SANCTIONS"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Severe Sanctions Risk (Owner)",
+      "actions": ["FREEZE_WALLET", "DENY", "REVIEW"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0xbEcf2Fc0d5F639c513b8ac99846C7507b5f08999",
+          "riskScore": "severe",
+          "riskCategories": ["SANCTIONS"],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "3c5309dd-623c-4206-ac23-dceef7471351",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "3aa5b955-a1b3-474d-8605-c9f5bfffbe91",
+    "address": "0xbEcf2Fc0d5F639c513b8ac99846C7507b5f08999",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "3c5309dd-623c-4206-ac23-dceef7471351",
+        "vendor": "<vendorName>",
+        "response": {
+          "chain": "polygon",
+          "address": "0xbEcf2Fc0d5F639c513b8ac99846C7507b5f08999",
+          "entities": [
+            {
+              "entity": "DGqLQmvLoM",
+              "category": "Screening",
+              "riskScoreLevel": 80,
+              "riskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressSubmitted": "0xbEcf2Fc0d5F639c513b8ac99846C7507b5f08999",
+          "addressRiskIndicators": [
+            {
+              "category": "Sanctions",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2715.0367502807676",
+              "incomingVolumeUsd": "2052.45711257512",
+              "outgoingVolumeUsd": "662.5796377056477",
+              "categoryRiskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressTotalVolumeUsd": "2715.0367502807676",
+          "addressIncomingVolumeUsd": "2052.45711257512",
+          "addressOutgoingVolumeUsd": "662.5796377056477"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "c933b018-ccdd-430e-982e-164b097b227c"
+  }
+}
+```
+
+</CodeGroup>
+
+## 5. Severe Terrorist Financing Risk (Owner)
+
+- Magic Values: Address ending in `8899`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Terrorist Financing Risk (Owner)",
+    "actions": ["REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x01f43824a066cebe734f3d949e48392851cf8899",
+        "riskScore": "severe",
+        "riskCategories": ["TERRORIST_FINANCING"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Terrorist Financing Risk (Owner)",
+    "actions": ["DENY", "REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x01f43824a066cebe734f3d949e48392851cf8899",
+        "riskScore": "severe",
+        "riskCategories": ["TERRORIST_FINANCING"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Severe Terrorist Financing Risk (Owner)",
+      "actions": ["FREEZE_WALLET", "REVIEW", "DENY"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x8fF9C8a2bEdba9f4553f5e47A1830b85dE168899",
+          "riskScore": "severe",
+          "riskCategories": ["TERRORIST_FINANCING"],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "d1c036ca-6cfd-423e-8e9f-c2e6ac5a51dd",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "ec1b1e47-31e2-4f61-9e0b-c5f786d36681",
+    "address": "0x8fF9C8a2bEdba9f4553f5e47A1830b85dE168899",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "d1c036ca-6cfd-423e-8e9f-c2e6ac5a51dd",
+        "vendor": "<vendorName>",
+        "response": {
+          "chain": "polygon",
+          "address": "0x8fF9C8a2bEdba9f4553f5e47A1830b85dE168899",
+          "entities": [
+            {
+              "entity": "PFpd82Qj4Y",
+              "category": "Terrorist Financing",
+              "riskScoreLevel": 80,
+              "riskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressSubmitted": "0x8fF9C8a2bEdba9f4553f5e47A1830b85dE168899",
+          "addressRiskIndicators": [
+            {
+              "category": "Terrorist Financing",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2614.71272693432",
+              "incomingVolumeUsd": "2078.1795850416493",
+              "outgoingVolumeUsd": "536.5331418926708",
+              "categoryRiskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressTotalVolumeUsd": "2614.71272693432",
+          "addressIncomingVolumeUsd": "2078.1795850416493",
+          "addressOutgoingVolumeUsd": "536.5331418926708"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "a39b400c-d11c-4287-94c2-c31979a592a0"
+  }
+}
+```
+
+</CodeGroup>
+
+## 6. Severe CSAM Risk (Owner)
+
+- Magic Value: Address ending in `8889`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe CSAM Risk (Owner)",
+    "actions": [
+      "REVIEW",
+      "FREEZE_WALLET"
+    ],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x068f626eacfbf669a0f4995b4de79f46cb9e8889",
+        "riskScore": "severe",
+        "riskCategories": [
+          "CSAM"
+        ],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": “<timestamp>”
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe CSAM Risk (Owner)",
+    "actions": [
+      "DENY",
+      "REVIEW",
+      "FREEZE_WALLET"
+    ],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x068f626eacfbf669a0f4995b4de79f46cb9e8889",
+        "riskScore": "severe",
+        "riskCategories": [
+          "CSAM"
+        ],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Severe CSAM Risk (Owner)",
+      "actions": [
+        "FREEZE_WALLET",
+        "DENY",
+        "REVIEW"
+      ],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x1c3Af0f2c682f3625B4D8C60b23c5aF0d9E98889",
+          "riskScore": "severe",
+          "riskCategories": [
+            "CSAM"
+          ],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "a04389af-4830-4d35-a641-16c8b5af33c5",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "b3d95694-c9e0-4d88-a27f-87bf241c4d37",
+    "address": "0x1c3Af0f2c682f3625B4D8C60b23c5aF0d9E98889",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "a04389af-4830-4d35-a641-16c8b5af33c5",
+        "vendor": "<vendorName>",
+        "response": {
+          "chain": "polygon",
+          "address": "0x1c3Af0f2c682f3625B4D8C60b23c5aF0d9E98889",
+          "entities": [
+            {
+              "entity": "2wRepYwHMB",
+              "category": "Child Sexual Abuse Material (CSAM) Consumer",
+              "riskScoreLevel": 80,
+              "riskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressSubmitted": "0x1c3Af0f2c682f3625B4D8C60b23c5aF0d9E98889",
+          "addressRiskIndicators": [
+            {
+              "category": "Child Sexual Abuse Material (CSAM)",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2156.8026917979587",
+              "incomingVolumeUsd": "2336.8225842450083",
+              "outgoingVolumeUsd": "-180.01989244704964",
+              "categoryRiskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressTotalVolumeUsd": "2156.8026917979587",
+          "addressIncomingVolumeUsd": "2336.8225842450083",
+          "addressOutgoingVolumeUsd": "-180.01989244704964"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "cd278c66-fa44-40f6-8dde-c4fa81210f4c"
+  }
+}
+```
+
+</CodeGroup>
+
+## 7. Severe Illicit Behavior Risk (Owner)
+
+- Magic Value: Address ending in `7779`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Illicit Behavior Risk (Owner)",
+    "actions": ["REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0xd5d268603413c563a9739a4ca69214cc4ed77779",
+        "riskScore": "severe",
+        "riskCategories": ["ILLICIT_BEHAVIOR"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "Severe Illicit Behavior Risk (Owner)",
+    "actions": ["DENY", "REVIEW", "FREEZE_WALLET"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0xd5d268603413c563a9739a4ca69214cc4ed77779",
+        "riskScore": "severe",
+        "riskCategories": ["ILLICIT_BEHAVIOR"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "DENIED",
+    "decision": {
+      "ruleName": "Severe Illicit Behavior Risk (Owner)",
+      "actions": ["REVIEW", "DENY", "FREEZE_WALLET"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0xD5DFfE73DAc5B4eeF3cBe9EEDBD964fbF5CC7779",
+          "riskScore": "severe",
+          "riskCategories": ["ILLICIT_BEHAVIOR"],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "76c7738b-7168-4a3c-b79c-dafddd34443d",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "eae928b5-22a8-4800-8aee-9d4ccad0486c",
+    "address": "0xD5DFfE73DAc5B4eeF3cBe9EEDBD964fbF5CC7779",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "76c7738b-7168-4a3c-b79c-dafddd34443d",
+        "vendor": "<vendorName>",
+        "response": {
+          "chain": "polygon",
+          "address": "0xD5DFfE73DAc5B4eeF3cBe9EEDBD964fbF5CC7779",
+          "entities": [
+            {
+              "entity": "d0LZgYvcxZ",
+              "category": "High Yield Investment Scheme",
+              "riskScoreLevel": 80,
+              "riskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressSubmitted": "0xD5DFfE73DAc5B4eeF3cBe9EEDBD964fbF5CC7779",
+          "addressRiskIndicators": [
+            {
+              "category": "High Yield Investment Scheme",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2694.1238387788844",
+              "incomingVolumeUsd": "1515.9560043460124",
+              "outgoingVolumeUsd": "1178.167834432872",
+              "categoryRiskScoreLevelLabel": "Severe"
+            }
+          ],
+          "addressTotalVolumeUsd": "2694.1238387788844",
+          "addressIncomingVolumeUsd": "1515.9560043460124",
+          "addressOutgoingVolumeUsd": "1178.167834432872"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "22fa6e1a-0721-4967-8320-26fd93b334e4"
+  }
+}
+```
+
+</CodeGroup>
+
+## 8. High Illicit Behavior Risk (Owner)
+
+- Magic Value: Send funds to an address ending in `7666`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND / OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "High Illicit Behavior Risk (Owner)",
+    "actions": ["REVIEW"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "address",
+        "riskScore": "high",
+        "riskCategories": ["ILLICIT_BEHAVIOR"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "APPROVED",
+    "decision": {
+      "ruleName": "High Illicit Behavior Risk (Owner)",
+      "actions": ["REVIEW"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x5f7E820b57bA360562209f789D7110919a017666",
+          "riskScore": "high",
+          "riskCategories": ["ILLICIT_BEHAVIOR"],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "e6a16937-34d5-4ea7-a69d-daf5e7a49818",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "867306ac-c75e-45ac-8f9f-d4bd8caccb11",
+    "address": "0x5f7E820b57bA360562209f789D7110919a017666",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "e6a16937-34d5-4ea7-a69d-daf5e7a49818",
+        "vendor": "<vendorName>",
+        "response": {
+          "chain": "polygon",
+          "address": "0x5f7E820b57bA360562209f789D7110919a017666",
+          "entities": [
+            {
+              "entity": "AuND7zgiJv",
+              "category": "Mixer",
+              "riskScoreLevel": 40,
+              "riskScoreLevelLabel": "High"
+            }
+          ],
+          "addressSubmitted": "0x5f7E820b57bA360562209f789D7110919a017666",
+          "addressRiskIndicators": [
+            {
+              "category": "Malware",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2822.1827321490728",
+              "incomingVolumeUsd": "1619.6413453166992",
+              "outgoingVolumeUsd": "1202.5413868323735",
+              "categoryRiskScoreLevelLabel": "High"
+            }
+          ],
+          "addressTotalVolumeUsd": "2822.1827321490728",
+          "addressIncomingVolumeUsd": "1619.6413453166992",
+          "addressOutgoingVolumeUsd": "1202.5413868323735"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "267fb4c3-8fb2-49f1-8cc8-39c1e62cfed4"
+  }
+}
+```
+
+</CodeGroup>
+
+## 9. High Gambling Risk (Owner)
+
+- Magic Value: Address ending in `7766`.
+- Result:
+
+<CodeGroup>
+
+```json INBOUND / OUTBOUND TXN
+{
+  "transactionScreeningEvaluation": {
+    "ruleName": "High Gambling Risk (Owner)",
+    "actions": ["REVIEW"],
+    "reasons": [
+      {
+        "source": "address",
+        "sourceValue": "0x2d6d4a938e7b69f9b67d815cd0c2737ebf897766",
+        "riskScore": "high",
+        "riskCategories": ["GAMBLING"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "<timestamp>"
+  }
+}
+```
+
+```json ADDRESS SCREENING
+{
+  "data": {
+    "result": "APPROVED",
+    "decision": {
+      "ruleName": "High Gambling Risk (Owner)",
+      "actions": ["REVIEW"],
+      "reasons": [
+        {
+          "source": "address",
+          "sourceValue": "0x5408E93c5B314D71bd000f903596638e83b97766",
+          "riskScore": "high",
+          "riskCategories": ["GAMBLING"],
+          "type": "OWNERSHIP",
+          "signalSource": {
+            "rowId": "4e8f5a71-6250-4ac3-a9b5-b6e1e7415b50",
+            "pointer": "/addressRiskIndicator/0"
+          }
+        }
+      ],
+      "screeningDate": "<timestamp>"
+    },
+    "id": "7ed18366-8e6c-467e-84e0-9f20cc4fb45a",
+    "address": "0x5408E93c5B314D71bd000f903596638e83b97766",
+    "chain": "MATIC",
+    "details": [
+      {
+        "id": "4e8f5a71-6250-4ac3-a9b5-b6e1e7415b50",
+        "vendor": "TRM",
+        "response": {
+          "chain": "polygon",
+          "address": "0x5408E93c5B314D71bd000f903596638e83b97766",
+          "entities": [
+            {
+              "entity": "6I0BB6c42L",
+              "category": "Gambling Service",
+              "riskScoreLevel": 40,
+              "riskScoreLevelLabel": "High"
+            }
+          ],
+          "addressSubmitted": "0x5408E93c5B314D71bd000f903596638e83b97766",
+          "addressRiskIndicators": [
+            {
+              "category": "Gambling Service",
+              "riskType": "OWNERSHIP",
+              "totalVolumeUsd": "2179.558889753797",
+              "incomingVolumeUsd": "1993.5326719259065",
+              "outgoingVolumeUsd": "186.02621782789038",
+              "categoryRiskScoreLevelLabel": "High"
+            }
+          ],
+          "addressTotalVolumeUsd": "2179.558889753797",
+          "addressIncomingVolumeUsd": "1993.5326719259065",
+          "addressOutgoingVolumeUsd": "186.02621782789038"
+        },
+        "createDate": "<timestamp>"
+      }
+    ],
+    "alertId": "4891023d-d19c-4e77-bcd0-c5d3fc24449a"
+  }
+}
+```
+
+</CodeGroup>

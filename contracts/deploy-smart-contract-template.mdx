@@ -1,0 +1,647 @@
+---
+title: "Quickstart: Deploy an NFT Smart Contract From a Template"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Deploy an NFT Smart Contract From a Template"
+---
+
+Circle's Smart Contract Templates make it easy to integrate smart contracts into
+your application without writing Solidity code. Deploy contracts in minutes
+using our curated and audited templates, which support popular on-chain use
+cases. You can deploy these templates through the console or APIs.
+
+## Quick Start Guide
+
+This guide will show you how to deploy an ERC-721 contract using Circle's NFT
+template.
+
+Yo'll learn to use both the Developer Services Console and API paths. The
+console is ideal for beginners to explore and understand contract functions.
+
+## Evaluate Templates
+
+To learn more about the NFT template or any other template, go to the
+[Developer Services Console](/w3s/circle-developer-account) or the
+[Templates Glossary](/contracts/scp-templates-overview) guide.
+
+- **Developer Services Console:** Viewing templates from the console provides a
+  simple way to understand the contracts offered, what they are, the primary use
+  cases each supports, the contracts' ABI functions, events, and code.
+- **Template Glossary:** Outlines the templates offered, a summary of each one,
+  and the configuration options for deployment.
+
+<Frame>
+  <img src="/w3s/images/scp-console-templates01.png" />
+</Frame>
+
+## Select Your Preferred Approach
+
+1. **[Console Path:](/contracts/deploy-smart-contract-template#console-ui-path)**
+   Use the Developer Services Console and a console wallet to deploy a smart
+   contract template and mint an NFT. This UI option is the preferred method for
+   those new to using Smart Contracts. It is faster and has much fewer
+   prerequisite steps.
+2. **[API Path:](/contracts/deploy-smart-contract-template#api-path)** Use APIs
+   to deploy a smart contract template and mint an NFT. This option is more
+   technical and requires creating an API key and a Developer-Controlled wallet.
+
+## Console UI Path
+
+## Prerequisites
+
+1. Create a [Developer Account](/w3s/circle-developer-account).
+
+## Console Wallets
+
+Console Wallets are Smart Contract Accounts specifically designed to be used
+within the Console and cannot be utilized with the APIs. Console Wallets
+leverage Gas Station, eliminating the need to maintain gas in the wallet to
+cover transaction fees. To learn more about the Gas Station, please refer to the
+[Gas Station](/wallets/gas-station) overview.
+
+If you do not already have a Console Wallet, you will be prompted to create one
+during the deployment of your first smart contract.
+
+<Warning>
+**Console Wallet Deploy Cost**
+
+Unlike Externally Owned Accounts (EOAs), SCAs cost gas to “deploy”. With our
+process of lazy deployment, you won't have to pay the gas fee at the time of
+wallet creation. Instead, the fee will be charged when you initiate your first
+outbound transaction.
+
+</Warning>
+
+## 1. Deploy the Smart Contract
+
+In the [console](https://console.circle.com):
+
+1. Navigate to the **Templates** tab via the left navigation.
+2. Select **NFT** ERC-721**.**
+3. Fill in the contract template deployment parameters:
+
+   1. **Name**: The off-chain name of the contract. This will only be
+      represented on Circle's systems, such as the APIs and Developer Services
+      Console. In this case, you can use “My First NFT Contract” or any other
+      name you prefer.
+
+   2. **Contract Name:** The on-chain name for the contract. In this case, you
+      can use “My First NFT Contract” or any other name you prefer.
+
+   3. **Default Admin:** The address of the default admin. This address can
+      execute permissions functions on the contract. This should be an address
+      you control or the address of a user if deploying on their behalf. In this
+      case, use the console wallet's address from step one.
+
+      1. NOTE: The following roles will be given to the defaultAdmin:
+         `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE`, `TRANSFER_ROLE`. The
+         `defaultAdmin` will also be set as the contract's owner. All of these
+         roles can be updated by the defaultAdmin later.
+
+   4. **Primary Sale Recipient:** The recipient's address for first-time sales.
+      All first-time sale proceeds will go to this address. In this case, use
+      the console wallet's address from step one.
+
+   5. **Royalty Recipient:** The recipient address for all royalties. Any
+      proceeds from secondary sales will go to this address. In this case, use
+      the console wallet's address from step one.
+
+   6. **Royalty Percent:** The percentage of secondary sales that go to the
+      royalty recipient. There should be a value between 0 and 100. In this
+      case, use “0”.
+
+   7. **Network**: The network to deploy onto. In this case, select “Polygon
+      Amoy”.
+
+   8. **Select Wallet:** The wallet to deploy the smart contract from. In this
+      case, select “Console Wallet 1”
+
+   9. **Deployment Speed**: A fee level setting (FAST, AVERAGE, SLOW). This
+      affects how quickly the network will process your deployment transaction.
+      In this case, you will use “AVERAGE”.
+
+4. Select **Deploy**.
+
+<br />
+
+<br />
+
+<Note>
+**Console Wallet Creation**
+
+After selecting a network, you will prompted to create a Console Wallet for
+deployment. This wallet will automatically be created on all available
+networks. On testnet, this will also automatically create a Policy for Gas
+Station. For more information on sponsoring transactions, see
+[Gas Station Policy Management](/wallets/gas-station/policy-management) .
+</Note>
+
+<Frame>
+  <img src="/w3s/images/scp-dnftsc-consolewallet01.png" />
+</Frame>
+
+<br />
+
+<br />
+
+Once deployed, you will be placed back on the **Contracts** dashboard. Here, you
+can check the deployment status of the contract. When you land on the page,
+expect the deployment status to be **Pending**. Give it several seconds, and
+then refresh the page. At this point, the deployment status should be set to
+**Complete**.
+
+<Frame>
+  <img src="/w3s/images/scp-dnftsc-consolecontracts01.png" />
+</Frame>
+
+<br />
+
+<br />
+
+<br />
+
+## 2. Mint an NFT
+
+Let's dive into the Console UI to explore the full range of capabilities it
+offers and mint an NFT. With the Console, you can seamlessly explore the NFT
+contract you deployed. Gain insights into its ABI functions, inspect their
+inputs, and easily execute functions. In this example, we will directly execute
+the mintTo function from the console - which mints an NFT to a user without a
+sale.
+
+In the [console](https://console.circle.com):
+
+1. Navigate to the **Contracts** tab.
+
+2. Select the **My First NFT Contract** within the console.
+
+3. Select **ABI Functions** sub tab. This should be selected by default.
+
+4. Select **Write**.
+
+5. Select **mintTo**.
+
+6. On the **mintTo** ABI function, provide the following parameters:
+
+   1. **\_to:** The wallet address to which the NFT will be minted. In this
+      case, use the wallet address of the wallet you deployed the contract from.
+      Ultimately, this can be any wallet on-chain.
+   2. **\_uri:** A distinct Uniform Resource Identifier (URI) for a given asset.
+      This can be a IPFS CID, a CDN URI or any other resource identifier.
+
+7. Select **Execute Function** and ensure **Console Wallet 1** is selected.
+
+8. Select **Execute.**
+
+<Frame>
+  <img src="/w3s/images/scp-dnftsc-consolemint01.png" />
+</Frame>
+
+Once executed, select **View Transaction History** to access the Console
+Wallet's transaction dashboard. Here, you can easily monitor the progress and
+status of the transaction. Once the transaction state is marked as **Complete**,
+the NFT has been successfully transferred on-chain to the designated address
+mentioned above.
+
+<Note>
+**Inbound Transaction**
+
+In the transaction history view, you will also notice an inbound transfer
+indicating that the NFT has been minted to the Console Wallet.
+</Note>
+
+Congratulations, you have deployed a smart contract and minted an NFT! As a next
+step, you may want to:
+
+1. Learn how to mint NFTs via the
+   [API](/contracts/deploy-smart-contract-template#api-path).
+2. Deploy a Token or Multi-Token contract.
+
+## API Path
+
+## Prerequisites
+
+1. Create a Developer Account, API key, and set up a Developer-Controlled
+   Wallet. We recommend using our
+   [interactive quickstart guide](/interactive-quickstarts/dev-controlled-wallets)
+   to complete these requirements if you haven't already.
+
+## 1. Deploy the Smart Contract
+
+To deploy a smart contract, you must provide a wallet to deploy from. If you
+don't have the `walletId`, you can use the
+[`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+API to acquire the wallet ID. Ensure the wallet custody type is
+Developer-Controlled and the blockchain is Polygon Amoy. We recommend the
+account type be SCA - removing the need for gas in your wallet for deployment.
+Lastly, note down the wallet's address. This will be used in the subsequent
+steps.
+
+Deployment Request Parameters:
+
+1. **idempotencyKey**: A unique value generated by the client that the server
+   uses to recognize subsequent retries of the same request.
+2. **name**: The off-chain name of the contract. This will only be represented
+   on Circle's System such as the APIs and Developer Services Console. In this
+   case, you can use `My First NFT Contract` or any other name you prefer.
+3. **walletId**: The ID of the wallet to deploy from.
+4. **templateId**: The ID of the chosen template. In this case, you will use
+   `76b83278-50e2-4006-8b63-5b1a2a814533` as the ID for the NFT template. This
+   `templateId` and other template-specific details are listed in the
+   [Templates Glossary](/contracts/scp-templates-overview).
+5. **blockchain**: The network to deploy onto. In this case, you will use
+   `MATIC-AMOY`.
+6. **entitySecretCiphertext**: The encrypted ciphertext of your entity secret.
+   It must be re-encrypted for every new request. Go to
+   [How to Re-Encrypt the Entity Secret](/wallets/dev-controlled/entity-secret-management)
+   to learn more about generating an entity secret ciphertext.
+7. **feeLevel**: A fee level setting (LOW, MEDIUM, HIGH). This affects how
+   quickly the network will process your deployment transaction. In this case,
+   you will use `MEDIUM`.
+8. **templateParameters**: A JSON object representing the template deployment
+   parameters and arguments. This object is explained in more detail below.
+
+### Template Parameters
+
+Template parameters are the inputs for initializing and deploying the template
+on-chain. Each template will have its own set of parameters.
+
+For the NFT template, the required properties are:
+
+1. **name:** The on-chain name for the contract. In this case, you can use
+   `My First NFT Contract` or any other name you prefer.
+2. **defaultAdmin:** The address of the default admin. This address can execute
+   permissioned functions on the contract. This should be an address you control
+   or the address of a user if deploying on their behalf. In this case, use the
+   developer-controlled wallet's address retrieved from the
+   [`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+   API above.
+   1. NOTE: The following roles will be given to the defaultAdmin:
+      `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE`, `TRANSFER_ROLE`. The `defaultAdmin`
+      will also be set as the contract's owner. All of these roles can be
+      updated by the defaultAdmin later.
+3. **primarySaleRecipient:** The recipient address for first-time sales. All
+   first-time sale proceeds will go to this address. In this case, use the
+   developer-controlled wallet's address retrieved from the
+   [`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+   API above.
+4. **royaltyRecipient:** The recipient address for all royalties. Any proceeds
+   from secondary sales will go to this address. In this case, use `0`.
+5. **royaltyPercent:** The percentage of secondary sales that go to the royalty
+   recipient. It should be a value between 0 and 100. In this case, use the
+   developer-controlled wallet's address retrieved from the
+   [`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+   API above.
+
+There are additional properties and configurations available for more advanced
+use cases. Please see the
+[Templates Glossary](/contracts/scp-templates-overview) for more information on
+configuring the NFT Template and for extended use cases of all template types.
+
+Now that you have all your request parameters in order, you can deploy the smart
+contract by making a request to the
+[`POST /templates/{id}/deploy`](/api-reference/contracts/smart-contract-platform/deploy-contract-template)
+API. You must also pass your entity secret ciphertext in the request body. The
+full request is as follows:
+
+<CodeGroup>
+
+```javascript Node.js SDK
+// Import and configure the developer-controlled wallet SDK
+const {
+  initiateDeveloperControlledWalletsClient,
+} = require("@circle-fin/developer-controlled-wallets");
+const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+  apiKey: "<API_KEY>",
+  entitySecret: "<ENTITY_SECRET>",
+});
+
+// Import and configure the smart contract SDK
+const {
+  initiateSmartContractPlatformClient,
+} = require("@circle-fin/smart-contract-platform");
+const circleContractSdk = initiateSmartContractPlatformClient({
+  apiKey: "<API_KEY>",
+  entitySecret: "<ENTITY_SECRET>",
+});
+
+const response = await circleContractSdk.deployContractTemplate({
+  id: "aea21da6-0aa2-4971-9a1a-5098842b1248",
+  blockchain: "MATIC-AMOY",
+  name: "My First NFT Contract",
+  walletId: "<WALLET_ID>",
+  templateParameters: {
+    name: "My First NFT Contract",
+    defaultAdmin: "<ADDRESS>",
+    primarySaleRecipient: "<ADDRESS>",
+    royaltyRecipient: "<ADDRESS>",
+    royaltyPercent: 0,
+  },
+  fee: {
+    type: "level",
+    config: {
+      feeLevel: "MEDIUM",
+    },
+  },
+});
+```
+
+```coffeescript Python SDK
+// Import and configure the developer-controlled wallet SDK
+client = utils.init_developer_controlled_wallets_client(api_key=key, entity_secret=entitySecret)
+
+// Import and configure the smart contract SDK
+scpClient = utils.init_smart_contract_platform_client(api_key=key, entity_secret=entitySecret)
+
+# create an api instance
+api_instance = smart_contract_platform.TemplatesApi(scpClient)
+try:
+    request = smart_contract_platform.TemplateContractDeploymentRequest.from_dict({
+      "blockchain": 'MATIC-AMOY',
+      "name": 'My First NFT Contract',
+      "walletId": '<WALLET_ID>',
+      "templateParameters": {
+        "name": 'My First NFT Contract',
+        "defaultAdmin": '<ADDRESS>',
+        "primarySaleRecipient": '<ADDRESS>',
+        "royaltyRecipient": '<ADDRESS>',
+        "royaltyPercent": "0"
+      },
+      "feeLevel": 'MEDIUM'
+      })
+    resposne = api_instance.deploy_contract_template("aea21da6-0aa2-4971-9a1a-5098842b1248", request)
+    print(resposne)
+except smart_contract_platform.ApiException as e:
+    print("Exception when calling TemplatesApi->deploy_contract_template: %s\n" % e)
+```
+
+```shell cURL
+curl --request POST \
+  --url  'https://api.circle.com/v1/w3s/templates/aea21da6-0aa2-4971-9a1a-5098842b1248/deploy' \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --header 'authorization: Bearer <API_KEY>' \
+  --data '
+{
+  "idempotencyKey": <uuidgen>,
+  "blockchain": "MATIC-MUMBAI",
+  "name": "My First NFT Contract",
+  "walletId": <WALLET_ID>,
+  "templateParameters": {
+    "name": "My First NFT Contract",
+    "defaultAdmin": <ADDRESS>,
+    "primarySaleRecipient": <ADDRESS>,
+    "royaltyRecipient": <ADDRESS>,
+    "royaltyPercent": 0
+  },
+  "feeLevel": "MEDIUM",
+  "entitySecretCiphertext": <entity secret ciphertext>"
+}
+'
+```
+
+</CodeGroup>
+
+```json
+{
+  "data": {
+    "contractIds": ["b7c35372-ce69-4ccd-bfaa-504c14634f0d"],
+    "transactionId": "601a0815-f749-41d8-b193-22cadd2a8977"
+  }
+}
+```
+
+<Note>
+A successful API response indicates that the deployment process has been
+initiated but does not guarantee that the deployment will be successful. The
+returned `transactionId` can be used to check the status of the deployment
+transaction using
+[get a transaction](/api-reference/wallets/developer-controlled-wallets/get-transaction).
+</Note>
+
+To validate that your contract has deployed successfully, make a request to
+[GET /transactions/\{id}](/api-reference/wallets/developer-controlled-wallets/get-transaction),
+providing the ID of the transaction received in the response above.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.listTransactions({});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.TransactionsApi(client)
+
+try:
+    resposne = api_instance.list_transactions()
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
+```
+
+```curl
+curl --request GET \
+     --url https://api.circle.com/v1/w3s/transactions/{id} \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "data": {
+    "transaction": {
+      "id": "601a0815-f749-41d8-b193-22cadd2a8977",
+      "blockchain": "MATIC-AMOY",
+      "state": "COMPLETE",
+      ...
+      [other fields truncated]
+    }
+  }
+}
+```
+
+The returned `contractId` can be used to perform further management and
+interaction with the deployed smart contract, such as minting an NFT.
+
+## 2. Mint an NFT
+
+Let's dive into the Developer Services Console to explore its full range of
+capabilities. With the Console, you can seamlessly explore the NFT contract you
+deployed. Gain insights into its ABI functions, inspect their inputs, and easily
+execute functions through an API call by conveniently copying the required code.
+
+_Alternatively, you can retrieve detailed information about the contract using
+the
+[`Get contract by ID`](/api-reference/wallets/developer-controlled-wallets/get-wallet)
+response, which includes all the available functions and events._
+
+In this example, we will use the code snippet generator to build the contract
+execution request for the `mintTo` function - which mints an NFT to a user
+without a sale. This can be done by selecting the contract within the Console,
+then in the ABI functions tab, selecting write, and selecting mintTo.
+
+<Frame>
+  <img src="/w3s/images/scp-dnftsc-consolemint02.png" />
+</Frame>
+
+As you fill in the parameters for the `mintTo` function, the code to make a
+contract execution API request and mint the NFT is automatically generated. Make
+sure to select your preferred wallet type and code generated, in this case,
+select a Developer Controlled wallet and Shell to create a cURL request example.
+
+mintTo function parameters:
+
+1. **\_to:** The wallet address that the NFT will be minted to. In this case,
+   use the wallet address of the wallet you deployed the contract from.
+   Ultimately, this can be any wallet on-chain.
+2. **\_uri:** A distinct Uniform Resource Identifier (URI) for a given asset.
+   This can be a IPFS CID, a CDN URI or any other resource identifier.
+
+As a result of plugging these parameters in, you will be provided with a code
+block similar to the one below. Once copied to your preferred API client, add
+your `walletId` and `entitySecretCiphertext` to the API request.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.createContractExecutionTransaction({
+  walletId: "<WALLET_ID>",
+  abiFunctionSignature: "mintTo(address,string)",
+  abiParameters: [
+    "0x6E5eAf34c73D1CD0be4e24f923b97CF38e10d1f3",
+    "ipfs://bafkreibdi6623n3xpf7ymk62ckb4bo75o3qemwkpfvp5i25j66itxvsoei",
+  ],
+  contractAddress: "0xf7761519cf2d84c31f634e249790b4757c10a103",
+  fee: {
+    type: "level",
+    config: {
+      feeLevel: "MEDIUM",
+    },
+  },
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.TransactionsApi(client)
+try:
+    request = developer_controlled_wallets.CreateContractExecutionTransactionForDeveloperRequest.from_dict({
+        "walletId": '<WALLET_ID>',
+        "abiFunctionSignature": 'mintTo(address,string)',
+        "abiParameters": [
+          '0x6E5eAf34c73D1CD0be4e24f923b97CF38e10d1f3',
+          'ipfs://bafkreibdi6623n3xpf7ymk62ckb4bo75o3qemwkpfvp5i25j66itxvsoei'
+        ],
+        "contractAddress": '0xf7761519cf2d84c31f634e249790b4757c10a103',
+        "feeLevel": 'MEDIUM',
+    })
+    resposne = api_instance.create_developer_transaction_contract_execution(request)
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->create_developer_transaction_contract_execution: %s\n" % e)
+```
+
+```shell
+curl --request POST \
+  --url https://api.circle.com/v1/w3s/developer/transactions/contractExecution \
+  --header 'authorization: Bearer <API_KEY>' \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{
+    "abiFunctionSignature": "mintTo(address,string)",
+    "abiParameters": [
+        "0x6E5eAf34c73D1CD0be4e24f923b97CF38e10d1f3",
+        "ipfs://bafkreibdi6623n3xpf7ymk62ckb4bo75o3qemwkpfvp5i25j66itxvsoei"
+    ],
+    "idempotencyKey": "a8350bbe-98b1-4204-aadd-385865530c79",
+    "contractAddress": "0xf7761519cf2d84c31f634e249790b4757c10a103",
+    "feeLevel": "MEDIUM",
+    "walletId": "<WALLET_ID>",
+    "entitySecretCiphertext": "<ENTITY_SECRET_CIPHERTEXT>"
+}'
+```
+
+</CodeGroup>
+
+**Note** that the address of the `walletId` must have the `MINTER_ROLE` on the
+contract to mint an NFT. Make sure you use the appropriate `walletId`.
+
+```json
+{
+  "data": {
+    "id": "601a0815-f749-41d8-b193-22cadd2a8977",
+    "state": "INITIATED"
+  }
+}
+```
+
+<Note>
+**Transaction Processing**
+
+A successful API response indicates that the `mintTo` transaction has been
+initiated but does not guarantee that the deployment will be successful.
+
+</Note>
+
+To validate that your contract has deployed successfully, make a request to
+[`GET /transactions/{id}`](/api-reference/wallets/developer-controlled-wallets/get-transaction)
+providing the ID of the transaction received in the response above.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleDeveloperSdk.getTransaction({
+  id: "601a0815-f749-41d8-b193-22cadd2a8977",
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = developer_controlled_wallets.TransactionsApi(client)
+
+try:
+    resposne = api_instance.get_transaction(id='601a0815-f749-41d8-b193-22cadd2a8977')
+    print(resposne)
+except developer_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
+```
+
+```curl
+curl --request GET \
+     --url https://api.circle.com/v1/w3s/transactions/{id} \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <API_KEY>'
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "data": {
+    "transaction": {
+      "id": "601a0815-f749-41d8-b193-22cadd2a8977",
+      "blockchain": "MATIC-AMOY",
+      "state": "COMPLETE",
+      ...
+      [other fields truncated]
+    }
+  }
+}
+```
+
+Once the transaction is complete, the receiver - the `_to` address that you
+previously specified - will now be able to use and interact with the minted NFT.
+
+Congratulations, you have deployed a smart contract and minted an NFT!
+
+## Next steps
+
+1. Learn how to mint NFTs via the
+   [Console](/contracts/deploy-smart-contract-template#console-ui-path).
+2. Deploy a Token or Multi-Token contract.

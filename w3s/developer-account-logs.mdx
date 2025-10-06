@@ -1,0 +1,56 @@
+---
+title: Developer Account Logs
+description: ''
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+## View API log entries in the Developer Services Console
+
+API logs enable you to view your API transaction history and debug API errors
+with no setup required. When an API request is sent, Circle stores it along with
+its associated response.
+
+On the API logs page, you can view logs for up to seven days and filter them to
+find the specific request you are looking for. Go to your
+[Developer Services Console](https://console.circle.com/) to access the logs and
+click **Logs**.
+
+<Frame>
+  <img src="/w3s/images/devcon-dal-logs01.png" />
+</Frame>
+
+## API Log Data Elements
+
+For each API request and response Circle will store the following information.
+
+| **Field**     | **Description**                                                                                                   |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- |
+| HTTP Status   | HTTP status code for each request, such as `200` or `400`.                                                        |
+| Path          | The path of the resource (excludes the base URL).                                                                 |
+| Request ID    | The `X-Request-Id` field in the request header or returned in the response.                                       |
+| User Agent    | The `User-Agent` field in the request header. Commonly, the HTTP library used will provide this field by default. |
+| Idempotency   | Idempotency key that was sent in the request body. This is only found in POST requests.                           |
+| Origin        | Includes the protocol (HTTP/HTTPS), the domain or IP address, and the port number if applicable.                  |
+| Time          | Timestamp of when the request was received.                                                                       |
+| Request Body  | The full request body.                                                                                            |
+| Response Body | The full response body.                                                                                           |
+
+## API Log Filtering
+
+To filter your search, use the search fields and popup menus at the top of the
+Circle Developer account page.
+
+<Frame>
+  <img src="/w3s/images/3406391-API_Log_Filters.png" />
+</Frame>
+
+| **Filter Name** | **Description**                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Search          | Filter by request ID, resource ID or idempotency key ID.                                                                               |
+| Date Range      | Filter results by date range.                                                                                                          |
+| Status          | Filter results by successful and/or failed requests. Succeeded includes all `2##` codes and failed includes all `4##` and `5##` codes. |
+| Method          | Filter results by HTTP method. Supports `POST`, `PUT`, `PATCH`, `DELETE` and `GET`.                                                    |
+| Path            | Filter results by the URL path, such as `/transactions`.                                                                               |

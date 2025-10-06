@@ -1,0 +1,86 @@
+---
+title: CCTP Block Confirmations
+description: Block confirmation requirements for attestations by chain
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Block Confirmations"
+---
+
+{/* prettier-ignore-start */}
+
+Before signing an attestation for a source chain event, Circle waits for a
+specified number of onchain block confirmations to achieve
+<Glossary term="hard finality" />.
+
+{/* prettier-ignore-end */}
+
+The tables below show the average time required for an attestation to become
+available after fast and standard messages are emitted onchain, respectively.
+
+<Note>
+**Note:** These values are subject to change.
+</Note>
+
+## CCTP V2 Fast Message Attestation Times
+
+| Source Chain    | Number of Blocks | Average Time |
+| --------------- | ---------------- | ------------ |
+| **Ethereum**    | 2                | ~20 seconds  |
+| **Arbitrum**    | 1                | ~8 seconds   |
+| **Base**        | 1                | ~8 seconds   |
+| **Codex**       | 1                | ~8 seconds   |
+| **Ink**         | 1                | ~8 seconds   |
+| **Linea**       | 1                | ~8 seconds   |
+| **OP Mainnet**  | 1                | ~8 seconds   |
+| **Plume**       | 1                | ~8 seconds   |
+| **Solana**      | 2-3\*            | ~8 seconds   |
+| **Unichain**    | 1                | ~8 seconds   |
+| **World Chain** | 1                | ~8 seconds   |
+
+## CCTP V2 Standard Message Attestation Times
+
+| Source Chain        | Number of Blocks | Average Time        |
+| ------------------- | ---------------- | ------------------- |
+| **Ethereum**        | ~65\*            | ~13 to 19 minutes\* |
+| **Arbitrum**        | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Avalanche**       | 1                | ~8 seconds          |
+| **Base**            | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **BNB Smart Chain** | 3                | ~2 seconds          |
+| **Codex**           | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **HyperEVM**        | 1                | ~5 seconds          |
+| **Ink**             | ~65 ETH blocks\* | ~30 minutes\*       |
+| **Linea**           | 1                | ~6 to 32 hours\*\*  |
+| **OP Mainnet**      | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Plume**           | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Polygon PoS**     | ~2-3             | ~8 seconds          |
+| **Sei**             | 1                | ~5 seconds          |
+| **Solana**          | 32               | ~25 seconds         |
+| **Sonic**           | 1                | ~8 seconds          |
+| **Unichain**        | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **World Chain**     | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **XDC**             | 3                | ~10 seconds         |
+
+<Note>
+**Block confirmations for L2s to Ethereum**
+
+Layer 2 (L2) blockchains publish transaction data in batches to Ethereum L1,
+and the frequency of these posts varies by chain. Most OP Stack-based chains,
+including Codex, post state updates using EIP-4844 blob transactions
+approximately every ~15 minutes. After a batch is posted, Circle waits for the
+Ethereum L1 block containing the batch to finalize, which typically happens
+after \~65 blocks (13 to 19 minutes), before issuing an attestation.
+
+**Hard finality for Linea**
+
+The typical time before hard finality on Linea is 6-32 hours.
+
+**Finality for Solana**
+
+For Solana Standard Messages, Circle waits for block finality before
+attesting. This takes 32 blocks. For Fast Messages, Circle only waits for the
+block to be confirmed, meaning the block has received votes from validators
+representing over two-thirds of the total stake. This typically takes 2-3
+blocks.
+</Note>

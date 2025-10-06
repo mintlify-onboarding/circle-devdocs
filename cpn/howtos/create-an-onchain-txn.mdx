@@ -1,0 +1,110 @@
+---
+title: "How-to: Create an Onchain Transaction"
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Create an Onchain Transaction"
+---
+
+When a payment is in the `CRYPTO_FUNDS_PENDING` state, the OFI must initiate an
+onchain transaction to fulfill the payment in USDC. CPN provides an API to help
+prepare and validate the onchain transaction call data, and to broadcast the
+transaction and monitor its state.
+
+## Steps
+
+Use the following steps to create and broadcast a USDC transfer to the
+blockchain:
+
+### Step 1: Prepare the call data
+
+Call the
+[create transaction](/api-reference/cpn/cpn-platform/create-transaction)
+endpoint to get an unsigned message object. Note that transaction objects differ
+between EVM blockchains and Solana.
+
+The API call must include the sender wallet information (which must be an EOA
+wallet). The rest of the transaction data such as amount, chain, destination
+address, and other information is populated automatically by CPN using the
+payment record.
+
+### Step 2: Create and sign the transaction
+
+Review the unsigned message object and ensure that it matches your expectations
+for the crypto transaction. Depending on the blockchain, the signing process
+varies.
+
+#### EVM
+
+When the unsigned data has been confirmed, you must sign it in accordance with
+[EIP-712](https://eips.ethereum.org/EIPS/eip-712). Next, you construct an
+[EIP-3009](https://eips.ethereum.org/EIPS/eip-3009) transaction from the signed
+data:
+
+1. **Extract the signature**. Extract the signature components (`v`, `r`, `s`)
+   from the signed typed data.
+2. **Encode the function call**. Using the ERC-20 smart contract's ABI for the
+   `TransferWithAuthorization` function, encode the function call with the
+   required parameters: sender address (`from`), recipient address (`to`),
+   `validAfter`, `validBefore`, `nonce`, and the signature components, `v`, `r`,
+   `s`. This encoding creates the data field for the raw transaction.
+3. **Construct the transaction object**. Build a raw transaction object that
+   includes the target contract address (USDC), the encoded function call data,
+   and other necessary parameters such as nonce, gas limit, max fee per gas, max
+   priority fee per gas, and chain ID.
+4. **Serialize the transaction**. Serialize the transaction object into the
+   proper RLP-encoded format so that it can be signed.
+
+The following is an example of the transaction object in
+[EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) format, for EIP-3009
+`TransferWithAuthorization` contract execution.
+
+```json
+{
+  "to": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+  "value": "0x0",
+  "gasLimit": "0x5208",
+  "maxPriorityFeePerGas": "0x59682f00",
+  "maxFeePerGas": "0x59682f00",
+  "nonce": "0x8",
+  "chainId": 1,
+  "type": "0x2",
+  "data": "0xe3ee160e000000000000000000000000a9d56270e9fd76be802ac4d45ef4be4322fdadbc0000000000000000000000006840c9f894b6b8264292e22b8abb2c57ae3946a700000000000000000000000000000000000000000000000000000000000f424000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000067ca8f131e790e4b5e8d2f801f12bdd8e8a9fcab490305f17a59a1620549791985617c36000000000000000000000000000000000000000000000000000000000000001cc8973666e8460a153a5a073a7a2878a4e6f42be09ffe012a04d342f2a729019b769e46ab7fefb0dadf8a6d0dd83a687d6dfcdfaf1c56af190eaaff8252e5929e"
+}
+```
+
+Sign this transaction data and move on to the next step.
+
+#### Solana
+
+On Solana, the transfer data follows Solana's `Ed2559` transaction format. After
+confirming the unsigned data, a transaction object is constructed with the
+transfer data. You sign the transaction object and submit it to the API.
+
+<Note>
+**Note:** Once signed, Solana transaction objects expire after one minute, so
+you should submit it immediately.
+</Note>
+
+### Step 3: Submit the signed transaction
+
+Call the
+[submit transaction](/api-reference/cpn/cpn-platform/submit-transaction)
+endpoint to submit the signed transaction data to CPN. CPN broadcasts the
+transaction and provides a webhook to notify you of the transaction status. This
+webhook is also provided to the BFI.
+
+Once the BFI confirms that they have received the desired amount for the
+payment, the BFI initiates the fiat payment.
+
+#### Handling failures
+
+If a transaction fails and the payment is still valid (for example, it has not
+expired), you can address the issues with the transaction and initiate a new
+transaction. For example, if there was not enough gas to cover the transaction,
+you could deposit additional gas tokens to the wallet, and try again.
+
+Only one active transaction is allowed at a time per payment, so you can only
+initiate a new transaction once the previous one has failed.

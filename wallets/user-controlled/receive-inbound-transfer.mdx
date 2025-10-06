@@ -1,0 +1,278 @@
+---
+title: Receive an Inbound Transfer
+description:
+  Initiate a currency transfer into a user-controlled wallet you've already
+  created.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Circle Wallets provide a comprehensive developer solution to storing, sending,
+and spending Web3 digital currencies and NFTs. You or your users can manage
+asset infrastructure. Circle provides a one-stop-shop experience with all the
+tools and services to handle the complex parts, including security, transaction
+monitoring, account recovery flows, and more.
+
+Note that if you're building with the [Signing API](/wallets/signing-apis), you
+will be responsible for deposit monitoring and balance retrieval.
+
+This guide outlines initiating a currency transfer into a previously created
+user-controlled wallet. You'll learn to use Circle's sample application and how
+to make API requests via Circle's API references or cURL requests. In this
+guide, you'll find cURL requests presented inline, while API references are
+linked from the API endpoint text. You can find instructions on using it in the
+[testing via the reference pages](/w3s/api-references) guide.
+
+- As with most of our quickstarts, all API calls and transactions in this guide
+  occur within the Testnet environment; no real-world funds will be transferred.
+- If you have not yet created a user-controlled wallet, see
+  [the user-controlled wallets interactive quickstart](/interactive-quickstarts/user-controlled-wallets).
+
+## 1. Acquire a Session Token
+
+Make a request to
+[`POST /users/token`](/api-reference/w3s/user-controlled-wallets/get-user-token)
+using a previously created user ID. The `userToken` is a 60-minute session token
+to initiate requests requiring a user challenge (PIN code entry). After 60
+minutes, the session expires, and a new `userToken` must be generated via the
+same endpoint.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+// Import and configure the user-controlled wallet SDK
+const {
+  initiateUserControlledWalletsClient,
+} = require("@circle-fin/user-controlled-wallets");
+const circleUserSdk = initiateUserControlledWalletsClient({
+  apiKey: "<API_KEY>",
+});
+
+const response = await circleUserSdk.createUserToken({
+  userId: "2f1dcb5e-312a-4b15-8240-abeffc0e3463",
+});
+```
+
+```coffeescript Python SDK
+import uuid
+
+from circle.web3 import user_controlled_wallets
+from circle.web3 import utils
+
+client = utils.init_user_controlled_wallets_client(api_key="Your API KEY")
+
+# create an api instance
+api_instance = user_controlled_wallets.UsersAndPinsApi(client)
+# get user token
+try:
+    request = user_controlled_wallets.GenerateUserTokenRequest.from_dict({"userId": "<USER_ID>"})
+    response = api_instance.get_user_token(request)
+    print(response)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling UsersAndPinsApi->get_user_token: %s\n" % e)
+```
+
+```curl
+curl --request POST \
+     --url 'https://api.circle.com/v1/w3s/users/token' \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header 'authorization: Bearer <API_KEY>' \
+     --data '
+{
+  "userId": "2f1dcb5e-312a-4b15-8240-abeffc0e3463"
+}
+'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "userToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCC9.eyJkZXZlbG9wZXJFbnRpdHlFbnZpcm9ubWVudCI6IlRFU1QiLCJlbnRpdHlJZCI6IjRlMDdhOGM5LTIxOTAtNDVlNC1hNjc0LWQyMGFkNjg4MWI3YyIsImV4cCI6MTY5MDU1MjcwNywiaWF0IjoxNjkwNTQ5MTA3LCJpbnRlcm5hbFVzZXJJZCI6ImQ2ZjkzODliLWQ5MzUtNWFlYy1iOTVhLWNjNTk1NjA2YWM5NiIsImlzcyI6Imh0dHBzOi8vcHJvZ3JhbW1hYmxlLXdhbGxldC5jaXJjbGUuY29tIiwianRpIjoiMmE0YmJlMzAtZTdkZi00YmM2LThiODMtNTk0NGUyMzE2ODlkIiwic3ViIjoiZXh0X3VzZXJfaWRfOSJ9.dhfByhxZFbJx0XWlzxneadT4RQWdnxLu3FSN9ln65hCDOfavaTL1sc4h-jUR8i4zMmfdURw3FFcQIdSbm-BUg6M7FP_fp-cs9xBbNmRZa31gMd1aKdcajJ9SvlVrfUowYfGXM3VcNF8rtTFtW-gk1-KzU4u10U35XXbbMcW1moxE0Rqx_fKotDgk2VdITuuds5d5TiQzAXECqeCOCtNoDKktMkglltbnLxOaRl2ReZjGt-ctD2V0DbYNO4T_ndPSUDI6qD7dXQRed5uDcezJYoha3Qj3tFGBglEnox2Y6DWTbllqjwmfTGrU8Pr0yz4jQz7suGwmiCzHPxcpYxMzYQ",
+    "encryptionKey": "Tlcyxz7Ts9ztRLQq5+pic0MIETblYimOo2d7idV/UFM="
+  }
+}
+```
+
+## 2. Acquire the Wallet ID
+
+Make a request to
+[`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+using the `userToken` returned in Step 1 to retrieve the wallet information for
+a given user.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleUserSdk.listWallets({
+  userToken: "<USER_TOKEN>",
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = user_controlled_wallets.WalletsApi(client)
+# get user token
+try:
+    response = api_instance.list_wallets("<USER_TOKEN>")
+    print(response)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling WalletsApi->list_wallets: %s\n" % e)
+```
+
+```curl
+curl --request POST \
+     --url 'https://api.circle.com/v1/w3s/wallets' \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header 'authorization: Bearer <API_KEY>' \
+     --header 'X-User-Token: <USER_TOKEN>'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "wallets": [
+      {
+        "id": "01899cf2-d415-7052-a207-f9862157e546",
+        "state": "LIVE",
+        "walletSetId": "01899cf2-d407-7f89-b4d9-84d63573f138",
+        "custodyType": "ENDUSER",
+        "userId": "2f1dcb5e-312a-4b15-8240-abeffc0e3463",
+        "address": "0x075e62c80e55d024cfd8fd4e3d1184834461db57",
+        "addressIndex": 0,
+        "blockchain": "MATIC-AMOY",
+        "accountType": "SCA",
+        "updateDate": "2023-07-28T14:41:47Z",
+        "createDate": "2023-07-28T14:41:47Z"
+      }
+    ]
+  }
+}
+```
+
+## 3. Transfer Testnet Currency
+
+{/* prettier-ignore-start */}
+
+Transfer testnet currency from an external wallet outside the Programmable
+Wallet infrastructure into your applicable wallet `address`. The best way to
+achieve this is through the use of a <Glossary term="faucet" />. In our case, we
+will use the [USDC Faucet](https://faucet.circle.com/) to transfer USDC on
+Polygon Amoy to user wallet.
+
+{/* prettier-ignore-end */}
+
+Here is a list of reputable native token faucets for each blockchain:
+
+| Blockchain       | USDC faucet                                        | Testnet native token faucet                                                      |
+| ---------------- | -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Aptos Testnet    | [USDC on APT Faucet](https://faucet.circle.com/)   | [Aptos APT Faucet](https://aptos.dev/en/network/faucet)                          |
+| Arbitrum Sepolia | [USDC on ARB Faucet](https://faucet.circle.com/)   | [Sepolia ARB Faucet](https://www.alchemy.com/faucets/arbitrum-sepolia)           |
+| Avalanche Fuji   | [USDC on AVAX Faucet](https://faucet.circle.com/)  | [Fuji AVAX Faucet](https://core.app/en/tools/testnet-faucet/?token=C)            |
+| Base Sepolia     | [USDC on BASE Faucet](https://faucet.circle.com/)  | [Sepolia Base Faucet](https://docs.base.org/chain/network-faucets)               |
+| Ethereum Sepolia | [USDC on ETH Faucet](https://faucet.circle.com/)   | [Sepolia ETH Faucet](https://sepoliafaucet.com/)                                 |
+| Optimism Sepolia | [USDC on OP Faucet](https://faucet.circle.com/)    | [Sepolia OP Faucet](https://docs.optimism.io/app-developers/tools/build/faucets) |
+| Polygon Amoy     | [USDC on MATIC Faucet](https://faucet.circle.com/) | [Amoy MATIC Faucet](https://www.alchemy.com/faucets/polygon-amoy)                |
+| Solana Devnet    | [USDC on SOL Faucet](https://faucet.circle.com/)   | [Devnet SOL Faucet](https://faucet.solana.com/)                                  |
+| Unichain Sepolia | [USDC on UNI Faucet](https://faucet.circle.com/)   | [Sepolia UNI Faucet](https://docs.unichain.org/docs/tools/faucets)               |
+
+Once an inbound transfer is made to the address and completed, Circle sends a
+notification to a [subscribed endpoint](/wallets/webhook-notifications). The
+Webhook notification will be similar to the one below.
+
+```json Webhook Request Body
+{
+  "subscriptionId": "d4c07d5f-f05f-4fe4-853d-4dd434806dfb",
+  "notificationId": "05b3f4e5-ec27-44b8-aa40-3698577f6d92",
+  "notificationType": "transactions.inbound",
+  "notification": {
+    "id": "2f4b6bcd-a752-5d8b-996b-92e3e04bd33b",
+    "blockchain": "MATIC-AMOY",
+    "walletId": "01899cf2-d415-7052-a207-f9862157e546",
+    "tokenId": "38f2ad29-a77b-5a44-be05-8d03923878a2",
+    "userId": "2f1dcb5e-312a-4b15-8240-abeffc0e3463",
+    "destinationAddress": "0x075e62c80e55d024cfd8fd4e3d1184834461db57",
+    "amounts": ["10"],
+    "nftTokenIds": [],
+    "state": "COMPLETED",
+    "transactionType": "INBOUND",
+    "createDate": "2023-07-28T16:03:08Z",
+    "updateDate": "2023-07-28T16:06:40Z"
+  },
+  "timestamp": "2023-07-28T16:06:40.907831464Z",
+  "version": 2
+}
+```
+
+Alternatively, you can poll
+[`GET /transactions`](/api-reference/wallets/user-controlled-wallets/list-transactions)
+using the `userId` or `userToken` associated with your user.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+const response = await circleUserSdk.listTransactions({
+  userToken: "<USER_TOKEN>",
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = user_controlled_wallets.TransactionsApi(client)
+# get user token
+try:
+    response = api_instance.list_transactions("<USER_TOKEN>")
+    print(response)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
+```
+
+```curl cURL
+curl --request GET \
+     --url 'https://api.circle.com/v1/w3s/transactions' \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header 'authorization: Bearer <API_KEY>' \
+     --header 'X-User-Token: <USER_TOKEN>'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "transactions": [
+      {
+        "id": "97d22a88-6d25-5947-a7b6-61b3dc668057",
+        "blockchain": "MATIC-AMOY",
+        "tokenId": "38f2ad29-a77b-5a44-be05-8d03923878a2",
+        "walletId": "01899cf2-d415-7052-a207-f9862157e546",
+        "sourceAddress": "0x6e5eaf34c73d1cd0be4e24f923b97cf38e10d1f3",
+        "destinationAddress": "0x075e62c80e55d024cfd8fd4e3d1184834461db57",
+        "transactionType": "INBOUND",
+        "custodyType": "ENDUSER",
+        "state": "CONFIRMED",
+        "amounts": ["10"],
+        "nfts": null,
+        "txHash": "0xdd2f81a78605dcad759265c703fb2b4c507c5ea100319338422714bfcde77225",
+        "blockHash": "0x4df6092fdb868331614771ff11944b43051cf6ed1067f8cfa55e9d40ef61426b",
+        "blockHeight": 9423950,
+        "networkFee": "",
+        "firstConfirmDate": "2023-07-28T19:07:24Z",
+        "operation": "TRANSFER",
+        "userId": "2f1dcb5e-312a-4b15-8240-abeffc0e3463",
+        "abiParameters": null,
+        "createDate": "2023-07-28T19:07:34Z",
+        "updateDate": "2023-07-28T19:07:37Z"
+      }
+    ]
+  }
+}
+```

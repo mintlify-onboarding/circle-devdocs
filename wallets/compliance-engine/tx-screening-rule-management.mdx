@@ -1,0 +1,209 @@
+---
+title: Rule Management
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transaction Screening Rule Management"
+---
+
+Your transaction screening rules are the rules against which your screening
+events (embedded or address) will be evaluated. They will contain the rule
+criteria that will trigger the rule as well as the applicable or suggested
+actions for each rule if triggered. For Testnet, there are a number of default
+rules in place which you can use to test against (see
+[Testing Guide](/wallets/compliance-engine/tx-screening-testing)).
+
+<Warning>
+**Rules on Mainnet**
+
+On Mainnet, we also have a number of default rules in place as a starting point.
+However, they may not be sufficient to address your company’s compliance
+obligations and/or risk appetite. We recommend that you consult legal counsel
+when evaluating
+[compliance requirements](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/PDFs/Whitepapers/ComplianceEngine_whitepaper.pdf)
+as they relate to your unique business model and the jurisdictions in which you
+operate. Once you have done so, you can set up appropriate configurable rules to
+address your risks.
+
+</Warning>
+
+## Rule Configurations
+
+There are two types of rules for
+[Transaction Screening](/wallets/compliance-engine/tx-screening) which can be
+configured: _Restrictive Rules_ and _Alert-only Rules_.
+
+A rule consists of the following:
+
+1. **Name:** This is auto generated based on the rule criteria and actions.
+2. **Description:** This is an optional text field to provide a summary of what
+   the rule is designed to accomplish.
+3. **Actions**: What actions should be applied or suggested when a rule is
+   matched. There are two distinct rule types, _Restrictive_ and _Alert-only_,
+   for which the following actions are associated:  
+   a. **Transaction Decision**: this action allows you to prevent outgoing
+   transactions from being broadcast. It is available as a _restrictive_ rule
+   only.  
+   b. **Wallet Freeze**: this action allows you to freeze the funds in the
+   associated Circle Wallet. It is available as a _restrictive_ rule only.  
+   c. **Generate an Alert**: this action will trigger the generation of an alert
+   in your Alerts Table within the [Console](https://console.circle.com/). This
+   is optional on _restrictive_ rules but mandatory on _alert-only_ rules.
+4. **Rule Criteria**: What combination of risk signals should a rule alert on.
+   There are three unique criteria to be set with each rule:  
+   a. **Risk Category**: general categorization of the risk that has been
+   flagged for the entity in question.  
+   b. **Risk Score**: representative value for the level of risk associated with
+   the entity.  
+   c. **Risk Type**: level of exposure for the risk involved. Is the address
+   directly or indirectly associated with the risk?
+
+## Mandatory Rules
+
+There are a number of rules in place by default that have minimal configuration
+options, e.g. the ability to toggle the alert action. These rules are as
+follows:
+
+- **Circle’s Sanctions Blocklist.** This rule is in line with the mandatory
+  [Compliance Requirements](/w3s/compliance-requirements#ofac-sanctions-compliance-in-terms-of-service)
+  you must adhere to when using Circle Wallets. Wallets and transactions will be
+  restricted if they are detected sending or receiving from any OFAC-sanctioned
+  address.
+- **Your blocklist.** This rule relates to the
+  [Watchlists](/wallets/compliance-engine/tx-screening-rule-management#watchlists)
+  functionality.
+- **Frozen.** This rule is used to enforce the wallet freeze, which is applied
+  to wallets by other transaction screening rules, or via the developer console.
+- **Your allowlist.** This rule relates to the
+  [Watchlists](/wallets/compliance-engine/tx-screening-rule-management#watchlists)
+  functionality.
+
+## Configurable Rule Criteria Combinations
+
+The table below outlines all possible criteria combinations that can be used to
+create/configure rules.
+
+| Symbol | Meaning                                                                                      |
+| ------ | -------------------------------------------------------------------------------------------- |
+| ✅     | Default Combination in place on Mainnet. Configurable.                                       |
+| 🟡     | Possible Combination that can be utilized in a configurable rule.                            |
+| ❌     | Unsupported combination, a screening cannot result in this possible combination of criteria. |
+
+<br />
+
+| Risk Category       | Risk Type    | Risk Score |          |            |         |
+| ------------------- | ------------ | ---------- | -------- | ---------- | ------- |
+|                     |              | **Severe** | **High** | **Medium** | **Low** |
+| Sanctions           | Ownership    | ✅         | ❌       | ❌         | ❌      |
+| Sanctions           | Counterparty | 🟡         | ❌       | ❌         | ❌      |
+| Sanctions           | Indirect     | ❌         | 🟡       | ❌         | ❌      |
+| Terrorist Financing | Ownership    | ✅         | 🟡       | ❌         | ❌      |
+| Terrorist Financing | Counterparty | 🟡         | 🟡       | ❌         | ❌      |
+| Terrorist Financing | Indirect     | ❌         | 🟡       | 🟡         | ❌      |
+| CSAM                | Ownership    | ✅         | ❌       | ❌         | ❌      |
+| CSAM                | Counterparty | 🟡         | ❌       | ❌         | ❌      |
+| CSAM                | Indirect     | ❌         | 🟡       | ❌         | ❌      |
+| PEP                 | Ownership    | ❌         | ❌       | 🟡         | ❌      |
+| PEP                 | Counterparty | ❌         | ❌       | 🟡         | ❌      |
+| PEP                 | Indirect     | ❌         | ❌       | ❌         | 🟡      |
+| Gambling            | Ownership    | ❌         | ❌       | ❌         | ❌      |
+| Gambling            | Counterparty | ❌         | ❌       | 🟡         | ❌      |
+| Gambling            | Indirect     | ❌         | ❌       | ❌         | 🟡      |
+| Illicit Behavior    | Ownership    | 🟡         | 🟡       | 🟡         | ❌      |
+| Illicit Behavior    | Counterparty | 🟡         | 🟡       | 🟡         | ❌      |
+| Illicit Behavior    | Indirect     | ❌         | 🟡       | 🟡         | 🟡      |
+| High Risk Industry  | Ownership    | ❌         | ❌       | 🟡         | 🟡      |
+| High Risk Industry  | Counterparty | ❌         | ❌       | 🟡         | 🟡      |
+| High Risk Industry  | Indirect     | ❌         | ❌       | ❌         | 🟡      |
+| Other               | Ownership    | ❌         | 🟡       | ❌         | 🟡      |
+| Other               | Counterparty | ❌         | 🟡       | 🟡         | 🟡      |
+| Other               | Indirect     | ❌         | ❌       | 🟡         | 🟡      |
+
+## Rule Setup
+
+To create or edit a rule, follow these steps:
+
+1. **Access Settings page**: Using your credentials, log in to the Circle
+   [Console](https://console.circle.com/). From there, navigate to the
+   **Compliance Engine > Settings** section, which allows you to manage your
+   screening rules conveniently.
+2. **Choose to create or edit a rule**: Select the appropriate rule type
+   _Configurable **restrictive** rules_ or _Configurable **alert-only** rules_.
+   To edit an existing rule, select the rule in question and click the `Edit`
+   button. To add a new rule, select `Add Rule`.
+3. **Configure the rule**: Set the desired rule (_description_, _actions_, and
+   _criteria_) based on your requirements. Refer to the above
+   [possible configurations](/wallets/compliance-engine/tx-screening-rule-management#configurable-rule-criteria-combinations)
+   for clarity on the available options.
+4. **Update or create the rule**: After applying the necessary configurations,
+   select either:
+   - `Save` to modify an existing rule; or
+   - `Create Rule` button (top-right of page) to create a new rule.
+
+<VideoContent
+  url="https://circle-com.wistia.com/medias/8zs0v4po7k"
+  header="Video Tutorial: Creating a Rule in the Console"
+/>
+
+## Deactivating a Rule
+
+New rules will be created in an _active_ state by default. If you need to
+temporarily deactivate a rule, you can do so as follows:
+
+1. **Select the rule.** Using your credentials, log in to the Circle
+   [Console](https://console.circle.com/). From there, navigate to the
+   **Compliance Engine > Settings** section, select the rule you wish to change,
+   and select the `Edit` button.
+2. **Toggle the Rule Status.** Rule status is located at the bottom of the page.
+   Just toggle the Rule Status from `Active` to `Inactive`.
+3. **Save change.**
+
+<VideoContent
+  url="https://circle-com.wistia.com/medias/56v6wt5ips"
+  header="Video Tutorial: Deactivating a Rule in the Console"
+/>
+
+## Deleting a Rule
+
+If you need to permanently delete a rule, you can do so as follows:
+
+1. **Select the rule.** Using your credentials, log in to the Circle
+   [Console](https://console.circle.com/). From there, navigate to the
+   **Compliance Engine > Settings** section, select the rule you wish to change.
+2. **Delete the rule.** Select the `Delete` button twice.
+
+<VideoContent
+  url="https://circle-com.wistia.com/medias/c943p3amb9"
+  header="Video Tutorial: Deleting a Rule in the Console"
+/>
+
+## Watchlists
+
+Another method for influencing your rule configuration is via the _Watchlists_
+feature. You can influence the screening evaluations by adding blockchain
+addresses to either the _Blocklist_ or the _Allowlist_.
+
+These lists act as the inputs for two of your default rules:
+
+- _Your blocklist_ will deny any transaction where the associated address has
+  been added to your blocklist.
+- _Your allowlist_ will allow any transaction where the associated address has
+  been added to your allowlist.
+
+To add an address to either your allowlist or your blocklist:
+
+1. **Access the Watchlists page.** Using your credentials log into the Circle
+   [Console](https://console.circle.com/). Navigate to the _Watchlists_ page
+   under the _Compliance Engine_.
+2. **Choose the appropriate list.** Select the appropriate tab between
+   _Blocklist_ and _Allowlist_ for your desired outcome.
+3. **Add entry.** Select the `Add Entry` button on the top right. Enter the
+   blockchain address, choose the reason, and leave an optional note explaining
+   the addition.
+
+<VideoContent
+  url="https://circle-com.wistia.com/medias/tp1k8tryxr"
+  header="Video Tutorial: Using Watchlists in the Console"
+/>

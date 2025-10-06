@@ -1,0 +1,154 @@
+---
+title: CCTP FAQ
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "FAQ"
+---
+
+## What is CCTP?
+
+Cross-Chain Transfer Protocol (CCTP) is a permissionless onchain utility that
+facilitates USDC transfers between blockchains via native burning and minting.
+With CCTP, USDC is effectively teleported from one blockchain to another.
+
+## How does CCTP differ from lock-and-mint bridging?
+
+Lock-and-mint bridges are applications that lock a user's native USDC within a
+smart contract on a source chain and then mint a synthetic or bridged form of
+USDC on a destination chain. This process incurs additional trust assumptions
+and can result in poor UX due to the fragmentation of liquidity. In contrast,
+CCTP enables USDC to move securely 1:1 between blockchains via a native
+burn-and-mint process. The result is greater capital efficiency and unified
+liquidity with no creation of bridged forms of USDC. As a low-level primitive,
+CCTP can be embedded within existing bridge apps to replace their lock-and-mint
+functionality.
+
+## How does CCTP differ from liquidity pool bridging?
+
+Liquidity pool bridges are applications that hold large pools of USDC on a
+source chain and a destination chain in order to facilitate cross-chain swaps
+for end users. This process incurs additional trust assumptions and fees
+associated with the liquidity tied up on each chain. In contrast, CCTP enables
+USDC to move securely 1:1 between blockchains via a native burn-and-mint
+process. The result is greater capital efficiency and unified liquidity without
+the need for large pools of USDC tokens. As a low-level primitive, CCTP can be
+embedded within existing bridge apps to replace their liquidity pool
+functionality. Alternatively, CCTP could be used by the bridge provider to
+programmatically rebalance their liquidity pools behind the scenes and reduce
+operational costs.
+
+## Who is CCTP designed for?
+
+CCTP is a permissionless protocol that you can integrate into your app, bridge,
+exchange, or wallet. It provides core infrastructure for cross-chain transfers.
+
+You can use CCTP to enable advanced cross-chain functionality at faster speeds
+and enhanced composability, or continue to use standard cross-chain
+functionality at standard speeds. For details, see the [CCTP overview](/cctp).
+
+## Does CCTP require signing up with Circle?
+
+No, CCTP is permissionless, which means any developer can integrate via
+[Circle's docs](/cctp) and [GitHub repository](https://github.com/circlefin).
+
+## What are the fees associated with cross-chain transfers via CCTP?
+
+There is a gas fee charged on the source blockchain and on the destination
+blockchain. The app that integrates with CCTP is responsible for determining how
+gas fees are handled.
+
+For fast transfers, an additional fee is collected when the stablecoin is minted
+on the destination chain. The fee is based on the amount minted. For more
+information, see the
+[product fee schedule](https://help.circle.com/s/article/Cross-Chain-Transfer-Protocol-product-fee-schedule?language=en_US&category=Fees_and_Billing)
+on the Circle Help Center.
+
+## What is the Fast Transfer Allowance in CCTP?
+
+Circle's Fast Transfer Allowance uses offchain funds to overcollateralize
+supported stablecoins, enabling message attestation before finalization. This
+mechanism is only used for CCTP fast transfers, and ensures that the stablecoin
+remains fully reserved in the event of a mint for which the associated source
+chain burn is affected by a reorg.
+
+## When will CCTP be available on additional chains?
+
+CCTP is available on multiple blockchains, with more chains to be added over
+time. For the latest list, see
+[CCTP supported blockchains](/cctp/cctp-supported-blockchains).
+
+## Can a blockchain support multiple CCTP versions?
+
+Yes, CCTP versions can coexist on the same blockchain. For example, CCTP V2 and
+CCTP V1 are available on multiple chains. CCTP V2 also supports standard
+transfers, so there's no need to use a legacy version for this functionality.
+
+## Can't I use Circle Mint to move USDC across chains? What about a centralized exchange?
+
+Yes, Circle Mint is capable of moving USDC natively across chains. However,
+Circle Mint is a commercial product that is only available to qualified
+businesses approved by Circle.
+
+Centralized exchanges typically hold various native forms of USDC liquidity on
+their platforms. Users with an account at a centralized exchange can deposit
+USDC (native to a given chain) into their exchange wallet, and then withdraw
+USDC (native to a different chain) to their external wallet.
+
+In contrast, CCTP is permissionless. This means it's accessible to any developer
+to seamlessly integrate into their apps and does not require onboarding to
+Circle. End users can move USDC through a CCTP-enabled app to any supported
+blockchain at any time. Developers can also compose new onchain experiences on
+top of CCTP within their apps.
+
+## How does a given quantity of USDC burned on the source chain become successfully minted on the destination chain?
+
+When USDC is burned on the source chain, the event is automatically observed by
+Circle's Attestation Service. The app facilitating the burn of USDC is
+responsible for fetching the signed attestation from Circle, which then enables
+CCTP to mint USDC on the destination chain.
+
+## Have the CCTP smart contracts undergone security audits?
+
+Yes. The CCTP smart contracts have been independently audited by third-party
+security firms:
+
+- CCTP V2 was audited by
+  [ChainSecurity (PDF)](<https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/PDFs/ChainSecurity_Circle_CCTP_V2_audit%20(1).pdf>)
+  and
+  [OtterSec (PDF)](<https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/PDFs/public_evm_cctp_audit_final%20(2).pdf>).
+- CCTP V2 (with Standard Transfer fee switch) was audited by
+  [ChainSecurity (PDF)](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/CCTP/ChainSecurity_Circle_CCTP_audit_2025-07.pdf).
+- CCTP V1 was audited by
+  [ChainSecurity (PDF)](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/CCTP/ChainSecurity_Circle_Circle_EVM_Bridge_audit.pdf)
+  and
+  [Halborn (PDF)](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/CCTP/Circle_Internet_Financial_EVM_Bridge_Smart_Contract_Security_Audit_Report_Halborn_Final.pdf).
+
+Refer to the linked reports for detailed findings and audit results.
+
+## What happens if Circle's Attestation Service is unresponsive?
+
+While its unavailability would temporarily preclude new burn messages from being
+signed, we anticipate robust uptime and availability similar to how our existing
+minting services operate today. You can always check
+[status.circle.com](https://status.circle.com) for real-time updates on service
+availability.
+
+## How does CCTP affect existing bridged forms of USDC?
+
+CCTP has no direct impact upon existing bridged forms of USDC.
+
+## How does CCTP affect Circle's plans to launch USDC on more blockchains?
+
+Circle's plans to bring USDC natively to more blockchain networks remain the
+same and will continue to grow. We envision CCTP establishing USDC as a
+universal liquidity layer for the Internet that is accessible to all.
+
+---
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on testnet from Ethereum to Avalanche using CCTP <Icon icon="arrow-right" />](/cctp/transfer-usdc-on-testnet-from-ethereum-to-avalanche)

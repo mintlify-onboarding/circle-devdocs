@@ -1,0 +1,163 @@
+---
+title: Transfer USDC on testnet between Sui and Ethereum using CCTP V1
+description: 
+sideNav: ""
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on testnet between Sui and Ethereum"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+To get started with CCTP V1 on Sui testnet, follow the example scripts provided
+[here](https://github.com/circlefin/sui-cctp/tree/master/scripts/sui-scripts).
+The
+[Readme](https://github.com/circlefin/sui-cctp?tab=readme-ov-file#run-localnet-example-scripts)
+contains instructions for running the scripts. The examples use the
+[Sui SDK](https://www.npmjs.com/package/@mysten/sui), to transfer USDC to and
+from an address on Sui testnet and an address on an external blockchain.
+
+<Warning>
+  **Do not reuse keys** As a security measure, these scripts should only be used
+  on a testnet for testing purposes. It is not recommended to reuse private keys
+  across mainnet and testnet.
+</Warning>
+
+Summary of calling `deposit_for_burn()` (full runnable script can be found in
+the sui-cctp repository):
+
+```javascript
+// Create DepositForBurn tx
+const depositForBurnTx = new Transaction();
+
+// Split USDC to send in depositForBurn call
+const ownedCoins = await client.getAllCoins({owner: signer.toSuiAddress()})
+const usdcStruct = ownedCoins.data.find(c => c.coinType.includes(usdcId));
+if (!usdcStruct || Number(usdcStruct.balance) < USDC_AMOUNT) {
+  throw new Error("Insufficient tokens in wallet to initiate transfer.");
+}
+
+const [coin] = depositForBurnTx.splitCoins(
+  usdcStruct.coinObjectId,
+  [USDC_AMOUNT]
+);
+
+// Create the deposit_for_burn move call
+depositForBurnTx.moveCall({
+  target: `${tokenMessengerMinterId}::deposit_for_burn::deposit_for_burn`,
+  arguments: [
+    depositForBurnTx.object(coin), // Coin<USDC>
+    depositForBurnTx.pure.u32(DESTINATION_DOMAIN), // destination_domain
+    depositForBurnTx.pure.address(evmUserAddress), // mint_recipient
+    depositForBurnTx.object(tokenMessengerMinterStateId), // token_messenger_minter state
+    depositForBurnTx.object(messageTransmitterStateId), // message_transmitter state
+    depositForBurnTx.object("0x403"), // deny_list id, fixed address
+    depositForBurnTx.object(treasuryId) // treasury object Treasury<USDC>
+  ],
+  typeArguments: [`${usdcId}::usdc::USDC`],
+});
+
+// Broadcast the transaction
+console.log("Broadcasting sui deposit_for_burn tx...");
+const depositForBurnOutput = await executeTransactionHelper({
+  client: client,
+  signer: signer,
+  transaction: depositForBurnTx,
+});
+assert(!depositForBurnOutput.errors);
+console.log(`deposit_for_burn transaction successful: 0x${depositForBurnOutput.digest} \n`);
+
+// Get USDC balance changes (optional)
+const suiUsdcBalanceChange = depositForBurnOutput.balanceChanges?.find(b => b.coinType.includes(usdcId))
+const balances = await client.getAllBalances({ owner: signer.toSuiAddress() });
+const usdcBalance = balances.find(b => b.coinType.includes(usdcId))?.totalBalance;
+
+// Get the message emitted from the tx
+const messageRaw: Uint8Array = (depositForBurnOutput.events?.find((event) =>
+  event.type.includes("send_message::MessageSent")
+)?.parsedJson as any).message;
+const messageBuffer = Buffer.from(messageRaw);
+const messageHex = `0x${messageBuffer.toString("hex")}`;
+const messageHash = web3.utils.keccak256(messageHex);
+console.log(`Message hash: ${messageHash}`);
+```
+
+Summary of calling `receive_message()` (full runnable script can be found in the
+sui-cctp repository):
+
+```javascript
+// Create receiveMessage transaction
+const receiveMessageTx = new Transaction();
+
+// Add receive_message move call to MessageTransmitter
+const [receipt] = receiveMessageTx.moveCall({
+  target: `${messageTransmitterId}::receive_message::receive_message`,
+  arguments: [
+    receiveMessageTx.pure.vector(
+      "u8",
+      Buffer.from(evmBurnTx.message.replace("0x", ""), "hex"),
+    ), // message as byte array
+    receiveMessageTx.pure.vector(
+      "u8",
+      Buffer.from(attestation.replace("0x", ""), "hex"),
+    ), // attestation as byte array
+    receiveMessageTx.object(messageTransmitterStateId), // message_transmitter state
+  ],
+});
+
+// Add handle_receive_message call to TokenMessengerMinter with Receipt from receive_message call
+const [stampReceiptTicketWithBurnMessage] = receiveMessageTx.moveCall({
+  target: `${tokenMessengerMinterId}::handle_receive_message::handle_receive_message`,
+  arguments: [
+    receipt, // Receipt object returned from receive_message call
+    receiveMessageTx.object(tokenMessengerMinterStateId), // token_messenger_minter state
+    receiveMessageTx.object("0x403"), // deny list, fixed address
+    receiveMessageTx.object(treasuryId), // usdc treasury object Treasury<T>
+  ],
+  typeArguments: [`${usdcId}::usdc::USDC`],
+});
+
+// Add deconstruct_stamp_receipt_ticket_with_burn_message call
+const [stampReceiptTicket] = receiveMessageTx.moveCall({
+  target: `${tokenMessengerMinterId}::handle_receive_message::deconstruct_stamp_receipt_ticket_with_burn_message`,
+  arguments: [stampReceiptTicketWithBurnMessage],
+});
+
+// Add stamp_receipt call
+const [stampedReceipt] = receiveMessageTx.moveCall({
+  target: `${messageTransmitterId}::receive_message::stamp_receipt`,
+  arguments: [
+    stampReceiptTicket, // Receipt ticket returned from deconstruct_stamp_receipt_ticket_with_burn_message call
+    receiveMessageTx.object(messageTransmitterStateId), // message_transmitter state
+  ],
+  typeArguments: [
+    `${tokenMessengerMinterId}::message_transmitter_authenticator::MessageTransmitterAuthenticator`,
+  ],
+});
+
+// Add complete_receive_message call to MessageTransmitter with StampedReceipt from stamp_receipt call.
+// Receipt and StampedReceipt are Hot Potatoes so they must be destroyed for the
+// transaction to succeed.
+receiveMessageTx.moveCall({
+  target: `${messageTransmitterId}::receive_message::complete_receive_message`,
+  arguments: [
+    stampedReceipt, // Stamped receipt object returned from handle_receive_message call
+    receiveMessageTx.object(messageTransmitterStateId), // message_transmitter state
+  ],
+});
+
+// Broadcast the transaction
+console.log("Broadcasting Sui receive_message tx...");
+const receiveMessageOutput = await executeTransactionHelper({
+  client: client,
+  signer: signer,
+  transaction: receiveMessageTx,
+});
+```
+
+<br />
+**WHAT'S NEXT**
+
+- [Transfer USDC on testnet between Aptos and Base using CCTP V1 <Icon icon="arrow-right" />](/cctp/v1/transfer-usdc-on-testnet-from-aptos-to-base)

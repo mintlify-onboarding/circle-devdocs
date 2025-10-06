@@ -1,0 +1,184 @@
+---
+title: "Quickstart: Set up a USDC trustline on XRPL"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Set up a USDC trustline on XRPL"
+---
+
+This guide shows you how to set up a trustline for USDC on the XRPL Testnet
+using TypeScript. You’ll use the XRPL JavaScript SDK to:
+
+- Create and fund a wallet
+- Establish a trustline with the USDC issuer
+- Prepare the wallet to receive USDC
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+
+- [Node.js 16 or later](https://nodejs.org/)
+- A terminal or code editor
+
+## Part 1: Set up your project
+
+Perform the following steps to set up your project.
+
+### 1.1. Create a project directory
+
+Run the following commands to create and initialize your project:
+
+```shell
+mkdir xrpl-usdc-trustline
+cd xrpl-usdc-trustline
+npm init -y
+```
+
+### 1.2. Install dependencies
+
+Run the following command to install the required libraries:
+
+```shell
+npm i xrpl typescript ts-node
+```
+
+## Part 2: Configure your project
+
+Perform the following steps to configure your project.
+
+### 2.1. Update the `package.json` file
+
+Open your `package.json` file and make the following updates:
+
+- Remove the `"type": "commonjs"` line if it was automatically added.
+- Add or update the `start` script to use `ts-node` to run your `main.ts` file.
+
+Your updated `package.json` should look similar to the following:
+
+```json package.json
+{
+  "name": "xrpl-usdc-trustline",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "xrpl": "^4.2.5"
+  }
+}
+```
+
+### 2.2. Add a `tsconfig.json` file
+
+Create a `tsconfig.json` file with the following configuration:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./"
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+## Part 3: Write your app code
+
+Create a `main.ts` file and paste the following code:
+
+```ts
+import {
+  Client,
+  IssuedCurrencyAmount,
+  TransactionMetadata,
+  TrustSetFlags,
+  Wallet,
+} from "xrpl";
+
+const USDC: IssuedCurrencyAmount = {
+  currency: "5553444300000000000000000000000000000000",
+  issuer: "rHuGNhqTG32mfmAvWA8hUyWRLV3tCSwKQt",
+  value: "1000000000",
+};
+
+async function main() {
+  const client = new Client("wss://s.altnet.rippletest.net:51233");
+  await client.connect();
+
+  try {
+    // Creating and funding a user wallet
+    console.log("Creating and funding a user wallet...");
+    const userWallet = Wallet.generate();
+    await client.fundWallet(userWallet);
+
+    console.log("======= User wallet details =======");
+    console.log("Address:", userWallet.address);
+    console.log("Seed:", userWallet.seed);
+    console.log("NOTE: DO NOT SHARE THE SEED WITH ANYONE!");
+    console.log("===================================");
+    console.log("");
+
+    // Creating a trustline for USDC
+    console.log("Creating a trustline for USDC...");
+    const response = await client.submitAndWait(
+      {
+        TransactionType: "TrustSet",
+        Account: userWallet.address,
+        LimitAmount: USDC,
+        Flags: TrustSetFlags.tfSetNoRipple,
+      },
+      { autofill: true, wallet: userWallet },
+    );
+
+    if (
+      response.result.validated &&
+      (response.result.meta as TransactionMetadata).TransactionResult !==
+        "tesSUCCESS"
+    ) {
+      throw new Error(`Transaction failed: ${JSON.stringify(response)}`);
+    }
+
+    console.log(
+      `Transaction succeeded: https://testnet.xrpl.org/transactions/${response.result.hash}`,
+    );
+
+    // Receiving USDC
+    console.log("Receiving USDC...");
+  } finally {
+    await client.disconnect();
+  }
+}
+
+main().catch(console.error);
+```
+
+## Part 4: Run your application
+
+Run the following from your project folder:
+
+```shell
+npm start
+```
+
+After you run the script, the terminal should display your wallet's public
+address, the wallet seed, and a transaction link that confirms the successful
+creation of the trustline. Your wallet is now ready to receive USDC on the XRPL
+Testnet.

@@ -1,0 +1,150 @@
+---
+title: Blockchain Confirmations
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+## "Reorgs" and associated risks
+
+Transactions in a blockchain are packaged into blocks. Different blockchains
+have different rules for how to decide which transactions get packaged into a
+block, but they often include rules for invalidating recently generated blocks.
+
+This rewrite of history is called a "reorganization" ("reorg" for short) and
+invalidates any transactions included in the invalidated blocks. You can think
+of invalidated transactions that moved funds as transactions that "never
+happened".
+
+Such events can represent a security risk, because an attacker could use a
+cryptocurrency transfer as payment for a good or service, and subsequently
+trigger a reorg, thus invalidating his transfer (and getting his cryptocurrency
+back) while keeping the good or service he paid for.
+
+## Confirmations
+
+To protect against reorg attacks, it's beneficial to wait for a number of
+confirmed blocks before recognizing a transfer as final. As more blocks are
+processed after a given block, the difficulty with which that block may be
+invalidated increases. Therefore, by choosing how many blocks to wait before
+recognizing a transfer, a receiver is able to balance speed (waiting very few
+blocks in order to process the transfer quickly while taking on risk of losing
+money due to a reorg) and security (waiting more blocks to minimize the risk of
+a reorg at the cost of slower transfer processing).
+
+The number of blocks you wait before considering a transfer as final is called
+the "confirmation number", which is typically different for different chains.
+Circle Mint and its APIs use the following confirmation numbers for each
+supported chain. They are based on a variety of factors that Circle has
+considered, including a given chain's historical performance, reorganizations,
+and overall architecture, and they do not reflect the blockchain networks'
+inherent requirements or limits.
+
+| Chain                                                                                                                                                                                                                                            | Confirmations/Blocks | Approximate Time  |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- | :---------------- |
+| Algorand ([USDC](https://explorer.perawallet.app/asset/31566704))                                                                                                                                                                                | **1**                | ~3 seconds        |
+| Aptos ([USDC](https://explorer.aptoslabs.com/fungible_asset/0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b?network=mainnet))                                                                                                 | **1**                | ~500 milliseconds |
+| Arbitrum ([USDC](https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831))                                                                                                                                                          | **300**              | ~3 minutes        |
+| Avalanche ([USDC](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E), [EURC](https://snowtrace.io/token/0xc891eb4cbdeff6e073e859e987815ed1505c2acd))                                                                         | **1**                | ~2 seconds        |
+| Base ([USDC](https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913), [EURC](https://basescan.org/token/0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42))                                                                              | **12 ETH Blocks**    | ~3 to 9 minutes   |
+| Celo ([USDC](https://celoscan.io/token/0xcebA9300f2b948710d2653dD7B07f33A8B32118C))                                                                                                                                                              | **65 ETH Blocks**    | ~13 to 19 minutes |
+| Codex ([USDC](https://explorer.codex.xyz/address/0xd996633a415985DBd7D6D12f4A4343E31f5037cf))                                                                                                                                                    | **65 ETH Blocks**    | ~13 to 19 minutes |
+| Ethereum ([USDC](https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48), [EURC](https://etherscan.io/token/0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c))                                                                          | **12**               | ~3 minutes        |
+| Flow (USDC)\*                                                                                                                                                                                                                                    | -                    | -                 |
+| Hedera ([USDC](https://app.dragonglass.me/hedera/tokens/0.0.456858))                                                                                                                                                                             | N/A                  | ~3 seconds        |
+| HyperEVM ([USDC](https://hyperscan.com/token/0xb88339CB7199b77E23DB6E890353E22632Ba630f))                                                                                                                                                        | **1**                | \<1 second        |
+| Ink ([USDC](https://explorer.inkonchain.com/address/0x2D270e6886d130D724215A266106e6832161EAEd))                                                                                                                                                 | **65 ETH Blocks**    | ~60 minutes       |
+| Linea ([USDC](https://lineascan.build/token/0x176211869ca2b568f2a7d4ee941e073a821ee1ff))                                                                                                                                                         | **65 ETH Blocks**    | ~6 to 32 hours    |
+| NEAR ([USDC](https://nearblocks.io/token/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1))                                                                                                                                      | **1**                | ~2 seconds        |
+| Noble ([USDC](http://mintscan.io/noble/assets))                                                                                                                                                                                                  | **1**                | ~1.53 seconds     |
+| OP Mainnet ([USDC](https://optimistic.etherscan.io/token/0x0b2c639c533813f4aa9d7837caf62653d097ff85))                                                                                                                                            | **12 ETH Blocks**    | ~3 to 9 minutes   |
+| Plume ([USDC](https://explorer.plume.org/address/0x222365EF19F7947e5484218551B56bb3965Aa7aF))                                                                                                                                                    | **65 ETH Blocks**    | ~30 minutes       |
+| Polkadot Asset Hub ([USDC](https://assethub-polkadot.subscan.io/assets/1337))                                                                                                                                                                    | **1**                | ~12 seconds       |
+| Polygon PoS ([USDC](https://polygonscan.com/token/0x3c499c542cef5e3811e1192ce70d8cc03d5c3359))                                                                                                                                                   | **50**               | ~2 minutes        |
+| Sei ([USDC](https://seitrace.com/address/0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392?chain=pacific-1))                                                                                                                                            | **1**                | ~400 milliseconds |
+| Solana ([USDC](https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v), [EURC](https://explorer.solana.com/address/HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr))                                                                 | **1**                | ~400 milliseconds |
+| Sonic ([USDC](https://sonicscan.org/token/0x29219dd400f2bf60e5a23d13be72b486d4038894))                                                                                                                                                           | **1**                | ~1 second         |
+| Stellar ([USDC](https://stellar.expert/explorer/public/asset/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN), [EURC](https://stellar.expert/explorer/public/asset/EURC-GDHU6WRG4IEQXM5NZ4BMPKOXHW76MZM4Y2IEMFDVXBSDP6SJY4ITNPP2)) | **1**                | ~5 seconds        |
+| Sui ([USDC](https://suiscan.xyz/mainnet/coin/0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC/txs))                                                                                                                | **1**                | ~500 milliseconds |
+| TRON (USDC)\*\*                                                                                                                                                                                                                                  | **19**               | ~1 minute         |
+| Unichain ([USDC](https://uniscan.xyz/token/0x078d782b760474a361dda0af3839290b0ef57ad6))                                                                                                                                                          | **12 ETH Blocks**    | ~3 to 9 minutes   |
+| World Chain ([USDC](https://worldscan.org/address/0x79A02482A880bCe3F13E09da970dC34dB4cD24D1))                                                                                                                                                   | **65 ETH Blocks**    | ~13 to 19 minutes |
+| XDC ([USDC](https://xdcscan.com/address/0xfA2958CB79b0491CC627c1557F441eF849Ca8eb1))                                                                                                                                                             | **3**                | ~6 seconds        |
+| XRPL ([USDC](https://livenet.xrpl.org/token/5553444300000000000000000000000000000000.rGm7WCVp9gb4jZHWTEtGUr4dd74z2XuWhE))                                                                                                                        | **1**                | ~5 seconds        |
+| ZKsync Era ([USDC](https://explorer.zksync.io/address/0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4))                                                                                                                                               | **65 ETH Blocks**    | ~5 to 7 hours     |
+
+<Warning>
+**Flow** (\*)
+
+Effective Sept 3, 2024 - Circle is discontinuing support for USDC on Flow. For
+details, see
+[Circle is Discontinuing Support for USDC on the Flow (Cadence) blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-flow-cadence-due-to-the-chains-upcoming-network-upgrade).
+
+**TRON** (\*\*)
+
+Effective Feb. 20, 2024 - Circle is discontinuing support for USDC on Tron.
+Withdrawals deprecated. For details, see
+[Circle is Discontinuing Support for USDC on the TRON blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-the-tron-blockchain).
+
+</Warning>
+
+<Note>
+**Linea and ZKsync**
+
+Finality is reached approximately 65 Ethereum blocks after the proof for the
+batch is posted to Ethereum L1.
+
+**OP Stack Chains**
+
+These Layer 2 (L2) rollup chains are built on the OP Stack and post periodic
+batched transaction data to Layer 1 (L1) Ethereum for security. Circle
+recognizes transaction finality on these networks only after the batch has
+been submitted to Ethereum and received the required number of confirmations.
+You can view transactions using L2 block explorers such as
+[BaseScan](https://basescan.org) and
+[Optimistic Etherscan](https://optimistic.etherscan.io/), even while Circle is
+still processing finality.
+
+**Hedera**
+
+Hedera is built on a hashgraph rather than a blockchain. For this reason,
+there isn't a count of confirmations/blocks before Circle determines the
+transfer to be valid. Instead, this determination is performed on Hedera
+directly and is then shared back to Circle. Please see the following link to
+learn more about [Hedera consensus](https://hedera.com/how-it-works).
+
+**Polygon PoS**
+
+Circle's platform requires 50 confirmations for transactions on Polygon PoS
+before marking them as complete, which takes ~2 minutes.
+</Note>
+
+## Confirmations and transfer status
+
+As soon as an incoming transfer is included in a block, the API will make it
+available for you (whether you poll the
+[get transfers endpoint](/api-reference/circle-mint/account/get-business-transfer)
+or subscribe to notifications). However, the transfer will have a `running`
+status and it will not credit the balance of the associated hosted wallet with
+the transfer amount until the required number of confirmations has been reached.
+
+At that point the transfer status will change to `completed`. If you have
+subscribed to notifications, you will receive a message indicating such status
+change.
+
+You might want to deem an incoming transfer completed before such a status
+change and fulfill your business process that depends on that transfer. But note
+that you will be doing so at your own risk, as you might never actually receive
+the funds in case there is a reorg before the number of confirmations has been
+reached.
+
+<Warning>
+
+Please note that waiting for confirmations before crediting a wallet only
+applies for on-chain transfers, where the `source` is of type `blockchain`.
+Transfers between hosted wallets, where the `source` is of type `wallet` do not
+require waiting on confirmations and are credited instantly.
+
+</Warning>

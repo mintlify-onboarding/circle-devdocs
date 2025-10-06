@@ -1,0 +1,1001 @@
+---
+title: Android Mobile SDK
+description:
+  Set up the client-side Android SDK for user-controlled wallets in your mobile
+  application.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The Circle Android SDK enables user-controlled wallets within your mobile
+application. Three authentication methods are supported, namely **social
+logins**, **email**, or **PIN**, which includes security questions for recovery.
+This allows you to authenticate your users in a seamless way and create
+user-controlled wallets for them.
+
+By integrating this client-side SDK, your users can securely create wallets and
+make transactions using social accounts or email. If you choose the PIN
+authentication method, your users can input sensitive data, like PINs or
+security answers, in a secure way. Moreover, the SDK encrypts the request body
+sent by the application, protecting your users' information.
+
+<Note>
+**Note:** The Web and Mobile SDKs preserve the user keyshare with the
+individual, giving them complete control. You must use the SDKs with the
+user-controlled wallet product. Additionally, the Web and Mobile SDKs support
+only the user-controlled wallet product.
+</Note>
+
+At Circle, we understand the importance of end-to-end security for your
+application and the need to create a tailored and seamless user experience for
+your end-users. Hence, Circle's SDK also exposes functionality for you to
+customize the description and layout. See the
+[Android SDK UI Customization API](/wallets/user-controlled/android-sdk-ui-customization-api)
+article to customize the SDK.
+
+## Install the SDKs
+
+The Android SDK supports Android API level 21+. Earlier versions are not
+supported.
+
+## Maven (recommended)
+
+Add the maven repository to your gradle file. It's suggested that load settings
+from `local.properties`:
+
+```gradle
+repositories {
+    ...
+    maven {
+            Properties properties = new Properties()
+            // Load local.properties.
+            properties.load(new File(rootDir.absolutePath + "/local.properties").newDataInputStream())
+
+            url properties.getProperty('pwsdk.maven.url')
+            credentials {
+                    username properties.getProperty('pwsdk.maven.username')
+                    password properties.getProperty('pwsdk.maven.password')
+        }
+    }
+}
+```
+
+Add the maven setting values in the `local.properties` file:
+
+```gradle
+pwsdk.maven.url=https://maven.pkg.github.com/circlefin/w3s-android-sdk
+pwsdk.maven.username=<GITHUB_USERNAME>
+# Fine-grained personal access tokens or classic with package write permission.
+pwsdk.maven.password=<GITHUB_PAT>
+```
+
+Add the dependency:
+
+```gradle
+dependencies {
+    implementation 'circle.programmablewallet:sdk:version'
+}
+```
+
+## Manual
+
+You can also manually set up the Android SDK by downloading it from
+[GitHub: circlefin/w3s-android-sdk](https://github.com/circlefin/w3s-android-sdk).
+
+## SDK architecture
+
+You must use Web, iOS, or Android SDKs to access the user-controlled
+Programmable Wallet product. The SDK secures, manages, and communicates with
+your server to ensure your user's keyshare, always stays with them and is not
+exposed to your servers.
+
+To learn more, see
+[SDK Architecture for User-Controlled Wallets](/wallets/user-controlled/sdk-architecture).
+
+## SDK API references
+
+## WalletSdk
+
+`object WalletSdk`
+
+| Public Methods                       |                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| @Throws(Throwable::class) <br />Unit | `init(context: Context?, config: WalletSdk.Configuration?)` <br /> <br />Configure the Circle endpoint for SDK to connect, throw Throwable if the parameters are null or endpoint and appId's format are invalid.                                                                                                                                                                  |
+| Unit                                 | `setLayoutProvider(provider: LayoutProvider?)` <br /> <br />Set a LayoutProvider derived class for customization, e.g. error code message, font and color. <br />Ignore when the parameter is null.                                                                                                                                                                                |
+| Unit                                 | `setViewSetterProvider(provider: ViewSetterProvider?)` <br /> <br />Set a ViewSetterProvider derived class for image customization.                                                                                                                                                                                                                                                |
+| @Throws(Throwable::class) <br />Unit | `setSecurityQuestions(questions: Array<SecurityQuestion?>?)` <br /> <br />Set the security question list, throw Throwable when the SecurityQuestion array is empty or contains any question whose title length is not between 2 and 512.                                                                                                                                           |
+| Unit                                 | `execute(activity: Activity?, userToken: String?, encryptionKey: String?, challengeId: Array<String?>?, callback: Callback<ExecuteResult>?)` <br /> <br />Execute the operations by challengeId and call the callback after sending the request to Circle endpoint. <br />Ignore when callback is null. <br />Callback will receive onError() when parameters are null or invalid. |
+| Unit                                 | `performLogin(activity: Activity?, provider: SocialProvider, deviceToken: String, deviceEncryptionKey: String, callback: SocialCallback<LoginResult>?)` <br /> <br />Execute Social provider login flow to get userToken, encryptionKey, refreshToken and OAuthInfo object                                                                                                         |
+| Unit                                 | `verifyOTP( activity: Activity?, otpToken: String, deviceToken: String,  deviceEncryptionKey: String, callback: Callback2<LoginResult>?)` <br /> <br />Prompt OTP input UI to verify email OTP, then get userToken, encryptionKey, and refreshToken                                                                                                                                |
+| Unit                                 | `performLogout(activity: Activity?, provider: SocialProvider, callback: LogoutCallback?)` <br /> <br />Clean login data, includes provider's data and userSecret                                                                                                                                                                                                                   |
+| String                               | `getDeviceId(context: Context?)` <br /> <br />Extract device id.                                                                                                                                                                                                                                                                                                                   |
+| Unit                                 | `addEventListener(listener: EventListener?)` <br /> <br />Register an EventListener for the app to handle events, e.g. forgot PIN. <br />Ignore when the parameter is null.                                                                                                                                                                                                        |
+| Unit                                 | `removeEventListener(listener: EventListener?)` <br /> <br />Unregister an EventListener. <br />Ignore when the parameter is null.                                                                                                                                                                                                                                                 |
+| Unit                                 | `moveTaskToFront(context: Context?)` <br /> <br />Bring the SDK UI to foreground. If the app launches another Activity in onEven() and onError() and makes the SDK UI in background, use this API to go back to the SDK UI. <br />Ignore when the parameter is null.                                                                                                               |
+| Unit                                 | `setBiometricsPin(activity: Activity?, userToken: String?, encryptionKey: String?, callback: Callback<ExecuteResult>?)` <br /> <br />Setup BiometricsForPin and call the callback after operation. <br />Ignore when callback is null. <br />Callback will receive onError() when parameters are null or invalid.                                                                  |
+| Unit                                 | `setCustomUserAgent(userAgent: String?)` <br /> <br />Set custom user agent value. <br />Ignore when the parameter is null.                                                                                                                                                                                                                                                        |
+| String                               | `sdkVersion()` <br /> <br />Get SDK version.                                                                                                                                                                                                                                                                                                                                       |
+
+### EventListener
+
+EventListener interface that receives events when an event is triggered.
+
+`interface EventListener`
+
+| Public Methods |                                                                              |
+| -------------- | ---------------------------------------------------------------------------- |
+| abstract Unit  | `onEvent(event: ExecuteEvent)` <br /> <br />Called when the event triggered. |
+
+### ExecuteEvent
+
+ExecuteEvent, see WalletSdk.addEventListener().
+
+`enum ExecuteEvent`
+
+| Enum values |
+| ----------- |
+| forgotPin   |
+| resendOtp   |
+
+### SocialProvider
+
+To specify a specific Social provider to operate on. See
+WalletSdk.performLogin() and WalletSdk.performLogout().
+
+`enum SocialProvider`
+
+| Enum values |
+| ----------- |
+| Google      |
+| Facebook    |
+| Apple       |
+
+### LoginResult
+
+LoginResult for Social login.
+
+`data class LoginResult`
+
+| Constructors                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor(userToken: String?, encryptionKey: String?, refreshToken: String?,  oauthInfo: OauthInfo?)` <br /> <br />Data structure to contain results after social login. |
+
+### OauthInfo
+
+OauthInfo for Social login.
+
+`data class OauthInfo`
+
+| Constructors                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor(provider: String?, scope: Array<String>?, socialUserUUID: String?, socialUserInfo: SocialUserInfo?)` <br /> <br />Data structure to contain relative Oauth information of social login. |
+
+### SocialUserInfo
+
+SocialUserInfo for Social login.
+
+`data class SocialUserInfo`
+
+| Constructors                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor(name: String?, email: String?, phone: String?)` <br /> <br />Data structure to contain relative user information of social login. |
+
+### WalletSdk.Configuration
+
+SDK Configuration for WalletSdk init.
+
+`data class Configuration`
+
+| Constructors                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor(endPoint: String?, appId: String?)` <br /> <br />Init with Circle endpoint. SDK will connect to this endpoint.                                                                                                       |
+| `constructor(endpoint: String?, appId: String?, settingsManagement: SettingsManagement?)` <br /> <br />Init with Circle endpoint. SDK will connect to this endpoint. The SettingsManagement can bring extra setting flags to use. |
+
+### SettingsManagement
+
+SettingsManagement is used to bring extra setting flags to Configuration that
+would be used when initial WalletSdk.
+
+`data class SettingsManagement`
+
+| Constructors                                          |
+| :---------------------------------------------------- |
+| `constructor(isEnableBiometricsPin: Boolean = false)` |
+
+| Properties |                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------- |
+| Boolean    | `isEnableBiometricsPin` <br /> <br />Flag that decides whether to use biometrics to protect PIN or not. |
+
+## LayoutProvider
+
+LayoutProvider helps perform customization during runtime.
+
+`open class LayoutProvider`
+
+| Public Methods                  |                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| open TextConfig?                | `getTextConfig(key: String)` <br /> <br />Define strings with specific configurations for general string customization. Returned TextConfig will replace strings.xml, colors.xml, and styles.xml values. <br /> <br />All keys are listed in [C Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#c-index-table---resourcekey).                                             |
+| open Array\<IconTextConfig?>?   | `getIconTextConfigs(key: Resource.IconTextsKey)` <br /> <br />Define icon and string sets with specific configurations for icon text list item customization. <br /> <br />All keys are listed in [B Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#b-index-table---resourceicontextskey).                                                                               |
+| open <br />Array\<TextConfig?>? | `getTextConfigs(key: Resource.TextsKey)` <br /> <br />Define strings with specific configurations for special text customization. <br /> <br />All keys are listed in [A Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#a-index-table---resourcetextskey).                                                                                                               |
+| open String?                    | `getErrorString(code: ApiError.ErrorCode)` <br /> <br />Define the error description. <br /> <br />All error codes are listed in ApiError.ErrorCode.                                                                                                                                                                                                                                             |
+| open String?                    | `getDateFormat()` <br /> <br />Get display date format, e.g. the answer of a security question in which inputType is datePicker. <br /> <br />Only those 3 strings are valid values: <br /> <br />1. “YYYY-MM-DD”,<br />2. “DD/MM/YYYY”<br />3. “MM/DD/YYYY” <br />If it returns an invalid value, the default value would be “YYYY-MM-DD”.All supported formats are listed Resource.DateFormat. |
+| open Boolean                    | `isDebugging()` <br /> <br />`true`: default value, check returned value, and print warn level log <br />`false`: skip checking and turn off the log.                                                                                                                                                                                                                                            |
+
+### Resource.DateFormat
+
+`interface DateFormat`
+
+| Constants |                                                                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| String    | `YYYYMMDD_HYPHEN = "YYYY-MM-DD"` <br />`DDMMYYYY_SLASH = "DD/MM/YYYY"` <br />`MMDDYYYY_SLASH = "MM/DD/YYYY"` <br /> <br />Available values of LayoutProvider.getDateFormat(). |
+
+### Resource.Key
+
+`interface Key`
+
+| Static Fields |                                                                                                     |
+| ------------- | --------------------------------------------------------------------------------------------------- |
+| String        | `circlepw_show_pin = "circlepw_show_pin"` <br />`circlepw_hide_pin = "circlepw_hide_pin"` <br />... |
+
+See
+[C Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#c-index-table---resourcekey).
+
+### TextConfig
+
+Data class for text customization.
+
+`data class TextConfig`
+
+| Constructors                                                             |
+| :----------------------------------------------------------------------- |
+| `constructor(text: String?, gradientColors: IntArray?, font: Typeface?)` |
+| `constructor(text: String?, textColor: Int, font: Typeface?)`            |
+| `constructor(text: String?)`                                             |
+
+| Properties                                                                                                                                             |                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| String?                                                                                                                                                | `text` <br /> <br />Text to display.                                                                                                                                                        |
+| [@CorlorInt](https://developer.android.com/reference/androidx/annotation/ColorInt) IntArray?                                                           | `gradientColors` <br /> <br />Array of Gradient text color. Only used by <br />`TextsKey.enterPinCodeHeadline`, <br />`TextsKey.securityIntroHeadline`, <br />`TextsKey.newPinCodeHeadline` |
+| [@CorlorInt](https://developer.android.com/reference/androidx/annotation/ColorInt) IntArray?                                                           | `textColor` <br /> <br />Text color.                                                                                                                                                        |
+| [Typeface?](<https://developer.android.com/reference/android/graphics/Typeface#createFromAsset(android.content.res.AssetManager,%20java.lang.String)>) | `font` <br /> <br />Font.                                                                                                                                                                   |
+
+### IconTextConfig
+
+Data class for icon text list item customization.
+
+`data class IconTextConfig`
+
+| Constructors                                                      |
+| :---------------------------------------------------------------- |
+| `constructor(setter: IImageViewSetter?, textConfig: TextConfig?)` |
+
+| Properties        |                                                                     |
+| ----------------- | ------------------------------------------------------------------- |
+| IImageViewSetter? | `setter` <br /> <br />The ImageView setter for image customization. |
+| TextConfig?       | `textConfig` <br /> <br />Text config for text customization.       |
+
+### Resource.TextsKey
+
+`enum TextsKey`
+
+| Enum Values                    |
+| ------------------------------ |
+| securityQuestionHeaders        |
+| securitySummaryQuestionHeaders |
+| enterPinCodeHeadline           |
+| securityIntroHeadline          |
+| newPinCodeHeadline             |
+| securityIntroLink              |
+| recoverPinCodeHeadline         |
+
+See
+[A Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#a-index-table---resourcetextskey).
+
+### Resource.IconTextsKey
+
+`enum IconTextsKey`
+
+| Enum Constants            |
+| ------------------------- |
+| securityConfirmationItems |
+
+See
+[B Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#b-index-table---resourceicontextskey).
+
+## IImageViewSetter
+
+The ImageView setter interface for image customization.
+
+`interface IImageViewSetter`
+
+| Public Methods |                                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| abstract Unit  | apply(iv: [ImageView?](https://developer.android.com/reference/android/widget/ImageView) ) <br /> <br />Called when the ImageView needs to be set. |
+
+### LocalImageSetter
+
+The implemented ImageView setter for image customization with local image.
+
+`class LocalImageSetter: IImageViewSetter`
+
+| Constructors                   |
+| :----------------------------- |
+| `constructor(drawableId: Int)` |
+
+| Properties                                                                                  |                                                        |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| @[DrawableRes](https://developer.android.com/reference/androidx/annotation/DrawableRes) Int | `drawableId` <br /> <br />The resource ID of drawable. |
+
+| Public Methods |                                                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit           | apply(iv: [ImageView](https://developer.android.com/reference/android/widget/ImageView)) <br /> <br />Set drawable to the imageView with drawableId. |
+
+### RemoteImageSetter
+
+The implemented ImageView setter for image customization with a remote image.
+
+`class RemoteImageSetter: IImageViewSetter`
+
+| Constructors                                 |
+| :------------------------------------------- |
+| `constructor(drawableId: Int)`               |
+| `constructor(drawableId: Int, url: String?)` |
+
+| Properties                                                                                  |                                                        |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| @[DrawableRes](https://developer.android.com/reference/androidx/annotation/DrawableRes) Int | `drawableId` <br /> <br />The resource ID of drawable. |
+| String                                                                                      | `url` <br /> <br />Image URL.                          |
+
+| Public Methods |                                                                                                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit           | apply(iv: [ImageView](https://developer.android.com/reference/android/widget/ImageView)) <br /> <br />Set a remote image from the URL to the ImageView. Use the drawable as the placeholder. |
+
+## IToolbarSetter
+
+The Toolbar setter interface for image customization.
+
+`interface IToolbarSetter`
+
+| Public Methods |                                                                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| abstract Unit  | apply(toolbar: [Toolbar?](https://developer.android.com/reference/androidx/appcompat/widget/Toolbar)) <br /> <br />Called when the Toolbar needs to be set. |
+
+### LocalToolbarImageSetter
+
+`class LocalToolbarImageSetter: IToolbarSetter`
+
+| Constructors                   |
+| :----------------------------- |
+| `constructor(drawableId: Int)` |
+
+| Properties                                                                                  |                                                        |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| @[DrawableRes](https://developer.android.com/reference/androidx/annotation/DrawableRes) Int | `drawableId` <br /> <br />The resource ID of drawable. |
+
+| Public Methods |                                                                                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit           | apply(toolbar: [Toolbar?](https://developer.android.com/reference/androidx/appcompat/widget/Toolbar)) <br /> <br />Set drawable as navigation icon to the Toolbar. |
+
+### RemoteToolbarImageSetter
+
+The implemented Toolbar setter for image customization with a remote image.
+
+`class RemoteToolbarImageSetter: IToolbarSetter`
+
+| Constructors                                 |
+| :------------------------------------------- |
+| `constructor(drawableId: Int)`               |
+| `constructor(drawableId: Int, url: String?)` |
+
+| Properties                                                                                  |                                                        |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| @[DrawableRes](https://developer.android.com/reference/androidx/annotation/DrawableRes) Int | `drawableId` <br /> <br />The resource ID of drawable. |
+| String?                                                                                     | `url` <br /> <br />Image URL.                          |
+
+| Public Methods |                                                                                                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit           | apply(toolbar: [Toolbar?](https://developer.android.com/reference/androidx/appcompat/widget/Toolbar)) <br />Set a remote image from the URL to the toolbar. Use drawable as the placeholder. |
+
+## ViewSetterProvider
+
+ViewSetterProvider supports performing image customization during runtime.
+
+`open class ViewSetterProvider` extends Object
+
+| Public Methods         |                                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| open IImageViewSetter? | `getImageSetter(type: Resource.Icon)` <br /> <br />Return implemented IImageViewSetter for performing general image customization. <br />e.g. LocalImageSetter, RemoteImageSetter <br /> <br />All keys are listed in [D Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#d-index-table).                                               |
+| open IToolbarSetter?   | `getToolbarImageSetter(  <br />    type: Resource.ToolbarIcon  <br />)` <br /> <br />Return implemented IToolbarSetter for performing Toolbar image customization. <br />e.g. LocalToolbarImageSetter, RemoteToolbarImageSetter <br /> <br />All keys are listed in [E Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#e-index-table). |
+
+### Resource.Icon
+
+`enum Icon`
+
+| Enum Values          |
+| -------------------- |
+| securityIntroMain    |
+| selectCheckMark      |
+| dropdownArrow        |
+| errorInfo            |
+| securityConfirmMain  |
+| biometricsAllowMain  |
+| showPin              |
+| hidePin              |
+| alertWindowIcon      |
+| swipeItemIcon        |
+| swipeBtConfirmed     |
+| transactionTokenIcon |
+| networkFeeTipIcon    |
+| requestIcon          |
+| showLessDetailArrow  |
+| showMoreDetailArrow  |
+
+[D Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#d-index-table).
+
+### Resource.ToolbarIcon
+
+`enum ToolbarIcon`
+
+| Enum Values |
+| ----------- |
+| close       |
+| back        |
+
+[E Index Table](/wallets/user-controlled/android-sdk-ui-customization-api#e-index-table)
+
+### SecurityQuestion
+
+Data class for security questions customization.
+
+See WalletSdk.setSecurityQuestions().
+
+`data class SecurityQuestion`
+
+| Constructors                                                      |
+| :---------------------------------------------------------------- |
+| constructor(title: String)                                        |
+| constructor(title: String, inputType: SecurityQuestion.InputType) |
+
+| Properties                 |                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| String                     | `title` <br /> <br />The question string.                                                   |
+| SecurityQuestion.InputType | `inputType` <br /> <br />The input type of the question. Support text input and timePicker. |
+
+### SecurityQuestion.InputType
+
+`public enum InputType`
+
+| Enum Values |
+| ----------- |
+| text        |
+| datePicker  |
+
+### Callback
+
+A generic callback interface for SDK API calls
+
+`interface Callback<R>`
+
+| Public Methods      |                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| abstract Boolean    | `onError(error: Throwable)` <br /> <br />The callback is triggered when a failure occurs in operation or is canceled by the user. <br />Return true - The app will handle the following step, SDK will keep the Activity. <br />Return false - The app won't handle the following step, SDK will finish the Activity.                                    |
+| abstract <br />Unit | `onResult(result: R)` <br /> <br />R - Type of result such as ExecuteResult <br />Callback when the operation is executed successfully. Finish the Activity after this callback is triggered.                                                                                                                                                            |
+| abstract Boolean    | `onWarning(warning: ExecuteWarning, result: R?)` <br /> <br />The callback is triggered when operation executed with warning. <br />R - Type of result such as ExecuteResult <br />Return true - App will handle the following step, SDK will keep the Activity. <br />Return false - App won't handle the following step, SDK will finish the Activity. |
+
+### Callback2
+
+The callback interface for verifyOTP()
+
+`interface Callback2<R>`
+
+| Public Methods      |                                                                                                                                                                                                                                                                                                                       |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| abstract Boolean    | `onError(error: Throwable)` <br /> <br />The callback is triggered when a failure occurs in operation or is canceled by the user. <br />Return true - The app will handle the following step, SDK will keep the Activity. <br />Return false - The app won't handle the following step, SDK will finish the Activity. |
+| abstract <br />Unit | `onResult(result: R)` <br /> <br />R - Type of result such as ExecuteResult <br />Callback when the operation is executed successfully. Finish the Activity after this callback is triggered.                                                                                                                         |
+
+### SocialCallback
+
+The callback interface for performLogin()
+
+`interface SocialCallback<R>`
+
+| Public Methods      |                                                                                                                                                                                               |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| abstract <br />Unit | `onError(error: Throwable)` <br /> <br />The callback is triggered when a failure occurs in operation or is canceled by the user.                                                             |
+| abstract <br />Unit | `onResult(result: R)` <br /> <br />R - Type of result such as ExecuteResult <br />Callback when the operation is executed successfully. Finish the Activity after this callback is triggered. |
+
+### LogoutCallback
+
+The callback interface for performLogout()
+
+`interface LogoutCallback`
+
+| Public Methods      |                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| abstract <br />Unit | `onError(error: Throwable)` <br /> <br />The callback is triggered when a failure occurs in operation or is canceled by the user. |
+| abstract <br />Unit | `onComplete()` <br /> <br />Callback when social logout operation completed.                                                      |
+
+### ExecuteWarning
+
+`enum ExcuteWarning`
+
+| Properties |                                                               |
+| ---------- | ------------------------------------------------------------- |
+| Int        | `warningType` <br /> <br />Warning type.                      |
+| String     | `warningString` <br /> <br />Description of the warning type. |
+
+| Enum Values                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- |
+| biometricsUserSkip(155711, "User skipped the setting of using biometrics to protect PIN this time.")        |
+| biometricsUserDisableForPin(155712, "User disabled the function of using biometrics to protect PIN.")       |
+| biometricsUserLockout(155713, "Too many attempts. Try again later.")                                        |
+| biometricsUserLockoutPermanent(155714, "Too many attempts. Biometrics sensor disabled.")                    |
+| biometricsUserNotAllowPermission(155715, "User didn\'t grant the permission to use biometrics"), //IOS ONLY |
+| biometricsInternalError(155716, "Biometrics internal error - %s");                                          |
+
+### ExecuteResult
+
+`data class ExecuteResult`
+
+| Constructors                                                                                                                           |
+| :------------------------------------------------------------------------------------------------------------------------------------- |
+| `constructor(     resultType: ExecuteResultType,     status: ExecuteResultStatus,     data: ExecuteResultData = ExecuteResultData() )` |
+
+| Properties          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ExecuteResultType   | `resultType` <br /> <br />The type of the operation that the challenge represents. The possible values are : <br /> <br />UNKNOWN(-1), <br />SET_PIN(0), <br />RESTORE_PIN(1), <br />CHANGE_PIN(2), <br />SET_SECURITY_QUESTIONS(3), <br />CREATE_WALLET(4), <br />CREATE_TRANSACTION(5), <br />ACCELERATE_TRANSACTION(6), <br />CANCEL_TRANSACTION(7), <br />CONTRACT_EXECUTION(8), <br />SIGN_MESSAGE(9), <br />SIGN_TYPEDDATA(10), <br />SIGN_TRANSACTION(11), <br />SET_BIOMETRICS_PIN(1000) |
+| ExecuteResultStatus | `status` <br /> <br />The status of the execution. The possible values are : <br /> <br />UNKNOWN(-1) <br />PENDING(0) <br />IN_PROGRESS(1) <br />COMPLETE(2) <br />FAILED(3) <br />EXPIRED(4)                                                                                                                                                                                                                                                                                                   |
+| ExecuteResultData   | `data` <br /> <br />The data of the execution.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+
+### ExecuteResultType
+
+`enum ExecuteResultType`
+
+| Properties |                                                 |
+| ---------- | ----------------------------------------------- |
+| Int        | `value` <br /> <br />The int value of the enum. |
+
+| Enum Values               |
+| ------------------------- |
+| UNKNOWN(-1)               |
+| SET_PIN(0)                |
+| RESTORE_PIN(1)            |
+| CHANGE_PIN(2)             |
+| SET_SECURITY_QUESTIONS(3) |
+| CREATE_WALLET(4)          |
+| CREATE_TRANSACTION(5)     |
+| ACCELERATE_TRANSACTION(6) |
+| CANCEL_TRANSACTION(7)     |
+| CONTRACT_EXECUTION(8)     |
+| SIGN_MESSAGE(9)           |
+| SIGN_TYPEDDATA(10)        |
+| SIGN_TRANSACTION(11)      |
+| INITIALIZE(12)            |
+| WALLET_UPGRADE(13)        |
+| SET_BIOMETRICS_PIN(1000)  |
+
+### ExecuteResultStatus
+
+`enum ExecuteResultStatus`
+
+| Properties |                                                 |
+| ---------- | ----------------------------------------------- |
+| Int        | `value` <br /> <br />The int value of the enum. |
+
+| Enum Values    |
+| -------------- |
+| UNKNOWN (-1)   |
+| PENDING(0)     |
+| IN_PROGRESS(1) |
+| COMPLETED(2)   |
+| FAILED(3)      |
+| EXPIRED(4)     |
+
+### ExecuteResultData
+
+`data class ExecuteResultData`
+
+| Constructors                             |
+| :--------------------------------------- |
+| `constructor(signature: String? = null)` |
+
+| Properties |                                                                                                                                                                                              |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| String?    | `signature` <br /> <br />The signature for SIGN_MESSAGE, SIGN_TYPEDDATA and SIGN_TRANSACTION. <br />For SIGN_TRANSACTION, the signature encodes the v, r, s parameters in big-endian format. |
+| String?    | `signedTransaction` <br /> <br />Signed transaction string for SIGN_TRANSACTION. Will be a hex string with ‘0x' prefix for EVM chains.                                                       |
+| String?    | `txHash` <br /> <br />The hash of the transaction for SIGN_TRANSACTION.                                                                                                                      |
+
+## APIError
+
+Error class for PW SDK
+
+`abstract class ApiError:[Throwable](https://developer.android.com/reference/java/lang/Throwable)`
+
+| Properties                  |                                                  |
+| --------------------------- | ------------------------------------------------ |
+| abstract ApiError.ErrorCode | `code` <br />Error code.                         |
+| open String                 | `message` <br />Get human-readable error message |
+
+### ApiError.ErrorCode
+
+`public enum ErrorCode`
+
+| Properties |                                          |
+| ---------- | ---------------------------------------- |
+| Int        | `value` <br />The int value of the enum. |
+
+| Enum Value                                  | Description                                                                                                             |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| undefined(-1)                               | Used when an error is defined on the server but not in the SDK. Overrides `unknown(-1)` if a server-defined code exists |
+| unknown(-1)                                 | An unspecified error occurred                                                                                           |
+| success(0)                                  | The operation completed successfully                                                                                    |
+| apiParameterMissing(1)                      | A required API parameter is missing                                                                                     |
+| apiParameterInvalid(2)                      | An API parameter provided is invalid                                                                                    |
+| forbidden(3)                                | The request is forbidden due to insufficient permissions                                                                |
+| unauthorized(4)                             | Authentication failed or user is not authorized                                                                         |
+| retry(9)                                    | Temporary issue; retry the operation                                                                                    |
+| customerSuspended(10)                       | The customer's account is suspended                                                                                     |
+| pending(11)                                 | The operation is pending and not yet completed                                                                          |
+| invalidSession(12)                          | The session is invalid or has expired                                                                                   |
+| invalidPartnerId(13)                        | The provided partner ID is invalid                                                                                      |
+| invalidMessage(14)                          | Message format is invalid                                                                                               |
+| invalidPhone(15)                            | The phone number provided is invalid                                                                                    |
+| userAlreadyExisted(155101)                  | The user already exists in the system                                                                                   |
+| userNotFound(155102)                        | The specified user was not found                                                                                        |
+| userTokenNotFound(155103)                   | The user token was not found                                                                                            |
+| userTokenExpired(155104)                    | The user token has expired                                                                                              |
+| invalidUserToken(155105)                    | The user token provided is invalid                                                                                      |
+| userWasInitialized(155106)                  | The user has already been initialized                                                                                   |
+| userHasSetPin(155107)                       | The user has already set a PIN                                                                                          |
+| userHasSetSecurityQuestion(155108)          | The user has already set security questions                                                                             |
+| userWasDisabled(155109)                     | The user account has been disabled                                                                                      |
+| userDoesNotSetPinYet(155110)                | The user has not set a PIN yet                                                                                          |
+| userDoesNotSetSecurityQuestionYet(155111)   | The user has not set security questions yet                                                                             |
+| incorrectUserPin(155112)                    | The PIN entered is incorrect                                                                                            |
+| incorrectDeviceId(155113)                   | The device ID provided is incorrect                                                                                     |
+| incorrectAppId(155114)                      | The application ID provided is incorrect                                                                                |
+| incorrectSecurityAnswers(155115)            | The security answers provided are incorrect                                                                             |
+| invalidChallengeId(155116)                  | The challenge ID provided is invalid                                                                                    |
+| invalidApproveContent(155117)               | The approval content is invalid                                                                                         |
+| invalidEncryptionKey(155118)                | The encryption key provided is invalid                                                                                  |
+| userPinLocked(155119)                       | The user's PIN is locked due to multiple failed attempts                                                                |
+| securityAnswersLocked(155120)               | The user's security answers are locked due to multiple failed attempts                                                  |
+| walletIsFrozen(155501)                      | The wallet is frozen and cannot perform operations                                                                      |
+| maxWalletLimitReached(155502)               | The user has reached the maximum number of wallets allowed                                                              |
+| walletSetIdMutuallyExclusive(155503)        | The wallet set ID is mutually exclusive and cannot be used with the current operation                                   |
+| metadataUnmatched(155504)                   | The metadata provided does not match the expected format or values                                                      |
+| userCanceled(155701)                        | The user canceled the operation                                                                                         |
+| launchUiFailed(155702)                      | Failed to launch the user interface                                                                                     |
+| pinCodeNotMatched(155703)                   | The PIN code entered does not match the expected value                                                                  |
+| insecurePinCode(155704)                     | The PIN code entered is considered insecure                                                                             |
+| hintsMatchAnswers(155705)                   | The hints provided match the security answers, which is not allowed                                                     |
+| networkError(155706)                        | A network error occurred during the operation                                                                           |
+| biometricsSettingNotEnabled(155708)         | Biometrics settings are not enabled on the device                                                                       |
+| deviceNotSupportBiometrics(155709)          | The device does not support biometric authentication                                                                    |
+| biometricsKeyPermanentlyInvalidated(155710) | The biometric key has been permanently invalidated                                                                      |
+| biometricsUserSkip(155711)                  | The user skipped biometric authentication                                                                               |
+| biometricsUserDisableForPin(155712)         | The user disabled biometrics for PIN authentication                                                                     |
+| biometricsUserLockout(155713)               | The user is temporarily locked out of biometric authentication                                                          |
+| biometricsUserLockoutPermanent(155714)      | The user is permanently locked out of biometric authentication                                                          |
+| biometricsUserNotAllowPermission(155715)    | The user did not grant permission for biometric authentication                                                          |
+| biometricsInternalError(155716)             | An internal error occurred during biometric authentication                                                              |
+| invalidUserTokenFormat(155718)              | The user token format is invalid                                                                                        |
+| userTokenMismatch(155719)                   | The user token does not match the expected value                                                                        |
+| socialLoginFailed(155720)                   | Social login failed                                                                                                     |
+| loginInfoMissing(155721)                    | Login information is missing                                                                                            |
+| walletIdNotFound(156001)                    | The specified wallet ID was not found                                                                                   |
+| tokenIdNotFound(156002)                     | The specified token ID was not found                                                                                    |
+| transactionIdNotFound(156003)               | The specified transaction ID was not found                                                                              |
+| entityCredentialNotFound(156004)            | The specified entity credential was not found                                                                           |
+| walletSetIdNotFound(156005)                 | The specified wallet set ID was not found                                                                               |
+
+## Static Customized String
+
+### res/values/strings.xml
+
+```xml XML
+<resources>
+    <string name="circlepw_continue">Continue</string>
+    <string name="circlepw_next">Next</string>
+    <string name="circlepw_question_label">Question:</string>
+</resources>
+```
+
+## Static Customized UI Layout
+
+### res/values/color.xml
+
+```xml XML
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="circlepw_text_main">#1A1A1A</color>
+    <color name="circlepw_text_auxiliary">#3D3D3D</color>
+    <color name="circlepw_text_action">#136FD8</color>
+    <color name="circlepw_text_action_pressed">#B3136FD8</color>
+</resources>
+```
+
+### res/values/styles.xml
+
+```xml XML
+<resources>
+    <style name="circlepw_heading3">
+        <item name="android:fontFamily">@font/avenir_heavy</item>
+        <item name="android:fontWeight" tools:targetApi="o">600</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="circlepw_heading4">
+        <item name="android:fontFamily">@font/avenir_heavy</item>
+        <item name="android:fontWeight" tools:targetApi="o">600</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>
+```
+
+### res/values/dimens.xml
+
+```xml XML
+<resources>
+    <dimen name="circlepw_bottom_bt_margin_top">10dp</dimen>
+    <dimen name="circlepw_intro_title_margin_bottom">24dp</dimen>
+    <dimen name="circlepw_intro_custom_grab_icon_size">48dp</dimen>
+</resources>
+```
+
+## Sample Code
+
+```java Java
+// Set endpoint and app ID
+try {
+    WalletSdk.init(getApplicationContext(), new WalletSdk.Configuration(endpoint, appId));
+} catch (Throwable e){
+    e.printStackTrace();
+    return;
+}
+
+// setViewSetterProvider
+WalletSdk.setViewSetterProvider(new MyViewSetterProvider());
+// setLayoutProvider
+WalletSdk.setLayoutProvider(new MyLayoutProvider(getApplicationContext()));
+// Regester EventListener
+WalletSdk.addEventListener(new EventListener() {
+    @Override
+       public void onEvent(ExecuteEvent event) {
+           switch (event){
+                  case forgotPin:
+                    startActivity(forgotPinIntent);
+                  break;
+           }
+       }
+});
+
+// setSecurityQuestion
+SecurityQuestion[] questions = new SecurityQuestion[]{
+                    new SecurityQuestion("What is your father's middle name?"),
+                    new SecurityQuestion("What is your favorite sports team?"),
+                    new SecurityQuestion("What is your mother's maiden name?"),
+                    new SecurityQuestion("What is the name of your first pet?"),
+                    new SecurityQuestion("What is the name of the city you were born in?"),
+                    new SecurityQuestion("What is the name of the first street you lived on?"),
+                    new SecurityQuestion("When is your father's birthday?", SecurityQuestion.InputType.datePicker)};
+WalletSdk.setSecurityQuestions(questions);
+```
+
+```java
+// There are two ways to use Configuration. Below is the way with SettingsManagement.
+// We can use SettingsManagement to bring the setting flag. SettingsManagement provide the setting flag
+// EnableBiometricsPin to enable/disable the function "Use biometrics to protect PIN" currently.
+// But if we do not use the settingsManagement, the default value of EnableBiometricsPin is false.
+try {
+    SettingsManagement settingsManagement = new SettingsManagement();
+    settingsManagement.setEnableBiometricsPin(true); //Set "true" to enable, "false" to disable
+    WalletSdk.init(getApplicationContext(), new WalletSdk.Configuration(endpoint, appId, settingsManagement));
+} catch (Throwable e){
+    e.printStackTrace();
+    return;
+}
+
+```
+
+```java
+// Execute
+WalletSdk.execute(getActivity(), userToken, encryptionKey,
+          new String[]{challengeId},
+          new Callback<ExecuteResult>() {
+                @Override
+                public boolean onError(Throwable error) {
+                      if(error instanceof ApiError){
+                              ApiError apiError = (ApiError) error;
+                              if(apiError.getCode() == ApiError.ErrorCode.userCanceled){
+                // App won't handle next step, SDK finishes the Activity.
+                                  return false;
+                               }
+                                startActivity(errorUiIntent);
+                // App will handle next step, SDK keeps the Activity.
+                               return true;
+                       }
+
+                }
+
+
+                @Override
+                public void onResult(ExecuteResult result) {
+                       // success
+                }
+
+
+                @Override
+                public boolean onWarning(ExecuteWarning warning, ExecuteResult executeResult) {
+                // App won't handle next step, SDK finishes the Activity.
+                        return false;
+                }
+});
+
+```
+
+```java
+// Extend LayoutProvider and override
+class MyLayoutProvider extends LayoutProvider {
+        Context context;
+        Typeface typeface;
+        int color;
+        public MyLayoutProvider(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public TextConfig getTextConfig(String key) {
+            switch (key){
+                case Resource.Key.circlepw_security_intros_description:
+                    typeface = ResourcesCompat.getFont(context, R.font.en);
+                    color = Color.parseColor("#105AAB");
+                    return new TextConfig("customized description", color, typeface);
+            }
+            return super.getTextConfig(key);
+        }
+
+
+@Override
+public IconTextConfig[] getIconTextConfigs(Resource.IconTextsKey key) {
+            switch (key){
+                case securityConfirmationItems: // SQ confirmation introduction items
+                    return new IconTextConfig[]{
+                            new IconTextConfig(
+                                    new LocalImageSetter(R.drawable.intro_item0_icon),
+                                    new TextConfig("This is the only way to recover my account access. ")),
+                            new IconTextConfig(
+                                    new RemoteImageSetter(R.drawable.error, "https://path/icon2.svg"),
+                                    new TextConfig("Circle won't store my answers so it's my responsibility to remember them.")),
+                            new IconTextConfig(
+                                    new RemoteImageSetter(R.drawable.error, "https://path/icon3.svg"),
+                                    new TextConfig("I will lose access to my wallet and my digital assets if I forget my answers. "))
+                    };
+}
+   return super.getIconTextConfigs(key);
+       }
+@Override
+        public TextConfig[] getTextConfigs(Resource.TextsKey key) {
+            switch (key){
+                case securityQuestionHeaders:
+                    return new TextConfig[]{
+                            new TextConfig("Choose your 1st question"),
+                            new TextConfig("Choose your 2nd question")
+                    };
+                case securitySummaryQuestionHeaders:
+                    return new TextConfig[]{
+                            new TextConfig("1st Question"),
+                            new TextConfig("2nd Question")
+                    };
+                case newPinCodeHeadline:
+                case enterPinCodeHeadline:
+                    return new TextConfig[]{
+                            new TextConfig("Enter your "),
+                            new TextConfig("PIN", getHeadingColor(), null),
+                    };
+                case securityIntroHeadline:
+                    return new TextConfig[]{
+                            new TextConfig("Set up your "),
+                            new TextConfig("Recovery Method", getHeadingColor(), null),
+                    };
+            }
+            return super.getTextConfigs(key);
+        }
+
+        private int getHeadingColor(){
+              return Color.parseColor("#0073C3");
+        }
+
+        @Override
+        public String getErrorString(ApiError.ErrorCode code) {
+            switch (code){
+                case userCanceled:
+                    return context.getString(R.string.user_canceled);
+            }
+            return super.getErrorString(code);
+        }
+
+        @Override
+        public String getDateFormat(){
+            return Resource.DateFormat.MMDDYYYY_SLASH; // "​​MM/DD/YYYY"
+        }
+
+        @Override
+        public boolean isDebugging(){
+            return BuildConfig.DEBUG;
+        }
+
+    }
+
+```
+
+```java
+// Extend ViewSetterProvider and override
+    class MyViewSetterProvider extends ViewSetterProvider{
+
+        @Override
+        public IToolbarSetter getToolbarImageSetter(Resource.ToolbarIcon type) {
+            switch (type){
+                case back:
+                    return new LocalToolbarImageSetter(R.drawable.ic_back);
+                case close:
+                    return new RemoteToolbarImageSetter(R.drawable.error, "https://path/close.svg");
+            }
+            return super.getToolbarImageSetter(type);
+        }
+    @Override
+        public IImageViewSetter getImageSetter(Resource.Icon type) {
+            switch (type){
+                case securityIntroMain:
+                    return new LocalImageSetter(R.drawable.main);
+                case selectCheckMark:
+                    return new RemoteImageSetter(R.drawable.error, "https://path/check.svg");
+                case dropdownArrow:
+                    return new RemoteImageSetter(R.drawable.error, "https://path/arrow.svg");
+                case errorInfo:
+                    return new RemoteImageSetter(R.drawable.error, "https://path/errorinfo.svg");
+                case securityConfirmMain:
+                    return new RemoteImageSetter(R.drawable.error, "https://path/main2.svg");
+            }
+            return super.getImageSetter(type);
+        }
+    }
+
+```
+
+```java Java
+// setBiometricsPin
+WalletSdk.setBiometricsPin(this, userToken, encryptionKey, new Callback<ExecuteResult>() {
+            @Override
+            public boolean onError(Throwable error) {
+                error.printStackTrace();
+                if (error instanceof ApiError) {
+                    ApiError apiError = (ApiError) error;
+                    switch (apiError.getCode()) {
+                        case incorrectUserPin:
+                        case userPinLocked:
+                        case securityAnswersLocked:
+                        case incorrectSecurityAnswers:
+                        case pinCodeNotMatched:
+                        case insecurePinCode:
+                            return true; // App will handle next step, SDK will keep the Activity.
+                    }
+                }
+                return false; // App won't handle next step, SDK will finish the Activity.
+            }
+
+            @Override
+            public void onResult(ExecuteResult executeResult) {
+                //success
+            }
+
+            @Override
+            public boolean onWarning(ExecuteWarning warning, ExecuteResult executeResult) {
+                return false; // App won't handle next step, SDK will finish the Activity.
+            }
+        });
+
+
+
+```

@@ -1,0 +1,300 @@
+{/* <!-- markdownlint-disable --> */}
+
+Behind the scenes, you (as a developer) have to go through a few essential steps
+to set up and initialize a user. In a theoretical sense, we will explore these
+steps next: creating your first user and initializing their wallets. These steps
+include creating a user, creating a session token, and initializing the user
+account, where you will also create a wallet for the user via Circle's APIs. At
+the end of these steps, you can then prompt your end-user to complete the
+account setup in your sample app.
+
+Once you've absorbed the theory behind these steps, you'll find a **Try It Out**
+component at the end. This tool handles all of these steps for you, making your
+experience with the QuickStart guide smoother and more user-friendly.
+
+Let's delve into the process!
+
+<OrderedList>
+  <OrderedListStep title="Create a new user">
+
+    To begin the end-to-end process, you must create and initialize the users who will ultimately be using your application. A user, representing the end-user of your app, is identified through a userID. This `userID` serves as the account identifier encompassing all associated wallets, assets, and transactions for that specific user.
+
+<Note>
+  You can use a UUID format for the `userID` or any other format. It must be at
+  least five characters long. To simplify the creation of the `userID` you can
+  use an online UUID generator such as
+  [uuidgenerator.net](https://www.uuidgenerator.net/).
+</Note>
+
+    <RequestTemplate
+      config={{
+        method: 'POST',
+        url: '/v1/w3s/users',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer <YOUR_API_KEY>',
+        },
+        body: {
+          userId: '<USER_ID>',
+        },
+      }}
+      title="Create a User"
+    />
+
+    <Note>
+      At Circle, we leave user management entirely in your hands. This allows you to
+      keep control of your processes and ensures that your user data stays securely
+      in your system. We simply require a UUID to identify each user in our system.
+      This means you, as a developer, maintain full control while working with us
+      using a straightforward yet secure approach.
+    </Note>
+
+  </OrderedListStep>
+  <OrderedListStep title="Acquire a Session Token">
+    Once you have successfully created a user, you will acquire a session token which authenticates the user's session within your app and has a validity period of 60 minutes. <br /> Typically, in your app's flow, you would create a session token when the user logs in. Once you have created a session, we will return an encryptionKey and a userToken. The userToken is the session identifier, and the encryptionKey is an encryption and decryption key that is randomly generated to ensure the security of the session.
+
+    <RequestTemplate
+      config={{
+        method: 'POST',
+        url: '/v1/w3s/users/token',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer <YOUR_API_KEY>',
+        },
+        body:{
+          userId: '<USER_ID>'
+        },
+      }}
+      title="Acquire a Session Token"
+    />
+
+  </OrderedListStep>
+  <OrderedListStep title="Initialize the User Account">
+    User initialization is a critical step where you create the user account and create a wallet for a specified blockchain at the time of account creation.
+
+    Two fundamental concepts to understand in this step are:
+
+    ### Idempotent Requests
+
+    When making an initialization request, it is required that you use an idempotency key, a unique identifier for the request, to ensure that subsequent requests with the same key do not create duplicate entities. You can learn more about it in our <Link path="/w3s/idempotent-requests" type="internal">documentation</Link>.
+
+    ### Challenges
+
+    A challenge is initiated when your end-users are prompted to take a specific action, such as initiating a transaction or executing a smart contract. They serve as checkpoints in the user journey, ensuring that sensitive operations can only be carried out with the user's explicit authorization.
+
+    The first challenge that users encounter involves setting their PIN code and creating a recovery method as part of this initial sign up. The PIN is encrypted during input on the user's personal device, ensuring developers or merchants never have access to user PINs. The recovery method allows users to regain access to their assets in case they forget their PIN code. They have the option to choose security questions, a familiar backup mechanism that enhances the user experience while ensuring that users have full control over their assets.
+
+    ### Benefits of Challenges: Empowering Users and Enhancing Security
+
+    <Features>
+      <Features.Feature icon="LockClosedSolid">
+        <Features.Feature.Title>
+          User Sovereignty and Asset Security
+        </Features.Feature.Title>
+        <Features.Feature.Description>
+          By setting up a PIN code, users have complete sovereignty over their
+          wallets. Only operations that are authorized by entering the PIN code can
+          be initiated, providing users with peace of mind and control over their
+          assets.
+        </Features.Feature.Description>
+      </Features.Feature>
+      <Features.Feature icon="KeyOutline">
+        <Features.Feature.Title>
+          Enhanced User Experience without Seed Phrase
+        </Features.Feature.Title>
+        <Features.Feature.Description>
+          By utilizing a unique PIN code and Recovery Method, users can conveniently
+          and securely access their wallets without being burdened by complex seed
+          phrases.
+        </Features.Feature.Description>
+      </Features.Feature>
+    </Features>
+
+    Now that we understand these two important concepts, we are ready to initialise the user account and create a wallet.
+
+    <RequestTemplate
+      config={{
+        method: 'POST',
+        url: '/v1/w3s/user/initialize',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer <YOUR_API_KEY>',
+          'X-User-Token': '<USER_TOKEN>',
+        },
+        body: {
+          idempotencyKey: '<IDEMPOTENCY_KEY>',
+          blockchains: ['<BLOCKCHAIN>'],
+        },
+      }}
+      title="Initialize a User"
+    />
+
+  </OrderedListStep>
+
+</OrderedList>
+
+This **Try It Out** component will aggregate the explained steps above and
+return a challengeId, the userToken and the encryptionKey. We will use in the
+next few steps within the sample app to set up the user.
+
+<Playground
+  title="Initialize User"
+  url="/quickstarts/api/user-controlled/initialize-user"
+  copy={[
+    {
+      path: "getSessionTokenResponse.data.userToken",
+      key: "initUserToken",
+    },
+    {
+      path: "getSessionTokenResponse.data.encryptionKey",
+      key: "initEncryptionKey",
+    },
+    {
+      path: "initializeUserResponse.data.challengeId",
+      key: "initChallengeId",
+    },
+  ]}
+/>
+
+<Note>
+  You also have the option to initialize a for [PIN setup without setting up
+  wallets](/api-reference/wallets/user-controlled-wallets/create-user-pin-challenge).
+</Note>
+
+By following these steps, you have now created a user, establishing their unique
+identifiers. We have also initiated our first challenge by initializing their
+accounts and wallets, acquiring a session token and creating a challenge. <br />
+You can now enter these values into your sample app simulator and you will have
+completed the configuration. <br /> In the next step, we will play the role of
+your end-user, and complete the account setup by defining a pin and recovery
+methods. <br />
+
+### Complete Account Setup
+
+After we gathered all necessary parameters, we are now able to use our
+[WebSDK](https://www.npmjs.com/package/@circle-fin/w3s-pw-web-sdk) to enter this
+information and start the set up process that the end user would go through.
+
+<WebSDK title="Initialize User" inputKeys={{userToken: 'initUserToken', encryptionKey: 'initEncryptionKey', challengeId: 'initChallengeId'}}>
+
+By entering your App ID and initializing the user session with the UserToken,
+EncryptionKey, and ChallengeID, you have successfully invoked the account setup
+for the end-user. This step is crucial when the you want your end-user to set up
+their wallet, such as during the account creation process.
+
+Now, you will assume the role of the end user and complete the wallet setup. Get
+ready to experience the effortless setup experience.
+
+</WebSDK>
+
+**🎉 Great job on setting up the WebSDK!**
+
+After the sucessful confirmation a wallet was created, you may now proceed with
+the next step and learn how to check the wallet status!
+
+Now that the end-user has successfully set up their PIN and defined their
+recovery method, we can proceed to check whether the wallet was successfully
+created. The check returns the following details about the wallet:
+
+<Parameters title="Response explained">
+  <Parameter name="Address">
+    The end-users wallet address is a unique identifier generated during wallet
+    creation. It is used for sending, receiving, and storing digital assets on a
+    blockchain network. It serves as the destination for cryptocurrency
+    transactions, verifying ownership of the specific digital wallet.
+  </Parameter>
+  <Parameter name="Blockchain">
+    Specifies the testnet blockchain (network) you created the wallet for.
+  </Parameter>
+  <Parameter name="Create Date">
+    A timestamp that indicates the time at which the wallet was created.
+  </Parameter>
+  <Parameter name="CustodyType">
+    CustodyType refers to whether the end user or the developer controls the
+    private key invocation. In the case of user-controlled wallets, the custody
+    type is user-controlled, granting the end-user full control over their
+    private keys.
+  </Parameter>
+  <Parameter name="ID">The unique ID assigned to the wallet.</Parameter>
+  <Parameter name="State">
+    The State reflects the current status of the wallet and can be either "live"
+    or "frozen".
+  </Parameter>
+  <Parameter name="WalletSetId">
+    The WalletSetId indicates the ID of the wallet set. A wallet set represents
+    a collection of wallets managed by a single cryptographic private key. It
+    offers a unified management experience, particularly in the context of
+    supported blockchains. Wallets from different chains can share the same
+    address within a wallet set, especially on EVM chains.
+  </Parameter>
+</Parameters>
+
+Understanding these returned values will enable you to verify the successful
+creation of the end-user's wallet and act accordingly within your application.
+
+<Parameters
+  title="Request body"
+  linkToDocs="/api-reference/wallets/user-controlled-wallets/list-wallets"
+>
+  <Parameter name="UserId">
+    User token of the user that owns the wallet to check the status of.
+  </Parameter>
+</Parameters>
+
+<Playground
+  title="Check Wallet Status"
+  url="/quickstarts/api/user-controlled/check-wallet-status"
+  config={{
+    method: "GET",
+    url: "/v1/w3s/wallets?userId=__USER-ID__",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+  }}
+  copy={[
+    {
+      path: "data.wallets[0].id",
+      key: "userCUserWalletId",
+    },
+    {
+      path: "data.wallets[0].address",
+      key: "userCDestinationAddress",
+    },
+  ]}
+/>
+
+🎉 Congratulations on successfully crafting your wallet! This marks a
+significant milestone in your web3 journey. Now, let's explore the next step:
+populating your wallets with tokens. Since we're operating on Testnet, we'll be
+using Testnet tokens. To help you with this, we have the Try It Out Box below -
+a convenient solution to fund your freshly created wallets.
+
+<Playground
+  title="Fund your Wallet"
+  url="/quickstarts/api/user-controlled/get-funds"
+  config={{
+    method: "POST",
+    url: "/v1/faucet/drips",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      address: "<YOUR_WALLET_ADDRESS>",
+      blockchain: "ETH-SEPOLIA",
+      native: false,
+      usdc: true,
+      eurc: false,
+    },
+  }}
+  copy={[
+    {
+      path: "data.wallets[0].address",
+      key: "userCUserWalletAddress",
+    },
+  ]}
+/>
+
+If you have successfully set up your wallets you can now proceed to initiate
+your first transaction!

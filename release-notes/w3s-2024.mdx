@@ -1,0 +1,701 @@
+---
+title: Release Notes - Developer Services - 2024
+description: 2024 release notes for Circle's Developer Services platform.
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+initiator: 
+sidebarTitle: "Developer Services"
+---
+
+## December 2024
+
+### 2024.12.18
+
+API documentation update.
+
+#### API updates
+
+- Updated various Travel Rule API request bodies to include descriptions and
+  examples for all fields.
+
+---
+
+### 2024.12.10
+
+Travel Rule (Beta), part of Circle's Compliant Engine solution, has been
+released.
+
+#### Documentation updates
+
+The following docs have been updated to support Travel Rule (Beta):
+
+- [Compliance Engine Overview](/wallets/compliance-engine)
+- [Travel Rule Overview](/w3s/travel-rule)
+- [Travel Rule Quickstart](/w3s/travel-rule-quickstart)
+
+---
+
+### 2024.12.09
+
+API documentation update.
+
+#### API additions
+
+- Fix response schema for following APIs:
+
+  - `GET /user`
+  - `POST /users/`
+  - `GET /users/{id}`
+
+#### API updates
+
+- Update request bodies for following APIs:
+
+  - `POST /compliance/travelRule/validityCheck`
+  - `POST /compliance/travelRule/receivePii`
+
+---
+
+## November 2024
+
+### 2024.11.12
+
+Updated description for USDC Access API endpoints, and added Unichain Sepolia
+enum values for several endpoints.
+
+#### API additions
+
+- Added enum values `UNI-SEPOLIA` to the `blockchain` request field for the
+  following APIs:
+
+  - `POST /developer/wallets`
+  - `POST /user/wallets`
+  - `GET /wallets`
+  - `GET /transactions`
+  - `POST /transactions/validateAddress`
+  - `POST /user/initialize`
+  - `GET /config/entity/monitoredTokens`
+  - `GET /contracts`
+  - `POST /contracts/deploy`
+  - `POST /contracts/deploy/estimateFee`
+  - `POST /templates/{id}/deploy`
+  - `POST /templates/{id}/deploy/estimateFee`
+
+- Added `401 Unauthorized` response to all endpoints that require `API_KEY`
+- Added `404 Not Found` response to all endpoints that interact with a resource:
+  wallet, walletSet, token, transaction or challenge.
+
+#### API updates
+
+- Updated API description for USDC Access endpoints.
+- Fix response schema for the following APIs:
+
+  - `Get /user`
+  - `POST /users/`
+  - `GET /users/{id}`
+
+---
+
+### 2024.11.06
+
+USDC Access and API documentation updates.
+
+#### Documentation additions
+
+Added the following docs to support USDC Access:
+
+- About USDC Access Integration Flows
+- About USDC Access Sessions
+
+#### Documentation updates
+
+The USDC Access content has been moved to its own dedicated section in the Web3
+Services section of the site.
+
+#### API updates
+
+- Updated descriptions of query parameters, request body fields and response
+  body fields.
+
+  - `walletIds` query parameter
+  - `address` request field
+  - `tokenAddress`, `walletAddress`, `destinationAddress` response fields
+    updated and consolidated
+  - `tokenId`, `walletId` response fields updated and consolidated
+  - `name` response field
+  - Renamed `ContractExecutionTxnPinCodeRequest` schema to
+    `CreateContractExecutionTransactionForEndUserRequest`
+
+---
+
+## October 2024
+
+### 2024.10.31
+
+- Added support to the new Travel Rule (early access) feature of the Compliance
+  Engine product.
+- The Smart Contract Platform now supports Event Monitoring via Webhooks and new
+  API endpoints.
+- The sign transaction API endpoints now support EVM wallets.
+
+#### Documentation updates
+
+Added a new section Event Monitoring to the Smart Contract Platform page from
+the Getting Started category:
+
+- [Event Monitoring](/contracts#event-monitoring)
+
+Added a new quickstart to the Smart Contract Platform category:
+
+- [Event Monitoring for Smart Contracts](/contracts/scp-event-monitoring)
+
+#### Documentation additions
+
+The following docs have been added to support the new Travel Rule (early access)
+feature:
+
+- [Travel Rule](/w3s/travel-rule)
+  - [Quickstart](/w3s/travel-rule-quickstart)
+  - [Testing Guide](/w3s/travel-rule-testing-guide)
+
+Added new how-to guide:
+
+- [Sign Transactions on EVM chains](/wallets/sign-tx-evm)
+
+Added new reference guide:
+
+- [Chain IDs for Signing Transactions](/w3s/sign-tx-chain-id)
+
+#### API additions
+
+Added new Travel Rule API endpoints for Compliance Engine:
+
+- `POST` `/compliance/travelRule/eligibilityCheck`
+- `POST` `/compliance/travelRule/messages`
+- `POST` `/compliance/travelRule/receivePii`
+- `POST` `/compliance/travelRule/sendPii`
+- `POST` `/compliance/travelRule/uploadOwnershipProof`
+- `POST` `/compliance/travelRule/validityCheck`
+- `PUT` `/compliance/travelRule/{travelRuleId}`
+
+Added new API endpoints for Event Monitoring:
+
+- `GET` `/contracts/monitors`
+- `POST` `/contracts/monitors`
+- `DELETE` `/contracts/monitors/{id}`
+- `PUT` `/contracts/monitors/{id}`
+- `GET` `/contracts/events`
+
+Added new error codes for Event Monitoring:
+
+- Added predefined error `EXT_EVENT_SUBSCRIPTION_NOT_FOUND` (code: `175301`)
+- Added predefined error `EXT_EVENT_SUBSCRIPTION_ALREADY_EXISTS` (code:
+  `175302`)
+- Added predefined error `EXT_EVENT_SIGNATURE_DOES_NOT_EXIST` (code: `175303`)
+
+Added enum values `EVM` and `EVM-TESTNET` to the `blockchain` request and
+response fields for the following API endpoint:
+
+- `POST` `/developer/wallets`
+
+Added sign transaction support for `EVM` and `EVM-TESTNET` wallets for the
+following API endpoint:
+
+- `POST` `/developer/sign/transaction`
+- `POST` `/developer/sign/typedData`
+- `POST` `/developer/sign/message`
+
+Added new [errors](/w3s/synchronous-errors) related to signing APIs using `EVM`
+and `EVM-TESTNET` blockchain:
+
+- 155807: The typed data or transaction chainID is not supported for EVM signing
+- 155808: The chainID is missing from typed data or transaction for EVM signing
+
+Added optional `initialPublicKey` field in the wallet response for NEAR chains
+in the following API endpoints:
+
+- `POST` `/developer/wallets`
+- `GET` `/developer/wallets`
+- `GET` `/developer/wallets/{id}`
+
+Added optional `txHash` field in sign transaction response for `NEAR`,
+`NEAR-TESTNET`, `EVM`, and `EVM-TESTNET` chains in the following API endpoint:
+
+- `POST` `/developer/sign/transaction`
+
+---
+
+### 2024.10.24
+
+- The quickstarts now have a simpler way to encrypt/register the Entity Secret
+  using SDK methods.
+- The sign transaction API endpoints now support both `SOL` and `SOL-DEVNET`
+  wallets.
+
+#### Documentation updates
+
+The Entity Secret registration step was refactored from:
+
+- [Create Your First Developer-Controlled Wallet](/wallets/dev-controlled/create-your-first-wallet)
+
+and moved into its own quickstart (see below), thereby simplifying the developer
+journey.
+
+#### Documentation additions
+
+Added a new quickstart about developer-controlled wallets:
+
+- [Register Your Entity Secret](/wallets/dev-controlled/register-entity-secret)
+
+featuring various ways to register the Entity Secret, including via SDK methods.
+
+Added new how-to guide:
+
+- [Sign Transactions on Solana](/wallets/sign-tx-solana)
+
+#### API updates
+
+Added sign transaction support for the Solana (`SOL`) blockchain for the
+following API endpoints:
+
+- `/developer/sign/transaction`
+- `/user/sign/transaction`
+
+---
+
+### 2024.10.21
+
+USDC Access is now available to integrate into your application. Use the hosted,
+end-to-end USDC Access widget to enable your users to buy or sell USDC.
+
+#### Documentation additions
+
+- About USDC Access - A comprehensive, conceptual guide that describes the
+  on-ramp and off-ramp integration flow and user flow, widget features, the
+  concept of sessions, and the webhook notifications sent for session events.
+- Integrate with USDC Access - A step-by-step tutorial that walks you through
+  how to integrate USDC Access into your application. Includes code examples.
+
+#### API additions
+
+Added the following API endpoints:
+
+- `POST` `/ramp/sessions`
+- `GET` `/ramp/tradeConfigurations`
+- `GET` `/ramp/sessions`
+- `POST` `/ramp/quotes`
+- `GET` `/ramp/sessions`
+
+---
+
+### 2024.10.14
+
+#### API updates
+
+New functionality was added that now allows you to override your gas limit for
+EOA wallets.
+
+Note that this changed functionality applies to EOA wallets only.
+
+You can now use `gasLimit` together with `feeLevel` to customize and override
+your `gasLimit` for the following API endpoints:
+
+- `POST` `/developer/transactions/contractExecution`
+- `POST` `/developer/transactions/transfer`
+- `POST` `/user/transactions/contractExecution`
+- `POST` `/user/transactions/transfer`
+
+---
+
+### 2024.10.02
+
+We have heard your feedback and have launched a new and improved developer
+documentation platform. It brings the following features:
+
+- **New revamped home page**: to find all of our developer-centric resources in
+  one place
+- **Interactive API Playground**: to quickly test API endpoints
+- **Unified developer portal**: combining docs, interactive quickstarts, and
+  APIs - learn.circle.com is now available under
+  [developers.circle.com/interactive-quickstarts](/interactive-quickstarts)
+- **Improved User Experience (UX)**: for easier and faster navigation
+
+And many more features all designed to dramatically improve your experience.
+
+---
+
+## September 2024
+
+### 2024.09.24
+
+Adds support to the new Compliance Engine product, including the new Transaction
+Screening feature and some necessary API additions and updates.
+
+#### Documentation additions
+
+The following docs have been added to support the new Compliance Engine release
+with the new Transaction Screening feature:
+
+- [Compliance Engine](/wallets/compliance-engine)
+  - [Transaction Screening](/w3s//wallets/compliance-engine/tx-screening-screening)
+    - [Quickstart](/wallets/compliance-engine/tx-screening-quickstart)
+    - [Testing Guide](/wallets/compliance-engine/tx-screening-testing)
+    - [Rule Management](/wallets/compliance-engine/tx-screening-rule-management)
+    - [Alert Management](/wallets/compliance-engine/tx-screening-alert-management)
+
+#### API additions
+
+Added new Compliance Engine APIs:
+
+- `POST` `/compliance/screening/addresses`
+
+Added new optional `transactionScreeningEvaluation` field to `Transaction`
+schema. The new field contains transaction screening results from the new
+Compliance Engine. It is available for the following API endpoints:
+
+- `GET` `/transactions`
+- `GET` `/transactions/{id}`
+
+---
+
+### 2024.09.11
+
+Made some API additions to support the Arbitrum blockchain.
+
+#### API additions
+
+Added enum values `ARB` and `ARB-SEPOLIA` to the `blockchain` request field for
+the following APIs:
+
+- `POST` `/developer/wallets`
+- `POST` `/user/wallets`
+- `GET` `/wallets`
+- `GET` `/transactions`
+- `POST` `/transactions/validateAddress`
+- `POST` `/user/initialize`
+- `GET` `/config/entity/monitoredTokens`
+- `GET` `/contracts`
+- `POST` `/contracts/deploy`
+- `POST` `/contracts/deploy/estimateFee`
+- `POST` `/templates/{id}/deploy`
+- `POST` `/templates/{id}/deploy/estimateFee`
+
+Added new `networkFee` field to the `TransactionFee` schema, representing the
+maximum value of native token needed for a transaction. The new field is
+available for the `transaction.estimatedFee` field and all `estimateFee`
+endpoints:
+
+- `POST` `/transactions/transfer/estimateFee`
+- `POST` `/transactions/contractExecution/estimateFee`
+- `POST` `/transactions/contractDeployment/estimateFee`
+- `POST` `/contracts/deploy/estimateFee`
+- `POST` `/templates/{id}/deploy/estimateFee`
+
+---
+
+### 2024.09.09
+
+Made some API additions and updates for improved parameter preconditions and
+better error handling.
+
+#### API additions
+
+Added new sign transaction error `SignTransactionRawTransactionTooLarge` for
+Programmable wallet sign transaction APIs when the `rawTransaction` size exceeds
+blockchain limit.
+
+- `POST` `/user/sign/transaction`
+- `POST` `/developer/sign/transaction`
+
+#### API updates
+
+Fixed a typo in the description of `monitoredTokens` API endpoint.
+
+- `GET` `/config/entity/monitoredTokens`
+
+Updated description for contract name field to clarify it only accepts
+alphanumeric characters.
+
+- `POST` `/contracts/import`
+- `POST` `/contracts/deploy`
+- `PATCH` `/contracts/{id}`
+
+---
+
+### 2024.09.05
+
+Circle's API platform now supports Arbitrum.
+
+#### Documentation additions
+
+For how to deposit ETH into an Arbitrum wallet, see the tutorial
+[Deposit ETH to Arbitrum](/w3s/deposit-eth-to-arbitrum).
+
+For a list of APIs that support Arbitrum, see
+[Blockchain Compatibility for Developer Services APIs](/w3s/blockchain-compatibility-for-circle-apis).
+
+---
+
+## August 2024
+
+### 2024.08.22
+
+Made some restructuring of the documentation navigation for improved browsing.
+
+#### Documentation updates
+
+A new category section was added to our documentation navigation:
+
+- [SDKs and Sample Apps](/w3s/web3-services-sdks)
+
+All existing documentation for our SDKs and sample apps was moved to this new
+section.
+
+---
+
+### 2024.08.14
+
+Made some necessary API additions and updates to support Solana NFTs and Zero
+balance tokens.
+
+#### Documentation additions
+
+The following docs have been updated to reflect the supported changes on the
+Solana network:
+
+- [API Compatibility](/w3s/blockchain-compatibility-for-circle-apis) for
+  supported blockchains
+- [Testnet Faucets](/w3s/developer-console-faucet) for supported blockchains
+
+#### API additions
+
+The following new enum values for the `standard` query parameters and response
+fields were added:
+
+- `FungibleAsset`
+- `NonFungible`
+- `NonFungibleEdition`
+- `ProgrammableNonFungible`
+- `ProgrammableNonFungibleEdition`
+
+for the following API endpoints:
+
+- `GET` `/wallets/{id}/nfts`
+- `GET` `/tokens/{id}`
+- `POST` `/user/transactions/transfer`
+- `POST` `/developer/transactions/transfer`
+- `GET` `/transactions`
+- `GET` `/transactions/{id}`
+- `GET` `/config/entity/monitoredTokens`
+- `POST` `/config/entity/monitoredTokens`
+- `PUT` `/config/entity/monitoredTokens`
+
+#### API updates
+
+Made `nftTokenId` an optional field in the response of the following API
+endpoints, since Solana doesn't have `nftTokenId`:
+
+- `GET` `/wallets/{id}/nfts`
+
+Modified the behavior of several API endpoints related to token balances in a
+wallet. In particular, tokens with a balance of zero will no longer be included
+in the API responses for the following endpoints:
+
+- `GET` `/wallets/{id}/balances`
+- `GET` `/wallets/{id}/nfts`
+
+**Note**: If you have enabled the [monitored token](/wallets/monitored-tokens)
+feature, tokens that have a zero balance will still be included in the response.
+
+---
+
+## July 2024
+
+### 2024.07.25
+
+Added two new sign transaction API endpoints for SOL-DEVNET wallets.
+
+#### API additions
+
+The following endpoints have been added:
+
+- `POST` `/user/sign/transaction`
+- `POST` `/developer/sign/transaction`
+
+---
+
+### 2024.07.23
+
+User-controlled wallets now offer two new authentication methods: social login
+and email authentication.
+
+#### Documentation additions
+
+See the following new docs:
+
+- [Authentication Methods](/wallets/user-controlled/authentication-methods)
+- [Confirmation UIs](/wallets/user-controlled/confirmation-uis)
+- [Quickstarts for Social Logins or Email Authentication](/w3s/quickstart-for-social-logins)
+
+#### API additions
+
+The following new API endpoints have been added:
+
+- `POST` `/users/social/token`
+- `POST` `/users/email/token`
+- `POST` `/users/resendOTP`
+- `POST` `/user/token/refresh`
+
+#### API updates
+
+The following API endpoints have been updated for social logins and email
+authentication:
+
+- `POST` `/users/social/token`
+- `POST` `/users/email/token`
+- `POST` `/user/initialize`
+- `POST` `/user/token/refresh`
+- `POST` `/users/resendOTP`
+
+The following API endpoints have been updated for PIN authentication:
+
+- `POST` `/users`
+- `POST` `/users/token`
+- `POST` `/user/initialize`
+- `GET` `/user`
+- `POST` `/user/pin`
+- `PUT` `/user/pin`
+- `POST` `/user/pin/restore`
+
+The following API endpoints have been updated for users:
+
+- `GET` `/users`
+- `GET` `/users/{id}`
+- `GET` `/user/challenges`
+- `GET` `/user/challenges/{id}`
+
+---
+
+### 2024.07.19
+
+Renamed the `FT` enum to `Fungible` in the standard query parameters and
+response fields across multiple API endpoints.
+
+#### API updates
+
+The `FT` enum is now the `Fungible` enum in the standard query parameters and
+response fields for the following endpoints:
+
+- `GET` `wallets/{id}/balances`
+- `GET` `tokens/{id}`
+- `GET`, `POST`, `PUT` `config/entity/monitoredTokens`
+
+---
+
+## June 2024
+
+### 2024.06.26
+
+Included the `FT` enum in the `standard` query parameters and response fields in
+multiple API endpoints.
+
+#### API additions
+
+Added the `FT` enum to the `standard` query parameters and response fields in
+the following endpoints:
+
+- `GET` `wallets/{id}/balances`
+- `GET` `wallets/{id}/nfts`
+- `GET` `tokens/{id}`
+- `GET` `config/entity/monitoredTokens`
+- `POST` `config/entity/monitoredTokens`
+- `PUT` `config/entity/monitoredTokens`
+
+---
+
+### 2024.06.20
+
+Added a new field to the `/contracts/deploy/estimateFee` endpoint.
+
+#### API additions
+
+Added new `AbiJson` field in the following API endpoint:
+
+- `POST` `/contracts/deploy/estimatefee`
+
+---
+
+### 2024.06.18
+
+A new Smart Contract template is available for Airdrop.
+
+#### Documentation additions
+
+To learn more about the new Airdrop template, see [Airdrop](/contracts/airdrop).
+
+---
+
+### 2024.06.13
+
+This fix updates the signTypedData API response for both user-controlled wallets
+and developer-controlled wallets.
+
+#### Documentation updates
+
+The `v` value in the signature response has changed from `0/1` to `27/28` to
+ensure compatibility with most verification methods in the following API calls:
+
+- `POST` `/user/sign/typedData`
+- `POST` `/developer/sign/typedData`
+
+---
+
+### 2024.06.12
+
+New server-side SDKs are available for Node.js and Python.
+
+#### Documentation updates
+
+A new version of the Node.js SDK is available. To set up the server-side Node.js
+SDK in your application. See the [Node.js SDK](/sdk-explorer#server-side-sdks)
+guide.
+
+A new server-side Python SDK is available. To set up the Python SDK in your
+application. See the [Python SDK](/sdk-explorer#server-side-sdks) guide.
+
+### 2024.06.11
+
+Programmable Wallets is now available on Solana.
+
+#### Documentation additions
+
+To see what's available, see the
+[Programmable Wallets on Solana](/wallets/wallets-on-solana) guide.
+
+#### API additions
+
+Added enum values `SOL` and `SOL-DEVNET` to the `blockchain` request and
+response fields for the following APIs:
+
+- `POST` `/faucet/drips`
+- `POST` `/developer/wallets`
+- `POST` `/user/wallets`
+- `GET` `/wallets`
+- `GET` `/transactions`
+- `POST` `/transactions/validateAddress`
+- `POST` `/user/initialize`
+- `GET` `/config/entity/monitoredTokens`
+
+#### API updates
+
+Updated description of `fee` parameters for Solana use case.
+
+Updated description of `AccountType` for Solana use case.
+
+Fixed `blockchain` request field to be string enum for the following APIs:
+
+- `POST` `/user/transactions/transfer`
+- `POST` `/developer/transactions/transfer`
+- `POST` `/transactions/transfer/estimateFee`

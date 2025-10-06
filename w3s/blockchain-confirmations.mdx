@@ -1,0 +1,131 @@
+---
+title: Blockchain Confirmations
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+When a transaction is created, it's initially in an unconfirmed or pending
+transaction state and waiting to be included in a block. Block confirmation is
+the process of validating and adding transactions to a block in a blockchain
+network. Blockchain confirmations help secure transactions against malicious
+actors and ensure the finality of transaction settlement.
+
+By the end of this guide, you will understand:
+
+- The importance of confirmations
+- How confirmations are shown in Circle's API platform
+- What to consider when balancing transaction settlement speed with the risk of
+  a reorganization
+
+## Importance of confirmations
+
+Each time a new block is validated in a blockchain network, it indicates a
+confirmation. Without confirmations, transactions are vulnerable to alteration
+or reversal through reorgs. A reorg is a rewriting of transaction history which
+invalidates recently generated blocks. With each additional block confirmation,
+however, it becomes more difficult for an attacker to invalidate previous
+blocks.
+
+## Confirmation number
+
+The confirmation number is the number of times a block must be confirmed before
+all transactions included in that block are considered final. This allows the
+block to reach finality and ensures that all transactions included in that block
+cannot be altered or reversed.
+
+The confirmation number varies across different blockchain networks. On Circle's
+API platform, a transaction state is `COMPLETED` when the confirmation number
+has been reached for the specific blockchain network. In your application, you
+can choose to use a `CONFIRMED` state to consider a transaction as valid, though
+this means taking on some risk.
+
+## Transaction state
+
+On Circle's API platform, when a transaction is added to a block, it starts in a
+`CONFIRMED` state and the wallet balance is updated. The meaning of this varies
+for Solana and EVM L2s such as Arbitrum:
+
+- For Solana, `CONFIRMED` means that the transaction is included in a block that
+  has been voted on by a supermajority (> 2/3) of the network's stake. This is
+  known as optimistic confirmation. To this date, a block that has been
+  optimistically confirmed has never been rolled back nor failed to finalize.
+- For EVM L2s, `CONFIRMED` means that the transaction has been processed by the
+  sequencer. This is known as soft finality. Your acceptance of finality
+  completely depends on trusting the sequencer of the L2 chain.
+
+To receive a notification of when a transaction is added to a block, subscribe
+to webhook notifications. For more, see
+[Notifications Quickstart](/wallets/webhook-notifications). You can also view
+transaction details by sending a `POST` request to the `/transactions/{id}`
+endpoint.
+
+Once the confirmation number is reached, the transaction state transitions to
+`COMPLETED`. If subscribed, you will receive a webhook notification of the new
+state.
+
+## Confirmation numbers for supported chains
+
+Taking into consideration historical performance, the potential for reorgs, and
+overall network architecture, Circle's API platform uses specific confirmation
+numbers for each of its supported chains. This means that all transactions start
+in a `CONFIRMED` state and when the confirmation number is reached for a
+specific chain, transitions to a `COMPLETED` state.
+
+The following table showcases the confirmation numbers used by Circle's API
+platform for each supported chain.
+
+<Note>
+  These confirmation numbers are based on Circle's considerations and do not
+  necessarily reflect the inherent requirements or limits of the blockchain
+  networks.
+</Note>
+
+| Chain                                                                                                                                                                            | Confirmation number | Approximate time |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ---------------- |
+| Arbitrum ([USDC](https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831))                                                                                          | 12 ETH blocks       | \~3 minutes      |
+| Avalanche ([USDC](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E), [EURC](https://snowtrace.io/token/0xc891eb4cbdeff6e073e859e987815ed1505c2acd))         | 1                   | \~2 seconds      |
+| Base ([USDC](https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913), [EURC](https://basescan.org/token/0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42))              | 12 ETH blocks       | ~3 minutes       |
+| Ethereum ([USDC](https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48), [EURC](https://etherscan.io/token/0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c))          | 12                  | \~3 minutes      |
+| Optimism ([USDC](https://optimistic.etherscan.io/token/0x0b2c639c533813f4aa9d7837caf62653d097ff85))                                                                              | 12 ETH blocks       | ~4 minutes       |
+| Polygon PoS ([USDC](https://polygonscan.com/token/0x3c499c542cef5e3811e1192ce70d8cc03d5c3359))                                                                                   | 2                   | \~5 seconds      |
+| Solana ([USDC](https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v), [EURC](https://explorer.solana.com/address/HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr)) | 33                  | \~13 seconds     |
+| Unichain ([USDC](https://unichain-sepolia.blockscout.com/token/0x31d0220469e10c4E71834a79b1f276d740d3768F))                                                                      | 300                 | ~3 minutes       |
+| Aptos ([USDC](https://explorer.aptoslabs.com/account/0x3faec0a94cb84c45f7b50cb7c61983f8b5a2ce76b4b2fc0c6696a4d87b60b17e?network=mainnet))                                        | 1                   | ~500 ms          |
+
+For transactions on Polygon PoS, Circle's API platform requires 50 confirmations
+before transitioning their state to `COMPLETED`. This process generally takes
+around 2 minutes. The chosen confirmation number represents three times the
+number of confirmations needed for sufficient transaction finality, based on the
+largest reorg observed thus far.
+
+## Balancing risk and transaction processing speed
+
+Waiting for multiple confirmed blocks mitigates the risk of a reorg but
+increases the transaction settlement time. As a developer, you decide how to
+balance the two in your application.
+
+When a transaction state is `CONFIRMED` on Circle's API platform, the wallet
+balance is updated. You can display this to your user as a pending transaction,
+similar to how banks display inbound deposits. Here are a few ways you could
+choose to handle transactions in different states:
+
+- Wait for the transaction state to transition to `COMPLETED`, which ensures the
+  confirmation number is reached, before allowing your user to withdraw from
+  their wallet balance. There is no risk if you choose to implement this option.
+- Allow your user to withdraw funds when the transaction state is `CONFIRMED`.
+  The trust associated with this option varies by chain:
+  - Solana: `CONFIRMED` means that you are trusting the blockchain's optimistic
+    confirmation prior to `COMPLETED`.
+  - EVM L2s: `CONFIRMED` means that you are trusting the L2's sequencer prior to
+    achieving finality on Ethereum, which is indicated by `COMPLETED`.
+  - Avalanche: Transactions immediately transition from `CONFIRMED` to
+    `COMPLETED` as Avalanche supports 1 block finality.
+  - Other EVM L1s: Risks may vary. Ensure you research the blockchain.
+
+If a transaction is of significant value, it is best practice to wait for its
+state to transition to `COMPLETED`. By understanding blockchain confirmations
+and the risk of reorgs, you can enhance the security and reliability of your
+applications.

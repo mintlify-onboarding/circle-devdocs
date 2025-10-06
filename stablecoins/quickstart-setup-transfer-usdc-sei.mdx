@@ -1,0 +1,356 @@
+---
+title: "Quickstart: Set up and transfer USDC on Sei"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Transfer USDC on Sei"
+---
+
+This quickstart guide helps you write a standalone `index.js` script that checks
+your USDC balance and sends a test transfer on the Sei Atlantic-2 Testnet. It's
+designed for developers looking to quickly get hands-on with
+[USDC](/stablecoins/what-is-usdc) on Sei.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Installed **[Node.js v18+](https://nodejs.org/)** and `npm`, which comes with
+  `Node.js`.
+- Prepared a Sei testnet wallet with USDC and SEI for gas:
+  - [Set up a Sei-compatible wallet](https://docs.sei.io/learn/wallets).
+  - [Request SEI from the faucet](https://docs.sei.io/learn/faucet).
+  - [Transfer testnet USDC](https://replit.com/@buildoncircle/cctp-v2-web-app)
+    to Sei using Circle's CCTP Sample App.
+- Stored your private key and a recipient address in a `.env` file.
+
+### USDC contract address
+
+Use the following contract address for USDC on the Sei Atlantic-2 Testnet:
+
+- USDC contract –
+  [`0x4fCF1784B31630811181f670Aea7A7bEF803eaED`](https://seitrace.com/address/0x4fCF1784B31630811181f670Aea7A7bEF803eaED?chain=atlantic-2)
+
+## Part 1: Set up your project
+
+Follow these steps to install dependencies and set up your script environment.
+
+### 1. Initialize a project
+
+Create a new directory and initialize it with `npm`:
+
+```shell
+mkdir usdc-sei-script
+cd usdc-sei-script
+npm init -y
+npm pkg set type=module
+```
+
+### 2. Install required dependencies
+
+Install `viem` and `dotenv`:
+
+```shell
+npm install viem dotenv
+```
+
+### 3. Create your `.env` file
+
+In the project root, create a `.env` file and add the following values:
+
+```
+# Your private key (64 hex characters with 0x prefix)
+PRIVATE_KEY=<YOUR_PRIVATE_KEY>
+
+# The address you want to send USDC to
+RECIPIENT_ADDRESS=0x<RECIPIENT_ADDRESS>
+```
+
+<Note>
+Your private key must be a `0x`-prefixed 64-character hex string.
+</Note>
+
+## Part 2: Build your script
+
+Create a file named `index.js`. You'll build your script step-by-step in the
+following sections.
+
+### 1. Import libraries and define constants
+
+In `index.js`, start by importing dependencies and setting up the chain and
+token configuration:
+
+```ts
+// Load environment variables from .env
+import "dotenv/config";
+
+// Import Viem utilities for blockchain interaction
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  formatUnits,
+  parseUnits,
+} from "viem";
+
+// Convert a raw private key string into an account object
+import { privateKeyToAccount } from "viem/accounts";
+
+// Define Sei Atlantic-2 testnet chain configuration
+const seiTestnet = {
+  id: 1328,
+  name: "Sei Atlantic-2 Testnet",
+  network: "sei-atlantic-2",
+  nativeCurrency: { name: "Sei", symbol: "SEI", decimals: 18 },
+  rpcUrls: { default: { http: ["https://evm-rpc.atlantic-2.seinetwork.io"] } },
+  blockExplorers: {
+    default: { url: "https://seitrace.com/?chain=atlantic-2" },
+  },
+  testnet: true,
+};
+
+// Define USDC token address and its decimals on Sei testnet
+const USDC_ADDRESS = "0x4fCF1784B31630811181f670Aea7A7bEF803eaED";
+const USDC_DECIMALS = 6;
+
+// Define a minimal ABI with only the required functions
+const USDC_ABI = [
+  {
+    name: "balanceOf",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "account", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    name: "transfer",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
+];
+```
+
+<Note>
+<Accordion title="**Learn more:** Why use a minimal ABI?">
+This ABI includes only the two methods needed for this script:
+
+- `balanceOf(address)` to check the token balance.
+- `transfer(to, amount)` to send USDC.
+
+This makes the ABI compact and easier to understand. Using a minimal ABI:
+
+- Reduces complexity by excluding unrelated functions.
+- Speeds up onboarding for new developers.
+- Avoids unnecessary contract data that would be unused in this context.
+</Accordion>
+</Note>
+
+### 2. Load environment variables and validate inputs
+
+Next, load your credentials from `.env` and validate them:
+
+```ts
+// Load variables from .env file
+const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
+const RECIPIENT = process.env.RECIPIENT_ADDRESS || process.env.RECIPIENT;
+
+// Validate .env inputs to avoid runtime errors
+if (!PRIVATE_KEY_RAW) {
+  console.error("Error: Set PRIVATE_KEY in your .env file");
+  process.exit(1);
+}
+if (!RECIPIENT) {
+  console.error("Error: Set RECIPIENT_ADDRESS in your .env file");
+  process.exit(1);
+}
+if (!/^0x[a-fA-F0-9]{40}$/.test(RECIPIENT)) {
+  console.error("Error: Invalid recipient address");
+  process.exit(1);
+}
+
+// Ensure the private key has 0x prefix for compatibility
+const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
+  ? PRIVATE_KEY_RAW
+  : "0x" + PRIVATE_KEY_RAW;
+```
+
+<Note>
+<Accordion title="**Learn more:** Input validation and the 'fail fast' principle">
+Failing fast means catching mistakes early in the execution cycle. This script
+validates inputs to avoid:
+
+- Missing or undefined environment variables.
+- Private keys that are not prefixed with `0x`.
+- Recipient addresses that don't follow Ethereum address formatting.
+
+These checks:
+
+- Prevent runtime failures deeper in the logic.
+- Help you debug configuration issues immediately.
+- Save time and reduce the risk of sending faulty transactions.
+</Accordion>
+</Note>
+
+### 3. Set up Viem clients
+
+Set up the Viem clients and your account object:
+
+```ts
+// Convert private key to account object
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+// Create a client for reading chain state (for example, balanceOf)
+const publicClient = createPublicClient({
+  chain: seiTestnet,
+  transport: http(),
+});
+
+// Create a wallet client for signing and sending transactions
+const walletClient = createWalletClient({
+  account,
+  chain: seiTestnet,
+  transport: http(),
+});
+const walletClient = createWalletClient({
+  account,
+  chain: seiTestnet,
+  transport: http(),
+});
+```
+
+<Note>
+<Accordion title="**Learn more:** When to use `publicClient` vs. `walletClient`">
+- `publicClient` calls `eth_call` to read blockchain data. It doesn't need your
+  private key.
+  - Use this for functions like `balanceOf`, `symbol`, or `decimals`.
+- `walletClient` sends transactions using `eth_sendTransaction`.
+  - It signs data with your private key and requires a funded account.
+
+Both clients use the same RPC connection but serve different roles.
+</Accordion>
+</Note>
+
+### 4. Check balance and send USDC
+
+Now add the logic to check your balance and send tokens:
+
+```ts
+(async () => {
+  try {
+    // Read the sender's USDC balance using the balanceOf function
+    const balance = await publicClient.readContract({
+      address: USDC_ADDRESS,
+      abi: USDC_ABI,
+      functionName: "balanceOf",
+      args: [account.address],
+    });
+
+    // Convert raw balance (in smallest units) into readable format (e.g., 250.0 USDC)
+    const balanceFormatted = Number(formatUnits(balance, USDC_DECIMALS));
+
+    // Set the amount of USDC to transfer (can be customized)
+    const amount = 10;
+
+    // Log the sender address, recipient, and current balance
+    console.log("Sender:", account.address);
+    console.log("Recipient:", RECIPIENT);
+    console.log("USDC balance:", balanceFormatted);
+
+    // Exit if the wallet balance is insufficient
+    if (amount > balanceFormatted) {
+      console.error("Error: Insufficient USDC balance");
+      process.exit(1);
+    }
+
+    // Convert the amount to raw format (10 USDC = 10 * 10^6 units)
+    const amountInDecimals = parseUnits(amount.toString(), USDC_DECIMALS);
+
+    // Send the USDC by calling the transfer function of the token contract
+    const hash = await walletClient.writeContract({
+      address: USDC_ADDRESS,
+      abi: USDC_ABI,
+      functionName: "transfer",
+      args: [RECIPIENT, amountInDecimals],
+    });
+
+    // Log the transaction hash and a link to view it on the Sei block explorer
+    console.log("Transfer successful!");
+    console.log("Tx hash:", hash);
+    console.log(
+      "Explorer:",
+      `https://seitrace.com/?chain=atlantic-2&tx=${hash}`,
+    );
+  } catch (err) {
+    // Log any errors that occur (e.g., RPC errors, contract reverts)
+    console.error("Transfer failed:", err.message || err);
+    process.exit(1);
+  }
+  // Exit cleanly after the transfer completes
+  process.exit(0);
+})();
+```
+
+<Note>
+<Accordion title="**Learn more:** Handling USDC units with `formatUnits` and `parseUnits`">
+Token contracts use the smallest indivisible unit of a token. For USDC, that’s 6
+decimal places.
+
+- `formatUnits(value, 6)` converts raw blockchain balances into readable amounts
+  like `250.0`.
+- `parseUnits('10', 6)` converts user inputs into raw values like `10000000`
+  (10 \* 10^6).
+
+These utilities:
+
+- Prevent incorrect math during transfer.
+- Ensure compatibility with ERC-20 functions.
+- Improve display formatting in logs and UI.
+</Accordion>
+</Note>
+
+## Part 3: Run your script
+
+To run your script, use the following command:
+
+```shell
+node index.js
+```
+
+### Sample output
+
+If the script runs successfully, your terminal will print a transaction summary
+like this:
+
+```
+Sender: 0x1A2b...7890
+Recipient: 0x9F8f...1234
+USDC balance: 250.0
+Transfer successful!
+Tx hash: 0xabc123...def456
+Explorer: https://seitrace.com/?chain=atlantic-2&tx=0xabc123...def456
+```
+
+You can open the explorer link in your browser to view the transaction on
+SeiTrace.
+
+## Additional notes
+
+- **Testnet only:** This guide runs on the Sei testnet. Tokens and transfers
+  here are not real and hold no value.
+- **Security best practices:** Always store sensitive data like private keys in
+  environment variables. Never hardcode or commit `.env` files to version
+  control.
+- **Gas fees:** All EVM-compatible chains require gas. Be sure to request
+  testnet SEI from the faucet so your transactions can be mined.
+- **Lightweight ABI:** The ABI used here is minimal. It includes only the
+  functions necessary for balance checks and transfers, which keeps the script
+  lean.
+- **Auto-prefixing:** Some tools or environments strip the `0x` prefix from
+  private keys. This script adds it back if needed to avoid errors.

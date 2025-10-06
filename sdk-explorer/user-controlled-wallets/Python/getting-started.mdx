@@ -1,0 +1,105 @@
+---
+title: Getting Started with User-Controlled Wallets - Python
+featureFlag: sdkExplorerEnabled
+dropDownNavigation:
+  label: Python
+  items:
+    - label: Node.js
+      href: /sdk-explorer/user-controlled-wallets/Node.js/getting-started
+---
+
+Use the Python SDK to interact with Circle's User-Controlled Wallet APIs, which
+allow you to embed secure wallets in your applications and create blockchain
+transactions using the Developer Services platform.
+
+This page provides short examples of how to install and use the user-controlled
+wallets SDK. For complete examples, see the [Sample Projects](/sample-projects)
+page. For more information see the
+[user-controlled wallets documentation](/wallets/user-controlled).
+
+## Prerequisites
+
+- Have Python installed.
+- Have an active [Circle Developer Account](https://console.circle.com/).
+- [Generate an API key](https://developers.circle.com/w3s/web3-services-api-client-keys-auth)
+  to use in requests to the Circle API.
+- [Generate an entity secret](https://developers.circle.com/wallets/dev-controlled/register-entity-secret)
+  to use in requests with the developer-controlled wallets SDK.
+
+Although not a requirement for using the SDK, Circle recommends that you
+[use a virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
+for development. A Python virtual environment is an isolated environment that
+you can use to silo your project from the global Python environment.
+
+## Install the SDK
+
+Use the following command to install the SDK with
+[pip](https://pypi.org/project/pip/):
+
+```shell
+pip install circle-user-controlled-wallets
+```
+
+## User-controlled wallets client
+
+To start using the SDK, you first need to configure a client and initialize it
+with your API key.
+
+### Import the client
+
+The following example shows how to import the client and configure it to use
+your API key:
+
+```python
+from circle.web3 import utils
+
+client = utils.init_user_controlled_wallets_client(
+api_key="<your_api_key>"
+)
+```
+
+### Create a transaction
+
+The following example shows how to create a transaction using the client:
+
+```python
+import uuid
+from circle.web3 import user_controlled_wallets
+
+# generate a user id
+user_id = str(uuid.uuid4())
+
+# create user
+api_instance = user_controlled_wallets.UsersAndPinsApi(client)
+try:
+    request = user_controlled_wallets.CreateUserRequest(user_id=user_id)
+    api_instance.create_user(request)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling UsersAndPinsApi->create_user: %s\n" % e)
+
+# get user
+try:
+    response = api_instance.get_user(id=user_id)
+    print(response.data)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling UsersAndPinsApi->get_user: %s\n" % e)
+
+# get user token
+try:
+    request = user_controlled_wallets.GenerateUserTokenRequest.from_dict({"userId": user_id})
+    response = api_instance.get_user_token(request)
+    print(response.data.user_token)
+except user_controlled_wallets.ApiException as e:
+    print("Exception when calling UsersAndPinsApi->get_user_token: %s\n" % e)
+```
+
+## Client configuration options
+
+The client for the user-controlled wallets SDK accepts the following
+configuration parameters:
+
+| **Option**   | **Required?** | **Description**                                                                                 |
+| ------------ | ------------- | ----------------------------------------------------------------------------------------------- |
+| `api_key`    | Yes           | The API key used to authenticate requests to the Circle API.                                    |
+| `host`       | No            | The base URL that overrides the default API URL of `https://api.circle.com/v1/w3s`.             |
+| `user_agent` | No            | Custom user agent request header. If provided, it's added before the default user agent header. |

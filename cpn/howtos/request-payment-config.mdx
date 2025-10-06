@@ -1,0 +1,92 @@
+---
+title: "How-to: Request Payment Configurations and Routes"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Request Payment Configurations and Routes"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+You can use the API to discover which corridors, currencies, and payment methods
+are available. Retrieving this information and handling it in your integration
+allows you to show your users the available sources and destinations for funds
+in CPN.
+
+## Steps
+
+Use the following steps to request CPN configuration overview, and get the
+available routes from country to country.
+
+### Step 1: Request configuration overview
+
+Make a request to the
+[configurations overview endpoint](/api-reference/cpn/cpn-platform/get-payment-configurations-overview)
+to receive a list of supported currencies, countries, payment methods, and
+blockchains.
+
+```shell
+curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
+  -X GET https://api.circle.com/v1/cpn/v1/ofi/configurations/overview
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "sourceCurrencies": ["USDC"],
+    "destinationCountries": ["BR", "HK", "MX", "NG", "US"],
+    "destinationCurrencies": ["BRL", "HKD", "MXN", "NGN", "USD"],
+    "paymentMethodTypes": [
+      "ACH-BANK-TRANSFER",
+      "BANK-TRANSFER",
+      "CHATS",
+      "FPS",
+      "PIX",
+      "SPEI",
+      "WIRE"
+    ],
+    "blockchains": ["ETH-SEPOLIA", "MATIC-AMOY", "SOL-DEVNET"]
+  }
+}
+```
+
+### Step 2: Request available route details
+
+Evaluate the available route details for a specific transfer by making a request
+to the
+[supported payment routes endpoint](/api-reference/cpn/cpn-platform/list-routes).
+This example evaluates a route from the US to Mexico, but other routes can be
+evaluated by changing the query parameters.
+
+```shell
+curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
+  -X GET https://api.circle.com/v1/cpn/v1/ofi/configurations/routes?sourceCurrency=USDC&destinationCountry=MX
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "destinationCurrency": "MXN",
+      "paymentMethodType": "SPEI",
+      "blockchain": "ETH-SEPOLIA",
+      "fiatLimit": {
+        "min": "168",
+        "max": "837500",
+        "currency": "MXN"
+      },
+      "cryptoLimit": {
+        "min": "8.34",
+        "max": "41552.14",
+        "currency": "USDC"
+      }
+    }
+  ]
+}
+```

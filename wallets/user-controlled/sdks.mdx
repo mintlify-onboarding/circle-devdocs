@@ -1,0 +1,141 @@
+---
+title: User-Controlled Wallets SDKs
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "SDKs"
+---
+
+Circle's user-controlled wallets SDKs allow for the integration of
+user-controlled wallets within your client applications. The SDKs support
+various authentications methods to ensure a seamless user experience while using
+the wallet.
+
+<Note>
+**Note:** Circle's user-controlled wallets SDKs simplify client-side
+development and are not required for developer-controlled wallets.
+</Note>
+
+To build client applications that enable secure, user-controlled wallets, you
+must use one of Circle's user-controlled wallets SDKs. Circle supports the
+following platforms:
+
+- [Web](/wallets/user-controlled/web-sdk)
+- [iOS](/wallets/user-controlled/ios-sdk)
+- [Android](/wallets/user-controlled/android-sdk)
+- [React Native](/wallets/user-controlled/react-native-sdk)
+
+## Security
+
+The user-controlled wallets SDKs securely manage and communicate with your
+server, ensuring that users' keyshares remain exclusively with them and are
+never exposed to your server. To maintain security, the SDKs encrypt all request
+bodies using an encryption key. This guarantees that users retain full control
+over their digital assets in the wallet, with no access to funds by either
+Circle or your application.
+
+## Operation
+
+You initialize the SDK by setting the endpoint server. This allows your
+application and Circle's API platform to communicate. To simplify the
+development of your application, you can use the corresponding server-side
+[Node.js SDKs](/sdk-explorer/user-controlled-wallets/Node.js/getting-started) or
+[Python SDKs](/sdk-explorer/user-controlled-wallets/Python/getting-started).
+
+Your server retrieves `challengeId` from
+[Circle's API platform](/api-reference/wallets/user-controlled-wallets/create-device-token-social-login)
+and passes it to the SDK, which then executes relevant operations. Certain
+operations may differ based on the authentication method with which you choose
+to integrate, for example:
+
+- For social login or email authentication, the SDK can display a confirmation
+  UI to your users to preview and confirm the transaction or signature details
+- For PIN authentication, the SDK can display a UI that allows your users to
+  securely input their PIN and security answers
+
+For more on the SDK design flow including a diagram, see
+[SDK Architecture for User-Controlled Wallets](/wallets/user-controlled/sdk-architecture).
+
+## Customizable UI elements
+
+You can customize the styling, layout, and description of your UI modals,
+including:
+
+- Title and subtitle - Modify the title and subtitle to reflect your brand
+  identity or provide specific instructions.
+- Transaction and signature details - Tailor the information displayed on the
+  Confirmation UIs to provide context for your users during the signing process.
+- Error messages - Customize the error messages displayed to users to provide
+  guidance and a personalized experience.
+- PIN code input layout - Adjust the layout and styling of the PIN code input
+  field to align with your application's design guidelines.
+- Question list configuration - Set the list of security questions and allow
+  users to choose from a predefined set.
+
+For detailed instructions on customizing UIs for web, iOS, and Android, see the
+following docs:
+
+- [Web SDK UI Customizations API](/wallets/user-controlled/web-sdk-ui-customizations)
+- [iOS SDK UI Customization API](/wallets/user-controlled/ios-sdk-ui-customization-api)
+- [Android SDK UI Customization API](/wallets/user-controlled/android-sdk-ui-customization-api)
+
+## Web SDK
+
+Circle provides the following client-side web SDK to enable integrations with
+Circle’s prebuilt UI components to create user wallets securely, send
+transactions and more.
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 xl:gap-8 pt-4">
+
+<Card href="/wallets/user-controlled/web-sdk" title="Web SDK">
+  <div className="inline-flex items-center space-x-2 rounded-sm py-2 pr-1 text-blue-400 font-circular-bold hover:bg-blue-50">
+    <div>GET STARTED</div>
+    <Icon icon="arrow-right" />
+  </div>
+</Card>
+</div>
+
+## Mobile SDKs
+
+Circle provides the following client-side mobile device SDKs to help you create
+native applications for iOS and Android devices and platforms. Mobile SDKs
+support only user-controlled wallets.
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 xl:gap-8 pt-4">
+
+<Card href="/wallets/user-controlled/ios-sdk" title="iOS SDK">
+  <div className="inline-flex items-center space-x-2 rounded-sm py-2 pr-1 text-blue-400 font-circular-bold hover:bg-blue-50">
+    <div>GET STARTED</div>
+    <Icon icon="arrow-right" />
+  </div>
+</Card>
+<Card href="/wallets/user-controlled/android-sdk" title="Android SDK">
+  <div className="inline-flex items-center space-x-2 rounded-sm py-2 pr-1 text-blue-400 font-circular-bold hover:bg-blue-50">
+    <div>GET STARTED</div>
+    <Icon icon="arrow-right" />
+  </div>
+</Card>
+<Card href="/wallets/user-controlled/react-native-sdk" title="React Native SDK">
+  <div className="inline-flex items-center space-x-2 rounded-sm py-2 pr-1 text-blue-400 font-circular-bold hover:bg-blue-50">
+    <div>GET STARTED</div>
+    <Icon icon="arrow-right" />
+  </div>
+</Card>
+</div>
+
+## Postman API Suite
+
+Circle’s Postman workspace lets you quickly send requests and learn to use
+Developer Services APIs.
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 xl:gap-8 pt-4">
+
+<Card href="/w3s/postman" title="Postman API Suite">
+  <div className="inline-flex items-center space-x-2 rounded-sm py-2 pr-1 text-blue-400 font-circular-bold hover:bg-blue-50">
+    <div>GET STARTED</div>
+    <Icon icon="arrow-right" />
+  </div>
+</Card>
+</div>

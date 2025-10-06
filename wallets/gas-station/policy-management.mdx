@@ -1,0 +1,189 @@
+---
+title: Policy Management
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+A policy is your configuration on a blockchain network for using Circle's Gas
+Station. You must set up a policy to use the Gas Station on mainnet. Here, you
+configure what you are willing to sponsor on behalf of your users. Circle's Gas
+Station pays the fees if a transaction meets your configuration.
+
+## Policy Setup for Gas Station on mainnets
+
+To activate a mainnet policy, follow these steps:
+
+1. **Access the Sponsorship Policy page:** Using your credentials, log in to the
+   developer console. Toggle to mainnet [top left corner]. From there, navigate
+   to the Gas Station section, which allows you to manage your gas fee
+   sponsorship policies efficiently.
+2. **Choose to create or select a policy:** If you don't have a mainnet policy
+   yet, select the option to create a new policy. Alternatively, choose the
+   desired policy from the available list if you already have an existing one.
+3. **Configure policy settings:** Set the desired configurations for your policy
+   based on your specific needs. Refer to the list of configurations provided
+   below for clarity on available options.
+
+<Note>
+   > **Tip:**: Make sure your limits are set high enough to cover your expected
+   > user transactions. Otherwise, transactions that exceed your policy are not
+   > sponsored and may fail.
+</Note>
+
+4. **Update or create the policy:** After applying the necessary configurations,
+   choose either the **Update** or **Create** button at the bottom of the page.
+   Select **Update** to modify an existing policy, and select **Create\*** to
+   create a new policy.
+5. **Activate the policy:** After confirming your chosen policy configurations,
+   click the **Activate** button. This final step enables the selected policy
+   and initiates gas fee sponsorship according to the specified settings.
+
+<Check>
+
+**Gas Station auto-sponsors after Policy is set**
+
+When you create a policy on a chain, Circle sponsors gas fees for all accounts
+that meet your configuration. You don't need to pass the policy ID in each
+transaction request.
+
+</Check>
+
+## Policy configurations
+
+A policy consists of the following configurations:
+
+1. **Policy Name:** Provide a descriptive name for the policy to identify it in
+   the policy list. The policy name displays only in the console.
+2. **Network:** Refers to the specific blockchain network where the Gas Station
+   covers gas fees. Each policy supports only one blockchain network, ensuring
+   clarity and ease of management.
+3. **Default Policy:** The policy sponsors gas fees for any transaction on a
+   specific network, including wallet creation and contract execution. You can
+   set only one default policy per network. Circle recommends designating this
+   as the first policy for the specified network.
+
+<Note>
+   > **Note**: Transactions use only default policies. If you want to use a
+   > non-default policy, update it to default and activate it.
+</Note>
+
+4. **Maximum spend per day\* (optional):** Specify the maximum allowance for gas
+   fees in USD that you are willing to sponsor within a 24-hour period. This
+   restriction provides control over the allocated budget for gas fee
+   sponsorship.
+5. **Maximum spend per transaction\* (optional):** The maximum allowance for gas
+   fees in USD that you are willing to sponsor for a single transaction.
+
+<Note>
+   > **Note**: Maximum spend per transaction limit does not apply to the first
+   > transaction made from any Smart Contract Account (SCA) wallet. This
+   > includes SCA-type wallets as well as Console Wallets.
+</Note>
+   >
+<Note>
+   > This first transaction limit check does not lock the nonce of the wallet,
+   > so in some cases it is possible that multiple calls with high network fees
+   > bypass the check.
+</Note>
+
+6. **Maximum operations per day\* (optional):** The maximum number of supported
+   operations (such as transactions) per day.
+7. **Blocked addresses (optional):** A configurable list of blockchain addresses
+   that should not receive sponsored gas fees. This feature allows you to
+   exclude specific addresses from benefiting from gas fee coverage.
+
+_\*Daily limits reset once every 24 hours at 0:00 UTC._
+
+By leveraging these configurations within a policy, you can fine-tune the gas
+fee sponsorship parameters to your specific requirements and financial
+considerations. Note that any limits left blank are not applied.
+
+<Warning>
+
+**Transactions Outside Your Policy**
+
+If a transaction exceeds your configured policy limits, such as maximum spend
+per transaction, maximum spend per day, or maximum operations per day, **the
+transaction is not sponsored** by Circle's Gas Station. In this case, the
+transaction fails unless the sender provides their own gas.
+
+If your policy settings are missing, misconfigured, or too restrictive, user
+transactions may fail. Review your policy carefully and monitor transaction
+activity to avoid unexpected failures.
+
+</Warning>
+
+## Deactivating a Gas Station policy on mainnets
+
+If you need to deactivate the mainnet policy at any given time, it can be done
+conveniently from the developer console. To deactivate the mainnet policy,
+follow these simple steps:
+
+1. **Select the mainnet policy:** Access the console and locate the intended
+   mainnet policy that you wish to deactivate. This can be found in the policy
+   management section.
+2. **Click the deactivate option:** Once you have identified the mainnet policy,
+   click the **Deactivate** button in the console interface's top right corner.
+   This action triggers the deactivation process.
+3. **Confirm the deactivation:** A pop-up modal appears after clicking the
+   deactivate option. Select the deactivate button within the modal to confirm
+   deactivation of the policy.
+
+<Warning>
+
+**Warning:** Deactivating a policy stops all mainnet transaction sponsorships
+and end-users wallet transactions are rejected for sponsorship.
+
+</Warning>
+
+Following these steps, you can easily deactivate the mainnet policy, granting
+you control and flexibility over the gas fee sponsorship within your
+application.
+
+## Policy Setup for Gas Station on testnets
+
+When it comes to using Gas Station on testnets, the setup process is
+hassle-free. Circle takes care of the initial configuration by automatically
+generating a default policy upon signing up for an account. This default policy
+is designed for developers leveraging Wallets during the testing phase. With
+this default policy in place, you can seamlessly sponsor testnet tokens while
+building your applications.
+
+It's important to note the gas fee sponsorship limits applicable for different
+testnets:
+
+| Testnet          | Sponsored Token | Daily Limit |
+| ---------------- | --------------- | ----------- |
+| Aptos Testnet    | APT             | 10          |
+| Arbitrum Sepolia | ETH             | 50          |
+| Avalanche Fuji   | AVAX            | 50          |
+| Base Sepolia     | ETH             | 50          |
+| Ethereum Sepolia | ETH             | 50          |
+| Optimism Sepolia | ETH             | 50          |
+| Polygon Amoy     | MATIC           | 50          |
+| Solana Devnet    | SOL             | 2           |
+| Unichain Sepolia | ETH             | 50          |
+
+## View gas sponsored transactions
+
+Circle provides a dashboard to monitor and analyze these gas sponsorship
+transactions.
+
+### Using the Developer Dashboard
+
+To view gas-sponsored transactions in testnet or mainnet:
+
+1. **Access the Gas Station policy page:** log in to the developer console using
+   your credentials. From there, navigate to the Gas Station Policy section,
+   which allows you to manage your gas fee sponsorship policies efficiently.
+2. **Select a policy:** Choose the specific policy you want to review from the
+   available list on the policy page.
+
+**View sponsored transactions table:** There is a table on the policy page that
+lists transactions that have been sponsored. You can apply filters to refine the
+view, enabling you to focus on specific transactions.

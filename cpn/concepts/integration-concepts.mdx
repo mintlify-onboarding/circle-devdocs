@@ -1,0 +1,139 @@
+---
+title: CPN Integration Concepts
+description: 
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Integration Concepts"
+---
+
+This page discusses key concepts for integrating with CPN. Understanding these
+concepts can help you integrate with CPN more effectively.
+
+## Authentication
+
+CPN authenticates your API requests using a unique key associated with your
+account. All authentication is performed in the HTTP header of requests to the
+API. If a key is not provided, or an incorrect key is provided, the API returns
+a `401 - Invalid Credentials` error. All requests must use HTTPS; the API
+rejects any requests using plain HTTP.
+
+Circle provides API keys for authentication with the CPN API. These keys are
+provided manually during onboarding. The following is an example of how to set
+up the authentication header:
+
+```shell
+curl --location --request GET 'https://api.circle.com/v1/cpn/payments' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer {YOUR_API_KEY}'
+```
+
+### Security notes
+
+- Your API key provides full access to the CPN API, so make sure they are stored
+  securely. They should never be exposed in public repositories and they should
+  only be shared within your organization using secure methods. As a best
+  practice, you should rotate your API keys periodically.
+- When setting up your API key with Circle, you can request that only certain IP
+  addresses be allowed to make API calls using the key. Talk to your Circle
+  representative about establishing an IP allowlist for your API key.
+- You should ensure that API requests are always made over TLS/encrypted
+  connections to prevent the exposure of your key.
+- For webhook subscriptions, you must provide an HTTPS endpoint, and validate
+  the signature with Circle-provided public keys.
+
+## Idempotency
+
+For endpoints that create transactions and payments, CPN requires an idempotency
+key to be included in the request body. The idempotency key must be in the UUID
+∂v4 format. This allows the API to identify if a repeated request is unique or
+duplicate, and prevent unintended duplicate transactions.
+
+To generate an idempotency key, use a UUID generator in your selected
+programming language. Generated UUIDs can then be passed to the API as
+idempotency keys.
+
+## Quotes
+
+Quotes are real-time exchange rates and settlement costs for a specific payment
+corridor. A quote includes the following key elements:
+
+- **Exchange rate lock**: The quote locks in an exchange rate for a specified
+  time window, protecting both the OFI and the sender from market volatility
+  during the payment process. When the time window expires, a new quote must be
+  requested.
+- **Two-way quotes**: You may query the quote based on the source amount and the
+  destination amount. For instance, if a customer holding USDC wants to pay a
+  recipient in BRL and the recipient needs an accurate amount of BRL, you can
+  query using the destination amount. If a quote is for a remittance use case,
+  where the customer needs an accurate amount of USDC to send, you can query
+  using the source amount.
+- **Cost breakdown**: The quote response includes details of all applicable
+  fees, including fee and any additional charges at the transaction level,
+  ensuring transparent cost estimation.
+- **Competitive aggregation**: By providing multiple quotes, CPN ensures that
+  OFIs can choose the most competitive option based on price, speed, and
+  compliance.
+
+## Payments
+
+A payment represents the end-to-end CPN payment flow, including the onchain
+transaction and RFI check. It is initiated by locking in a quote and providing
+the required recipient details.
+
+The payment process begins when an <Glossary term="OFI" /> locks in a quote and
+submits sender and beneficiary details. The transaction undergoes compliance
+checks, including the RFI process if required. Once all necessary compliance
+checks are completed, the payment enters the onchain transaction phase, where it
+awaits the transfer of USDC. After the crypto transfer is received, the BFI
+initiates a fiat transfer to the final recipient.
+
+During the fiat transfer, the CPN sends webhook notifications to the OFI
+indicating that the transfer has been confirmed or canceled. If the fiat
+transfer is canceled or fails for any reason, the <Glossary term="BFI" /> issues
+a refund of crypto to the OFI.
+
+## Requests for Information
+
+{/* prettier-ignore-start */}
+
+When a <Glossary term='BFI' /> needs more information about a sender or an
+<Glossary term="OFI" />, they create a Request for Information (RFI). This
+additional information is required to meet regulatory or risk compliance checks.
+The OFI is required to gather the appropriate information and respond to the
+request in a set period of time. If the OFI does not respond in time, the
+payment associated with the RFI is cancelled.
+
+{/* prettier-ignore-end */}
+
+CPN defines [3 levels of RFI requests](/cpn/references/rfi-levels), each with a
+specific set of fields. The OFI is expected to include all fields specified by
+the level when responding to the RFI. Failure to provide the appropriate fields
+can lead to payment failure.
+
+The BFI can initiate an RFI at the following points of the payment process:
+
+1. At payment creation
+2. After the onchain transaction is complete, but before fiat payout
+3. After the payment is complete
+
+Depending on the point in the process where the RFI is created, the OFI may be
+notified synchronously in an API response, or asynchronously by webhook. RFIs
+are typically resolved by returning the relevant information through the API.
+RFIs can also be raised and resolved through direct support tickets with CPN.
+
+## Transactions
+
+A transaction in the CPN API represents a transfer of funds onchain to fund the
+payment. Once payment is in the `CRYPTO_FUNDS_PENDING` status, the OFI should
+create the onchain transaction using CPN's transaction endpoints. Through these
+endpoints, the OFI can initiate and broadcast the transaction. The OFI uses its
+own wallet integration to sign transactions before sending them to the API. CPN
+provides transaction updates through webhooks. Transactions follow these steps:
+
+1. The OFI initiates a transaction request, and Circle returns the raw transaction data
+2. The OFI validates the response and signs the transaction
+3. The OFI submits the signed transaction to the CPN API
+4. CPN verifies the transaction content and broadcasts it to the blockchain
+5. CPN notifies the OFI and the BFI of the transaction status

@@ -1,0 +1,106 @@
+---
+title: Testnet Faucets
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Faucets are essential for developers to quickly obtain testnet tokens, including
+native tokens like ETH and stablecoins like USDC, to fund their wallets on
+blockchain test networks for testing purposes.
+
+Testnet tokens play a critical role in test network environments for two primary
+use cases:
+
+- **Cover network gas fees:** Use native tokens like ETH to pay network gas fees
+  for testnet transactions.
+- **Validate smart contract functionality:** Experiment with funds flows in your
+  smart contracts to validate behavior and support for specific digital assets.
+
+## Available faucets
+
+Circle provides two faucets:
+
+- **Public Faucet:** Distributes USDC and EURC on supported blockchain test
+  networks.
+- **Developer Console Faucet:** Distributes native tokens like AVAX, ETH, and
+  MATIC, and stablecoins like USDC. To access the Developer Console faucet, you
+  must log in with your Circle developer account.
+
+The following table describes the properties of each faucet:
+
+|                             | Public Faucet                                                                                                                                                                                                                                                                                                                                                             | Developer Console Faucet                                                                                                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cost**                    | Free and open for anyone to use. No account required.                                                                                                                                                                                                                                                                                                                     | Free and open for anyone to use. You must log in with your Circle developer to use the faucet.                                                                                                                                           |
+| **Supported Wallets**       | Any wallet on a supported blockchain test network, specified by wallet address.                                                                                                                                                                                                                                                                                           | Any wallet generated using Circle’s developer platform (via API or UI), specified by Wallet ID.                                                                                                                                          |
+| **Tokens sent per request** | Stablecoins <br /> • USDC: 10 <br /> • EURC: 10                                                                                                                                                                                                                                                                                                                           | Stablecoins <br /> • USDC: 20 <br /> <br />Native tokens <br /> • ARB: 0.01 <br /> • AVAX: 0.1 <br /> • BASE: 0.01 <br /> • ETH: 0.01 <br /> • MATIC: 0.2 <br /> • OP: 0.01 <br /> • UNI: 0.01 <br /> • SOL: 0.01 <br /> **• APT: 0.01** |
+| **Request limits**          | One request every 24 hours for USDC per testnet. <br />One request every 24 hours for EURC per testnet.                                                                                                                                                                                                                                                                   | Ten requests per developer account or team every 24 hours.                                                                                                                                                                               |
+| **Supported Testnets**      | • Algorand TestNet <br /> • Arbitrum Sepolia <br /> • Avalanche Fuji <br /> • Base Sepolia <br /> • Celo Sepolia <br /> • Ethereum Sepolia <br /> • Hedera Testnet <br /> • NEAR Testnet <br /> • Noble Testnet <br /> • Optimism Sepolia <br /> • Polygon PoS Amoy <br /> • Polkadot Westend <br /> • Solana Devnet <br /> • Stellar Testnet <br /> • Unichain Sepolia | • Arbitrum Sepolia <br /> • Avalanche Fuji <br /> • Base Sepolia <br /> • Optimism Sepolia <br /> • Ethereum Sepolia <br /> • Polygon PoS Amoy <br /> • Unichain Sepolia <br /> • Solana Devnet <br /> **• Aptos Testnet**               |
+
+## Public Faucet
+
+Use the Public Faucet to send USDC and EURC to your testnet wallets. To request
+tokens, go to [faucet.circle.com](https://faucet.circle.com).
+
+## Developer Console Faucet
+
+Use the Developer Console Faucet to send USDC, AVAX, ETH, and MATIC to your
+testnet wallets generated using Circle’s developer platform. To request tokens,
+navigate to [console.circle.com/faucet](https://console.circle.com/faucet).
+
+## Acquire a Wallet ID from Developer Console
+
+Use the steps in the following sections to get the ID of the wallet to send
+tokens to.
+
+## User-controlled wallets
+
+1. Navigate to **User Controlled** **>** **Users**.
+2. Click on a user to view the user details.
+3. Click on a wallet to view the wallet details. Confirm the network displayed
+   matches the network you plan to send tokens to.
+4. Click the copy icon in the Wallet ID field.
+
+## Developer-controlled wallets
+
+1. Navigate to **Dev Controlled** **>** **Wallets**.
+2. Click on a wallet to view the wallet details. Confirm the network displayed
+   matches the network you plan to send tokens to.
+3. Click the copy icon in the Wallet ID field.
+
+## Console wallets
+
+1. Navigate to **Console Wallets**.
+2. Click on a wallet to view the wallet details. Confirm the network displayed
+   is the network you plan to send tokens to.
+3. Click the copy icon in the Wallet ID field.
+
+## Retrieve a wallet ID programmatically
+
+To acquire a wallet ID programmatically, use an API request to
+[GET /v1/w3s/wallets](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+to retrieve a list of wallets in your account.
+
+## Fund a wallet programmatically
+
+To fund your wallets programmatically, submit a request to
+[POST /v1/faucet/drips](/api-reference/w3s/programmable-wallets/request-testnet-tokens).
+
+```curl
+curl --request POST \
+     --url https://api.circle.com/v1/faucet/drips \
+     --header 'Accept: application/json' \
+     --header 'Authorization: Bearer TEST_API_KEY:XXX' \
+     --header 'Content-Type: application/json' \
+     --data '
+{
+    "address": "0x...",
+    "blockchain": "MATIC-AMOY",
+    "native": true,
+    "usdc": true,
+    "eurc": true
+}
+'
+```

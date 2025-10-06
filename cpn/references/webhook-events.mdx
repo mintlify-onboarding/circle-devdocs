@@ -1,0 +1,51 @@
+---
+title: "Webhook Events"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Webhook Events"
+---
+
+Components of CPN send webhook notifications when events occur, typically for a
+change in state. These webhook notifications are sent to the OFI so that they
+can track and manage payments in CPN. The webhooks described in this topic are
+specific to OFIs only.
+
+The following sections describe the webhook events by component.
+
+## Payment events
+
+| Event name                         | Description                                                                                                                                  | Trigger when                                                                                                                                                                    |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cpn.payment.cryptoFundsPending`   | The payment has been created and is waiting for funds to be deposited                                                                        | The payment is ready to accept crypto funds                                                                                                                                     |
+| `cpn.payment.fiatPaymentInitiated` | The BFI has initiated the fiat payment to the receiver's bank account                                                                        | The onchain transaction is confirmed by the BFI and the BFI initiated the fiat payment                                                                                          |
+| `cpn.payment.completed`            | The payment is fully processed                                                                                                               | The fiat payment has been sent.<br /><br />Depending on the payment method, the receiver may or may not have received the transfer. At this point, the CPN payment is complete. |
+| `cpn.payment.failed`               | The payment failed due to errors in processing, insufficient funds, or compliance rejection                                                  | The payment can't proceed due to an issue                                                                                                                                       |
+| `cpn.payment.delayed`              | There is a delay to the estimate of payment settlement time. No status has changed but an updated settlement time is included in the payload | The BFI has an internal issue such that fiat settlement takes longer to process than originally stated                                                                          |
+
+## RFI events
+
+| Event name                    | Description                                                                | Trigger when                                                      |
+| ----------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `cpn.rfi.informationRequired` | Additional compliance information is needed before the payment can proceed | The BFI requests more information to proceed with the payment     |
+| `cpn.rfi.inReview`            | The submitted RFI response is under review by the BFI                      | The OFI submits the required information through the API endpoint |
+| `cpn.rfi.approved`            | The RFI has been reviewed and approved, the payment can proceed            | The BFI approves the submitted information                        |
+| `cpn.rfi.rejected`            | The RFI has been reviewed and rejected, the payment is failed              | The BFI rejects the submitted information                         |
+
+## Transaction events
+
+| Event name                    | Description                                                                                | Trigger when                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| `cpn.transaction.broadcasted` | The signed transaction is sent to the blockchain for confirmation                          | The signed transaction has been broadcast        |
+| `cpn.transaction.completed`   | The transaction was successfully included in a block                                       | The blockchain confirms the transaction          |
+| `cpn.transaction.failed`      | The transaction failed due to issues such as incorrect parameters or insufficient gas fees | The blockchain failed to confirm the transaction |
+
+## Refund events
+
+| Event name             | Description                                         | Trigger when                                                                     |
+| ---------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `cpn.refund.created`   | The BFI created a refund for the associated payment | The BFI initiated the refund.<br /><br />**Note:** Not all BFIs send this event. |
+| `cpn.refund.failed`    | The refund failed                                   | The refund failed                                                                |
+| `cpn.refund.completed` | The refund is complete                              | The BFI confirms that the refund was successfully returned to the refund address |

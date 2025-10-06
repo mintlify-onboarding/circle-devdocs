@@ -1,0 +1,188 @@
+---
+title: Sign Transactions on Solana
+description:
+  "Learn how to build transactions and sign them with our server-side SDK."
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+This tutorial walks you through creating a developer-controlled wallet to sign
+transactions on Solana.
+
+## Prerequisites
+
+Before you begin:
+
+- Create a [Circle Developer Account](/w3s/circle-developer-account) and API key
+- Install the Developer Services
+  [Server-side SDKs](/sdk-explorer#server-side-sdks)
+- Complete the
+  [Create Your First Developer-Controlled Wallet](/wallets/dev-controlled/create-your-first-wallet)
+  tutorial to register an entity secret and create a wallet set
+
+## Step 1. Create Solana wallets
+
+When
+[creating a developer-controlled wallet](/api-reference/wallets/developer-controlled-wallets/create-wallet),
+pass `SOL-DEVNET` or `SOL` in the `blockchains` field. This wallet can be used
+to sign transactions.
+
+The following example code shows how to create a wallet using the Circle
+Developer SDK.
+
+<CodeGroup>
+
+```javascript
+const response = await circleDeveloperSdk.createWallets({
+  accountType: "EOA",
+  blockchains: ["SOLANA-DEVNET"],
+  count: 2,
+  walletSetId: "<wallet-set-id>",
+});
+```
+
+</CodeGroup>
+
+<Note>
+  Use `count` to specify the number of wallets to create, up to a maximum of 200
+  per API request.
+</Note>
+
+## Step 2. Prepare a raw transaction
+
+For Solana, you can sign a raw transaction using the API or SDK.
+
+The following example code shows how to prepare a raw transaction for swapping
+tokens on Jupiter. Note that this code is purely for example purposes only.
+
+<CodeGroup>
+
+```javascript
+// Get quote for swapping SOL to USDC with input 0.01 SOL and 0.5% slippage
+const quoteResponse = await (
+  await fetch(
+    "https://quote-api.jup.ag/v6/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=10000000&slippageBps=50",
+  )
+).json();
+// Get serialized transactions for the swap
+const { swapTransaction } = await (
+  await fetch("https://quote-api.jup.ag/v6/swap", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      // quoteResponse from /quote API
+      quoteResponse,
+      // User public key to be used for the swap
+      userPublicKey: "FILL-YOUR-WALLET-ADDRESS",
+      // Auto wrap and unwrap SOL. Default is true
+      wrapAndUnwrapSol: true,
+    }),
+  })
+).json();
+```
+
+</CodeGroup>
+
+## Step 3. Sign the raw transaction
+
+The following example code shows how to sign the raw transaction.
+
+<CodeGroup>
+
+```javascript
+const response = await circleDeveloperSdk.signTransaction({
+  walletId: "FILL-YOUR-SOL-WALLET-ID",
+  rawTransaction: swapTransaction,
+});
+```
+
+</CodeGroup>
+
+<Warning>
+  The raw transaction must be provided as a Base64 encoded string. Ensure that
+  it is properly encoded before submission.
+</Warning>
+
+The following example code shows how you can encode a raw transaction to a
+Base64 encoded string in JavaScript.
+
+<CodeGroup>
+
+```javascript
+const web3 = require("@solana/web3.js");
+const {
+  initiateDeveloperControlledWalletsClient,
+} = require("@circle-fin/developer-controlled-wallets");
+const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
+  baseUrl: "https://api.circle.com",
+  apiKey: "YOUR-API-KEY",
+  entitySecret: "YOUR-ENTITY-SECRET", // Make sure to enter the entity secret from the step above.
+});
+
+async function transferNativeToken() {
+  const connection = new web3.Connection(
+    web3.clusterApiUrl("devnet"),
+    "confirmed",
+  );
+
+  // Amount to send (in SOL)
+  const amount = 0.1;
+
+  // Convert SOL to lamports
+  const lamports = web3.LAMPORTS_PER_SOL * amount;
+
+  const fromPubKey = new web3.PublicKey("YOUR-WALLET-ADDRESS");
+  const toPubKey = new web3.PublicKey("DESTINATION-WALLET-ADDRESS");
+
+  // Create a transfer instruction
+  const instruction = web3.SystemProgram.transfer({
+    fromPubkey: fromPubKey,
+    toPubkey: toPubKey,
+    lamports: lamports,
+  });
+
+  // Get the latest blockhash
+  const { blockhash } = await connection.getLatestBlockhash();
+
+  // Create the transaction
+  const transaction = new web3.Transaction().add(instruction);
+
+  // Set the recent blockhash and the paying account
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = fromPubKey;
+
+  // Serialize the transaction
+  const rawTransaction = transaction.serialize({
+    requireAllSignatures: false,
+    verifySignatures: false,
+  });
+
+  //   // sign the transaction
+  const response = await circleDeveloperSdk.signTransaction({
+    walletId: "YOUR-WALLET-ADDRESS-WALLET-ID",
+    memo: "TEST-SIGN-RAW-TX",
+    rawTransaction: rawTransaction.toString("base64"),
+  });
+
+  const rawTransactionBuf = Buffer.from(
+    response.data.signedTransaction,
+    "base64",
+  );
+  const txid = await connection.sendRawTransaction(rawTransactionBuf, {
+    skipPreflight: false,
+    maxRetries: 2,
+  });
+  console.log(`txid:${txid}`);
+
+  await connection.confirmTransaction(txid);
+  console.log(`https://solscan.io/tx/${txid}`);
+}
+
+transferNativeToken();
+```
+
+</CodeGroup>

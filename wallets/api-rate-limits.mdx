@@ -1,0 +1,32 @@
+---
+title: Wallets API Rate Limits
+description: View the Wallets API endpoint rate limits.
+sideNav: ""
+documentationItems: 
+- title: Documentation
+sidebarTitle: "API Rate Limits"
+---
+
+Circle's Developer Services handle a high volume of API requests. To ensure
+optimum performance, we implemented rate limits for API requests per second
+(RPS) per developer entity. These limits ensure the availability, stability, and
+reliability of Developer Services.
+
+Rate limits apply to all Wallets APIs. The default limit per endpoint is 5
+requests per second. The following table lists the endpoints with custom limits.
+
+| Method | Endpoint                                                  | RPS Limit |
+| ------ | :-------------------------------------------------------- | --------- |
+| `POST` | `/v1/w3s/developer/wallets`                               | 10        |
+| `PUT`  | `/v1/w3s/developer/wallets/{id}/blockchains/{blockchain}` | 10        |
+| `POST` | `/v1/w3s/transactions/transfer/estimateFee`               | 10        |
+| `POST` | `/v1/w3s/transactions/contractExecution/estimateFee`      | 10        |
+| `POST` | `/v1/w3s/users/token`                                     | 10        |
+| `POST` | `/v1/w3s/user/sign/transaction`                           | 10        |
+| `POST` | `/v1/w3s/user/sign/message`                               | 10        |
+| `POST` | `/v1/w3s/user/sign/typedData`                             | 10        |
+| `POST` | `/v1/w3s/developer/sign/transaction`                      | 10        |
+| `POST` | `/v1/w3s/developer/sign/message`                          | 10        |
+| `POST` | `/v1/w3s/developer/sign/typedData`                        | 10        |
+| `POST` | `/v1/w3s/developer/sign/delegateAction`                   | 10        |
+| `GET`  | All endpoints                                             | 20        |

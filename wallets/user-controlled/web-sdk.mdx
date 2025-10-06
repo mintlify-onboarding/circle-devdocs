@@ -1,0 +1,1293 @@
+---
+title: Web SDK
+description:
+  Set up the client-side web SDK for user-controlled wallets in your web
+  application.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+The Circle Web SDK enables user-controlled wallets within your web application.
+Three authentication methods are supported, namely **social logins**, **email**,
+or **PIN**, which includes security questions for recovery. This allows you to
+authenticate your users in a seamless way and create user-controlled wallets for
+them.
+
+By integrating this client-side SDK, your users can securely create wallets and
+make transactions using social accounts or email. If you choose the PIN
+authentication method, your users can input sensitive data, like PINs or
+security answers, in a secure way. Moreover, the SDK encrypts the request body
+sent by the application, protecting your users' information.
+
+<Note>
+**Note:**
+
+The Web and Mobile SDKs preserve the user keyshare with the individual, giving
+them complete control. You must use the SDKs with the user-controlled wallet
+product. Additionally, the Web and Mobile SDKs support only the user-controlled
+wallet product.
+
+</Note>
+
+At Circle, we understand the importance of end-to-end security for your
+application and the need to create a tailored and seamless user experience for
+your end-users. Hence, Circle’s SDK also exposes functionality for you to
+customize the description and layout. See the
+[Web SDK UI Customization API](/wallets/user-controlled/web-sdk-ui-customizations)
+article to customize the SDK.
+
+## Install the SDKs
+
+Install using [npm](https://docs.npmjs.com/about-npm):
+
+```shell
+npm install @circle-fin/w3s-pw-web-sdk
+```
+
+## SDK architecture
+
+You must use Web, iOS, or Android SDKs to access the user-controlled
+Programmable Wallet product. The SDK secures, manages, and communicates with
+your server to ensure your user’s keyshare, always stays with them and is not
+exposed to your servers.
+
+To learn more, see
+[SDK Architecture for User-Controlled Wallets](/wallets/user-controlled/sdk-architecture).
+
+## SDK API references: enums
+
+The Web SDK supports the API reference enums listed in the following sections.
+
+### ChallengeType
+
+Enumerates the types of challenges supported.
+
+```javascript
+enum ChallengeType {
+  INITIALIZE,
+  SET_PIN,
+  RESTORE_PIN,
+  CHANGE_PIN,
+  SET_SECURITY_QUESTIONS,
+  CREATE_WALLET,
+  CREATE_TRANSACTION,
+  ACCELERATE_TRANSACTION,
+  CANCEL_TRANSACTION,
+  CONTRACT_EXECUTION,
+  SIGN_MESSAGE,
+  SIGN_TYPEDDATA,
+  SIGN_TRANSACTION,
+  WALLET_UPGRADE,
+  UNKNOWN,
+}
+```
+
+### ChallengeStatus
+
+Enumerates the possible status for a challenge.
+
+```javascript
+enum ChallengeStatus {
+  COMPLETE,
+  EXPIRED,
+  FAILED,
+  IN_PROGRESS,
+  PENDING,
+}
+```
+
+### QuestionType
+
+Enumerates the types of security questions.
+
+```javascript
+enum QuestionType {
+  DATE,
+  TEXT,
+}
+```
+
+### ErrorCode
+
+Enumerates the types of error code.
+
+```javascript
+enum ErrorCode {
+  unknown = -1,
+  success = 0,
+  apiParameterMissing = 1,
+  apiParameterInvalid = 2,
+  forbidden = 3,
+  unauthorized = 4,
+  retry = 9,
+  customerSuspended = 10,
+  pending = 11,
+  invalidSession = 12,
+  invalidPartnerId = 13,
+  invalidMessage = 14,
+  invalidPhone = 15,
+  userAlreadyExisted = 155101,
+  userNotFound = 155102,
+  userTokenNotFound = 155103,
+  userTokenExpired = 155104,
+  invalidUserToken = 155105,
+  userWasInitialized = 155106,
+  userHasSetPin = 155107,
+  userHasSetSecurityQuestion = 155108,
+  userWasDisabled = 155109,
+  userDoesNotSetPinYet = 155110,
+  userDoesNotSetSecurityQuestionYet = 155111,
+  incorrectUserPin = 155112,
+  incorrectDeviceId = 155113,
+  incorrectAppId = 155114,
+  incorrectSecurityAnswers = 155115,
+  invalidChallengeId = 155116,
+  invalidApproveContent = 155117,
+  invalidEncryptionKey = 155118,
+  userPinLocked = 155119,
+  securityAnswersLocked = 155120,
+  notEnoughFunds = 155201,
+  notEnoughBalance = 155202,
+  exceedWithdrawLimit = 155203,
+  minimumFundsRequired = 155204,
+  invalidTransactionFee = 155205,
+  rejectedOnAmlScreening = 155206,
+  tagRequired = 155207,
+  gasLimitTooLow = 155208,
+  transactionDataNotEncodedProperly = 155209,
+  fullNodeReturnedError = 155210,
+  walletSetupRequired = 155211,
+  lowerThenMinimumAccountBalance = 155212,
+  rejectedByBlockchain = 155213,
+  droppedAsPartOfReorg = 155214,
+  operationNotSupport = 155215,
+  amountBelowMinimum = 155216,
+  wrongNftTokenIdNumber = 155217,
+  invalidDestinationAddress = 155218,
+  tokenWalletChainMismatch = 155219,
+  wrongAmountsNumber = 155220,
+  walletIsFrozen = 155501,
+  maxWalletLimitReached = 155502,
+  walletSetIdMutuallyExclusive = 155503,
+  metadataUnmatched = 155504,
+  userCanceled = 155701,
+  launchUiFailed = 155702,
+  pinCodeNotMatched = 155703,
+  insecurePinCode = 155704,
+  hintsMatchAnswers = 155705,
+  networkError = 155706,
+  invalidUserTokenFormat= 155718,
+  walletIdNotFound = 156001,
+  tokenIdNotFound = 156002,
+  transactionIdNotFound = 156003,
+  entityCredentialNotFound = 156004,
+  walletSetIdNotFound = 156005,
+}
+```
+
+## SDK API references: interfaces
+
+The Web SDK supports the interfaces listed in the following sections.
+
+### Configs
+
+- `appSettings` [\<AppSettings>](#appsettings) Application settings object
+- `authentication` [\<Authentication>](#authentication) Authentication object
+- `socialLoginConfig` [\<SocialLoginConfig>](#loginconfigs) Social login
+  configuration object
+
+### AppSettings
+
+Holds application settings.
+
+- `appId`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Application ID, retrieved from Circle Developer Services Console
+
+### Authentication
+
+Holds authentication information.
+
+- `userToken`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  User token
+- `encryptionKey`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Encryption key
+
+### LoginConfigs
+
+Holds login configuration information.
+
+- `google`
+  [\<object> | undefined](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  (optional) Configuration object for Google login.
+  - `clientId`
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Client ID for Google login
+  - `redirectUri`
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Redirect URI for Google login
+  - `selectAccountPrompt`
+    [\<boolean> | undefined](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#boolean_type)
+    Turn on/off the Google prompt for account selection
+- `facebook`
+  [\<object> | undefined](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Configuration for Facebook login.
+  - `appId`
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    App ID for Facebook login
+  - `redirectUri`
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Redirect URI for Facebook login
+- `apple`
+  [\<FirebaseOptions> | undefined (optional)](https://firebase.google.com/docs/reference/kotlin/com/google/firebase/FirebaseOptions)
+  Configuration for Apple login, using Firebase.
+- `deviceToken`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Token used to identify the device
+- `deviceEncryptionKey`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Encryption key used for the device
+- `otpToken`
+  [\<string> | undefined (optional)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  OTP token for verification
+
+#### Definitions
+
+- **google**: Configuration object for Google login.
+  - **clientId**: The Client ID for Google login.
+  - **redirectUri**: The Redirect URI for Google login.
+  - **selectAccountPrompt**: Whether to prompt the user to select an account
+    when signing in.
+    <Note>
+      Learn more about how **prompt** works in the [Google OAuth
+      API](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#obtainingaccesstokens)
+      documentation (keyword: **prompt**).
+    </Note>
+- **facebook**: Configuration object for Facebook login.
+  - **appId**: The App ID for Facebook login.
+  - **redirectUri**: The Redirect URI for Facebook login.
+- **apple**: Configuration for Apple login, using Firebase.
+- **FirebaseOptions**: The Firebase configuration object.
+- **deviceToken**: The token used to identify the device.
+- **deviceEncryptionKey**: The encryption key used for the device.
+- **otpToken**: The optional OTP token for verification.
+
+### SocialLoginProvider
+
+- `APPLE`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Apple login provider
+- `FACEBOOK`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Facebook login provider
+- `GOOGLE`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Google login provider
+
+### Challenge
+
+Holds information about a challenge.
+
+- `challengeId`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Challenge Id
+
+### ChallengeResult
+
+Holds the result of a challenge.
+
+- `type` [\<ChallengeType>](#challengetype) Challenge type
+- `status` [\<ChallengeStatus>](#challengestatus) Challenge status
+- `data` [\<SignMessageResult | undefined>](#signmessageresult) Sign message
+  response
+
+### SignMessageResult
+
+Holds the result of a sign message or sign typed-data challenge.
+
+- `signature`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Signature result after signing
+
+### SignTransactionResult
+
+Holds the result of a sign transaction challenge.
+
+- `signature`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Signature result after signing
+- `txHash`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Transaction hash
+- `signedTransaction`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Signed transaction
+
+### SocialLoginResult
+
+Holds the result of a social login.
+
+- userToken
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  User token
+- encryptionKey
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Encryption key
+- refreshToken
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Refresh token
+- oAuthInfo
+  [\<object>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  OAuth information
+
+### EmailLoginResult
+
+Holds the result of an email login.
+
+- userToken
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  User token
+- encryptionKey
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Encryption key
+- refreshToken
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Refresh token
+
+### OauthInfo
+
+Holds the OAuth information.
+
+- provider [\<SocialLoginProvider>](#socialloginprovider) Social login
+- scope
+  [\<string\[\]>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  OAuth scope
+- socialUserUUID
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Social user UUID
+- socialUserInfo
+  [\<object>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Social user information
+  - email
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Email
+  - name
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Name
+  - phone
+    [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Phone
+
+### Error
+
+Holds error information.
+
+- `code`
+  [\<integer | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+  Internal error code
+- `message`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Error message
+
+### SocialLoginCompleteCallback
+
+Callback function for social login completion.
+
+- `error` [\<Error>](#error) Presents if error occurs
+- `result` [\<SocialLoginResult>](#socialloginresult) \|
+  [/\<EmailLoginResult>](#emailloginresult) | undefined > Presents and contains
+  the result of the social login when the login is completed
+
+### SecurityQuestion
+
+Holds information about a custom security question.
+
+- `question`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Custom security question
+- `type` [\<QuestionType>](#questiontype) Type of the question
+
+### Localizations
+
+Holds localization settings.
+
+- `common` [\<Common | undefined>](#common) The settings for common texts
+- `confirmInitPincode` [\<ConfirmPincode | undefined>](#confirmpincode) The
+  settings for `ConfirmInitPincode` screen
+- `confirmNewPincode` [\<ConfirmPincode | undefined>](#confirmpincode) The
+  settings for `ConfirmNewPincode` screen
+- `enterPincode` [\<EnterPincode | undefined>](#enterpincode) The settings for
+  `EnterPincode` screen
+- `initPincode` [\<NewPincode | undefined>](#newpincode) The settings for
+  `InitPincode` screen
+- `newPincode` [\<NewPincode | undefined>](#newpincode) The settings for
+  `NewPincode` screen
+- `recoverPincode` [\<RecoverPincode | undefined>](#recoverpincode) The settings
+  for `RecoverPincode` screen
+- `securityConfirm` [\<SecurityConfirm | undefined>](#securityconfirm) The
+  settings for `SecurityConfirm` screen
+- `securityIntros` [\<SecurityIntros | undefined>](#securityintros) The settings
+  for `SecurityIntros` screen
+- `securityQuestions` [\<SecurityQuestions | undefined>](#securityquestions) The
+  settings for `SecurityQuestions` screen
+- `securitySummary` [\<SecuritySummary | undefined>](#securitysummary) The
+  settings for `SecuritySummary` screen
+- `socialEmailConfirmationUI`
+  [\<SocialEmailConfirmationUI | undefined>](#socialemailconfirmationui) The
+  settings for `socialEmailConfirmationUI` screen
+
+### Common
+
+Holds localization settings for common texts.
+
+- `continue`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Continue text
+- `showPin`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Show pin text
+- `hidePin`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Hide pin text
+- `confirm`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Confirm text
+
+### ConfirmPincode
+
+Holds localization settings for `ConfirmInitPincode` or `ConfirmNewPincode`
+screen.
+
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `headline2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text 2
+- `subhead`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subhead text
+
+### EnterPincode
+
+Holds localization settings for `EnterPincode` screen.
+
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `headline2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text 2
+- `subhead`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subhead text
+- `forgotPin`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Forgot pin text
+
+### NewPincode
+
+Holds localization settings for `InitPincode` or `NewPincode` screen.
+
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `headline2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text 2
+- `subhead`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subhead text
+
+### RecoverPincode
+
+Holds localization settings for `RecoverPincode` screen.
+
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `headline2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text 2
+- `subhead`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subhead text
+- `answerInputHeader`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer input header text
+- `answerInputPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer input placeholder text
+
+### SecurityConfirm
+
+Holds localization settings for `SecurityConfirm` screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `inputHeadline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Input headline text
+- `inputPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Input placeholder text
+- `inputMatch`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Input match text
+
+### SecurityIntros
+
+Holds localization settings for `SecurityIntros` screen.
+
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+- `headline2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text 2
+- `description`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Description text
+- `link`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Link text
+
+### SecurityQuestions
+
+Holds localization settings for `SecurityQuestions` screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `questionHeader`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Question header text
+- `questionPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Question placeholder text
+- `requiredMark`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Required mark text
+- `answerHeader`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer header text
+- `answerPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer placeholder text
+- `answerHintHeader`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer hint header text
+- `answerHintPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Answer hint placeholder text
+
+### SecuritySummary
+
+Holds localization settings for `SecuritySummary` screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `question`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Question text
+
+### SocialEmailConfirmationUI
+
+Holds localization settings for `SocialEmailConfirmationUI` screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `headline`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Headline text
+
+### TransactionRequest
+
+Holds localization settings for `TransactionRequest` screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `subtitle`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subtitle text
+- `mainCurrency`
+  [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Main currency details:
+  - `amount`
+    [\<string | number | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+    Main currency amount
+  - `symbol`
+    [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Main currency symbol
+- `exchangeValue`
+  [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Exchange currency details:
+  - `amount`
+    [\<string | number | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+    Exchange currency amount
+  - `symbol`
+    [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Exchange currency symbol
+- `fromLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  From label text
+- `from`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  From address or label text
+- `toLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  To label text
+- `to`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  To addresses
+- `networkFeeLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee label text
+- `networkFeeTip`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee tooltip text
+- `networkFee`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee amount
+- `exchangeNetworkFee`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Exchange network fee amount
+- `totalLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Total label text
+- `total`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Total amounts
+- `exchangeTotalValue`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Exchange total value
+- `rawTxDescription`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Raw transaction description
+- `rawTx`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Raw transaction data
+
+### ContractInteraction
+
+Holds localization settings for a contract interaction screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `subtitle`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subtitle text
+- `mainCurrency`
+  [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Main currency details:
+  - `amount`
+    [\<string | number | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+    Main currency amount
+  - `symbol`
+    [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Main currency symbol
+- `exchangeValue`
+  [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Exchange value details:
+  - `amount`
+    [\<string | number | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+    Exchange value amount
+  - `symbol`
+    [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Exchange value symbol
+- `fromLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  From label text
+- `from`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  From address or label text
+- `contractAddressLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Contract address label text
+- `contractInfo`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Contract information
+- `networkFeeLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee label text
+- `networkFeeTip`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee tooltip text
+- `networkFee`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Network fee amount
+- `exchangeNetworkFee`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Exchange network fee amount
+- `totalLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Total label text
+- `total`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Total amounts
+- `exchangeTotalValue`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Exchange total value
+- `dataDetails`
+  [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+  Data details:
+  - `dataDetailsLabel`
+    [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+    Data details label
+  - `callData`
+    [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+    Call data:
+    - `callDataLabel`
+      [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Call data label
+    - `data`
+      [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Call data string
+  - `abiInfo`
+    [\<object | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#objects)
+    ABI information:
+    - `functionNameLabel`
+      [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Function name label
+    - `functionName`
+      [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Function name string
+    - `parametersLabel`
+      [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Parameters label
+    - `parameters`
+      [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+      Parameters strings
+
+### SignatureRequest
+
+Holds localization settings for a signature request screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `contractName`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Contract name
+- `contractUrl`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Contract URL
+- `subtitle`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subtitle text
+- `descriptionLabel`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Description label text
+- `description`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Description text
+
+### EmailOtp
+
+Holds localization settings for an email OTP (One-Time Password) screen.
+
+- `title`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Title text
+- `subtitle`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Subtitle text
+- `resendHint`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Resend hint text
+- `resend`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Resend button text
+
+### ThemeColor
+
+Holds customization color settings.
+
+- `backdrop`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Backdrop color, e.g. `'#000000'`.
+- `backdropOpacity`
+  [\<number | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#snumber_type)
+  Backdrop opacity, e.g. `0.5`.
+- `divider`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Divider color, e.g. `'#808080'` or `'grey'`.
+- `bg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color e.g. `'#FFFFFF'` or `'white'`.
+- `success`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Success color, e.g. `'#008000'` or `'green'`.
+- `error`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Error color, e.g. `'#FF0000'` or `'red'`.
+- `textMain`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Main text color, e.g. `'#000000'` or `'black'`.
+- `textMain2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Main text color 2, e.g. `'#000000'` or `'black'`.
+- `textAuxiliary`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Auxiliary text color, e.g. `'#000000'` or `'black'`.
+- `textAuxiliary2`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Auxiliary text color 2, e.g. `'#000000'` or `'black'`.
+- `textSummary`[\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Summary text color, e.g. `'#000000'` or `'black'`.
+- `textSummaryHighlight`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Summary highlight text color, e.g. `'#000000'` or `'black'`.
+- `textPlaceholder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Placeholder text color, e.g. `'#808080'` or `'grey'`.
+- `pinDotBase`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Fill color for pincode input dot, e.g. `'#FFFFFF'` or `'white'`.
+- `pinDotBaseBorder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Stroke color for pincode input dot, e.g. `'#000000'` or `'black'`.
+- `pinDotActivated`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Fill color for inputted pincode input dot, e.g. `'#0000ff'` or `'blue'`.
+- `enteredPinText`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for entered pincode input, e.g. `#000000` or `black`.
+- `inputText`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for text input, e.g. `#000000` or `black`.
+- `inputBorderFocused`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for text input on focused, e.g. `'#0000ff'` or `'blue'`.
+- `inputBorderFocusedError`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for text input when error, e.g. `'#FF0000'` or `'red'`.
+- `inputBg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for text input, e.g. `'#FFFFFF'` or `'white'`.
+- `inputBgDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for disabled text input, e.g. `'#FFFFFF'` or `'white'`.
+- `dropdownBg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for dropdown, e.g. `'#FFFFFF'` or `'white'`.
+- `dropdownBorderIsOpen`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for dropdown is open, e.g. `'#0000ff'` or `'blue'`.
+- `dropdownBorderError`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for dropdown when error, e.g. `'#FF0000'` or `'red'`.
+- `mainBtnText`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for primary button, e.g. `'#FFFFFF'` or `'white'`.
+- `mainBtnTextDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for disabled primary button, e.g. `'#FFFFFF'` or `'white'`.
+- `mainBtnTextOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for primary button on hover, e.g. `'#FFFFFF'` or `'white'`.
+- `mainBtnBg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for primary button, e.g. `'#000000'` or `'black'`.
+- `mainBtnBgOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for primary button on hover, e.g. `'#000000'` or `'black'`.
+- `mainBtnBgDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for disabled primary button, e.g. `'#000000'` or `'black'`.
+- `secondBtnText`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for secondary button, e.g. `'#000000'` or `'black'`.
+- `secondBtnTextDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for disabled secondary button, e.g. `'#000000'` or `'black'`.
+- `secondBtnTextOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for secondary button on hover, e.g. `'#000000'` or `'black'`.
+- `secondBtnBorder`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for secondary button, e.g. `'#000000'` or `'black'`.
+- `secondBtnBorderOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for secondary button on hover, e.g. `'#000000'` or `'black'`.
+- `secondBtnBgOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for secondary button on hover, e.g. `'#FFFFFF'` or `'white'`.
+- `secondBtnBorderDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Outline color for disabled secondary button, e.g. `'#FFFFFF'` or `'white'`.
+- `plainBtnText`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for plain text button, e.g. `'#000000'` or `'black'`.
+- `plainBtnTextDisabled`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for disabled plain text button, e.g. `'#000000'` or `'black'`.
+- `plainBtnTextOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for plain text button on hover, e.g. `'#000000'` or `'black'`.
+- `plainBtnBg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for plain text button, e.g. `'#FFFFFF'` or `'white'`.
+- `plainBtnBgOnHover`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for plain text button on hover, e.g. `'#FFFFFF'` or
+  `'white'`.
+- `recoverPinHintTitle`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for recover pincode hint title, e.g. `'#FFFFFF'` or `'white'`.
+- `recoverPinHintTitleBg`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for recover pincode hint title, e.g. `'#FFFFFF'` or
+  `'white'`.
+- `recoverPinHint`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Text color for recover pincode hint, e.g. `'#FFFFFF'` or `'white'`.
+- `titleGradients`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Background color for linear-gradient text, e.g. `['#B090F5', '#1AA3FF']`.
+
+### Resources
+
+Holds resource urls and properties, such as images or font-family settings.
+These resource properties should be hosted on a public server. SDK will load
+these resources from the urls provided.
+
+- `naviClose`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Close icon
+- `naviBack`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Back icon
+- `securityIntroMain`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Security intro main image
+- `dropdownArrow`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Dropdown arrow icon
+- `selectCheckMark`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Select check mark icon
+- `securityConfirmMain`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Security confirm main image
+- `errorInfo`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Error info icon
+- `fontFamily`
+  [\<\{ name?: string, url?: string } | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#object_type)
+  Font family settings
+
+### CustomLinks
+
+Holds custom links.
+
+- `learnMoreUrl`
+  [\<string | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Learn more link
+
+## Class Definition
+
+The Web SDK supports the class definitions listed in the following sections.
+
+### W3SSdk
+
+#### Constructor
+
+Initializes a new instance of `W3SSdk`.
+
+#### Methods
+
+##### execute
+
+Executes a challenge.
+
+- `challengeId`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Challenge ID
+
+- `onCompleted`
+  [\<Function>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+  Callback function
+
+  - `error` [\<Error>](#error) Presents if error occurs
+  - `result`[\<ChallengeResult>](#challengeresult) Presents when success
+
+##### setAppSettings
+
+Sets the application settings.
+
+- `appSettings` [\<AppSettings>](#appsettings) Application settings object
+
+##### setAuthentication
+
+Sets the authentication information.
+
+- `auth` [\<Authentication>](#authentication) Authentication object
+
+##### updateConfigs
+
+Updates the configurations.
+
+- `configs`
+  [\<Configs>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+  Configurations object
+- `onSocialLoginComplete`
+  [\<Function | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+  Callback function
+  - `error` [\<Error>](#error) Presents if error occurs
+  - `result` [\<SocialLoginResult>](#socialloginresult) \|
+    [\<\\EmailLoginResult>](#emailloginresult) | undefined> Presents and
+    contains the result of the social login when the social login is completed
+
+##### getDeviceId
+
+Gets the device ID.
+
+##### performLogin
+
+Performs a social login.
+
+- `provider` [\<SocialLoginProvider>](#socialloginprovider) Social login
+  provider
+
+##### verifyOtp
+
+Verifies the OTP.
+
+##### execute
+
+Executes a challenge.
+
+- `challengeId`
+  [\<string>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type)
+  Challenge ID
+- `onCompleted`
+  [\<Function | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+  Callback function
+  - `error` [\<Error>](#error) Presents if error occurs
+  - `result` \<[ChallengeResult](#challengeresult) \|
+    [SignMessageResult](#signmessageresult) \|
+    [SignTransactionResult](#signtransactionresult) | undefined> Presents and
+    contains the result of the challenge when the challenge is completed
+
+##### setCustomSecurityQuestions
+
+Sets custom security questions.
+
+- `questions` [\<SecurityQuestion\[\] | undefined>](#securityquestion) Array of
+  `SecurityQuestion`
+- `requiredCount`
+  [\<integer | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type)
+  Required count of `SecurityQuestion`. The value is 2 by default.
+- `securityConfirmItems`
+  [\<string\[\] | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#array_type)
+  Array of customized disclaimers on `SecurityConfirm` screen. The value is
+  `undefined` by default.
+
+##### setLocalizations
+
+Sets custom localizations
+
+- `localizations` [\<Localizations | undefined>](#localizations) Settings of
+  `Localizations`
+
+##### setResources
+
+Sets custom resources
+
+- `resources` [\<Resources | undefined>](#resources) Settings of `Resources`
+
+##### setThemeColor
+
+Sets custom theme colors
+
+- `themeColor` [\<ThemeColor | undefined>](#themecolor) Settings of `ThemeColor`
+
+##### setCustomLinks
+
+Sets custom links
+
+- `customLinks` [\<CustomLinks | undefined>](#customlinks) Settings of
+  `CustomLinks`
+
+##### setOnForgotPin
+
+Sets callback function for ForgotPin button click event
+
+- `onForgotPin`
+  [\<Function | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+  Callback function
+- `shouldCloseModalOnForgotPin`
+  [\<boolean | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#boolean_type)
+  Should close modal on forgot pin click event
+
+##### setOnResendOtpEmail
+
+Sets callback function for **Resend OTP Email** button click event
+
+- `onResendOtpEmail`
+  [\<Function | undefined>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
+  Callback function
+
+## Sample code
+
+### React.js
+
+```javascript
+import React, { useCallback, useEffect, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import { W3SSdk } from '@circle-fin/w3s-pw-web-sdk'
+
+let sdk: W3SSdk
+
+function App() {
+  useEffect(() => {
+    sdk = new W3SSdk({
+      configs: {
+        appSettings: { appId: 'someAppId' },
+        authentication: {
+          userToken: 'someUserToken',
+          encryptionKey: 'someEncryptionKey'
+        },
+        socialLoginConfig: {}
+      },
+      socialLoginCompleteCallback: (error, result) => {
+        if (error) {
+          toast.error(`Social Login Error: ${error.message ?? 'Error!'}`)
+          return
+        }
+        toast.success(`Social Login Success: ${result?.userToken}`)
+      }
+    })
+  }, [])
+
+  const [appId, setAppId] = useState(localStorage.getItem('appId') || 'someAppId')
+  const [userToken, setUserToken] = useState(localStorage.getItem('userToken') || 'someUserToken')
+  const [encryptionKey, setEncryptionKey] = useState(localStorage.getItem('encryptionKey') || 'someEncryptionKey')
+  const [challengeId, setChallengeId] = useState(localStorage.getItem('challengeId') || 'someChallengeId')
+
+  const onChangeHandler = useCallback(
+    (setState, key) => (e) => {
+      const value = e.target.value
+      setState(value)
+      localStorage.setItem(key, value)
+    },
+    []
+  )
+
+  const onSubmit = useCallback(() => {
+    sdk.setAppSettings({ appId })
+    sdk.setAuthentication({ userToken, encryptionKey })
+
+    sdk.execute(challengeId, (error, result) => {
+      if (error) {
+        toast.error(`Error: ${error?.message ?? 'Error!'}`)
+        return
+      }
+      toast.success(`Challenge: ${result?.type}, Status: ${result?.status}`)
+    })
+  }, [appId, userToken, encryptionKey, challengeId])
+
+  return (
+    <div className="p-4">
+      <TextField
+        label="App Id"
+        onChange={onChangeHandler(setAppId, 'appId')}
+        value={appId}
+      />
+      <TextField
+        label="User Token"
+        onChange={onChangeHandler(setUserToken, 'userToken')}
+        value={userToken}
+      />
+      <TextField
+        label="Encryption Key"
+        onChange={onChangeHandler(setEncryptionKey, 'encryptionKey')}
+        value={encryptionKey}
+      />
+      <TextField
+        label="Challenge Id"
+        onChange={onChangeHandler(setChallengeId, 'challengeId')}
+        value={challengeId}
+      />
+      <Button variant="contained" color="primary" onClick={onSubmit}>
+        Verify Challenge
+      </Button>
+      <ToastContainer />
+    </div>
+  )
+}
+```
+
+### Vanilla JavaScript
+
+```javascript
+// Assume W3SSdk is globally available
+let sdk = new W3SSdk({
+  configs: {
+    appSettings: { appId: 'someAppId' },
+    authentication: {
+      userToken: 'someUserToken',
+      encryptionKey: 'someEncryptionKey'
+    },
+    socialLoginConfig: {}
+  },
+  socialLoginCompleteCallback: (error, result) => {
+    if (error) {
+      console.error(`Social Login Error: ${error.message ?? 'Error!'}`)
+      return
+    }
+    console.log(`Social Login Success: ${result?.userToken}`)
+  }
+})
+
+// Initialize settings
+const initSettings = () => {
+  sdk.setAppSettings({
+    appId: 'someAppId',
+  })
+  sdk.setAuthentication({
+    userToken: 'someUserToken',
+    encryptionKey: 'someEncryptionKey',
+  })
+}
+
+// Handle form submission
+const handleSubmit = () => {
+  const challengeId = document.getElementById('challengeId').value
+
+  sdk.execute(challengeId, (error, result) => {
+    if (error) {
+      console.error(`Error: ${error?.message ?? 'Error!'}`)
+      return
+    }
+    console.log(`Challenge: ${result?.type}, Status: ${result?.status}`)
+  })
+}
+
+// Initialization
+initSettings()
+
+// Listen for button click event
+document.getElementById('submitBtn').addEventListener('click', handleSubmit)sdk.execute(challengeId, (error, result) => {
+  if (error) {
+    toast.error(`Error: ${error?.message ?? 'Error!'}`)
+    return
+  }
+  toast.success(`Challenge: ${result?.type}, Status: ${result?.status}`)
+})
+```

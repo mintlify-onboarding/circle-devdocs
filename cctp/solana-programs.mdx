@@ -1,0 +1,326 @@
+---
+title: CCTP Solana Programs and Interfaces
+description: Programs for CCTP V2 support on the Solana blockchain
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Solana Programs and Interfaces"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+## Overview
+
+Solana CCTP programs are written in Rust and leverage the Anchor framework. The
+Solana CCTP V2 protocol implementation is split into two programs:
+`MessageTransmitterV2` and `TokenMessengerMinterV2`. `TokenMessengerMinterV2`
+encapsulates the functionality of both `TokenMessengerV2` and `TokenMinterV2`
+contracts on EVM chains. To ensure alignment with EVM contracts' logic and
+state, and to facilitate upgrades and maintenance, the code and state of Solana
+programs reflect the EVM counterparts as closely as possible.
+
+### Mainnet Program Addresses
+
+| Program                | [Domain](/cctp/cctp-supported-blockchains#cctp-supported-domains) | Address                                                                                                                   |
+| :--------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| MessageTransmitterV2   | 5                                                                 | [`CCTPV2Sm4AdWt5296sk4P66VBZ7bEhcARwFaaS9YPbeC`](https://solscan.io/account/CCTPV2Sm4AdWt5296sk4P66VBZ7bEhcARwFaaS9YPbeC) |
+| TokenMessengerMinterV2 | 5                                                                 | [`CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe`](https://solscan.io/account/CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe) |
+
+### Devnet Program Addresses
+
+| Program                | [Domain](/cctp/cctp-supported-blockchains#cctp-supported-domains) | Address                                                                                                                                  |
+| :--------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| MessageTransmitterV2   | 5                                                                 | [`CCTPV2Sm4AdWt5296sk4P66VBZ7bEhcARwFaaS9YPbeC`](https://solscan.io/account/CCTPV2Sm4AdWt5296sk4P66VBZ7bEhcARwFaaS9YPbeC?cluster=devnet) |
+| TokenMessengerMinterV2 | 5                                                                 | [`CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe`](https://solscan.io/account/CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe?cluster=devnet) |
+
+The Solana CCTP source code is
+[available on GitHub](https://github.com/circlefin/solana-cctp-contracts/). The
+interface below serves as a reference for permissionless messaging functions
+exposed by the programs.
+
+## CCTP V2 Interface
+
+The interface below serves as a reference for permissionless messaging functions
+exposed by the `TokenMessengerMinter` and `MessageTransmitter` programs. The
+full IDLs can be found onchain using a block explorer.
+[MessageTransmitterV2 IDL](https://explorer.solana.com/address/CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe/anchor-program)
+and
+[TokenMessengerMinterV2 IDL](https://explorer.solana.com/address/CCTPV2Sm4AdWt5296sk4P66VBZ7bEhcARwFaaS9YPbeC/anchor-program).
+
+_Please see the instruction rust files or quick-start for PDA information._
+
+### Changes from CCTP V1
+
+#### New Functions
+
+- `TokenMessengerMinterV2#deposit_for_burn_with_hook` (extends
+  `deposit_for_burn` by adding hook data)
+- `TokenMessengerMinterV2#handle_receive_unfinalized_message` (replaces
+  `handle_receive_message`)
+- `TokenMessengerMinterV2#handle_receive_finalized_message` (replaces
+  `handle_receive_message`)
+
+#### Modified Functions
+
+- `TokenMessengerMinterV2#deposit_for_burn`
+- `MessageTransmitterV2#send_message`
+- `MessageTransmitterV2#receive_message`
+- `MessageTransmitterV2#reclaim_event_account` (5 day waiting window added, see
+  [TokenMessengerMinterV2 section](#tokenmessengerminterv2) for more
+  information)
+
+#### Removed Functions
+
+- `TokenMessengerV2#handle_receive_message`
+- `TokenMessengerV2#replace_deposit_for_burn`
+- `TokenMessengerV2#deposit_for_burn_with_caller`
+- `MessageTransmitterV2#replace_message`
+- `MessageTransmitterV2#send_message_with_caller`
+
+### TokenMessengerMinterV2
+
+#### [depositForBurn](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/token-messenger-minter-v2/src/token_messenger_v2/instructions/deposit_for_burn.rs)
+
+Deposits and burns tokens from sender to be minted on destination domain. Minted
+tokens will be transferred to `mintRecipient`.
+
+**Parameters**
+
+| Field                | Type   | Description                                                                                                                                                                                                                                                                     |
+| :------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| amount               | u64    | Amount of tokens to deposit and burn.                                                                                                                                                                                                                                           |
+| destinationDomain    | u32    | Destination domain identifier.                                                                                                                                                                                                                                                  |
+| mintRecipient        | Pubkey | Public Key of token account mint recipient on destination domain. _Address should be the 32 byte version of the hex address in base58. See Additional Notes on `mintRecipient` section for more information._                                                                   |
+| destinationCaller    | Pubkey | Address which can call `receiveMessage` on destination domain. If set to `PublicKey.default`, any address can call `receiveMessage` _Address should be the 32 byte version of the hex address in base58. See Additional Notes on `mintRecipient` section for more information._ |
+| maxFee               | u64    | Max fee paid for the transfer, specified in units of the burn token.                                                                                                                                                                                                            |
+| minFinalityThreshold | u32    | Minimum finality threshold at which burn will be attested                                                                                                                                                                                                                       |
+
+<Note>
+**Fees**
+
+A fee may be charged for standard USDC transfers. Fees for standard transfers
+are set to 0, but are subject to change. See
+[CCTP Fees](/cctp/technical-guide#cctp-fees) for more information.
+
+</Note>
+
+<Note>
+**MessageSent event storage**
+
+To ensure persistent and reliable message storage, MessageSent events are stored
+in accounts. MessageSent event accounts are generated client-side, passed into
+the instruction call, and assigned to have the `MessageTransmitterV2` program as
+the owner. See the
+[Quickstart Guide](/cctp/transfer-usdc-on-testnet-from-ethereum-to-avalanche)
+for how to generate this account and pass it to the instruction call.
+
+For `depositForBurn` CCTP V1 messages, this costs `~0.00381408 SOL` in rent.
+_This rent is paid by the
+[`event_rent_payer`](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/message-transmitter/src/instructions/send_message.rs#L16C9-L16C25)
+account which can be the user or subsidized by a calling program or integrator._
+
+In CCTP V1, this SOL could be reclaimed by calling `reclaim_event_account` once
+the attestation is available.
+
+In CCTP V2, message nonces are generated offchain, meaning the source messages
+cannot be identified from the attestation. Due to this, there is a 5 day window
+after sending a message that callers must wait before `reclaim_event_account`
+can be called. This is to ensure that the message has been fully processed by
+Circle's offchain services.
+
+</Note>
+
+#### [depositForBurnWithHook](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/token-messenger-minter-v2/src/token_messenger_v2/instructions/deposit_for_burn_with_hook.rs)
+
+Deposits and burns tokens from sender to be minted on destination domain, and
+emits a crosschain message with additional hook data appended. In addition to
+the standard `deposit_for_burn` parameters, `deposit_for_burn_with_hook` accepts
+a dynamic-length `hookData` parameter, allowing the caller to include additional
+metadata to the attested message, which can be used to trigger custom logic on
+the destination chain.
+
+**Parameters**
+
+| Field                | Type      | Description                                                                                                                                                                                                                                                                     |
+| :------------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| amount               | u64       | Amount of tokens to deposit and burn.                                                                                                                                                                                                                                           |
+| destinationDomain    | u32       | Destination domain identifier.                                                                                                                                                                                                                                                  |
+| mintRecipient        | Pubkey    | Public Key of token account mint recipient on destination domain. _Address should be the 32 byte version of the hex address in base58. See Additional Notes on `mintRecipient` section for more information._                                                                   |
+| destinationCaller    | Pubkey    | Address which can call `receiveMessage` on destination domain. If set to `PublicKey.default`, any address can call `receiveMessage` _Address should be the 32 byte version of the hex address in base58. See Additional Notes on `mintRecipient` section for more information._ |
+| maxFee               | u64       | Max fee paid for fast burn, specified in units of the burn token.                                                                                                                                                                                                               |
+| minFinalityThreshold | u32       | Minimum finality threshold at which burn will be attested                                                                                                                                                                                                                       |
+| hookData             | Vec\<u8\> | Additional metadata attached to the attested message, which can be used to trigger custom logic on the destination chain                                                                                                                                                        |
+
+#### [handleReceiveFinalizedMessage](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/token-messenger-minter-v2/src/token_messenger_v2/instructions/handle_receive_finalized_message.rs)
+
+Handles incoming message received by the local MessageTransmitter, and takes the
+appropriate action. For a burn message, mints the associated token to the
+requested recipient on the local domain. Validates the function sender is the
+local MessageTransmitter, and the remote sender is a registered remote
+TokenMessenger for `remoteDomain`.
+
+Additionally, reads the `feeExecuted` parameter from the BurnMessage. If
+nonzero, the `feeExecuted` amount is minted to the `feeRecipient`.
+
+**Parameters**
+
+| Field                     | Type                       | Description                                                  |
+| ------------------------- | -------------------------- | ------------------------------------------------------------ |
+| remoteDomain              | u32                        | The domain where the message originated from                 |
+| sender                    | Pubkey                     | The sender of the message (remote TokenMessenger)            |
+| finalityThresholdExecuted | u32                        | Specifies the level of finality Iris signed the message with |
+| messageBody               | Vec\<u8\> (dynamic length) | The message body bytes                                       |
+
+#### [handleReceiveUnfinalizedMessage](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/token-messenger-minter-v2/src/token_messenger_v2/instructions/handle_receive_unfinalized_message.rs)
+
+Handles incoming message received by the local MessageTransmitter, and takes the
+appropriate action. For a burn message, mints the associated token to the
+requested recipient on the local domain. Validates the function sender is the
+local MessageTransmitter, and the remote sender is a registered remote
+TokenMessenger for `remoteDomain`.
+
+Similar to `handleReceiveFinalizedMessage`, but is called for messages which are
+not finalized (`finalityThresholdExecuted` \< 2000).
+
+Unlike `handleReceiveFinalizedMessage`, `handleReceiveUnfinalizedMessage` has
+the following `messageBody` parameter:
+
+- **`expirationBlock`**. If `expirationBlock` ≤ `blockNumber` on the destination
+  domain, the message will revert and must be re-signed without the expiration
+  block.
+
+**Parameters**
+
+| Field                         | Type                       | Description                                                                       |
+| ----------------------------- | -------------------------- | --------------------------------------------------------------------------------- |
+| **remoteDomain**              | u32                        | The domain where the message originated from                                      |
+| **sender**                    | Pubkey                     | The sender of the message (remote TokenMessenger)                                 |
+| **finalityThresholdExecuted** | u32                        | Specifies the level of finality Iris signed the message with                      |
+| **messageBody**               | Vec\<u8\> (dynamic length) | The message body bytes (see [Message format](/cctp/technical-guide#message-body)) |
+
+### MessageTransmitterV2
+
+#### [receiveMessage](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/message-transmitter-v2/src/instructions/receive_message.rs)
+
+Messages with a given nonce can only be broadcast successfully once for a pair
+of domains. The message body of a valid message is passed to the specified
+recipient for further processing.
+
+**Parameters**
+
+| Field       | Type     | Description                    |
+| :---------- | :------- | :----------------------------- |
+| message     | Vec\<u8> | Message bytes.                 |
+| attestation | Vec\<u8> | Signed attestation of message. |
+
+**Remaining Accounts**
+
+If the `receiveMessage` instruction is being called with a deposit for burn
+message that will be received by the `TokenMessengerMinterV2`, additional
+`remainingAccounts` are required so they can be passed with the CPI to
+`TokenMessengerMinter#handle_receive_finalized_message` or
+`TokenMessengerMinter#handle_receive_unfinalized_message`:
+
+| Account Name                    | PDA Seeds                                             | PDA ProgramId        | isSigner? | isWritable? | Description                                                                                                                                                               |
+| :------------------------------ | :---------------------------------------------------- | :------------------- | :-------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `token_messenger`               | `["token_messenger"]`                                 | tokenMessengerMinter | false     | false       | TokenMessenger Program Account                                                                                                                                            |
+| `remote_token_messenger`        | `["remote_token_messenger", sourceDomainId]`          | tokenMessengerMinter | false     | false       | Remote token messenger account where the remote token messenger address is stored for the given source domain id                                                          |
+| `token_minter`                  | `["token_minter"]`                                    | tokenMessengerMinter | false     | true        | TokenMinter Program Account                                                                                                                                               |
+| `local_token`                   | `["local_token", localTokenMint.publicKey]`           | tokenMessengerMinter | false     | true        | Local token account where the information for the local token (e.g. USDCSOL) being minted is stored                                                                       |
+| `token_pair`                    | `["token_pair", sourceDomainId, sourceTokenInBase58]` | tokenMessengerMinter | false     | false       | Token pair account where the info for the local and remote tokens are stored. `sourceTokenInBase58` is the remote token that was burned and converted into base58 format. |
+| `user_token_account`            | N/A                                                   | N/A                  | false     | true        | User token account that will receive the minted tokens. This address **must** match the mintRecipient from the source chain depositForBurn call.                          |
+| `custody_token_account`         | `["custody", localTokenMint.publicKey]`               | tokenMessengerMinter | false     | true        | Custody account that holds the pre-minted USDCSOL that can be minted for CCTP usage.                                                                                      |
+| `SPL.token_program_id`          | N/A                                                   | N/A                  | false     | false       | The native SPL token program ID.                                                                                                                                          |
+| `token_program_event_authority` | `["__event_authority"]`                               | tokenMessengerMinter | false     | false       | Event authority account for the TokenMessengerMinter program. Needed to emit Anchor CPI events.                                                                           |
+| `program`                       | N/A                                                   | N/A                  | false     | false       | Program id for the TokenMessengerMinter program.                                                                                                                          |
+
+#### [sendMessage](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/v2/message-transmitter-v2/src/instructions/send_message.rs)
+
+Sends a message to the destination domain and recipient. Stores message in a
+`MessageSent` account which will be attested by Circle's attestation service.
+
+**Parameters**
+
+| Field             | Type     | Description                                              |
+| :---------------- | :------- | :------------------------------------------------------- |
+| destinationDomain | u32      | Destination domain identifier.                           |
+| recipient         | Pubkey   | Address to handle message body on destination domain.    |
+| messageBody       | Vec\<u8> | Application-specific message to be handled by recipient. |
+
+## Additional Notes
+
+These notes are applicable to all CCTP versions.
+
+### Mint Recipient for Solana as Destination Chain Transfers
+
+When calling `depositForBurn` on a non-Solana chain with Solana as the
+destination, the `mintRecipient` should be a **hex encoded USDC token account
+address**. The token account* must exist at the time `receiveMessage` is called
+on Solana* or else this instruction will revert. An example of converting an
+address from Base58 to hex taken from the Solana quickstart tutorial in
+Typescript can be seen below:
+
+```typescript
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import { hexlify } from "ethers";
+
+const solanaAddressToHex = (solanaAddress: string): string =>
+  hexlify(bs58.decode(solanaAddress));
+```
+
+### Mint Recipient for Solana as Source Chain Transfers
+
+When specifying the `mintRecipient` for Solana `deposit_for_burn` instruction
+calls, the address must be given as the 32 byte version of the hex address in
+base58 format. An example taken from the Solana quickstart tutorial in
+Typescript can be seen below:
+
+```typescript
+import { getBytes } from "ethers";
+import { PublicKey } from "@solana/web3.js";
+
+const evmAddressToBytes32 = (address: string): string =>
+  `0x000000000000000000000000${address.replace("0x", "")}`;
+
+const evmAddressToBase58PublicKey = (addressHex: string): PublicKey =>
+  new PublicKey(getBytes(evmAddressToBytes32(addressHex)));
+```
+
+### Program Events
+
+Program events like
+[DepositForBurn](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/token-messenger-minter/src/token_messenger/events.rs#L35-L45)
+,
+[MintAndWithdraw](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/token-messenger-minter/src/token_messenger/events.rs#L47-L52)
+, and
+[MessageReceived](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/token-messenger-minter/src/token_messenger/events.rs#L47-L52)
+are emitted as Anchor CPI events. This means a self-CPI is made into the program
+with the serialized event as instruction data so it is persisted in the
+transaction and can be fetched later on as needed. More information can be seen
+in the
+[Anchor implementation PR](https://github.com/coral-xyz/anchor/pull/2438), and
+an example of reading CPI events can be seen in the
+[solana-cctp-contracts repository](https://github.com/circlefin/solana-cctp-contracts/blob/master/tests/utils.ts#L62-L111).
+
+[MessageSent](https://github.com/circlefin/solana-cctp-contracts/blob/master/programs/message-transmitter/src/events.rs#L49-L55)
+events are different, as they are stored in accounts. Please see the
+[MessageSent Event Storage section](#depositforburn) for more info.
+
+## CCTP Workflow vs. CCTP V1
+
+This table highlights the key workflow improvements of CCTP over CCTP V1 in
+terms of enhanced cross-chain messaging, fewer manual steps, and greater control
+over message acceptance:
+
+| CCTP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | CCTP V1                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Burn USDC via `deposit_for_burn_with_hook`** <br /> <br /> You can call `deposit_for_burn_with_hook` on **TokenMessengerMinterV2**, which supports **hooks** and **finality thresholds**. New parameters include `destinationCaller`, `maxFee`, and `minFinalityThreshold`, allowing you to choose **Fast Transfer (1000)** or **Standard Transfer (2000)**.                                                                                                                                                     | **Burn USDC via `deposit_for_burn`** <br /> <br /> In CCTP V1, you call `deposit_for_burn` on **TokenMessengerMinter**.                                                                                                                     |
+| **Retrieve, Hash, and Wait for Attestation** <br /> <br /> Iris automates message retrieval and hashing, allowing you to just poll for attestation via [GET /v2/messages](/api-reference/w3s/cctp/get-messages-v-2). The attestation includes both the hashed message and the attestation signature.                                                                                                                                                                                                               | **Retrieve and Hash Message explicitly** <br /> <br /> In CCTP V1, you need to manually extract and hash the `messageBytes` data from the `MessageSent` event logs using `Keccak256`.                                                       |
+| **Wait for Attestation via Iris** <br /> <br /> The attestation request is merged with message retrieval and hashing from the previous step. You simply wait for the polling to complete and retrieve the attestation.                                                                                                                                                                                                                                                                                             | **Request Attestation from Circle's Attestation Service** <br /> <br /> In CCTP V1, you poll for attestation via [GET /v1/attestations](/api-reference/w3s/cctp/get-attestation).                                                           |
+| **Send Messages via `MessageTransmitterV2#send_message`** <br /> <br /> The recipient must implement message handling methods based on finality thresholds: <br /> • `handle_receive_finalized_message` for messages with `finality_threshold_executed ≥ 2000` (fully finalized). <br /> • `handle_receive_unfinalized_message` for messages with `finality_threshold_executed < 2000` (pre-finalized). <br /> <br /> This allows recipients to enforce specific finality requirements before accepting a message. | **Send Messages via `MessageTransmitter#send_message`** <br /> <br /> In CCTP V1, you send an arbitrary message via `send_message` on **MessageTransmitter**. The recipient must implement `handle_receive_message` to process the message. |
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Block Confirmations <Icon icon="arrow-right" />](/cctp/required-block-confirmations)

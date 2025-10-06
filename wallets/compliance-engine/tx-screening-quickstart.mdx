@@ -1,0 +1,189 @@
+---
+title: "Quickstart: Assess the Risk of Wallet Addresses"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Assess the Risk of Wallet Addresses"
+---
+
+Circle's **Transaction Screening** allows you to programmatically assess the
+risk of wallet addresses when sending digital assets using Circle Wallets. This
+guide walks you through setup, integration, and testing using Circle's
+**Compliance Engine**.
+
+<Note>
+**Note:** This guide applies specifically to the
+[standalone screening](/wallets/compliance-engine/tx-screening#standalone-screening)
+mode, where blockchain addresses are screened independently of transaction
+flows.
+</Note>
+
+## Prerequisites
+
+Before you begin, make sure you have the following:
+
+- A **Circle Developer Account**
+- An **API key** with appropriate access to
+  [Compliance Engine](https://console.circle.com/compliance) (all testnet keys
+  have this access by default)
+- [Node.js](https://nodejs.org/en/download) installed, or an API tool like
+  Postman or cURL
+- [Axios](https://axios-http.com/) installed, if using Node.js
+
+## Steps
+
+Follow the steps below to screen an address:
+
+### 1. Generate a test address
+
+To simulate a real screening scenario, visit
+[vanity-eth.tk](https://vanity-eth.tk) to generate a test Ethereum wallet
+address ending in `9999`:
+
+For example:
+
+```text
+0x7fb49965753A9eC3646fd5d004ee5AeD6Cc89999
+```
+
+The `9999` suffix triggers **Circle's Sanctions Blocklist** in the screening
+API.
+
+### 2. Screen the wallet address explicitly using Circle's API
+
+Submit a `POST` request to the screening API using Node.js:
+
+```javascript
+import axios from "axios";
+
+const options = {
+  method: "POST",
+  url: "https://api.circle.com/v1/w3s/compliance/screening/addresses",
+  headers: {
+    Authorization: "Bearer <API_KEY>",
+    "Content-Type": "application/json",
+  },
+  data: {
+    idempotencyKey: "44bd2d89-9461-4502-84ba-550c9e278db7", // unique-idempotency-key
+    address: "0x7fb49965753A9eC3646fd5d004ee5AeD6Cc89999",
+    chain: "ETH-SEPOLIA",
+  },
+};
+
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
+```
+
+<Note>
+**Note:** You must replace the `<API_KEY>` above with your actual Circle API
+key.
+</Note>
+
+### 3. Review the screening response
+
+If the address is flagged, the response returns a `DENIED` result with some
+actionable compliance recommendations:
+
+```json
+{
+  "result": "DENIED",
+  "decision": {
+    "ruleName": "Circle's Sanctions Blocklist",
+    "actions": ["FREEZE_WALLET", "DENY", "REVIEW"],
+    "reasons": [
+      {
+        "source": "ADDRESS",
+        "sourceValue": "0x7fb49965753A9eC3646fd5d004ee5AeD6Cc89999",
+        "riskScore": "BLOCKLIST",
+        "riskCategories": ["SANCTIONS"],
+        "type": "OWNERSHIP"
+      }
+    ],
+    "screeningDate": "2025-03-29T01:59:02Z"
+  },
+  "address": "0x7fb49965753A9eC3646fd5d004ee5AeD6Cc89999",
+  "chain": "ETH-SEPOLIA"
+}
+```
+
+### 4. Evaluate screening recommendations
+
+If the screening result is `DENIED`, you can take the following actions based on
+the recommendations provided:
+
+- **Block** the wallet from transaction activity (based on the `DENY`
+  recommendation)
+- **Flag** the wallet for manual review (based on the `REVIEW` recommendation)
+- **Freeze** the wallet (based on the `FREEZE_WALLET` recommendation)
+
+<Note>
+You can **block** or **freeze** the wallet from the
+[Compliance Engine > Alerts](https://console.circle.com/compliance/alerts/screening)
+page in the Developer Console. For more details, see the
+[Alerts Management](/wallets/compliance-engine/tx-screening-alert-management)
+documentation.
+</Note>
+
+## Automate rules based on screening outcomes
+
+You can integrate
+[actions and alerts](/wallets/compliance-engine/tx-screening-rule-management)
+into the transaction logic of your application:
+
+```javascript
+if (response.data.result === "DENIED") {
+  const ruleName = response.data.decision.ruleName;
+  const actions = response.data.decision.actions;
+
+  console.log("Screening result: DENIED by Rule: " + ruleName);
+
+  if (actions.includes("DENY")) {
+    console.log("Recommended action: DENY — block transactions on wallet");
+  }
+
+  if (actions.includes("REVIEW")) {
+    console.log("Recommended action: REVIEW — flag wallet for manual review");
+  }
+
+  if (actions.includes("FREEZE_WALLET")) {
+    console.log("Recommended action: FREEZE_WALLET — freeze wallet activity");
+  }
+}
+```
+
+You can also query additional fields such as `riskCategories`, `ruleName`, and
+`type` to make compliance decisions tailored to your business needs. For more
+information about these fields, refer to their descriptions in the response
+object of the
+[Screen a blockchain address](/api-reference/w3s/compliance/screen-address) API
+endpoint.
+
+## Testing with simulated risk categories
+
+You can use specific suffixes in test addresses to simulate different risk
+scenarios:
+
+| Suffix | Simulated Rule Triggered           |
+| ------ | ---------------------------------- |
+| `9999` | Circle's Sanctions Blocklist       |
+| `8888` | Frozen User Wallet                 |
+| `7777` | Custom Blocklist Rule              |
+| `8999` | Severe Sanctions Risk (Owner)      |
+| `8899` | Severe Terrorist Financing (Owner) |
+| `8889` | Severe CSAM Risk (Owner)           |
+| `7779` | Severe Illicit Behavior (Owner)    |
+| `7666` | High Illicit Behavior Risk (Owner) |
+| `7766` | High Gambling Risk (Owner)         |
+
+<Note>
+**Test suffixes** are useful in pre-production environments for validation of
+custom rule enforcement and behavior.
+</Note>

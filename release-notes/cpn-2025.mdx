@@ -1,0 +1,102 @@
+---
+title: Release Notes - Circle Payments Network - 2025
+description: 2025 release notes for Circle Payments Network.
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+initiator: 
+sidebarTitle: "Circle Payments Network"
+---
+
+## August 2025
+
+### 2025.08.29
+
+#### Documentation additions
+
+- Added a topic on detailed
+  [payment failure codes](/cpn/references/payment-failure-codes) to help explain
+  why a payment failed and how to resolve the issue
+
+#### Documentation updates
+
+- Updated
+  [payment failure reasons](/cpn/references/payment-and-transaction-failure-reasons#payments)
+  with new values
+- Added new [magic values](/cpn/references/magic-values) for testing refund
+  workflows
+- Added a new [payment error code](/cpn/references/error-codes#payment)
+  (`290207`) for missing required parameters
+- Added new [RFI error codes](/cpn/references/error-codes#rfi) (`290302`,
+  `290303`, `290304`, `290305`) for RFI verification failures
+
+#### API updates
+
+- Added the optional `quoteOptions` field to the
+  [`POST /v1/cpn/quotes`](/api-reference/cpn/cpn-platform/create-quotes)
+  endpoint to support additional quote options when creating a quote.
+- Updated the allowed values for `failureReason` for payments and transactions
+  to reflect new failure reasons.
+- Added `failureCode` to the response of the following endpoints:
+
+  - [`POST /v1/cpn/payments`](/api-reference/cpn/cpn-platform/create-payment)
+  - [`GET /v1/cpn/payments`](/api-reference/cpn/cpn-platform/list-payments)
+  - [`GET /v1/cpn/payments/{paymentId}`](/api-reference/cpn/cpn-platform/get-payment)
+
+## July 2025
+
+### 2025.07.25
+
+Added full DevDocs for OFIs for Circle Payments network:
+
+#### Documentation additions
+
+Added the following topics for CPN:
+
+- [CPN Overview](/cpn)
+- [Integration Concepts](/cpn/concepts/integration-concepts)
+- [Quickstart: Integrate with CPN as an OFI](/cpn/quickstarts/integrate-with-cpn-ofi)
+- [How-to: Set up Webhook Notifications](/cpn/howtos/setup-webhook-notifications)
+- [How-to: Verify Webhook Signatures](/cpn/howtos/verify-webhook-signatures)
+- [How-to: Request Payment Configurations and Routes](/cpn/howtos/request-payment-config)
+- [How-to: Integrate with JSON Schema](/cpn/howtos/integrate-with-json-schema)
+- [How-to: Encrypt Travel Rule and Beneficiary Data](/cpn/howtos/encrypt-travel-rule-beneficiary-data)
+- [How-to: Create an Onchain Transaction](/cpn/howtos/create-an-onchain-txn)
+- [How-to: Encrypt Files for RFI Transmission](/cpn/howtos/encrypt-files)
+- [How-to: Create a Support Ticket](/cpn/howtos/create-support-ticket)
+- [Supported Blockchains](/cpn/references/supported-blockchains)
+- [Wallet Provider Compatibility](/cpn/references/wallet-provider-compatibility)
+- [Component States and Workflows](/cpn/references/component-states-and-workflows)
+- [Magic Values for Testing](/cpn/references/magic-values)
+- [Webhook Events](/cpn/references/webhook-events)
+- [Webhook Retries](/cpn/references/webhook-retries)
+- [Payment and Transaction Failure Reasons](/cpn/references/payment-and-transaction-failure-reasons)
+- [Error Codes](/cpn/references/error-codes)
+- [JSON Schema](/cpn/references/json-schema)
+- [RFI Levels](/cpn/references/rfi-levels)
+- [Travel Rule Requirements](/cpn/references/travel-rule-requirements)
+- [Payment Reference](/cpn/references/payment-reference)
+- [Validating Brazilian Tax ID and Bank Account Numbers](/cpn/references/validating-brazil-tax-account-id)
+
+#### API additions
+
+Added the following CPN endpoints:
+
+- [`GET /v1/cpn/configurations/overview`](/api-reference/cpn/cpn-platform/get-payment-configurations-overview)
+- [`GET /v1/cpn/configurations/routes`](/api-reference/cpn/cpn-platform/list-routes)
+- [`POST /v1/cpn/quotes`](/api-reference/cpn/cpn-platform/create-quotes)
+- [`GET /v1/cpn/quotes/{quoteId}`](/api-reference/cpn/cpn-platform/get-quote)
+- [`GET /v1/cpn/payments`](/api-reference/cpn/cpn-platform/list-payments)
+- [`POST /v1/cpn/payments`](/api-reference/cpn/cpn-platform/create-payment)
+- [`GET /v1/cpn/payments/{paymendId}`](/api-reference/cpn/cpn-platform/get-payment)
+- [`GET /v1/cpn/payments/{paymentId}/refunds/{refundId}`](/api-reference/cpn/cpn-platform/get-refund)
+- [`GET /v1/cpn/payments/requirements`](/api-reference/cpn/cpn-platform/get-payment-requirements)
+- [`POST /v1/cpn/payments/{paymentId}/transactions`](/api-reference/cpn/cpn-platform/create-transaction)
+- [`GET /v1/cpn/payments/{paymentId}/transactions/{transactionId}`](/api-reference/cpn/cpn-platform/get-transaction)
+- [`POST /v1/cpn/payments/{paymentId}/transactions/{transactionId}/submit`](/api-reference/cpn/cpn-platform/submit-transaction)
+- [`POST /v1/cpn/payments/{paymentId}/transactions/accelerate`](/api-reference/cpn/cpn-platform/accelerate-transaction)
+- [`GET /v1/cpn/payments/{paymentId}/rfis/{rfiId}`](/api-reference/cpn/cpn-platform/get-rfi)
+- [`POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/submit`](/api-reference/cpn/cpn-platform/submit-rfi)
+- [`POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/files`](/api-reference/cpn/cpn-platform/upload-rfi-file)
+- [`POST /v1/cpn/supportTickets`](/api-reference/cpn/cpn-platform/create-support-ticket)

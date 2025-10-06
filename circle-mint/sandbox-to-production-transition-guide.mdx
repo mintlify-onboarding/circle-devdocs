@@ -1,0 +1,127 @@
+---
+title: Sandbox to Production Transition Guide
+description:
+  Move your code from sandbox into production so you can take your site live and
+  accept transactions.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_If you've completed your API integration in Circle’s sandbox, it's time to move
+your site into production. Because the code is largely the same between sandbox
+and production, moving into the production environment is a fairly
+straightforward process. Follow the steps below and take note of any additional
+information provided._
+
+To ensure success, please note the following:
+
+- If you have any questions about the differences listed below, reach out to
+  your Circle solutions engineer or our
+  [customer support team](mailto:customer-support@circle.com) for more
+  information.
+- Note that to obtain Production API keys, you need to apply for a
+  [Circle Mint account](https://www.circle.com/en/circle-mint).
+
+## 1. Move your code to production
+
+Take your sandbox code into the production environment. There are a couple ways
+to do this based on your needs:
+
+- **Basic users** who only need Circle's core functionality can use the same
+  code documents they've been using in sandbox and convert them directly into
+  production code using the steps below.
+- **Advanced users** using our full suite of APIs will probably want to continue
+  using the sandbox version of their site in parallel for continued development,
+  testing, and troubleshooting. These users should clone their sandbox code and
+  edit the copy to bring it into production.
+
+## 2. Replace sandbox URLs with production URLs
+
+When you're transitioning from Sandbox to Production, you'll need to switch to
+the Production base URL for your requests.
+
+Sandbox URL: `https://api-sandbox.circle.com`  
+Production URL: `https://api.circle.com`
+
+In some cases, this will be as simple as performing a “find and replace”
+function with a text editor; in others it will be more complex depending on your
+approach. Consult your engineering team if you have any questions.
+
+## 3. Replace sandbox API keys with production API keys
+
+Now that you're ready to move to production, navigate to the API key tab within
+the Circle Mint developer dashboard. Create an API key and name it, and assign
+it a list of IPs permitted to originate requests. After creating your API key,
+you can copy and paste it as needed.
+
+**Security:** _Because the production API key allows you to work with real, live
+funds within your Circle Mint account, the key must be provided and managed by
+Circle. (You can't regenerate it from your Circle Mint account.) For this
+reason, your production API key must be treated with appropriate security
+protocols. Please consult your company's security team if you have questions._
+
+<Note>
+  Circle disables public access to all APIs by default. If you haven’t already
+  connected with a Circle representative regarding using Circle's APIs, please
+  reach out to
+  [customer-support@circle.com](mailto:customer-support@circle.com).
+</Note>
+
+## 4. (Optional) Set up your system to originate requests from IPv4 addresses allowlist
+
+If you have set up an IP allowlist, Circle only accepts requests using your
+Production API key that originate from an IP address on the list.
+
+- **Set up your system** to send production calls only from these addresses.
+- **Double-check** that these static addresses match the ones you sent to
+  Circle.
+
+## 5. Check that your API Key Roles are up to date
+
+While working in sandbox, your sandbox API key has allowed you to make calls to
+any Circle endpoint for testing purposes. In production, you’ll be restricted to
+the functionality—and endpoint access—that you are specifically solutioned for
+in your Solution Description and Flow of Funds documents. If you attempt to make
+API calls to an endpoint you aren’t solutioned for, you’ll receive a 403
+response.
+
+- **Test your calls.** Try out each of the API calls you created in sandbox to
+  make sure that they still work in production. For instance, your
+  [list all balances](/api-reference/circle-mint/account/list-business-balances)
+  call from sandbox should still provide balances in production as long as you
+  have updated the URL.
+- **Update as necessary.** If you run into error codes, or if your needs have
+  changed and you need additional functionality, contact your Circle
+  representative. They can update your Solution Description and Flow of Funds
+  agreements to enable the needed functionality.
+
+## 6. Allow for actual production settlement times
+
+In the sandbox environment, settlement times (the time it takes to process a
+transaction) are kept as low as possible to enable you to easily test a variety
+of behaviors. Because they reflect real-world transactions, production
+settlement times will invariably be longer (see table below).
+
+- **Test actual settlement times** in production.
+- **Take into account** your own operations and whether you want to perform
+  certain actions (such as releasing goods) after confirmation or after
+  settlement.
+- **Update your interface** to manage users’ expectations.
+
+### Crypto Payments and Payouts
+
+- See [blockchain confirmations](/circle-mint/blockchain-confirmations).
+
+## 7. Anticipate transaction fees
+
+Because sandbox does not reflect your client agreement with Circle, fees in the
+sandbox environment may not always reflect the fees you’ll be charged in
+production.
+
+- **See your contract with Circle** to understand what fees you’ll see when you
+  initiate transactions in the production environment.
+- **Determine actual fees** by testing various transactions in production.
+- **Update your interface** if you will be passing along these fees to your
+  customers.

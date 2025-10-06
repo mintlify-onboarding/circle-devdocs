@@ -1,0 +1,272 @@
+---
+title: Webhooks Flows
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Webhook Notifications Flows"
+---
+
+## Common Considerations
+
+All implementations of notification messages have the following attributes:
+
+| Name               | Type   | Description                                                         | Example                                |
+| ------------------ | ------ | ------------------------------------------------------------------- | -------------------------------------- |
+| `subscriptionId`   | string | ID of the webhook subscription.                                     | `80b9b08f-fd12-4f40-a3a6-51bad45cec51` |
+| `notificationId`   | string | ID for each event notification. This value is the same for retries. | `b3f2761f-6ae8-49f8-a730-6216aea08900` |
+| `notificationType` | string | The type of notification.                                           | `transactions.inbound`                 |
+| `version`          | int    | The version of the notification.                                    | `2`                                    |
+
+## Implementations
+
+This section lists models used by existing flows.
+
+## Transaction Flows
+
+This section introduces the events that may occur with a transaction.
+
+### Inbound Transactions
+
+#### Confirmed
+
+Confirmed transactions have been broadcast on the blockchain but have not yet
+reached the number of confirmations needed to be considered complete.
+
+**Confirmed Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.inbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Completed
+
+Completed transactions are settled transactions in which the needed number of
+blockchain confirmations has been met. Therefore the funds should be available
+in the destination account.
+
+**Completed Transaction Notification Payload:**
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.inbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+### Outbound Transactions
+
+#### Queued
+
+Queued transactions have been successfully initiated but have not yet been
+processed.
+
+**Queued Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Sent
+
+Sent transactions are processed and sent to the blockchain node but have not yet
+been broadcast onchain.
+
+**Sent Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Confirmed
+
+Confirmed transactions have been successfully broadcast on the blockchain but
+have not yet reached the number of confirmations needed to be considered
+complete.
+
+**Confirmed Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Completed
+
+Completed transactions are settled transactions in which the needed number of
+blockchain confirmations has been met. Therefore the funds should be available
+in the destination account.
+
+**Completed Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Canceled
+
+The following structure represents notifications for confirmed _cancel_
+requests:
+
+**Canceled Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+#### Failed
+
+A transaction might fail due to insufficient balance, failed challenge and so
+forth. A notification with the following structure is sent for _failed_
+transactions:
+
+**Failed Transaction Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "transactions.outbound",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Transaction Object_.
+
+### Challenge Flows
+
+This section introduces the events that may occur with a challenge.
+
+#### Complete
+
+Complete challenges indicate that the operation has been successfully passed by
+the end-user. Therefore the associated action should be automatically initiated.
+
+**Complete Challenge Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "challenges.initialize",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Challenge Object_.
+
+#### Failed
+
+Challenges can fail for reasons such as an incorrect pin being entered, the
+challenge expiring and so forth. A notification with the following structure is
+sent for failed challenges. This indicates that the operation needs to be
+re-initiated.
+
+**Failed Challenge Notification Payload**:
+
+```json
+{
+  "subscriptionId": "80b9b08f-fd12-4f40-a3a6-51bad45cec51",
+  "notificationId": "b3f2761f-6ae8-49f8-a730-6216aea08900",
+  "notificationType": "challenges.initialize",
+  "notification": {
+    "id": "",
+    ...
+  },
+  "timestamp": "2023-06-29T15:05:33.135665781Z",
+  "version": 2
+}
+```
+
+The payload will contain the information of a _Challenge Object_.

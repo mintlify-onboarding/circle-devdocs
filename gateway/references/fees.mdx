@@ -1,0 +1,76 @@
+---
+title: Gateway Fees
+description: ""
+sideNav: ""
+documentationItems: 
+- title: Documentation
+tableOfContents: true
+sidebarTitle: "Fees"
+---
+
+Fees for using Circle Gateway vary based on several factors, including the
+source blockchain and the size of the transaction. Each transfer includes a base
+fee that covers the gas costs incurred during the burn process on the source
+chain. In addition to these network-related costs, there is a percentage-based
+fee on the transaction size to support operational and infrastructure needs.
+
+Gateway fees are in USDC and collected onchain at the time of the burn from the
+user's unified USDC balance. This mechanism ensures that USDC minted on the
+destination chain is equivalent to the requested USDC, and also matches the
+amount of USDC burned on the source chain.
+
+The base fee is static and determined by the source chain of each burn intent.
+
+Transfers where the source and destination domains are the same don't incur the
+percentage-based fee, as these are instant withdrawals from the Gateway smart
+contract without invoking crosschain functions.
+
+## Promotional pricing
+
+To support early adopters and encourage adoption, Circle is offering a
+promotional rate of 0.005% (half a basis point) on all instant crosschain
+transfers. Circle is committed to providing low-cost access to instant,
+non-custodial USDC transfers across multiple blockchains.
+
+As the Gateway network continues to scale and mature, Circle may revise this
+promotional pricing. Users and partners maintaining high volume and balances
+during the promotional period may be eligible to extend the promotional pricing
+beyond the standard window.
+
+If you have further questions about the current fee structure or would like to
+discuss long-term pricing options, reach out to Circle directly via the Discord
+support channel or your Circle account representative.
+
+## Gas fees
+
+Excluding the percentage-based fee charged by Circle for using Gateway, network
+fees affect both the base fee charged by Circle and the cost of executing the
+mint onchain using the attestation provided by Circle. Generally, the overall
+gas cost increases linearly with the number of sources (burn intents) involved
+in a transfer.
+
+The gas cost of using an attestation for a single-source transfer is comparable
+to the cost of a CCTP mint. Each additional source chain (burn intent) involved
+in the transfer adds approximately 60k gas to the mint transaction, which scales
+at a slower rate than the cost of the equivalent set of CCTP transfers. Hook
+data incurs a cost of about 16 gas per byte for both the mint and the burn.
+
+For reducing overall gas costs, it may be preferable to keep the majority of
+Gateway funds on low-cost chains, so that the base fee for the burns Circle
+charges for is cheaper.
+
+### Table of fees
+
+The following table shows the gas fees charged per burn intent, based on the
+source chain. The `maxFee` field of the burn intent must be greater than or
+equal to the value shown below, plus the applicable transfer fee.
+
+| Source chain | Gas fee (USDC) |
+| ------------ | -------------- |
+| Arbitrum     | $0.01          |
+| Avalanche    | $0.02          |
+| Base         | $0.01          |
+| Ethereum     | $2.00          |
+| OP           | $0.0015        |
+| Polygon PoS  | $0.0015        |
+| Unichain     | $0.001         |

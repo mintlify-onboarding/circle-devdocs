@@ -1,0 +1,48 @@
+---
+title: CCTP API Hosts and Endpoints V1
+description: API hosts and endpoints for CCTP V1
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "API Hosts and Endpoints"
+---
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+CCTP V1 provides a set of API hosts and endpoints to manage messages,
+attestations, and transaction details for your cross-chain USDC transfers.
+
+## CCTP V1 API Service Hosts
+
+| Environment | URL                                   |
+| :---------- | :------------------------------------ |
+| **Testnet** | `https://iris-api-sandbox.circle.com` |
+| **Mainnet** | `https://iris-api.circle.com`         |
+
+## CCTP V1 API Endpoints
+
+CCTP V1 endpoints allow you to fetch attestations for **Standard Transfer** burn
+events, verify public keys, and access transaction details. Below is an overview
+of the CCTP V1 public endpoints. Click on any endpoint for its API reference.
+
+| Endpoint                                                                                        | Description                                                                 | Use Case                                                                                                                    |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [GET /v1/attestations/\{messageHash\}](/api-reference/w3s/cctp/get-attestation)                 | Retrieves the signed attestation for a USDC burn event on the source chain. | Certifying the burn of USDC post <Glossary term="hard finality" />. Used as a signal to mint USDC on the destination chain. |
+| [GET /v1/publicKeys](/api-reference/w3s/cctp/get-public-keys)                                   | Fetches Circle's active public keys for verifying attestation signatures.   | Validating the authenticity of Circle's signed attestations.                                                                |
+| [GET /v1/messages/\{sourceDomainId\}/\{transactionHash\}](/api-reference/w3s/cctp/get-messages) | Provides transaction details for burn events or associated messages.        | Accessing detailed information about CCTP V1 transactions.                                                                  |
+
+<Note>
+**API Service Rate Limit**
+
+The CCTP V1 API service rate limit is 35 requests per second. If you exceed 35
+requests per second, the service blocks all API requests for the next 5
+minutes and returns an HTTP 429 response.
+</Note>
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Limits V1 <Icon icon="arrow-right" />](/cctp/v1/limits)

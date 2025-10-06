@@ -1,0 +1,156 @@
+---
+title: Wallet Upgrades
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+Smart Contract Account (SCA) and Modular Smart Contract Account (MSCA) wallets
+use a contract proxy pattern, a common design pattern that allows Circle to
+upgrade the contract's logic without changing the address of the contract. With
+a proxy pattern, the proxy contract delegates calls to an implementation
+contract. The proxy contract can be configured to use a new implementation
+contract, which is commonly referred to as an upgrade. Circle uses the
+[ERC-1967](https://docs.openzeppelin.com/contracts/5.x/api/proxy#ERC1967Proxy)
+proxy pattern, which is well-established in the crypto industry.
+
+The proxy pattern gives Circle the ability to provide bug fixes and product
+improvements to SCAs and MSCAs over time. However, you are in full control of
+your wallets, even when Circle performs a contract upgrade. When Circle makes a
+new version of a contract available, you must manually initiate an upgrade using
+the API.
+
+<Note>
+**Note:** Because modular wallets are proxy contracts, users' wallet addresses
+in block explorers are shown as `ERC1967Proxy` instead of `UpgradeableMSCA`.
+
+Modular wallets only have a single version of the wallet contract available.
+When an upgrade is available this page provides instructions on the
+appropriate API calls to make to upgrade your wallets.
+</Note>
+
+## Smart Contract Account wallets
+
+You can upgrade both developer-controlled and user-controlled SCA wallets to
+newer SCA versions using the **Wallet Upgrade API**.
+
+- To upgrade a **developer-controlled wallet**, use
+  [`POST /developer/transactions/walletUpgrade`](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-wallet-upgrade).
+- To upgrade a **user-controlled wallet**, use
+  [`POST /user/transactions/walletUpgrade`](/api-reference/wallets/user-controlled-wallets/create-user-transaction-wallet-upgrade-challenge)
+  and follow the standard challenge approval flow.
+
+### Supported migration paths
+
+| Source SCA Version             | Destination SCA Version        | Contract Function Used for Upgrade |
+| ------------------------------ | ------------------------------ | ---------------------------------- |
+| **circle_4337_v1**             | **circle_6900_singleowner_v2** | `upgradeToAndCall(address,bytes)`  |
+| **circle_6900_singleowner_v1** | **circle_6900_singleowner_v2** | `upgradeTo(address)`               |
+
+<Note>
+  **💡 Tip:** Use the `scaCore` query parameter in the `GET /wallets` endpoint
+  to fetch SCA wallets eligible for an upgrade.
+</Note>
+
+After calling any **Wallet Upgrade API** endpoint, a transaction appears in the
+**Developer Console UI** and transaction APIs, showing the contract execution
+call that upgrades the wallet. Once the transaction reaches the `COMPLETE`
+state, the SCA version of the wallet is updated in the responses of the
+`GET /wallets/{id}` or `GET /wallets` endpoints.
+
+### Special handling for `circle_4337_v1` wallets
+
+Due to onchain specific requirements, `circle_4337_v1` wallets must be **lazy
+deployed** before they can be upgraded. To trigger deployment, initiate an
+**outbound transfer** or **contract execution** from the SCA wallet you want to
+upgrade. See the [Account Types](/wallets/account-types) page for more details
+on SCA lazy deployment.
+
+If you need to upgrade a `circle_4337_v1` wallet on a **testnet**, send native
+token funds to the wallet's **owner address**. You can retrieve the owner
+address using the
+[`POST /contracts/query`](/api-reference/contracts/smart-contract-platform/query-contract)
+endpoint.
+
+<CodeGroup>
+
+```javascript Node.js SDK
+response = await client.queryContract({
+  abiFunctionSignature: "owner()",
+  address: "<replace-me-with-your-circle_4337_v1-sca-wallet-address>",
+  blockchain: "<replace-me-with-your-wallet's-blockchain>",
+  abiJson:
+    '[{"inputs": [],"name": "owner","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"}]',
+});
+```
+
+```coffeescript Python SDK
+# create an api instance
+api_instance = smart_contract_platform.InteractApi(scpClient)
+try:
+    request = smart_contract_platform.ReadContractStateRequest.from_dict({
+        "abiFunctionSignature": "owner()",
+        "address": "<replace-me-with-your-circle_4337_v1-sca-wallet-address>",
+        "blockchain": "<replace-me-with-your-wallet's-blockchain>",
+        "abiJson": "[{\"inputs\": [],\"name\": \"owner\",\"outputs\": [{\"internalType\": \"address\",\"name\": \"\",\"type\": \"address\"}],\"stateMutability\": \"view\",\"type\": \"function\"}]"
+    })
+    response = api_instance.query_contract(request)
+except smart_contract_platform.ApiException as e:
+    print("Exception when calling InteractApi->read_contract: %s\n" % e)
+```
+
+```curl
+curl --request POST \
+  --url https://api.circle.com/v1/w3s/contracts/query \
+  --header "Authorization: Bearer $API_KEY" \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{
+      "abiFunctionSignature": "owner()",
+      "address": "<replace-me-with-your-circle_4337_v1-sca-wallet-address>",
+      "blockchain": "<replace-me-with-your-wallet's-blockchain>",
+      "abiJson": "[{\"inputs\": [],\"name\": \"owner\",\"outputs\": [{\"internalType\": \"address\",\"name\": \"\",\"type\": \"address\"}],\"stateMutability\": \"view\",\"type\": \"function\"}]"
+    }'
+```
+
+</CodeGroup>
+
+```json Response Body
+{
+  "data": {
+    "outputData": "0x...",
+    "outputValues": ["<owner-address>"]
+  }
+}
+```
+
+The first entry in the `outputValues` array contains the **owner address**,
+which must receive the native token funds. Circle recommends sending enough
+tokens to cover **~300,000 gas**. Estimated costs:
+
+- **ETH-SEPOLIA**: 300,000 gas \* 30 Gwei (replace with current gas price) =
+  `0.009 ETH`
+- **MATIC-AMOY**: 300,000 gas \* 150 Gwei (replace with current gas price) =
+  `0.045 POL`
+
+<Note>
+  **Note:** You can skip the native token funding step for **mainnet**
+  `circle_4337_v1` wallets, as they have already received airdropped native
+  tokens to cover upgrade transaction fees. These wallets can be upgraded
+  immediately after lazy deployment.
+</Note>
+
+### How the upgrade works
+
+The wallet upgrade contract execution updates the **logic contract address** of
+the [ERC-1967](https://eips.ethereum.org/EIPS/eip-1967) proxy (the SCA wallet)
+by calling either:
+
+- `upgradeTo(addresss)`
+- `upgradeToAndCall(addresss,bytes)`
+
+Your wallet's address and assets don't change during or after the upgrade. You
+can continue to use the wallet normally while the upgrade transaction is in
+progress.

@@ -1,0 +1,53 @@
+---
+title: Wire Virtual Account Number
+description:
+  Improve customer experience and avoid returned wires when sending funds to
+  Circle.
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+_Circle’s Virtual Account Number is a unique bank account number assigned to
+customers. Customers use this number each time they send a wire to Circle,
+allowing Circle to attribute incoming funds accordingly. Compared to previous
+methods, this improves the customer experience and reduces incidents of wires
+returned due to missing reference IDs._
+
+## Virtual Account Numbers
+
+Circle manages a single omnibus account number for receiving all wire payments.
+The way Circle identifies funds and assigns them to you is through the use of a
+Virtual Account Number. This unique number enables us to properly attribute
+those wired funds to you.
+
+Each linked fiat account is assigned a unique Virtual Account Number. Any
+incoming wire payment funds are attributed to the customer wallet based on the
+related Virtual Account Number.
+
+## Benefits of Virtual Account Number
+
+When customers use Virtual Account Number to make a local Wire Payment or
+Internal SWIFT transfer, they do not have to quote a tracking reference in the
+payment instruction. This eliminates one of the most common reasons for wire
+returns (missing or incorrect tracking reference in the incoming wire) and
+thereby improves the wire payment experience and success rate.
+
+## Payments supported by Virtual Account Number
+
+All Domestic and International wire transfers (i.e.SWIFT payment) are supported
+by Virtual Account Number.
+
+## Affected endpoints
+
+There is no impact to the existing API schemas. Instead we change the underlying
+field value `beneficiaryBank.accountNumber` to a Virtual Account Number rather
+than using Circle’s Omnibus account number. All other information i.e.
+Beneficiary Bank Name, address, SWIFT code and routing number etc. will remain
+unchanged.
+
+The `beneficiaryBank.accountNumber` field is located within the response from a
+successful GET request for wire deposit instructions:
+
+- `GET: /v1/businessAccount/banks/wires/{id}/instructions`

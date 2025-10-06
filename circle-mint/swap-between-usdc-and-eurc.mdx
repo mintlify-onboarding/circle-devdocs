@@ -1,0 +1,213 @@
+---
+title: "Quickstart: Swap Between USDC and EURC"
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Swap Between USDC and EURC"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+The Cross-Currency API lets you swap between USDC and EURC.
+
+This guide walks you through how to use the Cross-Currency API to obtain a quote
+for a EURC to USDC exchange and then execute the swap.
+
+## Prerequisites
+
+Before you begin this quickstart, ensure that you have:
+
+- Obtained an API key for Mint from Circle
+- Obtained access to the Cross-Currency API
+- cURL installed on your development machine
+- Funded your Circle Mint account with EURC
+
+This quickstart provides API requests in cURL format, along with example
+responses.
+
+## Part 1: Request a quote
+
+Using a UUIDv4 generator, generate a UUID to use as the idempotency key. Using
+the idempotency key, request a quote from the
+[`/exchange/quotes`](/api-reference/circle-mint/cross-currency/get-quote)
+endpoint for exchanging a specific amount of EURC to USDC. You must include an
+`amount` field on either the `from` or the `to` object, but not both. The `type`
+field must be set to `tradable` to get a locked rate quote. The following is an
+example request for a quote:
+
+<Note>
+**Note:** Quotes are valid for 3 seconds and must be refreshed if not used in
+that time frame.
+</Note>
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quotes' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "type": "tradable",
+  "idempotencyKey": "07c238ad-b144-4607-9b70-51d1ffbb3c7b",
+  "from": {
+    "currency": "EURC",
+    "amount": 100
+  },
+  "to": {
+    "currency": "USDC",
+    "amount": null
+  }
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
+    "rate": 0.1974,
+    "from": {
+      "currency": "EURC",
+      "amount": 100.0
+    },
+    "to": {
+      "currency": "USDC",
+      "amount": 110.0
+    },
+    "expiry": "2023-10-26T14:37:20.804786Z",
+    "type": "tradable"
+  }
+}
+```
+
+## Part 2: Initiate the trade
+
+Generate another idempotency key, and then use it to confirm the quote with the
+[`/exchange/trades`](/api-reference/circle-mint/cross-currency/create-fx-trade)
+endpoint and initiate the trade. This locks in the rate. Funds are debited from
+your Circle Mint account in accordance with your settlement schedule.
+
+The following is an example request:
+
+```shell
+curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trades' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "idempotencyKey": "07c238ad-b144-4607-9b70-51d1ffbb3c7b",
+  "quoteId": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1"
+}
+'
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
+    "from": {
+      "currency": "EURC",
+      "amount": 100.0
+    },
+    "to": {
+      "currency": "USDC",
+      "amount": 110.0
+    },
+    "status": "pending",
+    "createDate": "2023-10-26T14:37:20.804786Z",
+    "updateDate": "2023-10-26T14:37:20.804786Z",
+    "quoteId": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1"
+  }
+}
+```
+
+## Part 3: Get the settlement batch (optional)
+
+Once you have initiated the trade, you can optionally retrieve the settlement
+batch from the
+[`/exchange/trades/settlements`](/api-reference/circle-mint/cross-currency/get-settlements)
+endpoint on your account and review the details of the settlement.
+
+```shell
+curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer ${YOUR_API_KEY}'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "id": "7bf8cf16-2dc1-4514-9b64-c471561a7321",
+      "entityId": "2bcca31e-784f-4b21-9002-8239551e985f",
+      "status": "settled",
+      "createDate": "2025-05-27T19:00:48.688390Z",
+      "updateDate": "2025-05-27T19:00:51.619761Z",
+      "details": [
+        {
+          "id": "454fc27e-ae8a-461f-834b-d19d8dec481e",
+          "type": "receivable",
+          "status": "completed",
+          "amount": {
+            "currency": "EURC",
+            "amount": "1.45"
+          },
+          "createDate": "2025-05-27T19:00:48.688333Z",
+          "updateDate": "2025-05-27T19:00:51.617187Z"
+        },
+        {
+          "id": "d22eebbc-0db9-4818-9f3a-24b39d02524a",
+          "type": "payable",
+          "status": "completed",
+          "amount": {
+            "currency": "USDC",
+            "amount": "1.60"
+          },
+          "expectedPaymentDueAt": "2025-05-27T22:00:00Z",
+          "createDate": "2025-05-27T19:00:48.688369Z",
+          "updateDate": "2025-05-27T19:00:51.617187Z"
+        }
+      ]
+    },
+    {
+      "id": "e8edbad2-d0a3-4560-b892-d035ca26ba69",
+      "entityId": "2bcca31e-784f-4b21-9002-8239551e985f",
+      "status": "settled",
+      "createDate": "2025-05-19T22:10:29.945750Z",
+      "updateDate": "2025-05-20T16:52:01.754271Z",
+      "details": [
+        {
+          "id": "b19a182d-ac3d-436b-be4b-5f8b549c74fd",
+          "type": "payable",
+          "status": "completed",
+          "amount": {
+            "currency": "USDC",
+            "amount": "1.60"
+          },
+          "expectedPaymentDueAt": "2025-05-19T22:00:00Z",
+          "createDate": "2025-05-19T22:10:29.944724Z",
+          "updateDate": "2025-05-20T16:52:01.750552Z"
+        },
+        {
+          "id": "6644a7e5-4793-48ef-882b-742cf7bea4ee",
+          "type": "receivable",
+          "status": "completed",
+          "amount": {
+            "currency": "EURC",
+            "amount": "1.45"
+          },
+          "createDate": "2025-05-19T22:10:29.944441Z",
+          "updateDate": "2025-05-20T16:52:01.750552Z"
+        }
+      ]
+    }
+  ]
+}
+```

@@ -1,0 +1,151 @@
+---
+title: Circle Payments Network
+description: Fast, cost-effective, and compliant global payments
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "CPN Overview"
+---
+
+Circle Payments Network (CPN) is a next-generation payment infrastructure
+designed to reduce reliance on multiple intermediaries while enhancing
+transparency, security, and speed. Using onchain primitives and built-in
+compliance capabilities, CPN delivers near-instant cross-border settlement. CPN
+allows participating financial institutions to rapidly expand their global
+footprint with a single integration.
+
+This developer documentation focuses on Originating Financial Institutions
+(OFIs) who facilitate cross-border payments for their customers. OFIs interface
+with ultimate senders initiating cross-border transactions, and act as the
+onramp for fiat to crypto. Complementing this, Beneficiary Financial
+Institutions (BFIs) receive stablecoins and act as the offramp into local fiat,
+delivering funds to end recipients. CPN actively coordinates OFIs and BFIs to
+deliver cross-border transactions with reduced costs and delays compared to
+traditional systems. CPN is part of Circle's broader ecosystem of financial
+products, designed to work with the USDC ecosystem to optimize your global
+payment operations.
+
+Before onboarding as an OFI, you should meet the following prerequisites for
+CPN:
+
+- Access to USDC liquidity
+- A custodial solution for USDC and technical capability to interact with
+  blockchains (sign and observe transactions)
+- Established KYC and AML processes in place for your customers
+
+<Note>
+**Note:** If you're a BFI or payout partner, Circle may reach out proactively
+as CPN grows.
+</Note>
+
+## Key features
+
+- **Real-time FX quoting and locking**: CPN obtains competitive quotes from
+  multiple providers instantly. FX rates are locked, which eliminates FX risk
+  for both OFIs and their customers during the payment process.
+- **Smart routing**: CPN selects the optimal BFI based on pricing and
+  operational preferences defined by the OFI.
+- **Stablecoin-powered transfers**: Payments are settled using USDC across
+  [supported blockchains](/cpn/references/supported-blockchains) and exchanged
+  to local fiat currencies for the receiver.
+- **API integration**: CPN offers a comprehensive API suite, which allows for
+  quick integration into existing systems. Features include real-time payment
+  monitoring with webhooks, detailed developer documentation, and dedicated
+  support to ensure a successful integration process.
+- **End-to-end encryption**: Travel rule and beneficiary account data is
+  encrypted by the OFI throughout the payment process and can only be decrypted
+  by the designated BFI.
+- **Ticketing support for payments, disputes, and reversals**: CPN allows
+  integrated institutions to create and manage support tickets through the API.
+  Circle handles routing and resolution of issues across the network.
+
+<Note>
+**CPN White Paper**
+
+Read the
+[CPN White Paper](https://6778953.fs1.hubspotusercontent-na1.net/hubfs/6778953/PDFs/Whitepapers/CPN_Whitepaper.pdf)
+to learn more about the motivation for creating CPN and its intended use
+cases.
+</Note>
+
+## Entities in CPN
+
+The following entities are referenced in this documentation and make up the key
+entities that allow CPN to perform cross-border transactions.
+
+- **Senders** (external): Businesses or individuals initiating cross-border
+  payments
+- **Receivers** (external): Businesses or individuals receiving cross-border
+  payments
+- **Originating Financial Institutions (OFIs)**: Financial institutions that
+  interface with senders, onramp fiat to USDC, and connect with BFIs through CPN
+  for transfer and fiat offramp
+- **Beneficiary Financial Institutions (BFIs)**: Financial institutions that
+  receive USDC from OFIs through CPN and provide an offramp to local fiat
+  currency
+- **Circle Payments Network (CPN)**: Orchestration layer that aggregates
+  financial institutions, vets participants, and facilitates money movement
+  through onchain and offchain services.
+
+<Frame>
+  <img src="/cpn/images/cpn-overview.png" />
+</Frame>
+
+## CPN workflow
+
+The CPN workflow for OFIs consists of four major stages:
+
+- Quote generation
+- Payment creation
+- Crypto transfer
+- Payment management
+
+The following is a generic example of how a payment in CPN is performed. In this
+example, the OFI has a sender in the US. The sender already has an account and
+completed KYC with the OFI. The sender wants to pay a receiver in Brazil. The
+sender wants to pay with USD and the receiver wants to receive the payment in
+Brazil Real (BRL). The following steps occur:
+
+1. Quote generation
+
+   - OFI requests a list of quotes for the payment (USDC to BRL) from CPN
+   - CPN aggregates quotes from multiple BFIs
+   - CPN returns a list of quotes to the OFI
+   - OFI selects the best quote or asks the sender to select their preferred
+     quote
+
+2. Payment creation
+
+   - Sender accepts the quote
+   - OFI gets the requirements for travel rule data and beneficiary account
+     information
+   - OFI creates a payment request (USDC to BRL) in CPN
+     - OFI collects and
+       [encrypts](/cpn/howtos/encrypt-travel-rule-beneficiary-data) necessary
+       payment details, such as travel rule data and beneficiary account
+       information, and includes the encrypted data in the payment request.
+   - BFI reviews the travel rule data (and may
+     [request additional information](/cpn/concepts/integration-concepts#requests-for-information))
+     and approves the payment request
+
+3. Onchain transaction
+
+   - OFI requests an onchain transaction object to transfer USDC to the
+     destination address from CPN to sign
+   - OFI signs the onchain transaction object and sends to CPN
+   - CPN validates and broadcasts the transaction
+   - CPN notifies the OFI and BFI when the onchain transaction is confirmed
+
+4. Fiat settlement (no OFI action required)
+
+   - BFI initiates fiat payment after the onchain transaction is confirmed
+     (transfer BRL to receiver's bank account)
+   - BFI notifies CPN when the fiat payment is initiated and complete
+   - CPN notifies the OFI with the appropriate payment statuses
+
+5. Payment management
+
+   - OFI can query payment status at any time from the CPN API
+   - CPN provides real-time status updates on the payment via webhooks
+   - Payment history and reporting is available for reconciliation

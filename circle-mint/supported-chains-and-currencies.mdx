@@ -1,0 +1,146 @@
+---
+title: Supported Chains and Currencies
+description: ""
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+## Supported chains and currencies
+
+The following sections list the chains and currencies supported by Circle Mint
+and related APIs.
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+<Warning>
+
+**Unsupported assets**
+
+Circle Mint and Circle APIs only support USDC and EURC tokens on the indicated
+blockchains. Don't send unsupported tokens such as USDT or bridged USDC to your
+Circle Mint address. Doing so might result in a loss of funds.
+
+**Cosmos appchains**
+
+Circle Mint and Circle APIs only support USDC from Noble. If you transfer USDC
+from Noble to other appchains via IBC, you must transfer it back to Noble before
+you transfer it to your Circle Mint address.
+
+Don't attempt to deposit USDC from an appchain other than Noble to your Circle
+Mint address. Doing so might result in a loss of funds.
+
+**Polkadot parachains**
+
+Circle Mint and Circle APIs only support USDC from Polkadot Asset Hub. If you
+transfer USDC from Polkadot Asset Hub to other parachains via XCM, you must
+transfer it back to Polkadot Asset Hub before you transfer it to your Circle
+Mint address.
+
+Don't attempt to deposit XCM-transferred USDC from a parachain other than
+Polkadot Asset Hub to your Circle Mint address. Doing so might result in a loss
+of funds.
+
+</Warning>
+
+{/* <!-- markdownlint-enable MD036 --> */}
+
+### USDC
+
+| Chain              | Currency                                                                                                                                 | API Chain Code | API Currency Code |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------- | :------------- | :---------------- |
+| Algorand           | [USDC](https://explorer.perawallet.app/asset/31566704)                                                                                   | ALGO           | USD               |
+| Aptos              | [USDC](https://explorer.aptoslabs.com/fungible_asset/0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b?network=mainnet) | APTOS          | USD               |
+| Arbitrum           | [USDC](https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831)                                                             | ARB            | USD               |
+| Avalanche C-Chain  | [USDC](https://snowtrace.io/token/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E)                                                            | AVAX           | USD               |
+| Base               | [USDC](https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)                                                            | BASE           | USD               |
+| Celo               | [USDC](https://celoscan.io/token/0xcebA9300f2b948710d2653dD7B07f33A8B32118C)                                                             | CELO           | USD               |
+| Codex              | [USDC](https://explorer.codex.xyz/address/0xd996633a415985DBd7D6D12f4A4343E31f5037cf)                                                    | CODEX          | USD               |
+| Ethereum           | [USDC](https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48)                                                            | ETH            | USD               |
+| Flow\*             | USDC                                                                                                                                     | FLOW           | USD               |
+| Hedera             | [USDC](https://app.dragonglass.me/hedera/tokens/0.0.456858)                                                                              | HBAR           | USD               |
+| HyperEVM           | [USDC](https://hyperscan.com/token/0xb88339CB7199b77E23DB6E890353E22632Ba630f)                                                           | HYPEREVM       | USD               |
+| Ink                | [USDC](https://explorer.inkonchain.com/address/0x2D270e6886d130D724215A266106e6832161EAEd)                                               | N/A            | N/A               |
+| Linea              | [USDC](https://lineascan.build/token/0x176211869ca2b568f2a7d4ee941e073a821ee1ff)                                                         | LINEA          | USD               |
+| NEAR               | [USDC](https://nearblocks.io/token/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1)                                     | NEAR           | USD               |
+| Noble              | [USDC](http://mintscan.io/noble/assets)                                                                                                  | NOBLE          | USD               |
+| OP Mainnet         | [USDC](https://optimistic.etherscan.io/token/0x0b2c639c533813f4aa9d7837caf62653d097ff85)                                                 | OP             | USD               |
+| Plume              | [USDC](https://explorer.plume.org/address/0x222365EF19F7947e5484218551B56bb3965Aa7aF)                                                    | N/A            | N/A               |
+| Polkadot Asset Hub | [USDC](https://assethub-polkadot.subscan.io/assets/1337)                                                                                 | PAH            | USD               |
+| Polygon PoS        | [USDC](https://polygonscan.com/token/0x3c499c542cef5e3811e1192ce70d8cc03d5c3359)                                                         | POLY           | USD               |
+| Sei                | [USDC](https://seitrace.com/address/0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392?chain=pacific-1)                                          | SEI            | USD               |
+| Solana             | [USDC](https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)                                                            | SOL            | USD               |
+| Sonic              | [USDC](https://sonicscan.org/token/0x29219dd400f2bf60e5a23d13be72b486d4038894)                                                           | SONIC          | USD               |
+| Stellar            | [USDC](https://stellar.expert/explorer/public/asset/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN)                       | XLM            | USD               |
+| Sui                | [USDC](https://suiscan.xyz/mainnet/coin/0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC/txs)              | SUI            | USD               |
+| TRON\*\*           | USDC                                                                                                                                     | TRX            | USD               |
+| Unichain           | [USDC](https://uniscan.xyz/token/0x078d782b760474a361dda0af3839290b0ef57ad6)                                                             | UNI            | USD               |
+| World Chain        | [USDC](https://worldscan.org/address/0x79A02482A880bCe3F13E09da970dC34dB4cD24D1)                                                         | WLD            | USD               |
+| XDC                | [USDC](https://xdcscan.com/address/0xfA2958CB79b0491CC627c1557F441eF849Ca8eb1)                                                           | N/A            | N/A               |
+| XRPL               | [USDC](https://livenet.xrpl.org/token/5553444300000000000000000000000000000000.rGm7WCVp9gb4jZHWTEtGUr4dd74z2XuWhE)                       | XRP            | USD               |
+| ZKsync Era         | [USDC](https://explorer.zksync.io/address/0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4)                                                    | ZKS            | USD               |
+
+\* As of Sept 3, 2024 - Circle is ending support for USDC on Flow. For details,
+see
+[Circle is Discontinuing Support for USDC on the Flow blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-flow-cadence-due-to-the-chains-upcoming-network-upgrade).
+
+\*\* As of Feb. 20, 2024 - Circle is ending support for USDC on TRON. For
+details, see
+[Circle is Discontinuing Support for USDC on the TRON blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-the-tron-blockchain).
+
+### EURC
+
+| Chain             | Currency                                                                                                           | API Chain Code | API Currency Code |
+| :---------------- | :----------------------------------------------------------------------------------------------------------------- | :------------- | :---------------- |
+| Avalanche C-Chain | [EURC](https://snowtrace.io/token/0xc891eb4cbdeff6e073e859e987815ed1505c2acd)                                      | AVAX           | EUR               |
+| Base              | [EURC](https://basescan.org/token/0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42)                                      | BASE           | EUR               |
+| Ethereum          | [EURC](https://etherscan.io/token/0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c)                                      | ETH            | EUR               |
+| Solana            | [EURC](https://explorer.solana.com/address/HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr)                           | SOL            | EUR               |
+| Stellar           | [EURC](https://stellar.expert/explorer/public/asset/EURC-GDHU6WRG4IEQXM5NZ4BMPKOXHW76MZM4Y2IEMFDVXBSDP6SJY4ITNPP2) | XLM            | EUR               |
+
+### Deposits and Payouts APIs
+
+The Deposits and Payouts APIs support a subset of blockchains that have USDC
+available. The following table outlines which blockchain each API supports.
+
+| Chain              | Crypto Deposits API | Crypto Payouts API |
+| ------------------ | ------------------- | ------------------ |
+| Algorand           | ✅                  | ❌                 |
+| Aptos              | ❌                  | ❌                 |
+| Arbitrum           | ✅                  | ✅                 |
+| Avalanche C-Chain  | ✅                  | ✅                 |
+| Base               | ✅                  | ✅                 |
+| Celo               | ❌                  | ✅                 |
+| Codex              | ❌                  | ❌                 |
+| Ethereum           | ✅                  | ✅                 |
+| Hedera             | ✅                  | ❌                 |
+| HyperEVM           | ✅                  | ✅                 |
+| Ink                | ❌                  | ❌                 |
+| Linea              | ❌                  | ❌                 |
+| NEAR               | ❌                  | ✅                 |
+| Noble              | ✅                  | ✅                 |
+| OP Mainnet         | ✅                  | ✅                 |
+| Plume              | ❌                  | ❌                 |
+| Polkadot Asset Hub | ❌                  | ✅                 |
+| Polygon PoS        | ✅                  | ✅                 |
+| Sei                | ❌                  | ❌                 |
+| Solana             | ✅                  | ✅                 |
+| Sonic              | ❌                  | ❌                 |
+| Stellar            | ✅                  | ✅                 |
+| Sui                | ✅                  | ✅                 |
+| Unichain           | ❌                  | ❌                 |
+| World Chain        | ❌                  | ❌                 |
+| XDC                | ❌                  | ❌                 |
+| XRPL               | ✅                  | ✅                 |
+| ZKsync Era         | ❌                  | ❌                 |
+
+## Using chains and currencies in the API
+
+Any time you refer to a currency in a Circle Mint API call, you use a currency
+and chain pair. For example, to
+[create a USDC transfer](/api-reference/circle-mint/account/create-business-transfer)
+on Ethereum, specify the `USD` currency on the `ETH` chain.
+
+When referring to balances, you only need to refer to the currency because the
+value of the currency for Circle-hosted assets is independent of the chain.

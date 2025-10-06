@@ -1,0 +1,331 @@
+---
+title: CCTP Aptos Packages and Interfaces V1
+description: Packages for CCTP V1 support on the Aptos blockchain
+sideNav: ""
+tableOfContents: true
+documentationItems: 
+- title: Documentation
+sidebarTitle: "Aptos Packages and Interfaces"
+---
+
+{/* <!-- markdownlint-disable MD036 --> */}
+
+<Warning>
+  **This is CCTP V1 version. For the latest version, see [CCTP](/cctp)**.
+</Warning>
+
+## Overview
+
+The CCTP V1 Aptos smart contract implementation is written in
+[Move](https://aptos.dev/en/build/smart-contracts). The Aptos CCTP V1
+implementation is split into two packages: `MessageTransmitter` and
+`TokenMessengerMinter`. `TokenMessengerMinter` encapsulates the functionality of
+both `TokenMessenger` and `TokenMinter` contracts on EVM chains. To ensure
+alignment with EVM contracts logic and state, and to facilitate future upgrades
+and maintenance, the code and state of the Aptos packages reflect the EVM
+counterparts as closely as possible.
+
+The key difference with Aptos packages from EVM and other CCTP V1
+implementations is the receive message flow. Since the Move language uses static
+dispatch and requires all dependencies to be available at compile time, the
+`MessageTransmitter` `receive_message` function cannot call into the receiver
+package (e.g. `TokenMessengerMinter` for USDC transfers). The workaround for
+this limitation is that callers of `message_transmitter::receive_message` must
+also atomically (in the same transaction or
+[move script](https://aptos.dev/en/build/smart-contracts/scripts)) call into the
+receiver package's `handle_receive_message` function with a Receipt object
+returned from `receive_message`, and then pass a `Receipt` object back into the
+`message_transmitter::complete_receive_message` function to complete the message
+and destroy the `Receipt` object. Please see the interface and examples below
+for more information on this flow.
+
+Below are the known package IDs and object IDs on Aptos testnet and mainnet.
+
+### Testnet
+
+#### Package IDs
+
+| Package              | [Domain](/cctp/v1/supported-domains) | Address                                                              |
+| :------------------- | :----------------------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | 9                                    | `0x081e86cebf457a0c6004f35bd648a2794698f52e0dde09a48619dcd3d4cc23d9` |
+| TokenMessengerMinter | 9                                    | `0x5f9b937419dda90aa06c1836b7847f65bbbe3f1217567758dc2488be31a477b9` |
+
+#### Object IDs
+
+| Object               | Object ID                                                            |
+| :------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | `0xcbb70e4f5d89b4a37e850c22d7c994e32c31e9cf693e9633784e482e9a879e0c` |
+| TokenMessengerMinter | `0x1fbf4458a00a842a4774f441fac7a41f2da0488dd93a43880e76d58789144e17` |
+| Stablecoin           | `0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832` |
+
+CCTP V1 and Stablcoin use a shared package `AptosExtensions` deployed at
+`0xb75a74c6f8fddb93fdc00194e2295d8d5c3f6a721e79a2b86884394dcc554f8f`
+
+### Mainnet
+
+#### Package IDs
+
+| Package              | [Domain](/cctp/v1/supported-domains) | Address                                                              |
+| :------------------- | :----------------------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | 9                                    | `0x177e17751820e4b4371873ca8c30279be63bdea63b88ed0f2239c2eea10f1772` |
+| TokenMessengerMinter | 9                                    | `0x9bce6734f7b63e835108e3bd8c36743d4709fe435f44791918801d0989640a9d` |
+
+#### Object IDs
+
+| Object               | Object ID                                                            |
+| :------------------- | :------------------------------------------------------------------- |
+| MessageTransmitter   | `0x45bf7f71e44750f2b2a7a1fea21fc44b4a83ba5d68ab10c7a3935f6d8cbdbc75` |
+| TokenMessengerMinter | `0x9e6702a472080ea3caaf6ba9dfaa6effad2290a9ba9adaacd5af5c618e42782d` |
+| Stablecoin           | `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b` |
+
+The shared package `AptosExtensions` is deployed at
+`0x98bce69c31ee2cf91ac50a3f38db7b422e3df7cdde9fe672ee1d03538a6aeae0`
+
+## Interface
+
+The Aptos CCTP V1 source code is
+[available on GitHub](https://github.com/circlefin/aptos-cctp/).
+
+The interface below serves as a reference for permissionless messaging functions
+exposed by the programs.
+
+### TokenMessengerMinter
+
+#### [deposit_for_burn](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/sources/token_messenger/token_messenger.move#L123)
+
+Burns passed in `FungibleAsset` from sender to be minted on the destination
+domain. Minted tokens will be transferred to `mint_recipient` on the destination
+chain. The `mint_recipient` can be an account address or a store address. The
+`deposit_for_burn` interface and functionality is very similar to the EVM
+implementation. The asset parameter is the key difference due to how passing
+tokens around on Aptos works. The asset parameter is Aptos Fungible Asset type,
+defining information of the token to deposit and burn.
+
+Nonce reserved for the message is returned, but it is not required to do
+anything with this return value, they are returned for convenience.
+
+**Parameters**
+
+| Field              | Type            | Description                                                                                                                                                                                                                                                                                                                         |
+| :----------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller             | `Signer`        | Signer executing the transaction                                                                                                                                                                                                                                                                                                    |
+| asset              | `FungibleAsset` | Asset to be burned.                                                                                                                                                                                                                                                                                                                 |
+| destination_domain | `u32`           | Destination domain identifier.                                                                                                                                                                                                                                                                                                      |
+| mint_recipient     | `address`       | Address of mint recipient on destination domain. Can be an account address or [store address](https://aptos.dev/en/build/smart-contracts/fungible-asset#managing-stores-advanced). _Note: If destination is a non-Move chain,_ `mint_recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+
+#### [deposit_for_burn_with_caller](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/sources/token_messenger/token_messenger.move#L147)
+
+The same as deposit_for_burn, but with an additional parameter:
+`destination_caller`. This parameter specifies which address has permission to
+call `receiveMessage` on the destination domain for the message.
+
+**Parameters**
+
+| Field              | Type            | Description                                                                                                                                                                                                                                                                                                                         |
+| :----------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller             | `Signer`        | Signer executing the transaction                                                                                                                                                                                                                                                                                                    |
+| asset              | `FungibleAsset` | Asset to be burned.                                                                                                                                                                                                                                                                                                                 |
+| destination_domain | `u32`           | Destination domain identifier.                                                                                                                                                                                                                                                                                                      |
+| mint_recipient     | `address`       | Address of mint recipient on destination domain. Can be an account address or [store address](https://aptos.dev/en/build/smart-contracts/fungible-asset#managing-stores-advanced). _Note: If destination is a non-Move chain,_ `mint_recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+| destination_caller | `address`       | Address of caller on destination chain.                                                                                                                                                                                                                                                                                             |
+
+<Note>
+**Destination Caller Notes**
+
+If the `destination_caller` does not represent a valid address, then it will not
+be possible to broadcast the message on the destination domain. This is an
+advanced feature, and the standard `deposit_for_burn` should be preferred for
+use cases where a specific destination caller is not required.
+
+_Note: If destination is a non-Move chain,_ `destination_caller` _address should
+be converted to hex and passed in using the @0x123 address format._
+
+</Note>
+
+#### [replace_deposit_for_burn_with](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/sources/token_messenger/token_messenger.move#L171)
+
+Replace a BurnMessage to change the mint recipient and/or destination caller.
+Allows the sender of a previous BurnMessage (created by `deposit_for_burn` or
+`deposit_for_burn_with_caller`) to send a new BurnMessage to replace the
+original.
+
+**Remarks:**
+
+- Only the sender of the original `deposit_for_burn` transaction has access to
+  call `replace_deposit_for_burn`
+- The new `BurnMessage` will reuse the amount and burn token of the original,
+  without requiring a new `FA` deposit.
+- The resulting mint will supersede the original mint, as long as the original
+  mint has not confirmed yet onchain.
+- A valid attestation is required before calling this function.
+- This is useful in situations where the user specified an incorrect address and
+  has no way to safely mint the previously burned USDC.
+
+**Parameters**
+
+| Field                  | Type              | Description                                                                                                                                                                                      |
+| :--------------------- | :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller                 | `Signer`          | Signer executing the transaction                                                                                                                                                                 |
+| original_message       | `vector<u8>`      | Original message bytes (to replace).                                                                                                                                                             |
+| original_attestation   | `vector<u8>`      | Original attestation                                                                                                                                                                             |
+| new_destination_caller | `Option<address>` | The new destination caller, which may be the same as the original destination caller, a new destination caller, or an empty destination caller, indicating that any destination caller is valid. |
+| new_mint_recipient     | `Option<address>` | The new mint recipient, which may be the same as the original mint recipient, or different.                                                                                                      |
+
+#### [handle_receive_message](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/sources/token_messenger/token_messenger.move#241)
+
+Handles an incoming message that has already been verified by
+`message_transmitter`, and mints USDC to the recipient for valid messages. This
+function can only be called with a mutable reference to a `Receipt` object,
+which can only be created via a call with a valid message to the
+`message_transmitter::receive_message` function. In this function
+`MessageTransmitter::complete_receive_message` is called with the `Receipt` to
+emit the `MessageReceived` event to complete the message and destroy Receipt.
+
+This should be called in a single transaction after calling
+`message_transmitter::receive_message`. EOAs can execute these functions in a
+single
+[Move script](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/scripts/handle_receive_message.move#L5).
+See the Examples section for the entire flow of receiving a message.
+
+**Parameters**
+
+| Field   | Type      | Description                                                      |
+| :------ | :-------- | :--------------------------------------------------------------- |
+| receipt | `Receipt` | Receipt struct returned by `message_transmitter:receive_message` |
+
+### MessageTransmitter
+
+#### [receive_message](https://github.com/circlefin/aptos-cctp/blob/master/packages/message_transmitter/sources/message_transmitter.move#L287)
+
+Receives a message emitted from a source chain. Messages with a given `nonce`
+can only be received once for a (sourceDomain, destinationDomain) pair.
+
+This function returns a `Receipt` struct
+([Hot Potato](https://medium.com/@borispovod/move-hot-potato-pattern-bbc48a48d93c))
+after validating the attestation and marking the nonce as used. In order to
+destroy the `Receipt` and complete the message, in a single transaction,
+`handle_receive_message()` must be called with the `Receipt` in the receiver
+package. EOAs can execute these functions in a single
+[Move script](https://github.com/circlefin/aptos-cctp/blob/master/packages/token_messenger_minter/scripts/handle_receive_message.move#L5).
+
+Returns a `Receipt` object that must be handled by the intended receiving
+package, and completed via a `complete_receive_message` call before the
+transaction ends. See the
+[Examples](/cctp/v1/transfer-usdc-on-testnet-from-aptos-to-base) section for
+more information on receiving USDC transfers.
+
+**Parameters**
+
+| Field         | Type         | Description                      |
+| :------------ | :----------- | :------------------------------- |
+| caller        | `Signer`     | Signer executing the transaction |
+| message_bytes | `vector<u8>` | Message bytes                    |
+| attestation   | `vector<u8>` | Attestation                      |
+
+#### [complete_receive_message](https://github.com/circlefin/aptos-cctp/blob/master/packages/message_transmitter/sources/message_transmitter.move#L330)
+
+Completes the message by emitting a `MessageReceived` event for a receipt and
+destroying the receipt.
+
+**Parameters**
+
+| Field   | Type      | Description                                |
+| :------ | :-------- | :----------------------------------------- |
+| caller  | `Signer`  | Signer for the `receipt.recipient` address |
+| receipt | `Receipt` | Receipt struct to be destroyed             |
+
+#### [send_message](https://github.com/circlefin/aptos-cctp/blob/master/packages/message_transmitter/sources/message_transmitter.move#L169)
+
+Sends a message to the destination domain and recipient. Nonce reserved for the
+message is returned, but it is not required to do anything with this struct, it
+is returned for convenience.
+
+**Remarks:**
+
+- For USDC transfers, this function is called directly by the
+  `TokenMessengerMinter` package in `deposit_for_burn()`.
+
+**Parameters**
+
+| Field              | Type         | Description                                                                                                                                                    |
+| :----------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller             | `Signer`     | Signer for executing the transaction                                                                                                                           |
+| destination_domain | `u32`        | Destination domain identifier.                                                                                                                                 |
+| recipient          | `address`    | Recipient address. _Note: If destination is a non-Move chain,_ `recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+| message_body       | `vector<u8>` | Message to be sent to destination chain                                                                                                                        |
+
+#### [send_message_with_caller](https://github.com/circlefin/aptos-cctp/blob/master/packages/message_transmitter/sources/message_transmitter.move#L198)
+
+This is the same as send_message, except the `receive_message` call on the
+destination domain must be called by `destination_caller`.
+
+**Parameters**
+
+| Field              | Type         | Description                                                                                                                                                    |
+| :----------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller             | `Signer`     | Signer for executing the transaction                                                                                                                           |
+| destination_domain | `u32`        | Destination domain identifier.                                                                                                                                 |
+| recipient          | `address`    | Recipient address. _Note: If destination is a non-Move chain,_ `recipient` _address should be converted to hex and passed in using the @0x123 address format._ |
+| destination_caller | `address`    | Address of caller on destination chain.                                                                                                                        |
+| message_body       | `vector<u8>` | Message to be sent to destination chain                                                                                                                        |
+
+<Note>
+**Destination Caller Notes**
+
+If the `destination_caller` does not represent a valid address, then it will not
+be possible to broadcast the message on the destination domain. This is an
+advanced feature, and the standard `deposit_for_burn` should be preferred for
+use cases where a specific destination caller is not required.
+
+_Note: If destination is a non-Move chain,_ `destination_caller` _address should
+be converted to hex and passed in using the @0x123 address format._
+
+</Note>
+
+#### [replace_message](https://github.com/circlefin/aptos-cctp/blob/master/packages/message_transmitter/sources/message_transmitter.move#L229)
+
+Replace a message with a new message body and/or destination caller. The
+originalAttestation must be a valid attestation of originalMessage, produced by
+Circle’s attestation service.
+
+**Remarks:**
+
+- Only the sender of the original deposit_for_burn transaction has access to
+  call `replace_message`
+
+**Parameters**
+
+| Field                  | Type                 | Description                                                                                                                                                                                      |
+| :--------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| caller                 | `Signer`             | Signer executing the transaction                                                                                                                                                                 |
+| original_message       | `vector<u8>`         | Original message bytes (to replace).                                                                                                                                                             |
+| original_attestation   | `vector<u8>`         | Original attestation                                                                                                                                                                             |
+| new_message_body       | `Option<vector<u8>>` | New message body                                                                                                                                                                                 |
+| new_destination_caller | `Option<address>`    | The new destination caller, which may be the same as the original destination caller, a new destination caller, or an empty destination caller, indicating that any destination caller is valid. |
+
+## Additional Notes
+
+### Using Move Scripts
+
+Pre-compiled scripts for executing `deposit_for_burn` and
+`handle_receive_message` are available in the
+[repo](https://github.com/circlefin/aptos-cctp/tree/master/typescript/example/precompiled-move-scripts)
+for testnet and mainnet. Alternatively, the scripts can be compiled from the
+source code. The documentation can be found on the official Aptos
+[website](https://aptos.dev/en/build/smart-contracts/scripts/compiling-scripts).
+
+### Mint Recipient Addresses for Aptos as Source Chain
+
+Outgoing mint recipient addresses from Aptos are passed as Aptos address types
+and can be treated the same as a `bytes32` mint recipient parameter on EVM
+implementations.
+
+### Mint Recipient Addresses for Aptos as Destination Chain
+
+Aptos mint recipient addresses from other chains should be treated the same as a
+hex `bytes32` parameter.
+
+<br />
+**WHAT'S NEXT**
+
+- [CCTP Block Confirmations V1 <Icon icon="arrow-right" />](/cctp/v1/required-block-confirmations)

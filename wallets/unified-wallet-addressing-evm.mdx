@@ -1,0 +1,142 @@
+---
+title: Unified Wallet Addressing on EVM Chains
+description: "Support same address wallets across multiple EVM chains."
+sideNav: ""
+tableOfContents: true
+documentationItems:
+  - title: Documentation
+---
+
+To provide a seamless wallet experience for your users across multiple EVM
+blockchains, you may want to offer wallets that maintain the **same address** on
+each chain. Unified addressing benefits your users in two key ways:
+
+- It creates a unified experience across chains and reduces the number of wallet
+  addresses users need to manage.
+- It provides a recovery path if users accidentally deposit tokens to an address
+  on an unsupported chain. For **user-controlled wallets**, this happens
+  automatically when you pass the user JWT token during
+  [wallet creation](/api-reference/wallets/user-controlled-wallets/create-user-wallet).
+
+For **developer-controlled wallets**, you need to implement the following
+capabilities:
+
+- Create wallets across multiple EVM chains using a shared `walletSetId` and
+  `refId`.
+- Derive wallets and add them on-demand for supported chains that users opt
+  into.
+- Recover assets from unsupported EVM chains by signing and broadcasting
+  transactions.
+- Understand how address indexes work to maintain consistency.
+- Follow best practices to manage wallet set limits effectively.
+
+## Batch create wallets across supported chains
+
+For chains you support by default, use the
+[`POST /wallets`](/api-reference/wallets/developer-controlled-wallets/create-wallet)
+API to create wallets in batches.
+
+Include the following in your request:
+
+- `walletSetId` to group wallets that will share an address index.
+- An array of `blockchains` representing the chains to support.
+- An array of `refIds` to associate each wallet back to a user ID in your
+  system.
+
+When a wallet is created with a `refId`, all EVM wallets sharing that `refId` in
+that API call will have the same address. You can retrieve these wallets using
+the
+[`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets)
+API.
+
+## Derive wallets on demand for supported chains
+
+For EVM chains that users can opt into, or in cases where assets are deposited
+to a chain not enabled by default, use the
+[`POST /wallets/{id}/blockchains/{blockchain}`](/api-reference/wallets/developer-controlled-wallets/derive-wallet)
+API to derive a wallet.
+
+Provide the following in this request:
+
+- Provide the existing `walletId` and `refId` for the user.
+- Specify the new EVM chain to create the wallet on.
+
+This will generate a wallet on the specified EVM chain with the **same address**
+as the existing wallet.
+
+## Recover tokens on unsupported EVM chains
+
+For unsupported EVM chains:
+
+- Create a wallet with `blockchain: EVM`.
+- Use the
+  [Sign transaction](/api-reference/wallets/developer-controlled-wallets/sign-transaction)
+  API to move the assets out.
+
+<Note>
+**Note:** For unsupported EVM chains, you are responsible for broadcasting the
+signed transaction to the chain yourself.
+</Note>
+
+This gives you the flexibility to support recovery scenarios across **any**
+EVM-compatible chain.
+
+## Understand how wallet addresses are derived
+
+Wallet addresses are derived based on the index in the `walletSet`. A single
+index (for example, `0x3`) maps to the same address on all EVM chains.
+
+### Wallet creation behavior
+
+- If you call **POST /wallets** for a single chain with no existing wallets, it
+  starts at index `0x1` and increments.
+- If you call **POST /wallets** across multiple chains, it uses the latest
+  available index and assigns the same address across chains.
+- If you call **POST /wallets** again for an individual chain, it increments
+  only on that chain.
+- If you call **POST /wallets** for a new chain (no existing wallets), it starts
+  at `0x1`.
+- Use
+  [`POST /wallets/{id}/blockchains/{blockchain}`](/api-reference/wallets/developer-controlled-wallets/derive-wallet)
+  to derive wallets and fill address gaps across chains.
+
+### Address index example
+
+The example below illustrates how address indexes work across chains.
+
+| EVM Chain | 0x1 | 0x2 | 0x3 | 0x4 | 0x5 |
+| --------- | --- | --- | --- | --- | --- |
+| Ethereum  | 1   | 2   | 3   |     | 7   |
+| Polygon   |     |     | 3   | 4   | 7   |
+| Arbitrum  | 5   | 6   |     |     | 7   |
+
+Walkthrough of the address derivation logic:
+
+1. **Step 1–2**: Creating wallets on Ethereum only results in `0x1`, then `0x2`.
+2. **Step 3**: Creating wallets on Ethereum + Polygon at once results in both
+   getting `0x3`.
+3. **Step 4**: Creating a new wallet only on Polygon now returns `0x4`.
+4. **Step 5–6**: Creating wallets on Arbitrum (new chain) starts at `0x1`, then
+   `0x2`.
+5. **Step 7**: Creating wallets across Ethereum, Polygon, and Arbitrum takes the
+   latest index and creates them at `0x5`.
+
+To fill gaps in the table, derive wallets using
+[`POST /wallets/{id}/blockchains/{blockchain}`](/api-reference/wallets/developer-controlled-wallets/derive-wallet).
+
+<Note>
+**Do not assign a unique `walletSetId` per user.**
+
+You're limited to **1,000 wallet sets** total, with **up to 10 million wallets
+per wallet set**. For details, see
+[Wallet Sets](/w3s/programmable-wallets-primitives#wallet-sets).
+</Note>
+
+## Summary
+
+Using Circle's wallet APIs, you can create and manage wallets that share the
+same address across multiple EVM chains. This unified approach improves the user
+experience and enables safe asset recovery, even on unsupported chains. By
+leveraging `walletSetId`, `refId`, and the appropriate API endpoints, you can
+batch-create wallets, add support for new chains on demand, and maintain
+consistent wallet derivation logic across your application.

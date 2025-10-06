@@ -1,0 +1,229 @@
+Welcome to a foundational step in utilizing our Developer Services: initiating
+your first API call to construct a WalletSet. We'll guide you through the
+process and clarify what a WalletSet entails within our platform.
+
+### Defining a WalletSet
+
+A WalletSet within our ecosystem is a sophisticated grouping of wallets,
+securely tied together by a singular cryptographic key. Leveraging the
+Hierarchical Deterministic (HD) wallet technology, WalletSets offer an enhanced
+way to handle wallet management that spans multiple blockchain networks. This is
+particularly relevant for Ethereum Virtual Machine (EVM) compatible blockchains,
+where it is common for wallets on different networks to share the same address,
+thanks to the underlying technology.
+
+### Grasping the concept of idempotency
+
+As we approach the creation of your inaugural WalletSet, it's important to
+comprehend a critical aspect of our APIs: idempotency keys.
+
+Idempotency is a fundamental concept which guarantees that an operation is
+repeatable without changing the outcome. This concept is extremely important in
+API requests to make sure that if a request is accidentally sent more than once,
+it doesn't result in duplicate operations.
+
+Consider situations like an unstable internet connection leading to multiple
+unintentional request submissions, or a user who accidentally activates a
+command several times. Without idempotency, such events might cause numerous
+unwanted operations.
+
+To prevent this, an idempotency key is used. Each request includes a distinct
+key that, when recognized by the server within a certain timeframe as a repeat
+submission, prevents the repeated processing of that request. This mechanism is
+crucial to preserving the integrity of your operations, ensuring that only
+intended actions are carried out.
+
+### Crafting Your WalletSet
+
+Now that we've got the concept of idempotency covered, let's look at creating
+your WalletSet.
+
+{/* prettier-ignore-start */}
+
+<Parameters
+  title="Request parameters"
+  linkToDocs="/api-reference/wallets/developer-controlled-wallets/create-wallet-set"
+>
+  <Parameter name="idempotencyKey">
+    Think of this as a safety net. By using a unique UUID for every transaction
+    request, you ensure no transaction is mistakenly processed more than once.
+    It's a measure against unintended duplicates.
+  </Parameter>
+  <Parameter name="entitySecretCiphertext">
+    Remember the encryption we discussed earlier? You'll need to provide this
+    encrypted string for security and authorization.
+  </Parameter>
+  <Parameter name="name">
+    The name for your new WalletSet.
+  </Parameter>
+</Parameters>
+
+{/* prettier-ignore-end */}
+
+Let's create our first wallet set!
+
+<Playground
+  title="Create a WalletSet"
+  url="/quickstarts/api/common/wallet-set"
+  config={{
+    method: "POST",
+    url: "/v1/w3s/developer/walletSets",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      idempotencyKey: "<UNIQUE_UUID>",
+      entitySecretCipherText: "<GENERATED_ENTITY_SECRET_CIPHERTEXT>",
+      name: "<WALLET_SET_NAME>",
+    },
+  }}
+  copy={[{ key: "walletSetId", path: "data.walletSet.id" }]}
+/>
+
+<Note>
+  Ensure that your idempotency key is unique for every distinct request. Our
+  APIs require the idempotency key to be of type uuidv4. Remember, its primary
+  role is to ensure that the same request isn't processed more than once.
+</Note>
+
+### Utilizing API Logs for Enhanced Monitoring
+
+For a comprehensive overview of each transaction you execute with Circle's Web3
+APIs, the Developer Services Console provides detailed access to API logs. By
+examining these logs, you gain valuable visibility into how your application
+interacts with Circle APIs, which can be pivotal for various aspects including
+troubleshooting, performance optimization, and security oversight by
+highlighting any abnormal activities. For detailed records of your API
+interactions, please refer to the
+[API Logs section](https://console.circle.com/logs).
+
+Within the scope of our Quickstart guide, the API log is indispensable for
+gaining insights into specific API calls and the objects that are created as a
+result. Think of the API log as a detailed record that allows you to retrieve
+the unique IDs of objects that have been generated, especially when these IDs
+are needed for subsequent API interactions. API logs are a crucial educational
+resource that simplify the debugging process and help you methodically
+comprehend the intricacies of the API's operations. Hence, the API log is not
+only instrumental in improving operational workflows but also serves as a
+valuable asset for your development projects.
+
+Ah, the most exhilarating phase: shaping your very first developer-controlled
+wallet in the vastness of web3. With your prepped API key and Entity Secret
+Ciphertext, we're only a few steps away from crafting a masterpiece. Let's dive
+right in!
+
+### Understanding the Developer-Controlled Wallet
+
+In web3, a wallet isn't just a storage mechanism for digital tokens or NFTs, but
+the very essence of user interactions on the blockchain. Essentially, it's a
+blend of a unique address and accompanying metadata stored on the blockchain.
+
+For developer-controlled wallets:
+
+<Features background="light">
+  <Features.Feature icon="BookOpenOutline">
+    <Features.Feature.Title>Address</Features.Feature.Title>
+    <Features.Feature.Description>
+      A unique identifier on a blockchain. Notably, while an address remains
+      distinct, multiple wallets can have the same address across different EVM
+      blockchains.
+    </Features.Feature.Description>
+  </Features.Feature>
+  <Features.Feature icon="KeyOutline">
+    <Features.Feature.Title>Custody Type</Features.Feature.Title>
+    <Features.Feature.Description>
+      This signifies who controls the private key invocation — either the user
+      or the developer. For our purpose, we're focusing on developer-controlled
+      wallets, which are inherently more manageable and tailored for specific
+      app requirements.
+    </Features.Feature.Description>
+  </Features.Feature>
+</Features>
+
+With that foundational knowledge, let's get to the hands-on part.
+
+### Crafting your wallet
+
+To create a wallet you use the following parameters:
+
+<Parameters
+  title="Request parameters"
+  linkToDocs="/api-reference/wallets/developer-controlled-wallets/create-wallet"
+>
+  <Parameter name="idempotencyKey">
+    Ensures that a request is executed only once, even if it's received multiple
+    times.
+  </Parameter>
+  <Parameter name="entitySecretCiphertext">
+    The encrypted form of your Entity Secret, ensuring robust security for your
+    API requests.
+  </Parameter>
+  <Parameter name="walletSetId">
+    The ID of the wallet set that you created in the preceding step.
+  </Parameter>
+  <Parameter name="blockchains">
+    Specifies the blockchains on which the wallet should be manifested.
+  </Parameter>
+  <Parameter name="count">
+    The number of wallets you aim to create. **Note:** The parameter should not
+    exceed 20.
+  </Parameter>
+  <Parameter name="accountType">
+    The type of account you want to create. For this guide, you will use SCA,
+    which represents developer-controlled wallets.
+  </Parameter>
+</Parameters>
+
+<Note>
+To ensure the best possible experience, the quickstart will automatically
+create and fund two wallets with testnet tokens. Each wallet will be funded
+with **10 USDC**, allowing you to dive right into the Quickstart without
+delay. Rest assured, this amount will be sufficient for you to initiate your
+first transaction.
+
+The funding process will only be completed if you use the **Try it out**
+panel. If you are following the quickstart using code snippets, you will need
+to first create your wallets, then fund them manually using the
+[testnet faucet](https://faucet.circle.com/).
+</Note>
+
+<Playground
+  title="Create your first wallets"
+  url="/quickstarts/api/dev-controlled/wallets"
+  config={{
+    method: "POST",
+    url: "/v1/w3s/developer/wallets",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer <YOUR_API_KEY>",
+    },
+    body: {
+      idempotencyKey: "<UNIQUE_UUID>",
+      entitySecretCipherText: "<GENERATED_ENTITY_SECRET_CIPHERTEXT>",
+      blockchains: ["<BLOCKCHAIN_1>", "<BLOCKCHAIN_2>", "<BLOCKCHAIN_3>"],
+      count: 2,
+      accountType: "SCA",
+      walletSetId: "<ID_OF_PREVIOUSLY_GENERATED_WALLET_SET>",
+    },
+  }}
+  copy={[
+    {
+      path: "data.wallets[0].id",
+      key: "devCWalletId",
+    },
+    {
+      path: "data.wallets[1].address",
+      key: "devCDestinationAddress",
+    },
+  ]}
+/>
+
+<Note>
+**Note:** Smart Contract Account wallets are not availabe for Solana Devnet. A
+similar workflow can be accomplished on Solana Devnet with EOA wallets and the
+Circle Gas Station.
+</Note>
+
+And there you have it! By the end of this step, you'll have fully functional
+developer-controlled wallets, ready to shape web3 experiences.
