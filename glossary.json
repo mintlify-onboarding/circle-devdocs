@@ -1,0 +1,92 @@
+[
+  {
+    "term": "BFI",
+    "page": "https://developers.circle.com/cpn/concepts/integration-concepts",
+    "text": "Beneficiary Financial Institution, responsible for offramping crypto to fiat and transferring the fiat to the recipient of the CPN payment."
+  },
+  {
+    "term": "Challenge",
+    "page": "https://developers.circle.com/wallets/user-controlled/create-your-first-wallet-with-pin",
+    "text": "Challenges in User-Controlled Wallets serve as checkpoints where users are required to enter their PIN code to authorize sensitive actions like transactions and smart contract executions. When users are first created, the initial challenge prompts them to set their PIN code and Recovery Method, enabling them to recover access if needed."
+  },
+  {
+    "term": "Ciphertext",
+    "page": "https://developers.circle.com/wallets/dev-controlled/entity-secret-management",
+    "text": "refers to the encrypted form of plain text that is transformed using cryptographic algorithms. It is the result of applying encryption techniques to the original message, making it unreadable to anyone without the decryption key or appropriate knowledge. Ciphertext acts as a security measure, ensuring the confidentiality and integrity of sensitive information during communication or storage. Reverse operations, such as decryption, are required to convert ciphertext back into the original readable plaintext."
+  },
+  {
+    "term": "Entity Secret",
+    "page": "https://developers.circle.com/wallets/dev-controlled/register-entity-secret",
+    "text": "The Entity Secret is a 32-byte private key designed to secure your Developer-Controlled wallets. It acts as your secret password, your personalized cryptographic stamp, known only to you. Our platform does not store the Entity Secret. This ensures that only you have the ability to invoke private keys, maintaining complete control. It is therefore your responsibility to safeguard this secret."
+  },
+  {
+    "term": "Entity Secret Ciphertext",
+    "page": "https://developers.circle.com/contracts/scp-deploy-smart-contract",
+    "text": "The Entity Secret Ciphertext is an RSA encryption value generated from your Entity Secret and Circle's public key. This asymmetrically encrypted value is sent in API requests like wallet creation or transaction initiation to ensure secure critical actions. This process enables safe usage of the Entity Secret to ensure it cannot be easily accessed or misused."
+  },
+  {
+    "term": "Events",
+    "page": "https://developers.circle.com/contracts/scp-event-monitoring",
+    "text": ""
+  },
+  {
+    "term": "Fast Transfer Allowance",
+    "page": "https://developers.circle.com/cctp",
+    "text": "Events are a logging mechanism used in smart contracts to emit information outside of the contract's storage variables. They are emitted, for example, when a token is transferred, allowing smart contracts to inform off-chain applications or users about state changes."
+  },
+  {
+    "term": "Faucet",
+    "page": "https://developers.circle.com/contracts/scp-deploy-smart-contract",
+    "text": "A blockchain faucet is a website or online platform that provides small amounts of cryptocurrency for free or in exchange for simple tasks. These faucets are primarily used on testnets, which simulate the live environment without real tokens or money. Blockchain faucets are used to test and develop applications, ensuring a safe and controlled environment for experimentation without the need for actual funds."
+  },
+  {
+    "term": "Gas Station policy",
+    "page": "https://developers.circle.com/wallets/gas-station/send-a-gasless-transaction",
+    "text": "A Gas Station Policy refers to the configuration set on a blockchain network to utilize Circle's managed Paymaster, known as Gas Station. It allows you to define what transactions you are willing to sponsor on behalf of your users. When a transaction meets the specified configuration, Circle's Paymaster covers the associated gas fees. Note a policy is required to enable the Gas Station functionality on the Mainnet."
+  },
+  {
+    "term": "Gas fees",
+    "page": "https://developers.circle.com/wallets/dev-controlled/transfer-tokens-across-wallets",
+    "text": "Gas fees represent the cost of executing transactions on the blockchain network. These fees vary based on factors such as network congestion and transaction complexity."
+  },
+  {
+    "term": "OFI",
+    "page": "https://developers.circle.com/cpn/concepts/integration-concepts",
+    "text": "Originating Financial Institution, responsible for collecting fiat from a sender in CPN, onramping it to the blockchain, and transferring crypto to the BFI."
+  },
+  {
+    "term": "RSA encryption",
+    "page": "https://developers.circle.com/wallets/dev-controlled/entity-secret-management",
+    "text": "is a widely used asymmetric encryption algorithm. RSA encryption involves two keys, a public key and a private key. The public key is used for encryption, while the private key is used for decryption. The keys are mathematically related, but it is computationally infeasible to determine the private key from the public key. RSA encryption is widely used for secure communication, digital signatures, and key exchange protocols. Its security relies on the difficulty of factoring large numbers into prime factors, making it resistant to attacks from classical and quantum computers when sufficiently large keys are used."
+  },
+  {
+    "term": "Testnet",
+    "page": "https://developers.circle.com/wallets/gas-station/send-a-gasless-transaction",
+    "text": "A blockchain Testnet is a separate and independent network designed for testing and development purposes. It allows blockchain developers and users to experiment, validate, and refine their applications, smart contracts, and functionalities without using real or valuable assets on the main blockchain network."
+  },
+  {
+    "term": "challenge",
+    "page": "https://developers.circle.com/wallets/user-controlled/create-your-first-wallet-with-pin",
+    "text": "Challenges in User-Controlled Wallets serve as checkpoints where users are required to enter their PIN code to authorize sensitive actions like transactions and smart contract executions. When users are first created, the initial challenge prompts them to set their PIN code and Recovery Method, enabling them to recover access if needed."
+  },
+  {
+    "term": "faucet",
+    "page": "https://developers.circle.com/wallets/user-controlled/receive-inbound-transfer",
+    "text": "A blockchain faucet is a website or online platform that provides small amounts of cryptocurrency for free or in exchange for simple tasks. These faucets are primarily used on testnets, which simulate the live environment without real tokens or money. Blockchain faucets are used to test and develop applications, ensuring a safe and controlled environment for experimentation without the need for actual funds."
+  },
+  {
+    "term": "gas fees",
+    "page": "https://developers.circle.com/contracts/scp-deploy-smart-contract",
+    "text": "Gas fees represent the cost of executing transactions on the blockchain network. These fees vary based on factors such as network congestion and transaction complexity."
+  },
+  {
+    "term": "hard finality",
+    "page": "https://developers.circle.com/cctp",
+    "text": "The point at which a transaction is fully finalized on-chain and can no longer be reversed or reorganized. This ensures the highest level of security and certainty before attestation. Hard Finality requires the transaction to reach full consensus on the source blockchain, typically resulting in longer processing times."
+  },
+  {
+    "term": "soft finality",
+    "page": "https://developers.circle.com/cctp",
+    "text": "The point at which a transaction is considered sufficiently secure for attestation, even though it has not yet reached hard finality. This allows for faster message processing while balancing the risk of chain reorganizations."
+  }
+]

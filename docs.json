@@ -650,52 +650,15 @@
       },
       {
         "tab": "Interactive Quickstarts",
-        "pages": [
-          "interactive-quickstarts",
+        "groups": [
           {
-            "group": "Get Started",
+            "group": "Interactive Quickstarts",
             "pages": [
+              "interactive-quickstarts",
               "interactive-quickstarts/get-started",
-              "interactive-quickstarts/get-started#create-a-developer-services-account",
-              "interactive-quickstarts/get-started#understanding-testnet-vs-mainnet-environments",
-              "interactive-quickstarts/get-started#create-your-api-key",
-              "interactive-quickstarts/get-started#the-power-of-testnet"
-            ]
-          },
-          {
-            "group": "Developer Controlled Wallets",
-            "pages": [
               "interactive-quickstarts/dev-controlled-wallets",
-              "interactive-quickstarts/dev-controlled-wallets#introduction",
-              "interactive-quickstarts/dev-controlled-wallets#prerequisites",
-              "interactive-quickstarts/dev-controlled-wallets#setup-your-entity-secret",
-              "interactive-quickstarts/dev-controlled-wallets#create-a-wallet",
-              "interactive-quickstarts/dev-controlled-wallets#initiate-a-transaction",
-              "interactive-quickstarts/dev-controlled-wallets#congratulations-on-your-progress"
-            ]
-          },
-          {
-            "group": "User Controlled Wallets",
-            "pages": [
               "interactive-quickstarts/user-controlled-wallets",
-              "interactive-quickstarts/user-controlled-wallets#introduction",
-              "interactive-quickstarts/user-controlled-wallets#prerequisites",
-              "interactive-quickstarts/user-controlled-wallets#configure-your-app-get-your-appid",
-              "interactive-quickstarts/user-controlled-wallets#create-your-user-wallet",
-              "interactive-quickstarts/user-controlled-wallets#initiate-a-transaction",
-              "interactive-quickstarts/user-controlled-wallets#congratulations-on-your-progress"
-            ]
-          },
-          {
-            "group": "CCTP",
-            "pages": [
-              "interactive-quickstarts/cctp",
-              "interactive-quickstarts/cctp#introduction",
-              "interactive-quickstarts/cctp#prerequisites",
-              "interactive-quickstarts/cctp#burn-usdc",
-              "interactive-quickstarts/cctp#approve-burn",
-              "interactive-quickstarts/cctp#mint-usdc",
-              "interactive-quickstarts/cctp#congratulations-on-your-progress"
+              "interactive-quickstarts/cctp"
             ]
           }
         ]

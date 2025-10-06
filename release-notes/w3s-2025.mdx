@@ -11,7 +11,7 @@ sidebarTitle: "Developer Services"
 
 ## August 2025
 
-### 2025.08.26
+<Update label="2025.08.26">
 
 #### API updates
 
@@ -23,13 +23,17 @@ Updated the following Gateway endpoints:
 - Added `processedHeight` and `burnIntentExpirationHeight` to the
   [`GET /v1/info`](/api-reference/gateway/all/get-gateway-info) response
 
-### 2025.08.07
+</Update>
+
+<Update label="2025.08.07">
 
 #### API updates
 
 Replaced the transaction state `PENDING_RISK_SCREENING` with `CLEARED`
 
-### 2025.08.04
+</Update>
+
+<Update label="2025.08.04">
 
 #### API additions
 
@@ -39,9 +43,11 @@ Added `networkFeeRaw` to the response of the following endpoints:
 - [`POST /transactions/transfer/estimateFee`](/api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee)
 - [`POST /contracts/deploy/estimateFee`](/api-reference/contracts/smart-contract-platform/estimate-contract-deploy)
 
+</Update>
+
 ## July 2025
 
-### 2025.07.23
+<Update label="2025.07.23">
 
 Expanded Developer Services support for Avalanche Mainnet and Avalanche Fuji
 Testnet to include smart contract accounts (SCAs), modular wallets, and Gas
@@ -78,9 +84,10 @@ following Circle Contracts APIs:
 - `POST /templates/{id}/deploy`
 - `POST /templates/{id}/deploy/estimateFee`
 
----
+</Update>
 
-### 2025.07.22
+
+<Update label="2025.07.22">
 
 Launched Circle Gateway on testnet.
 
@@ -104,9 +111,10 @@ Added the following endpoints to support Circle Gateway:
 - [`GET /v1/info`](/api-reference/gateway/all/get-gateway-info)
 - [`POST /v1/transfer`](/api-reference/gateway/all/create-transfer-attestation)
 
----
+</Update>
 
-### 2025.07.11
+
+<Update label="2025.07.11">
 
 Added an optional `delayReason` field to CCTP transfer status responses to
 provide context for delayed transfers.
@@ -117,9 +125,10 @@ The `delayReason` field is now returned in the following CCTP Iris endpoints:
 
 - `GET /v2/messages` - Get messages and attestations
 
----
+</Update>
 
-### 2025.07.08
+
+<Update label="2025.07.08">
 
 Added support for the `order` request parameter (`ASC` or `DESC`) to enable
 sorting by `createDate` for improved client-side data handling.
@@ -133,11 +142,12 @@ The `order` parameter is now supported in the following endpoints:
 - `GET /v1/w3s/wallets` - List wallets (user/developer-controlled)
 - `GET /v1/w3s/users` - List users (user-controlled)
 
----
+</Update>
+
 
 ## June 2025
 
-### 2025.06.25
+<Update label="2025.06.25">
 
 Launched Developer Services support for Aptos Mainnet and Testnet.
 
@@ -173,9 +183,10 @@ the following APIs:
 - `POST /transactions/validateAddress`
 - `POST /user/initialize`
 
----
+</Update>
 
-### 2025.06.17
+
+<Update label="2025.06.17">
 
 Added programmatic gas price optimization to modular wallets web SDK.
 
@@ -189,18 +200,20 @@ optimization support in modular wallets web SDK:
   - Added `GetUserOperationGasPriceRpcSchema` type.
   - Added `getUserOperationGasPrice` function.
 
----
+</Update>
 
-### 2025.06.13
+
+<Update label="2025.06.13">
 
 Removed Compliance Engine's **Travel Rule** from the developer documentation as
 it's been deprecated.
 
----
+</Update>
+
 
 ## May 2025
 
-### 2025.05.15
+<Update label="2025.05.15">
 
 Added support for Avalanche and Unichain to Paymaster v0.8.
 
@@ -212,7 +225,9 @@ Paymaster v0.8:
 - [Paymaster Overview](/paymaster)
 - [Paymaster Addresses and Events](/paymaster/addresses-and-events)
 
-### 2025.05.07
+</Update>
+
+<Update label="2025.05.07">
 
 Added Paymaster v0.8 documentation.
 
@@ -225,11 +240,12 @@ ERC-4337 contract in Paymaster:
 - [Quickstart: Build a Wallet to Pay Gas Fees with USDC](/paymaster/pay-gas-fees-usdc)
 - [Paymaster Addresses and Events](/paymaster/addresses-and-events)
 
----
+</Update>
+
 
 ## April 2025
 
-### 2025.04.17
+<Update label="2025.04.17">
 
 Added passkey recovery support to modular wallets web SDK.
 
@@ -253,9 +269,10 @@ wallets:
   - Added `registerRecoveryAddress` function.
 - [Modular Wallets Passkey](/wallets/modular/passkeys)
 
----
+</Update>
 
-### 2025.04.11
+
+<Update label="2025.04.11">
 
 #### Documentation updates
 
@@ -290,9 +307,10 @@ endpoint:
   **[Derive a Wallet API](/api-reference/wallets/developer-controlled-wallets/derive-wallet)**:
   `PUT /developer/wallets/:id/blockchains/:blockchain`
 
----
+</Update>
 
-### 2025.04.08
+
+<Update label="2025.04.08">
 
 - Launched Developer Services, including Circle Contracts, on Optimism (OP) and
   Base (BASE) blockchains.
@@ -367,11 +385,12 @@ Added Optimism (OP) and Base (BASE) blockchains to tables of support:
   - `POST /contracts/monitors`
   - `GET /contracts/events`
 
----
+</Update>
+
 
 ## March 2025
 
-### 2025.03.31
+<Update label="2025.03.31">
 
 Launched the SDK Explorer for Developer Services server-side SDKs.
 
@@ -387,9 +406,10 @@ Added the following pages for the SDK Explorer:
 - [Getting Started with Contracts - Node.js](/sdk-explorer/smart-contract-platform/Node.js/getting-started)
 - [Getting Started with Contracts - Python](/sdk-explorer/smart-contract-platform/Python/getting-started)
 
----
+</Update>
 
-### 2025.03.27
+
+<Update label="2025.03.27">
 
 The following Circle Product Lines have been renamed:
 
@@ -408,9 +428,10 @@ These name changes are part of a broader effort to simplify and align our
 product naming, creating a more unified developer experience across the Circle
 platform.
 
----
+</Update>
 
-### 2025.03.24
+
+<Update label="2025.03.24">
 
 #### Documentation updates
 
@@ -426,16 +447,19 @@ Added new API endpoints:
 - [`GET /v1/w3s/developer/wallets/balances`](/api-reference/wallets/developer-controlled-wallets/get-wallets-with-balances)
 - [`PUT /v1/w3s/developer/wallets/{id}/backfill`](/api-reference/wallets/developer-controlled-wallets/backfill-wallet)
 
----
+</Update>
 
-### 2025.03.21
+
+<Update label="2025.03.21">
 
 Removed USDC Access from the developer documentation as it's no longer available
 for new users.
 
+</Update>
+
 ## February 2025
 
-### 2025.02.22
+<Update label="2025.02.22">
 
 #### API updates
 
@@ -450,18 +474,20 @@ for new users.
 
 - Added example for `Address` and `ContractAddress`
 
----
+</Update>
 
-### 2025.02.21
+
+<Update label="2025.02.21">
 
 #### API updates
 
 - Updated `abiFunctionSignature` to be optional for the
   `POST /transactions/contractExecution/estimateFee` API.
 
----
+</Update>
 
-### 2025.02.19
+
+<Update label="2025.02.19">
 
 #### API additions
 
@@ -470,9 +496,10 @@ for new users.
 
   - `POST /compliance/screening/addresses`
 
----
+</Update>
 
-### 2025.02.12
+
+<Update label="2025.02.12">
 
 Added EIP-1193 example for modular wallets
 
@@ -482,9 +509,10 @@ Added a code example for EIP-1193:
 
 - [Key Features](/wallets/modular/key-features)
 
----
+</Update>
 
-### 2025.02.11
+
+<Update label="2025.02.11">
 
 Launched Web3 Services on Unichain mainnet
 
@@ -499,9 +527,11 @@ Added Unichain mainnets to tables of support:
 - [Gas Station Contract Addresses](/wallets/gas-station/contract-addresses)
 - [Gas Station](/wallets/gas-station)
 
+</Update>
+
 ## January 2025
 
-### 2025.01.30
+<Update label="2025.01.30">
 
 Added information on batching user-ops with the Circle API.
 
@@ -512,9 +542,10 @@ Updated information on batch operations:
 - [Account Types](/wallets/account-types)
 - [Batch Operations](/wallets/batch-operations)
 
----
+</Update>
 
-### 2025.01.29
+
+<Update label="2025.01.29">
 
 #### API additions
 
@@ -533,9 +564,10 @@ Updated information on batch operations:
   - `POST /user/transactions/transfer`
   - `POST /user/transactions/transfer/estimateFee`
 
----
+</Update>
 
-### 2025.01.25
+
+<Update label="2025.01.25">
 
 Launched user-controlled wallets signing on EVM chains.
 
@@ -547,18 +579,20 @@ Added information for signing transactions with user-controlled wallets:
 - [Signing APIs](/wallets/signing-apis)
 - [Supported Blockchains and Currencies](/w3s/supported-blockchains-and-currencies)
 
----
+</Update>
 
-### 2025.01.24
+
+<Update label="2025.01.24">
 
 #### API updates
 
 - Updated the description of error code `155236`: The provided fee in request is
   invalid.
 
----
+</Update>
 
-### 2025.01.17
+
+<Update label="2025.01.17">
 
 Launched modular wallets.
 
@@ -580,9 +614,10 @@ Added modular wallets endpoints:
 - `GET buidl/wallets/balances`
 - `GET buidl/wallets/nfts`
 
----
+</Update>
 
-### 2025.01.14
+
+<Update label="2025.01.14">
 
 Launched Web3 Services on Unichain testnet.
 
@@ -596,3 +631,4 @@ Added Unichain testnet to tables of support:
 - [Gas Fees](/wallets/gas-fees)
 - [Gas Station Contract Addresses](/wallets/gas-station/contract-addresses)
 - [Gas Station](/wallets/gas-station)
+</Update>
