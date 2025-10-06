@@ -139,7 +139,7 @@ request to the
 [`POST /users/token`](/api-reference/wallets/user-controlled-wallets/get-user-token)
 using the previously created `userId` in Step 2. The `userToken` is a 60-minute
 session token, which is used to initiate requests that require a user
-<Glossary term="challenge" /> (PIN code entry). After 60 minutes, the session
+<Tooltip tip="Challenges in User-Controlled Wallets serve as checkpoints where users are required to enter their PIN code to authorize sensitive actions like transactions and smart contract executions. When users are first created, the initial challenge prompts them to set their PIN code and Recovery Method, enabling them to recover access if needed.">challenge</Tooltip> (PIN code entry). After 60 minutes, the session
 expires, and a new `userToken` must be generated via the same endpoint.
 
 {/* prettier-ignore-end */}
@@ -216,7 +216,7 @@ simultaneously._
 Make a request to
 [`POST /user/initialize`](/api-reference/wallets/user-controlled-wallets/create-user-with-pin-challenge)
 using the `userToken` returned from Step 3. This call returns a
-<Glossary term="Challenge" /> ID, which is used with the Circle Programmable
+<Tooltip tip="Challenges in User-Controlled Wallets serve as checkpoints where users are required to enter their PIN code to authorize sensitive actions like transactions and smart contract executions. When users are first created, the initial challenge prompts them to set their PIN code and Recovery Method, enabling them to recover access if needed.">Challenge</Tooltip> ID, which is used with the Circle Programmable
 Wallet SDK to have the user set their PIN code and security questions.
 
 {/* prettier-ignore-end */}

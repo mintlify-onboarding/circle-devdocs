@@ -82,7 +82,7 @@ A payment represents the end-to-end CPN payment flow, including the onchain
 transaction and RFI check. It is initiated by locking in a quote and providing
 the required recipient details.
 
-The payment process begins when an <Glossary term="OFI" /> locks in a quote and
+The payment process begins when an <Tooltip tip="Originating Financial Institution, responsible for collecting fiat from a sender in CPN, onramping it to the blockchain, and transferring crypto to the BFI.">OFI</Tooltip> locks in a quote and
 submits sender and beneficiary details. The transaction undergoes compliance
 checks, including the RFI process if required. Once all necessary compliance
 checks are completed, the payment enters the onchain transaction phase, where it
@@ -91,15 +91,15 @@ initiates a fiat transfer to the final recipient.
 
 During the fiat transfer, the CPN sends webhook notifications to the OFI
 indicating that the transfer has been confirmed or canceled. If the fiat
-transfer is canceled or fails for any reason, the <Glossary term="BFI" /> issues
+transfer is canceled or fails for any reason, the <Tooltip tip="Beneficiary Financial Institution, responsible for offramping crypto to fiat and transferring the fiat to the recipient of the CPN payment.">BFI</Tooltip> issues
 a refund of crypto to the OFI.
 
 ## Requests for Information
 
 {/* prettier-ignore-start */}
 
-When a <Glossary term='BFI' /> needs more information about a sender or an
-<Glossary term="OFI" />, they create a Request for Information (RFI). This
+When a <Tooltip tip="Beneficiary Financial Institution, responsible for offramping crypto to fiat and transferring the fiat to the recipient of the CPN payment.">BFI</Tooltip> needs more information about a sender or an
+<Tooltip tip="Originating Financial Institution, responsible for collecting fiat from a sender in CPN, onramping it to the blockchain, and transferring crypto to the BFI.">OFI</Tooltip>, they create a Request for Information (RFI). This
 additional information is required to meet regulatory or risk compliance checks.
 The OFI is required to gather the appropriate information and respond to the
 request in a set period of time. If the OFI does not respond in time, the

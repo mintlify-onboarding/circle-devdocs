@@ -31,7 +31,7 @@ deploying your first contract.
 
 {/* prettier-ignore-start */}
 
-In Web3, <Glossary term="gas fees" /> refers to transaction fees that are always
+In Web3, <Tooltip tip="Gas fees represent the cost of executing transactions on the blockchain network. These fees vary based on factors such as network congestion and transaction complexity.">gas fees</Tooltip> refers to transaction fees that are always
 paid in the native currency of the blockchain network. For example, to deploy a
 contract on a contract on the Ethereum network, you must pay the transaction fee
 in Ether (ETH). Similarly, on the Polygon network, the fee would be in MATIC. To
@@ -39,7 +39,7 @@ ensure smooth transactions, it is important to have a sufficient amount of the
 native token in your wallet.
 
 To gather tokens for gas, we recommend using the
-[Polygon](https://faucet.polygon.technology/) <Glossary term="Faucet" />. When
+[Polygon](https://faucet.polygon.technology/) <Tooltip tip="A blockchain faucet is a website or online platform that provides small amounts of cryptocurrency for free or in exchange for simple tasks. These faucets are primarily used on testnets, which simulate the live environment without real tokens or money. Blockchain faucets are used to test and develop applications, ensuring a safe and controlled environment for experimentation without the need for actual funds.">Faucet</Tooltip>. When
 you visit the faucet's website, you will be prompted to provide your wallet's
 address. To acquire it, make a request to
 [`GET /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets) as
@@ -263,7 +263,7 @@ the prior steps:
 {/* prettier-ignore-start */}
 
 1. **`entitySecretCiphertext`** uniquely generated
-   <Glossary term="Entity Secret Ciphertext" />. To learn more about generating
+   <Tooltip tip="The Entity Secret Ciphertext is an RSA encryption value generated from your Entity Secret and Circle's public key. This asymmetrically encrypted value is sent in API requests like wallet creation or transaction initiation to ensure secure critical actions. This process enables safe usage of the Entity Secret to ensure it cannot be easily accessed or misused.">Entity Secret Ciphertext</Tooltip>. To learn more about generating
    the ciphertext for this request, see the guide [How to Re-Encrypt the Entity
    Secret](/wallets/dev-controlled/entity-secret-management#how-to-re-encrypt-the-entity-secret).
 2. **`walletId`** acquired from step 1. This is the identifier of your wallet on

@@ -33,7 +33,7 @@ instructions on using it in the
 
 To receive funds on-chain, you will need the wallet's address. The address is
 the on-chain identifier provided to the sending wallet or
-<Glossary term="faucet" /> in the following step. To retrieve the address, make
+<Tooltip tip="A blockchain faucet is a website or online platform that provides small amounts of cryptocurrency for free or in exchange for simple tasks. These faucets are primarily used on testnets, which simulate the live environment without real tokens or money. Blockchain faucets are used to test and develop applications, ensuring a safe and controlled environment for experimentation without the need for actual funds.">faucet</Tooltip> in the following step. To retrieve the address, make
 a request to [`GET
 /wallets`](/api-reference/wallets/developer-controlled-wallets/get-wallets) as shown
 below. You should also note down the `wallets.id` this will be used in step 3.
@@ -106,7 +106,7 @@ curl --request GET \
 
 Send testnet currency from an external wallet outside the Programmable Wallet
 infrastructure into your applicable wallet `address`. The best way to achieve
-this is through the use of a <Glossary term="faucet" />. In our case, we will
+this is through the use of a <Tooltip tip="A blockchain faucet is a website or online platform that provides small amounts of cryptocurrency for free or in exchange for simple tasks. These faucets are primarily used on testnets, which simulate the live environment without real tokens or money. Blockchain faucets are used to test and develop applications, ensuring a safe and controlled environment for experimentation without the need for actual funds.">faucet</Tooltip>. In our case, we will
 use the [USDC Faucet](https://usdcfaucet.com/) to transfer USDC on Polygon Amoy
 to the wallet.
 
