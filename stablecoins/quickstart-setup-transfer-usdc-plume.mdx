@@ -107,8 +107,7 @@ const USDC_ABI = [
 ];
 ```
 
-<Note>
-<Accordion title="**Learn more:** Chain and contract configuration">
+<Accordion icon="circle-info" title="Learn more: Chain and contract configuration">
 Here's what this section does:
 
 - Defines a custom chain configuration for the Plume testnet.
@@ -117,7 +116,6 @@ Here's what this section does:
 - Only includes the `balanceOf` and `transfer` functions, since they're all
   that's needed for this guide.
 </Accordion>
-</Note>
 
 ## Step 3: Load environment variables
 
@@ -142,8 +140,7 @@ const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
   : `0x${PRIVATE_KEY_RAW}`;
 ```
 
-<Note>
-<Accordion title="**Learn more:** Environment variables">
+<Accordion icon="circle-info" title="Learn more: Environment variables">
 This section ensures sensitive values are handled safely:
 
 - Loads values from the `.env` file so you don't hardcode sensitive information.
@@ -151,7 +148,6 @@ This section ensures sensitive values are handled safely:
 - Validates the recipient address format with a regex.
 - Ensures the private key is properly prefixed with `0x` so Viem can use it.
 </Accordion>
-</Note>
 
 ## Step 4: Initialize Viem clients
 
@@ -173,8 +169,7 @@ const walletClient = createWalletClient({
 });
 ```
 
-<Note>
-<Accordion title="**Learn more:** Viem clients">
+<Accordion icon="circle-info" title="Learn more: Viem clients">
 These client methods give you read and write access to the Plume testnet:
 
 - `privateKeyToAccount` creates an account object from your private key.
@@ -182,7 +177,6 @@ These client methods give you read and write access to the Plume testnet:
   key needed).
 - `createWalletClient` uses your account to sign and send transactions.
 </Accordion>
-</Note>
 
 ## Step 5: Transfer USDC
 
@@ -234,8 +228,7 @@ Now, write the main logic to check your balance and send a transfer:
 })();
 ```
 
-<Note>
-<Accordion title="**Learn more:** Transfer logic">
+<Accordion icon="circle-info" title="Learn more: Transfer logic">
 Here's how the transfer process works:
 
 - Reads your USDC balance using the `balanceOf` function.
@@ -247,7 +240,6 @@ Here's how the transfer process works:
 - Logs the transaction hash and a block explorer link so you can verify the
   transfer.
 </Accordion>
-</Note>
 
 ## Step 6: Run the script
 

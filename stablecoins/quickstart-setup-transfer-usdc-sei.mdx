@@ -137,8 +137,7 @@ const USDC_ABI = [
 ];
 ```
 
-<Note>
-<Accordion title="**Learn more:** Why use a minimal ABI?">
+<Accordion icon="circle-info" title="Learn more: Why use a minimal ABI?">
 This ABI includes only the two methods needed for this script:
 
 - `balanceOf(address)` to check the token balance.
@@ -150,7 +149,6 @@ This makes the ABI compact and easier to understand. Using a minimal ABI:
 - Speeds up onboarding for new developers.
 - Avoids unnecessary contract data that would be unused in this context.
 </Accordion>
-</Note>
 
 ### 2. Load environment variables and validate inputs
 
@@ -181,8 +179,7 @@ const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
   : "0x" + PRIVATE_KEY_RAW;
 ```
 
-<Note>
-<Accordion title="**Learn more:** Input validation and the 'fail fast' principle">
+<Accordion icon="circle-info" title="Learn more: Input validation and the 'fail fast' principle">
 Failing fast means catching mistakes early in the execution cycle. This script
 validates inputs to avoid:
 
@@ -196,7 +193,6 @@ These checks:
 - Help you debug configuration issues immediately.
 - Save time and reduce the risk of sending faulty transactions.
 </Accordion>
-</Note>
 
 ### 3. Set up Viem clients
 
@@ -225,8 +221,7 @@ const walletClient = createWalletClient({
 });
 ```
 
-<Note>
-<Accordion title="**Learn more:** When to use `publicClient` vs. `walletClient`">
+<Accordion icon="circle-info" title="Learn more: When to use `publicClient` vs. `walletClient`">
 - `publicClient` calls `eth_call` to read blockchain data. It doesn't need your
   private key.
   - Use this for functions like `balanceOf`, `symbol`, or `decimals`.
@@ -235,7 +230,6 @@ const walletClient = createWalletClient({
 
 Both clients use the same RPC connection but serve different roles.
 </Accordion>
-</Note>
 
 ### 4. Check balance and send USDC
 
@@ -297,8 +291,7 @@ Now add the logic to check your balance and send tokens:
 })();
 ```
 
-<Note>
-<Accordion title="**Learn more:** Handling USDC units with `formatUnits` and `parseUnits`">
+<Accordion icon="circle-info" title="Learn more: Handling USDC units with `formatUnits` and `parseUnits`">
 Token contracts use the smallest indivisible unit of a token. For USDC, that’s 6
 decimal places.
 
@@ -313,7 +306,6 @@ These utilities:
 - Ensure compatibility with ERC-20 functions.
 - Improve display formatting in logs and UI.
 </Accordion>
-</Note>
 
 ## Part 3: Run your script
 

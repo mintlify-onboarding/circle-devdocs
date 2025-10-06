@@ -91,15 +91,13 @@ const USDC_ABI = [
 ];
 ```
 
-<Note>
-<Accordion title="**Learn more:** Chain and contract configuration">
+<Accordion icon="circle-info" title="Learn more: Chain and contract configuration">
 - Imports required modules from Viem and your `.env` file.
 - Loads the HyperEVM testnet configuration.
 - Defines the USDC contract address, decimals, and minimal ABI.
 - Only includes the `balanceOf` and `transfer` functions, since they're all
   that's needed for this guide.
 </Accordion>
-</Note>
 
 ## Step 3: Load environment variables
 
@@ -124,14 +122,12 @@ const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
   : `0x${PRIVATE_KEY_RAW}`;
 ```
 
-<Note>
-<Accordion title="**Learn more:** Environment variables">
+<Accordion icon="circle-info" title="Learn more: Environment variables">
 - Loads values from the `.env` file so you don't hardcode sensitive information.
 - Checks that both the private key and recipient address are set.
 - Validates the recipient address format with a regex.
 - Ensures the private key is properly prefixed with `0x` so Viem can use it.
 </Accordion>
-</Note>
 
 ## Step 4: Initialize Viem clients
 
@@ -153,15 +149,13 @@ const walletClient = createWalletClient({
 });
 ```
 
-<Note>
-<Accordion title="**Learn more:** Viem clients">
+<Accordion icon="circle-info" title="Learn more: Viem clients">
 - `privateKeyToAccount` creates an account object from your private key.
 - `createPublicClient` is used for reading data from the blockchain (no private
   key needed).
 - `createWalletClient` uses your account to sign and send transactions.
 - Together, these clients give you read and write access to HyperEVM.
 </Accordion>
-</Note>
 
 ## Step 5: Transfer USDC
 
@@ -213,8 +207,7 @@ Now, write the main logic to check your balance and send a transfer:
 })();
 ```
 
-<Note>
-<Accordion title="**Learn more:** Transfer logic">
+<Accordion icon="circle-info" title="Learn more: Transfer logic">
 - Reads your USDC balance using the `balanceOf` function.
 - Converts the balance into a human-readable format with `formatUnits`.
 - Sets the transfer amount (1 USDC in this example).
@@ -224,7 +217,6 @@ Now, write the main logic to check your balance and send a transfer:
 - Logs the transaction hash and a block explorer link so you can verify the
   transfer.
 </Accordion>
-</Note>
 
 ## Step 6: Run the script
 
