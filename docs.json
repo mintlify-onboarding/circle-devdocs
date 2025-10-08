@@ -101,9 +101,7 @@
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": [
-                      "cpn/quickstarts/integrate-with-cpn-ofi"
-                    ]
+                    "pages": ["cpn/quickstarts/integrate-with-cpn-ofi"]
                   },
                   {
                     "group": "How-tos",
@@ -175,9 +173,7 @@
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": [
-                      "wallets/webhook-notifications"
-                    ]
+                    "pages": ["wallets/webhook-notifications"]
                   },
                   {
                     "group": "Tutorials",
@@ -208,9 +204,7 @@
                   "wallets/gas-station",
                   {
                     "group": "Quickstarts",
-                    "pages": [
-                      "wallets/gas-station/send-a-gasless-transaction"
-                    ]
+                    "pages": ["wallets/gas-station/send-a-gasless-transaction"]
                   },
                   {
                     "group": "References",
@@ -228,9 +222,7 @@
                   "wallets/compliance-engine",
                   {
                     "group": "Concepts",
-                    "pages": [
-                      "wallets/compliance-engine/tx-screening"
-                    ]
+                    "pages": ["wallets/compliance-engine/tx-screening"]
                   },
                   {
                     "group": "Quickstarts",
@@ -364,9 +356,7 @@
                   "contracts",
                   {
                     "group": "Concepts",
-                    "pages": [
-                      "contracts/scp-templates-overview"
-                    ]
+                    "pages": ["contracts/scp-templates-overview"]
                   },
                   {
                     "group": "Quickstarts",
@@ -395,10 +385,7 @@
                   "cctp",
                   {
                     "group": "Concepts",
-                    "pages": [
-                      "cctp/technical-guide",
-                      "cctp/cctp-faq"
-                    ]
+                    "pages": ["cctp/technical-guide", "cctp/cctp-faq"]
                   },
                   {
                     "group": "Quickstarts",
@@ -413,9 +400,7 @@
                       "cctp/evm-smart-contracts",
                       {
                         "group": "Non-EVM Contracts and Interfaces",
-                        "pages": [
-                          "cctp/solana-programs"
-                        ]
+                        "pages": ["cctp/solana-programs"]
                       },
                       "cctp/required-block-confirmations",
                       "api-reference/w3s/cctp/get-public-keys-v-2",
@@ -483,9 +468,7 @@
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": [
-                      "gateway/quickstarts/unified-balance"
-                    ]
+                    "pages": ["gateway/quickstarts/unified-balance"]
                   },
                   {
                     "group": "How-tos",
@@ -512,15 +495,11 @@
                   "paymaster",
                   {
                     "group": "Quickstarts",
-                    "pages": [
-                      "paymaster/pay-gas-fees-usdc"
-                    ]
+                    "pages": ["paymaster/pay-gas-fees-usdc"]
                   },
                   {
                     "group": "References",
-                    "pages": [
-                      "paymaster/addresses-and-events"
-                    ]
+                    "pages": ["paymaster/addresses-and-events"]
                   }
                 ]
               },
@@ -631,8 +610,578 @@
       },
       {
         "tab": "API Reference",
-        "pages": [
-          "api-reference"
+        "dropdowns": [
+          {
+            "dropdown": "API OVERVIEW",
+            "groups": [
+              {
+                "group": "API OVERVIEW",
+                "pages": [
+                  "api-reference",
+                  {
+                    "group": "Health",
+                    "pages": ["openapi/circle-apis.yaml GET /ping"]
+                  },
+                  {
+                    "group": "Webhook Subscriptions",
+                    "pages": [
+                      "openapi/configurations.yaml GET /v2/notifications/subscriptions",
+                      "openapi/configurations.yaml POST /v2/notifications/subscriptions",
+                      "openapi/configurations.yaml GET /v2/notifications/subscriptions/{id}",
+                      "openapi/configurations.yaml PATCH /v2/notifications/subscriptions/{id}",
+                      "openapi/configurations.yaml DELETE /v2/notifications/subscriptions/{id}",
+                      "openapi/configurations.yaml GET /v2/notifications/publicKey/{id}"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Wallets",
+            "groups": [
+              {
+                "group": "CONFIGURATIONS",
+                "pages": [
+                  {
+                    "group": "Monitor Tokens",
+                    "pages": [
+                      "openapi/configurations.yaml GET /v1/w3s/config/entity/monitoredTokens",
+                      "openapi/configurations.yaml POST /v1/w3s/config/entity/monitoredTokens",
+                      "openapi/configurations.yaml PUT /v1/w3s/config/entity/monitoredTokens",
+                      "openapi/configurations.yaml PUT /v1/w3s/config/entity/monitoredTokens/scope",
+                      "openapi/configurations.yaml POST /v1/w3s/config/entity/monitoredTokens/delete"
+                    ]
+                  },
+                  {
+                    "group": "Developer Account",
+                    "pages": [
+                      "openapi/configurations.yaml GET /v1/w3s/config/entity",
+                      "openapi/configurations.yaml GET /v1/w3s/config/entity/publicKey"
+                    ]
+                  },
+                  {
+                    "group": "Faucet",
+                    "pages": [
+                      "openapi/configurations.yaml POST /v1/faucet/drips"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "DEVELOPER-CONTROLLED WALLETS",
+                "pages": [
+                  {
+                    "group": "Wallet Sets",
+                    "pages": [
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/walletSets",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/walletSets/{id}",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/walletSets",
+                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/developer/walletSets/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Wallets",
+                    "pages": [
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/wallets",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}",
+                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/wallets/{id}",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/developer/wallets/balances",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/balances",
+                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/developer/wallets/{id}/blockchains/{blockchain}",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/nfts"
+                    ]
+                  },
+                  {
+                    "group": "Signing",
+                    "pages": [
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/message",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/typedData",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/transaction",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/delegateAction"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/transactions",
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/transactions/{id}",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/transfer",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/validateAddress",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/contractExecution/estimateFee",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/transfer/estimateFee",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/contractExecution",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/walletUpgrade",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/{id}/cancel",
+                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/{id}/accelerate"
+                    ]
+                  },
+                  {
+                    "group": "Token Lookup",
+                    "pages": [
+                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/tokens/{id}"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "MODULAR WALLETS",
+                "pages": [
+                  {
+                    "group": "Transfers",
+                    "pages": [
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/transfers",
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/transfers/{id}"
+                    ]
+                  },
+                  {
+                    "group": "UserOps",
+                    "pages": [
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/userOps",
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/userOps/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Wallets",
+                    "pages": [
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{id}/balances",
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{id}/nfts",
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{blockchain}/{address}/balances",
+                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{blockchain}/{address}/nfts"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "USER-CONTROLLED WALLETS",
+                "pages": [
+                  {
+                    "group": "Social/ Email Authentication",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/social/token",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/email/token",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/token/refresh",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/email/resendOTP"
+                    ]
+                  },
+                  {
+                    "group": "PIN Authentication",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/token",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/pin",
+                      "openapi/user-controlled-wallets.yaml PUT /v1/w3s/user/pin",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/pin/restore"
+                    ]
+                  },
+                  {
+                    "group": "Users",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/initialize",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/users",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/users/{id}",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user/challenges",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user/challenges/{id}",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user"
+                    ]
+                  },
+                  {
+                    "group": "Wallets",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/wallets",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/balances",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/nfts",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}",
+                      "openapi/user-controlled-wallets.yaml PUT /v1/w3s/wallets/{id}",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/transfer",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/{id}/accelerate",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/{id}/cancel",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/contractExecution",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/walletUpgrade",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/transactions",
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/transactions/{id}",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/transfer/estimateFee",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/contractExecution/estimateFee",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/validateAddress"
+                    ]
+                  },
+                  {
+                    "group": "Token Lookup",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/tokens/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Signing",
+                    "pages": [
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/message",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/typedData",
+                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/transaction"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "COMPLIANCE ENGINE",
+                "pages": [
+                  {
+                    "group": "Address Screening",
+                    "pages": [
+                      "openapi/compliance.yaml POST /v1/w3s/compliance/screening/addresses"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Contracts",
+            "groups": [
+              {
+                "group": "CIRCLE CONTRACTS",
+                "pages": [
+                  {
+                    "group": "Templates",
+                    "pages": [
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/templates/{id}/deploy/estimateFee",
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/templates/{id}/deploy"
+                    ]
+                  },
+                  {
+                    "group": "View / Update",
+                    "pages": [
+                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts",
+                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/{id}",
+                      "openapi/smart-contract-platform.yaml PATCH /v1/w3s/contracts/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Interact",
+                    "pages": [
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/query"
+                    ]
+                  },
+                  {
+                    "group": "Deploy / Import",
+                    "pages": [
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/import",
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/deploy/estimateFee",
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/deploy"
+                    ]
+                  },
+                  {
+                    "group": "Event Monitors",
+                    "pages": [
+                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/monitors",
+                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/monitors",
+                      "openapi/smart-contract-platform.yaml PUT /v1/w3s/contracts/monitors/{id}",
+                      "openapi/smart-contract-platform.yaml DELETE /v1/w3s/contracts/monitors/{id}",
+                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/events"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "CCTP",
+            "groups": [
+              {
+                "group": "Cross-Chain Transfer Protocol (CCTP)",
+                "pages": [
+                  {
+                    "group": "CCTP V1",
+                    "pages": [
+                      "openapi/cctp.yaml GET /v1/attestations/{messageHash}",
+                      "openapi/cctp.yaml GET /v1/publicKeys",
+                      "openapi/cctp.yaml GET /v1/messages/{sourceDomainId}/{transactionHash}"
+                    ]
+                  },
+                  {
+                    "group": "CCTP V2",
+                    "pages": [
+                      "openapi/cctp.yaml GET /v2/publicKeys",
+                      "openapi/cctp.yaml GET /v2/messages/{sourceDomainId}",
+                      "openapi/cctp.yaml POST /v2/reattest/{nonce}",
+                      "openapi/cctp.yaml GET /v2/fastBurn/USDC/allowance",
+                      "openapi/cctp.yaml GET /v2/burn/USDC/fees/{sourceDomainId}/{destDomainId}"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Gateway",
+            "groups": [
+              {
+                "group": "Circle Gateway",
+                "pages": [
+                  {
+                    "group": "Gateway",
+                    "pages": [
+                      "openapi/gateway.yaml POST /v1/balances",
+                      "openapi/gateway.yaml GET /v1/info",
+                      "openapi/gateway.yaml POST /v1/transfer"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Mint",
+            "groups": [
+              {
+                "group": "CORE FUNCTIONALITY",
+                "pages": [
+                  {
+                    "group": "Balances",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/balances"
+                    ]
+                  },
+                  {
+                    "group": "Payouts",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/payouts",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/payouts",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/payouts/{id}",
+                      "openapi/circle-apis.yaml GET /v1/fees/redemption/dailyReports"
+                    ]
+                  },
+                  {
+                    "group": "Wires",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/wires",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires/{id}",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires/{id}/instructions"
+                    ]
+                  },
+                  {
+                    "group": "CUBIX",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/cubix",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix/{id}",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix/{id}/instructions"
+                    ]
+                  },
+                  {
+                    "group": "PIX",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/pix",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix/{id}",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix/{id}/instructions"
+                    ]
+                  },
+                  {
+                    "group": "Transfers",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/transfers",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/transfers",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/transfers/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Addresses",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/wallets/addresses/deposit",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/wallets/addresses/deposit",
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/wallets/addresses/recipient",
+                      "openapi/circle-apis.yaml POST /v1/businessAccount/wallets/addresses/recipient",
+                      "openapi/circle-apis.yaml DELETE /v1/businessAccount/wallets/addresses/recipient/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Deposits",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/businessAccount/deposits"
+                    ]
+                  },
+                  {
+                    "group": "Payments",
+                    "pages": [
+                      "openapi/circle-apis.yaml POST /v1/mocks/payments/wire"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "API OVERVIEW",
+                "pages": [
+                  {
+                    "group": "Management",
+                    "pages": ["openapi/circle-apis.yaml GET /v1/configuration"]
+                  },
+                  {
+                    "group": "Subscriptions",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/notifications/subscriptions",
+                      "openapi/circle-apis.yaml POST /v1/notifications/subscriptions",
+                      "openapi/circle-apis.yaml DELETE /v1/notifications/subscriptions/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Stablecoins",
+                    "pages": ["openapi/circle-apis.yaml GET /v1/stablecoins"]
+                  }
+                ]
+              },
+              {
+                "group": "CRYPTO DEPOSITS API",
+                "pages": [
+                  {
+                    "group": "Payments",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/payments",
+                      "openapi/circle-apis.yaml GET /v1/payments/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Crypto Payments Intents",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/paymentIntents",
+                      "openapi/circle-apis.yaml POST /v1/paymentIntents",
+                      "openapi/circle-apis.yaml GET /v1/paymentIntents/{id}",
+                      "openapi/circle-apis.yaml POST /v1/paymentIntents/{id}/expire",
+                      "openapi/circle-apis.yaml POST /v1/paymentIntents/{id}/refund"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "CRYPTO PAYOUTS API",
+                "pages": [
+                  {
+                    "group": "Payouts",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/payouts",
+                      "openapi/circle-apis.yaml POST /v1/payouts",
+                      "openapi/circle-apis.yaml GET /v1/payouts/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Crypto Address Book",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/addressBook/recipients",
+                      "openapi/circle-apis.yaml POST /v1/addressBook/recipients",
+                      "openapi/circle-apis.yaml GET /v1/addressBook/recipients/{id}",
+                      "openapi/circle-apis.yaml PATCH /v1/addressBook/recipients/{id}",
+                      "openapi/circle-apis.yaml DELETE /v1/addressBook/recipients/{id}"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "CRYPTO-CURRENCY API",
+                "pages": [
+                  {
+                    "group": "Trades",
+                    "pages": [
+                      "openapi/circle-apis.yaml POST /v1/exchange/quotes",
+                      "openapi/circle-apis.yaml GET /v1/exchange/trades",
+                      "openapi/circle-apis.yaml POST /v1/exchange/trades",
+                      "openapi/circle-apis.yaml GET /v1/exchange/trades/{id}",
+                      "openapi/circle-apis.yaml PUT /v1/exchange/fxConfigs/accounts",
+                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"	
+                    ]
+                  },
+                  {
+                    "group": "Payments",
+                    "pages": [
+                      "openapi/circle-apis.yaml POST /v1/mocks/payments/pix"
+                    ]
+                  },
+                  {
+                    "group": "Settlements",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements",
+                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/{id}",
+                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/instructions/{currency}"
+                    ]
+                  }
+                ] 
+              },
+              {
+                "group": "RESERVE MANAGEMENT API",
+                "pages": [
+                  {
+                    "group": "Reserve Management",
+                    "pages": [
+                      "openapi/circle-apis.yaml POST /v2/reserveManagement/dailyCustodyBalances"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Circle Payments Network",
+            "groups": [
+              {
+                "group": "CPN OFI",
+                "pages": [
+                  {
+                    "group": "Configurations",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/configurations/overview",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/configurations/routes"
+                    ]
+                  },
+                  {
+                    "group": "Quotes",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/quotes",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/quotes/{quoteId}"
+                    ]
+                  },
+                  {
+                    "group": "Payments",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments",
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/requirements",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/refunds/{refundId}"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions",
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/transactions/{transactionId}",
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions/{transactionId}/submit",
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions/accelerate"
+                    ]
+                  },
+                  {
+                    "group": "Requests for information",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/rfis/{rfiId}",
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/submit",
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/files"
+                    ]
+                  },
+                  {
+                    "group": "Support Tickets",
+                    "pages": [
+                      "openapi/cpn-ofi.yaml POST /v1/cpn/supportTickets"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       {
@@ -640,11 +1189,7 @@
         "groups": [
           {
             "group": "Resources",
-            "pages": [
-              "sdk-explorer",
-              "sdks",
-              "sample-projects"
-            ]
+            "pages": ["sdk-explorer", "sdks", "sample-projects"]
           }
         ]
       },
@@ -724,11 +1269,6 @@
     }
   },
   "contextual": {
-    "options": [
-      "copy",
-      "chatgpt",
-      "claude",
-      "view"
-    ]
+    "options": ["copy", "chatgpt", "claude", "view"]
   }
 }
