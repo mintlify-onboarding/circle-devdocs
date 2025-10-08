@@ -613,6 +613,7 @@
         "dropdowns": [
           {
             "dropdown": "API OVERVIEW",
+            "icon": "magnifying-glass",
             "groups": [
               {
                 "group": "API OVERVIEW",
@@ -639,6 +640,7 @@
           },
           {
             "dropdown": "Wallets",
+            "icon": "wallet",
             "groups": [
               {
                 "group": "CONFIGURATIONS",
@@ -843,6 +845,7 @@
           },
           {
             "dropdown": "Contracts",
+            "icon": "file-contract",
             "groups": [
               {
                 "group": "CIRCLE CONTRACTS",
@@ -892,6 +895,7 @@
           },
           {
             "dropdown": "CCTP",
+            "icon": "right-left",
             "groups": [
               {
                 "group": "Cross-Chain Transfer Protocol (CCTP)",
@@ -920,6 +924,7 @@
           },
           {
             "dropdown": "Gateway",
+            "icon": "torii-gate",
             "groups": [
               {
                 "group": "Circle Gateway",
@@ -938,6 +943,7 @@
           },
           {
             "dropdown": "Mint",
+            "icon": "mintbit",
             "groups": [
               {
                 "group": "CORE FUNCTIONALITY",
@@ -1127,6 +1133,7 @@
           },
           {
             "dropdown": "Circle Payments Network",
+            "icon": "chart-network",
             "groups": [
               {
                 "group": "CPN OFI",
