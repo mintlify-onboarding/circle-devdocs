@@ -1,0 +1,40 @@
+export const FeatureGrid = ({ children, cols = 2, backgroundColor = '#f1f8ff' }) => {
+  const columns = cols === 1 ? 1 : 2
+
+  return (
+    <div className="feature-grid-container" style={{ backgroundColor }}>
+      <div
+        className="feature-grid"
+        data-cols={columns}
+        style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export const FeatureItem = ({ title, icon, iconColor = '#1061a6', children, iconSize = 20, iconType = 'regular', href }) => {
+  const titleContent = href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {title}
+      <Icon icon="arrow-up-right-from-square" size={12} className="feature-link-icon" />
+    </a>
+  ) : (
+    title
+  )
+
+  return (
+    <div className="feature-item">
+      <div className={`feature-icon`}>
+        <Icon icon={icon} size={iconSize} color={iconColor} iconType={iconType} />
+      </div>
+      <div className="feature-content">
+        <h3 className="feature-title">{titleContent}</h3>
+        <div className="feature-description">
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}

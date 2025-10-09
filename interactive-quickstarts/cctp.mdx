@@ -7,45 +7,1064 @@ documentationItems:
 href: https://developers.circle.com/cctp?_gl=1*14dxsxh*_gcl_au*MTE0MTM3NDQ5NC4xNzEwMzM0MDU0*_ga*MTI2NTAzNzIyMy4xNzEwMzM0MDU0*_ga_GJDVPCQNRV*MTcxMDMzNDA1NC4xLjEuMTcxMDMzNDA4NC4zMC4wLjA.
 ---
 
-import Introduction from "./introduction/index.mdx";
-import Prerequisites from "./prerequisites.mdx";
-import BurnUSDC from "./burn-usdc/index.mdx";
-import ApproveBurn from "./approve-burn.mdx";
-import MintUSDC from "./mint-usdc.mdx";
-import NextSteps from "./next-steps.mdx";
+import { FeatureGrid, FeatureItem } from '/snippets/FeatureGrid.mdx';
 
-<Section>
-  ## Introduction
+## Introduction
 
-  <Introduction />
-</Section>
+Circle's Cross-Chain Transfer Protocol (CCTP) facilitates the transfer of USDC
+between distinct blockchains, providing a more streamlined experience. By
+integrating CCTP with Circle Wallets in your applications, you enable seamless
+USDC transactions across multiple chains. This reduces the need for users to
+manage separate wallets for different blockchains, potentially broadening your
+audience and providing increased liquidity and adaptability. It's designed to
+provide users with a cohesive and efficient digital currency experience.
 
-<Section>
-  ## Prerequisites
+<FeatureGrid cols={2}>
+  <FeatureItem title="Leverage Blockchain-Specific Attributes" icon="bolt" iconType="solid">
+    Use blockchain-specific characteristics to optimize your user experience.
+    For instance, by bridging your ETH from Ethereum Mainnet to an Ethereum
+    Layer 2 rollup, such as Polygon, you gain access to lower transaction fees
+    while still enjoying the benefits of USDC.
+  </FeatureItem>
+  <FeatureItem title="Cross-Chain Swaps" icon="arrow-right-arrow-left">
+    Enable cross-chain swaps, allowing users to exchange digital assets that
+    reside on different chains. For example, users can swap AVAX for USDC on
+    Avalanche, route it to Polygon Mainnet, and further swap it for MATIC
+    token, expanding liquidity across multiple chains.
+  </FeatureItem>
+  <FeatureItem title="Cross-Chain Purchases" icon="circle-dollar">
+    Facilitate cross-chain purchases with minimal effort. Users can utilize
+    USDC on Avalanche to buy an NFT on Uniswap on Ethereum, then list it for
+    sale on OpenSea. CCTP effortlessly routes the USDC from Avalanche to
+    Ethereum for the purchase.
+  </FeatureItem>
+  <FeatureItem title="Solve Fragmented Liquidity" icon="cube">
+    Remove liquidity fragmentation barriers. If a user needs to send USDC to
+    an address on Avalanche but only holds USDC on Ethereum, the solution
+    becomes seamless. By bridging the USDC from Ethereum to Avalanche through
+    CCTP, users can transact across different blockchains.
+  </FeatureItem>
+</FeatureGrid>
 
-  <Prerequisites />
-</Section>
+### Outcomes of this Interactive Quickstart Guide
 
-<Section>
-  ## Burn USDC
+By the conclusion of this interactive guide, you will learn how to facilitate a
+transfer of USDC across blockchains using a Circle Wallet. Specifically, the
+guide will demonstrate a scenario wherein a user conducts a USDC transfer
+leveraging the Cross-Chain Transfer Protocol, CCTP V1. You will follow
+step-by-step instructions to create and execute a USDC transfer from Sepolia, an
+Ethereum testnet, to Mumbai, the Polygon Testnet, via a Circle Wallet. This
+practical walkthrough is designed to equip you with the knowledge to implement
+CCTP V1 in your own applications.
 
-  <BurnUSDC />
-</Section>
+**Completing a Cross-Blockchain Transfer: Step-By-Step Process**
 
-<Section>
-  ## Approve Burn
+<Steps>
+  <Step title="Approve USDC Contract to Initiate Transfers">
+    To utilize CCTP V1 effectively, it's necessary to authorize the USDC
+    contract to conduct transfers on a user's behalf. In this guide, we approve
+    only a small amount of USDC for demonstration. However, for operational
+    efficiency, you might want to approve a larger amount to minimize the
+    frequency of this action in a production environment.
+  </Step>
+  <Step title="Initiate the Burning of USDC">
+    Following the user's request to move USDC from Ethereum to Polygon,
+    leverage the provided tools to initiate burning the specified amount of
+    USDC from the Ethereum wallet created for this transaction.
+    <Frame>
 
-  <ApproveBurn />
-</Section>
+    <img
+      src="/interactive-quickstarts/cctp/introduction/images/burn-usdc.png"
+      alt="Burn USDC"
+    />
+    </Frame>
+  </Step>
+  <Step title="Obtain Circle's Attestation">
+    Circle monitors the burn event on the Ethereum blockchain and issues an
+    attestation. Retrieve this attestation using the relevant procedures,
+    which serves as the authorization required to mint the corresponding
+    USDC amount on the Polygon blockchain.
 
-<Section>
-  ## Mint USDC
+    <Frame>
+    <img
+      src="/interactive-quickstarts/cctp/introduction/images/fetch-attestation.png"
+      alt="Fetch Attestation"
+    />
+    </Frame>
+  </Step>
+  <Step title="Trigger USDC Minting">
+    Utilize the retrieved attestation to start the minting process. The
+    attestation confirms the amount of USDC to mint on the Polygon
+    blockchain, and the amount to allocate to the specified Polygon wallet.
 
-  <MintUSDC />
-</Section>
+    <Frame>
+    <img
+      src="/interactive-quickstarts/cctp/introduction/images/mint-usdc.png"
+      alt="Mint USDC"
+    />
+    </Frame>
+  </Step>
+</Steps>
 
-<Section>
-  ## Congratulations on your Progress!
+### Understanding Smart Contracts
 
-  <NextSteps />
-</Section>
+Smart contracts are computer protocols that automate the execution of
+agreements, operating under a set of predefined conditions. Once deployed onto a
+blockchain, they follow an "if-then" logic to perform actions automatically when
+specific conditions are met. The immutable nature of blockchain ensures that the
+smart contract code cannot be changed once established, which reinforces their
+reliability as they always execute exactly as programmed. A smart contract
+typically consists of code that defines its operations, a data storage area,
+memory, and a unique public address that can be interacted with through its
+functions. For a comprehensive exploration of smart contracts, you are
+encouraged to read further on the dedicated [resource](https://ethereum.org/en/developers/docs/smart-contracts/).
+
+### Exploring CCTP
+
+CCTP serves as an integral tool in blockchain infrastructure to guarantee the
+secure and seamless transfer of USDC across various blockchain networks. By
+adopting CCTP, users can benefit from a protected and efficient means of
+transferring USDC between [supported chains](/cctp/cctp-supported-blockchains).
+To learn more about CCTP, see the [CCTP Overview](/cctp) in the Circle Developer
+Documentation.
+
+To get started,
+[create a Circle Developer Services account](https://console.circle.com/signup)
+in the console.
+
+---
+
+## Prerequisites
+
+Before you get started, ensure that you have:
+
+- Have a
+  [Developer Services account](/get-started#create-a-developer-services-account)
+- Created your [API key](/get-started#create-your-api-key)
+- Created a
+  [Developer-Controlled Wallet](/dev-controlled-wallets#create-a-wallet)
+
+
+---
+
+
+## Burn USDC
+In the process of transferring USDC from Ethereum to Polygon, you need to give
+the TokenMessenger contract the necessary permissions to execute the USDC
+transfer on your behalf. In essence, you're empowering the TokenMessenger
+contract to access and transfer the specified amount of USDC from your source
+wallet.
+
+For this, we use the Wallets contract execution API:
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>contractAddress</strong></td>
+      <td>You interact with the USDC contract on the source chain, so the <code>contractAddress</code> parameter of the request is <strong>0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238</strong>.</td>
+    </tr>
+    <tr>
+      <td><strong>abiFunctionSignature</strong></td>
+      <td>
+        The function called on the USDC contract is <strong>approve(address spender, uint256 value)</strong>. Calling approve allows the <code>spender</code> to spend <code>value</code> USDC on your behalf. This is necessary in the <code>depositForBurn</code> step later on.
+        <br/><br/>
+        <strong>value</strong> is denominated in the smallest unit of USDC, which is a millionth of a dollar.
+        <br/><br/>
+        In this case it's <code>approve(address,uint256)</code>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>abiParameters</strong></td>
+      <td>
+        In this case, <code>address</code> is the TokenMessenger contract's <code>address</code> and value is 100000000 (100 USDC).
+        <br/><br/>
+        In this case it's <code>["0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5", 100000000]</code>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>walletId</strong></td>
+      <td>The wallet that performs the contract execution. This is the ID of the developer-controlled wallet you created earlier.</td>
+    </tr>
+    <tr>
+      <td><strong>feeLevel</strong></td>
+      <td>A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. <strong>HIGH</strong> is used for this transaction.</td>
+    </tr>
+    <tr>
+      <td><strong>idempotencyKey</strong></td>
+      <td>Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.</td>
+    </tr>
+    <tr>
+      <td><strong>entitySecretCiphertext</strong></td>
+      <td>A base64 string expression of the entity secret ciphertext. Refer to <a href="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9">this helpful tool</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+{/* TODO: Add playground */}
+## ⚠️ Approve USDC Sepolia from source wallet
+### ⚠️ ADD CODE SNIPPET HERE
+
+The second step of the process facilitates a burn of the specified amount of
+USDC on Ethereum Sepolia (the source chain) that you are looking to move to
+Polygon Mumbai (the destination chain).
+
+<Note>
+  **Mint** and **Burn** are the terms used to refer to the creation and removal
+  of a token from a blockchain network. During the CCTP V1 transfer, tokens on
+  one blockchain are burnt, removing them from the total supply, before new
+  tokens are minted on the destination blockchain - effectively moving USDC
+  across chains.
+</Note>
+
+To do this, you again use the Wallets contract execution API:
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>contractAddress</strong></td>
+      <td>You interact with the Token Messenger contract on the source chain, so the <code>contractAddress</code> parameter of the request is <code>0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>abiFunctionSignature</strong></td>
+      <td>
+        The function being called on the TokenMessenger contract is: <code>depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)</code>
+        <br/><br/>
+        This will be the abiFunctionSignature property of the request. In this case it's <strong>depositForBurn(uint256,uint32,bytes32,address)</strong>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>abiParameters</strong></td>
+      <td>
+        The abiParameters property defines the values to pass to the function. For the call to depositForBurn, they are amount, destinationDomain, mintRecipient and burnToken.
+        <br/><br/>
+        <ul>
+          <li><strong>amount</strong>: the amount of USDC to burn. This amount will be created on the destination chain after the mint. You will burn 1 USDC of the allowance you approved earlier.</li>
+          <li><strong>destinationDomain</strong>: a Circle-issued identifier for a network/chain where CCTP V1 contracts are deployed. Since the destination is Polygon, you will use 7. See <a href="/cctp/v1/supported-domains">CCTP V1 Domain List</a>.</li>
+          <li><strong>mintRecipient</strong>: this is the destination address, encoded to a Solidity address representation. This will be the same address as the source wallet. In your application, you will need to encode the destination address to the correct format using a library like web3js - but we have done it for you here.</li>
+          <li><strong>burnToken</strong>: the contract address of the token that is being burnt. In this case, it is the USDC contract on the source chain.</li>
+        </ul>
+        <br/>
+```js JavaScript
+const encodedDestinationAddress = web3.eth.abi.encodeParameter(
+  "address",
+  destinationAddress,
+);
+```
+        <br/>
+        Therefore, the complete abiParameters value is <strong>[1000000, 7, {encodedDestinationAddress}, "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"]</strong>.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>walletId</strong></td>
+      <td>The wallet that is performing the contract execution. This will be the ID of the developer-controlled wallet you created earlier.</td>
+    </tr>
+    <tr>
+      <td><strong>feeLevel</strong></td>
+      <td>A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. <strong>HIGH</strong> is used for this transaction.</td>
+    </tr>
+    <tr>
+      <td><strong>idempotencyKey</strong></td>
+      <td>Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.</td>
+    </tr>
+    <tr>
+      <td><strong>entitySecretCiphertext</strong></td>
+      <td>A base64 string expression of the entity secret ciphertext. Refer to <a href="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9">this helpful tool</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Just like your first contract execution request, the other parameters -
+`walletId`, `feeLevel`, `idempotencyKey`, and `EntitySecretCiphertext` - were
+automatically populated in the request.
+
+{/* TODO: Add playground */}
+## ⚠️ Deposit for Burn on Ethereum
+### ⚠️ ADD CODE SNIPPET HERE
+
+
+### Validating the Burn of 1 USDC in your Developer Console
+
+After initiating the burn of USDC through our API, you can check whether it was
+successful in our Developer Console.
+
+<Steps>
+  <Step title="Login to the Developer Services Console">
+    To begin the process of validating your burn of USDC, log in to the Web3
+    Services Console.
+  </Step>
+  <Step title="Navigate to the List of Wallets">
+    Within the console, locate the **Wallets** page under **Dev Controlled
+    Wallet**. This page displays all of the wallets you created thus far. Open
+    the [Wallets page](https://console.circle.com/wallets/dev/transactions).
+  </Step>
+  <Step title="Open the Wallet Details Screen">
+    Find and click on the Ethereum Sepolia wallet from which you initiated the
+    USDC burn.
+  </Step>
+  <Step title="View Your Wallet Balance">
+    On the wallet details screen, scroll down to the bottom to find the section
+    displaying your wallet balances. As you successfully created your Sepolia
+    Wallet, an initial deposit of 10 USDC was made. If you have successfully
+    burned 1 USDC, the total wallet balance should now reflect 9 USDC,
+    indicating the accurate deduction of the burned amount.
+
+    <Frame>
+    <img
+      src="/interactive-quickstarts/cctp/burn-usdc/images/successful-burn.png"
+      alt="Successful Burn Image"
+    />
+    </Frame>
+  </Step>
+</Steps>
+
+By following these step-by-step instructions and reviewing your wallet balance
+in the Developer Services Console, you can confidently validate the burn of your
+USDC tokens and verify the correct adjustment in your wallet's overall balance.
+
+
+
+
+## Approve Burn
+
+As a result of interacting with the TokenMessenger contract, Circle generates a
+unique ID for the transaction. Starting with the returned transaction ID, you
+call Circle's Attestation service to fetch an attestation that the burn took
+place. This attestation proves that the USDC was removed from circulation on the
+source chain.
+
+<Note>
+  The transactionId returned is a unique transaction ID generated by Circle. It
+  is distinct from the unique identifier that is used to track the transaction
+  on the blockchain - known as the transaction hash.
+</Note>
+
+The attestation is used on the destination chain to mint new USDC. You can make
+API calls to get the transaction's `transactionHash`, retrieve the logs of the
+`depositForBurn` transaction, and use Circle's Attestation API to fetch the
+attestation signature. The steps have been broken down for you here, but you can
+use the following "Try It Out" component to run all of these steps together.
+
+<Steps>
+  <Step title="Fetching the Deposit Transaction Object from the Wallets API">
+    Call the Wallets API to fetch the transaction object for the `depositForBurn` transaction. Make a GET request using the provided code and the transaction ID. Retrieve the transaction object from the response data.
+    <Tabs>
+      <Tab title="SDK">
+      <CodeGroup>
+      ```javascript NodeJS
+        // Import & Initialize
+        import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
+        const client = initiateDeveloperControlledWalletsClient({
+          apiKey: '<API_KEY>',
+          entitySecret: '<ENTITY_SECRET>'
+        });
+
+        const response = await client.getTransaction({
+          id: '<transaction-id>'
+        });
+      ```
+      ```python Python
+        from circle.web3 import developer_controlled_wallets
+        from circle.web3 import utils
+
+        client = utils.init_developer_controlled_wallets_client(api_key="<your-api-key>", entity_secret="<your-entity-secret>")
+        api_instance = developer_controlled_wallets.TransactionsApi(client)
+        response = api_instance.get_transaction(id='<TRANSACTION_ID>')
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Go">
+      <CodeGroup>
+      ```go Go
+        package main
+
+        import (
+          "fmt"
+          "net/http"
+          "io"
+        )
+
+        func main() {
+
+          url := "https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__"
+
+          req, _ := http.NewRequest("GET", url, nil)
+
+          req.Header.Add("Content-Type", "application/json")
+          req.Header.Add("Authorization", "Bearer <YOUR_API_KEY>")
+
+          res, _ := http.DefaultClient.Do(req)
+
+          defer res.Body.Close()
+          body, _ := io.ReadAll(res.Body)
+
+          fmt.Println(string(body))
+
+        }
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="NodeJS">
+      <CodeGroup>
+      ```javascript fetch
+        const fetch = require('node-fetch');
+
+        const url = 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__';
+        const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json', Authorization: 'Bearer <YOUR_API_KEY>'}
+        };
+
+        fetch(url, options)
+          .then(res => res.json())
+          .then(json => console.log(json))
+          .catch(err => console.error('error:' + err));
+      ```
+
+      ```javascript axios
+        const axios = require('axios');
+
+        const options = {
+          method: 'GET',
+          url: 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__',
+          headers: {'Content-Type': 'application/json', Authorization: 'Bearer <YOUR_API_KEY>'}
+        };
+
+        axios
+          .request(options)
+          .then(function (response) {
+            console.log(response.data);
+          })
+          .catch(function (error) {
+            console.error(error);
+          });
+      ```
+
+      ```java native
+        const http = require('https');
+
+        const options = {
+          method: 'GET',
+          hostname: 'api.circle.com',
+          port: null,
+          path: '/v1/w3s/transactions/__TRANSACTION_ID__',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer <YOUR_API_KEY>'
+          }
+        };
+
+        const req = http.request(options, function (res) {
+          const chunks = [];
+
+          res.on('data', function (chunk) {
+            chunks.push(chunk);
+          });
+
+          res.on('end', function () {
+            const body = Buffer.concat(chunks);
+            console.log(body.toString());
+          });
+        });
+
+        req.end();
+      ```
+
+      ```javascript request
+        const request = require('request');
+
+        const options = {
+          method: 'GET',
+          url: 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__',
+          headers: {'Content-Type': 'application/json', Authorization: 'Bearer <YOUR_API_KEY>'}
+        };
+
+        request(options, function (error, response, body) {
+          if (error) throw new Error(error);
+
+          console.log(body);
+        });
+      ```
+
+      ```javascript unirest
+        const unirest = require('unirest');
+
+        const req = unirest('GET', 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__');
+
+        req.headers({
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer <YOUR_API_KEY>'
+        });
+
+        req.end(function (res) {
+          if (res.error) throw new Error(res.error);
+
+          console.log(res.body);
+        });
+      ```
+
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Java">
+      <CodeGroup>
+      ```java asynchttp
+        AsyncHttpClient client = new DefaultAsyncHttpClient();
+        client.prepare("GET", "https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")
+          .setHeader("Content-Type", "application/json")
+          .setHeader("Authorization", "Bearer <YOUR_API_KEY>")
+          .execute()
+          .toCompletableFuture()
+          .thenAccept(System.out::println)
+          .join();
+
+        client.close();
+      ```
+
+      ```java nethttp
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__"))
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer <YOUR_API_KEY>")
+            .method("GET", HttpRequest.BodyPublishers.noBody())
+            .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+      ```
+
+      ```java okhttp
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+          .url("https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")
+          .get()
+          .addHeader("Content-Type", "application/json")
+          .addHeader("Authorization", "Bearer <YOUR_API_KEY>")
+          .build();
+
+        Response response = client.newCall(request).execute();
+      ```
+
+      ```java unirest
+        HttpResponse<String> response = Unirest.get("https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer <YOUR_API_KEY>")
+          .asString();
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="JavaScript">
+      <CodeGroup>
+      ```javascript axios
+        import axios from 'axios';
+
+        const options = {
+          method: 'GET',
+          url: 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__',
+          headers: {'Content-Type': 'application/json', Authorization: 'Bearer <YOUR_API_KEY>'}
+        };
+
+        axios
+          .request(options)
+          .then(function (response) {
+            console.log(response.data);
+          })
+          .catch(function (error) {
+            console.error(error);
+          });
+      ```
+
+      ```javascript fetch
+        const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json', Authorization: 'Bearer <YOUR_API_KEY>'}
+        };
+
+        fetch('https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__', options)
+          .then(response => response.json())
+          .then(response => console.log(response))
+          .catch(err => console.error(err));
+      ```
+
+      ```javascript jquery
+        const settings = {
+          async: true,
+          crossDomain: true,
+          url: 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__',
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer <YOUR_API_KEY>'
+          },
+          processData: false,
+          data: undefined
+        };
+
+        $.ajax(settings).done(function (response) {
+          console.log(response);
+        });
+      ```
+
+      ```javascript xhr
+        const data = JSON.stringify(undefined);
+
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener('readystatechange', function () {
+          if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+          }
+        });
+
+        xhr.open('GET', 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer <YOUR_API_KEY>');
+
+        xhr.send(data);
+      ```
+
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Kotlin">
+      <CodeGroup>
+      ```kotlin Kotlin
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+          .url("https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")
+          .get()
+          .addHeader("Content-Type", "application/json")
+          .addHeader("Authorization", "Bearer <YOUR_API_KEY>")
+          .build()
+
+        val response = client.newCall(request).execute()
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="PHP">
+      <CodeGroup>
+      ```curl curl
+        <?php
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+          CURLOPT_URL => "https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer <YOUR_API_KEY>",
+            "Content-Type: application/json"
+          ],
+        ]);
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+          echo "cURL Error #:" . $err;
+        } else {
+          echo $response;
+        }
+      ```
+
+      ```php guzzle
+        <?php
+        require_once('vendor/autoload.php');
+
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->request('GET', 'https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__', [
+          'headers' => [
+            'Authorization' => 'Bearer <YOUR_API_KEY>',
+            'Content-Type' => 'application/json',
+          ],
+        ]);
+
+        echo $response->getBody();
+      ```
+
+      ```python http1
+        <?php
+
+        $request = new HttpRequest();
+        $request->setUrl('https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__');
+        $request->setMethod(HTTP_METH_GET);
+
+        $request->setHeaders([
+          'Content-Type' => 'application/json',
+          'Authorization' => 'Bearer <YOUR_API_KEY>'
+        ]);
+
+        $request->setContentType('application/json');
+        $request->setBody(json_encode(null));
+
+        try {
+          $response = $request->send();
+
+          echo $response->getBody();
+        } catch (HttpException $ex) {
+          echo $ex;
+        }
+      ```
+      ```python http2
+        <?php
+
+        $client = new http\Client;
+        $request = new http\Client\Request;
+
+        $body = new http\Message\Body;
+        $body->append(json_encode(null));
+        $request->setRequestUrl('https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__');
+        $request->setRequestMethod('GET');
+        $request->setBody($body);
+
+        $request->setHeaders([
+          'Content-Type' => 'application/json',
+          'Authorization' => 'Bearer <YOUR_API_KEY>'
+        ]);
+
+        $client->enqueue($request)->send();
+        $response = $client->getResponse();
+
+        echo $response->getBody();
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Python">
+      <CodeGroup>
+      ```python Python
+        import requests
+
+        url = "https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__"
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer <YOUR_API_KEY>"
+        }
+
+        response = requests.get(url, headers=headers)
+
+        print(response.text)
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Ruby">
+      <CodeGroup>
+      ```ruby Ruby
+        require 'uri'
+        require 'net/http'
+
+        url = URI("https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")
+
+        http = Net::HTTP.new(url.host, url.port)
+        http.use_ssl = true
+
+        request = Net::HTTP::Get.new(url)
+        request["Content-Type"] = 'application/json'
+        request["Authorization"] = 'Bearer <YOUR_API_KEY>'
+
+        response = http.request(request)
+        puts response.read_body
+      ```
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Shell">
+      <CodeGroup>
+      ```bash curl
+        curl --request GET \
+          --url https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__ \
+          --header 'Authorization: Bearer <YOUR_API_KEY>' \
+          --header 'Content-Type: application/json'
+      ```
+
+      ```bash httpie
+        http GET https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__ \
+          Authorization:'Bearer <YOUR_API_KEY>' \
+          Content-Type:application/json
+      ```
+
+      ```bash wget
+        wget --quiet \
+          --method GET \
+          --header 'Content-Type: application/json' \
+          --header 'Authorization: Bearer <YOUR_API_KEY>' \
+          --output-document \
+          - https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__
+      ```
+
+      </CodeGroup>
+      </Tab>
+
+      <Tab title="Swift">
+      <CodeGroup>
+      ```swift Swift
+        import Foundation
+
+        let headers = [
+          "Content-Type": "application/json",
+          "Authorization": "Bearer <YOUR_API_KEY>"
+        ]
+
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.circle.com/v1/w3s/transactions/__TRANSACTION_ID__")! as URL,
+                                                cachePolicy: .useProtocolCachePolicy,
+                                            timeoutInterval: 10.0)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+          if (error != nil) {
+            print(error as Any)
+          } else {
+            let httpResponse = response as? HTTPURLResponse
+            print(httpResponse)
+          }
+        })
+
+        dataTask.resume()
+      ```
+      </CodeGroup>
+      </Tab>
+
+    </Tabs>
+  </Step>
+  <Step title="Decoding and Creating messageBytes and messageHash with a Web3 Library">
+    Using a Web3 library like [web3](https://www.npmjs.com/package/web3) or [ethers](https://www.npmjs.com/package/ethers), decode and create `messageBytes` and `messageHash` from the transaction object's `txHash`. Follow the provided code snippet to extract the relevant information.
+
+    ```js JavaScript
+    // get messageBytes from EVM logs using txHash of the transaction.
+    const transactionReceipt = await web3.eth.getTransactionReceipt(
+    transaction.txHash,
+    )
+    const eventTopic = web3.utils.keccak256('MessageSent(bytes)')
+    const log = transactionReceipt.logs.find((l) => l.topics[0] === eventTopic)
+    const messageBytes = web3.eth.abi.decodeParameters(['bytes'], log.data)[0]
+    const messageHash = web3.utils.keccak256(messageBytes)
+    ```
+  </Step>
+  <Step title="Fetch Attestation Signature from Circle's Iris API">
+    Retrieve the attestation signature from Circle's Iris API using the `messageHash` obtained in the previous step. Use the provided code inside a loop to query the API until the attestation status is "complete". Access the attestation signature from the response.
+
+    ```js JavaScript
+    // Get attestation signature from iris-api.circle.com
+    let attestationResponse = { status: 'pending' }
+    while (attestationResponse.status != 'complete') {
+      const response = await fetch(
+        `https://iris-api-sandbox.circle.com/attestations/${messageHash}`,
+      )
+      attestationResponse = await response.json()
+      await new Promise((r) => setTimeout(r, 2000))
+    }
+    ```
+
+    <Warning>
+      The attestation service is rate-limited. Please limit your requests to less
+      than 10 per second.
+    </Warning>
+  </Step>
+</Steps>
+
+<Note>
+  Message hash refers to the cryptographic value that represents the specific
+  message related to the USDC burn transaction. It serves as a fingerprint of
+  the transaction and helps ensure its integrity and authenticity. The message
+  hash plays a crucial role in verifying and validating the burn transaction on
+  the source blockchain, allowing participants to track and confirm the
+  successful burning of tokens. As a developer, you will need to generate the
+  message hash using the Keccak-256 hash of the bytes emitted by the
+  `MessageSent` event, as shown previously.
+</Note>
+
+{/* TODO: Add playground */}
+## ⚠️ Fetch Attestation
+### ⚠️ ADD CODE SNIPPET HERE
+
+
+## Mint USDC
+
+
+To mint USDC on the destination blockchain, we're using the `messageBytes` from
+the `depositForBurn` event and the attestation signature
+(`attestationResponse.attestation`). We're fetching both from Circle's
+attestation services and calling the `receiveMessage` function on the Message
+Transmitter contract in the destination blockchain network.
+
+Using the Wallets smart contract execution API:
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>contractAddress</strong></td>
+      <td>You interact with the Message Transmitter contract on the destination chain, so the <code>contractAddress</code> parameter of the request is <strong>0x7865fAfC2db2093669d92c0F33AeEF291086BEFD</strong></td>
+    </tr>
+    <tr>
+      <td><strong>abiFunctionSignature</strong></td>
+      <td>
+        The function being called on the Message Transmitter contract is: <code>receiveMessage(bytes message, ,bytes attestation)</code>
+        <br/><br/>
+        This is the <code>abiFunctionSignature</code> property of the request <strong>receiveMessage(bytes,bytes)</strong>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>abiParameters</strong></td>
+      <td>
+        For the call to receiveMessage, the abiParameters are
+        <ul>
+          <li><strong>message</strong>: the bytes emitted by MessageSent event from the depositForBurn transaction logs. This is messageBytes from the attestation steps earlier.</li>
+          <li><strong>Attestation</strong>: The signature from Circle's attestation service. This is attestationResponse.attestation from earlier.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>walletId</strong></td>
+      <td>The wallet that is performing the contract execution. This will be the ID of the developer-controlled wallet you created earlier.</td>
+    </tr>
+    <tr>
+      <td><strong>feeLevel</strong></td>
+      <td>A dynamic blockchain fee level setting (LOW, MEDIUM, or HIGH) that will be used to pay gas for the transaction. <strong>HIGH</strong> is used for this transaction.</td>
+    </tr>
+    <tr>
+      <td><strong>idempotencyKey</strong></td>
+      <td>Universally unique identifier (UUID v4) idempotency key. This is automatically generated for you.</td>
+    </tr>
+    <tr>
+      <td><strong>entitySecretCiphertext</strong></td>
+      <td>A base64 string expression of the entity secret ciphertext. Refer to <a href="https://codesandbox.io/p/sandbox/generate-entity-secret-ciphertext-fzcyc9">this helpful tool</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Once the message has been received, the specified amount of USDC is minted at
+the recipient's address on the destination blockchain.
+
+{/* TODO: Add playground */}
+## ⚠️ Mint on Polygon
+### ⚠️ ADD CODE SNIPPET HERE
+
+
+This returns a `transactionId` after you submit the `receiveMessage` request.
+You can use this `transactionId` to look up the status and details of the final
+transaction.
+
+{/* TODO: Add playground */}
+## ⚠️ Check transaction
+### ⚠️ ADD CODE SNIPPET HERE
+
+
+
+
+## Congratulations on your Progress!
+
+
+Throughout this process, you've successfully:
+
+<FeatureGrid cols={1} backgroundColor="transparent">
+  <FeatureItem title="Set up a Developer-Controlled Wallet" icon="check">
+    You successfully established a developer-controlled wallet using the
+    Programmable Wallet system. This wallet gives you full control and
+    flexibility over your users' wallets, ensuring a secure and frictionless
+    experience.
+  </FeatureItem>
+  <FeatureItem title="Interacted with USDC and CCTP V1 Contracts" icon="check">
+    Using your newly created wallet, you seamlessly interacted with the USDC
+    and CCTP V1 contracts. This enabled you to initiate and monitor USDC
+    transfers, ensuring transparency and control over the process.
+  </FeatureItem>
+  <FeatureItem title="Completed USDC Mint on Mumbai" icon="check">
+    To finalize the USDC minting process on the Mumbai testnet, you called
+    Circle's attestation service. This step ensures the successful creation
+    and verification of USDC tokens on Matic.
+  </FeatureItem>
+</FeatureGrid>
+
+### Stay connected & Explore more
+
+Your journey with us doesn't stop here. There's so much more to discover und
+dive into:
+
+<FeatureGrid cols={1} backgroundColor="transparent">
+  <FeatureItem title="Dive into our documentation" icon="book-open" href="/w3s/circle-programmable-wallets-an-overview">
+    Your comprehensive resource for understanding our web3 tools,
+    technologies, and best practices.
+  </FeatureItem>
+  <FeatureItem title="Join our Discord server" icon="message" href="https://discord.com/invite/buildoncircle">
+    Engage, ask, share, and collaborate. Become an integral part of our
+    vibrant developer community.
+  </FeatureItem>
+  <FeatureItem title="Sample Apps" icon="code" href="https://github.com/orgs/circlefin/repositories">
+    Get hands-on with real-world use cases, or gain inspiration for your next
+    big project.
+  </FeatureItem>
+  <FeatureItem title="Start building with our SDKs" icon="lightbulb-on" href="/w3s/web3-services-sdks">
+    Explore our server and client-side SDKs to start building.
+  </FeatureItem>
+</FeatureGrid>
+
+**Engage, Build, Share!** Dive into our forums, share your feedback, and keep an
+eye out for exciting challenges and hackathons. Your unique perspective and
+skills are valuable, and we're eager to see the innovations you'll introduce to
+our growing ecosystem.
+
+### Your feedback matters
+
+Before you embark further on your journey, we'd love to hear from you. Your
+feedback shapes the future of our platform and helps us provide a better
+experience for all developers.
+
+What did you love about the process? Was there something you wish was different?
+Every insight, no matter how small, matters to us.
+
+<Card title="Give Feedback" icon="message-circle" href="#">
+  Share your thoughts and help us improve
+</Card>
+
+Thank you for your trust, dedication, and enthusiasm. Here's to the next chapter
+in your web3 journey and the marvelous innovations you'll bring forth.
+
+**Happy Building!** 🚀
+
+**Next: Explore more Quickstarts**
+
+<Columns cols={2}>
+  <Card title="Developer-Controlled Wallet" icon="code" href="/interactive-quickstarts/dev-controlled-wallets" arrow="true" cta="Start Tutorial">
+    Will show you how to set up custodial wallets by establishing your entity secret and how to initiate a transaction.
+  </Card>
+  <Card title="User-Controlled Wallet" icon="code" href="/interactive-quickstarts/user-controlled-wallets" arrow="true" cta="Start Tutorial">
+    Learn how to set up non-custodial wallets for your end-users and initiate a transfer for them.
+  </Card>
+</Columns>
+
+
