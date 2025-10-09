@@ -1,0 +1,193 @@
+import { useState } from 'react';
+
+export const FeedbackButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
+  const [rating, setRating] = useState(null);
+  const [completed, setCompleted] = useState(false);
+  const [requestType, setRequestType] = useState('');
+
+  const handleSubmitProposal = () => {
+    setIsOpen(false);
+    setIsRequestOpen(true);
+  };
+
+  return (
+    <>
+      <button
+        className="feedback-button"
+        onClick={() => setIsOpen(true)}
+      >
+        Give Feedback
+      </button>
+
+      {isOpen && (
+        <div className="feedback-modal-overlay" onClick={() => setIsOpen(false)}>
+          <div className="feedback-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="feedback-modal-close"
+              onClick={() => setIsOpen(false)}
+            >
+              ×
+            </button>
+
+            <h2 className="feedback-modal-title">Give Feedback</h2>
+
+            <div className="feedback-form">
+              <div className="feedback-field">
+                <label className="feedback-label">Email address</label>
+                <input
+                  type="email"
+                  className="feedback-input"
+                  placeholder=""
+                />
+              </div>
+
+              <div className="feedback-checkbox">
+                <input
+                  type="checkbox"
+                  id="completed"
+                  checked={completed}
+                  onChange={(e) => setCompleted(e.target.checked)}
+                />
+                <label htmlFor="completed">I completed the Interactive Tutorial</label>
+              </div>
+
+              <div className="feedback-field">
+                <label className="feedback-label">How helpful did you find the Interactive Tutorial?</label>
+                <div className="feedback-rating">
+                  <span className="feedback-rating-label">Not helpful</span>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <label key={value} className="feedback-rating-option">
+                      <input
+                        type="radio"
+                        name="rating"
+                        value={value}
+                        checked={rating === value}
+                        onChange={() => setRating(value)}
+                      />
+                      <span className="feedback-rating-number">{value}</span>
+                    </label>
+                  ))}
+                  <span className="feedback-rating-label">Helpful</span>
+                </div>
+              </div>
+
+              <div className="feedback-field">
+                <label className="feedback-label">Your feedback</label>
+                <textarea
+                  className="feedback-textarea"
+                  rows="5"
+                  placeholder=""
+                />
+              </div>
+
+              <button className="feedback-submit">
+                SEND MESSAGE
+              </button>
+
+              <div className="feedback-footer">
+                <div className="feedback-footer-section">
+                  <div className="feedback-footer-title">Reach out directly</div>
+                  <a href="mailto:customer-support@circle.com" className="feedback-footer-link">
+                    customer-support@circle.com
+                  </a>
+                </div>
+                <div className="feedback-footer-section">
+                  <div className="feedback-footer-title">Join our Discord community</div>
+                  <a href="https://discord.com/invite/buildoncircle" className="feedback-footer-link feedback-footer-link-discord">
+                    <span className="discord-icon">
+                      <Icon icon="discord" iconType="brands" size={16} color="#fff"/>
+                    </span>
+                    Join Discord
+                  </a>
+                </div>
+                <div className="feedback-footer-section">
+                  <div className="feedback-footer-title">Have a feature or docs request?</div>
+                  <button onClick={handleSubmitProposal} className="feedback-footer-link feedback-footer-button">
+                    Submit a proposal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isRequestOpen && (
+        <div className="feedback-modal-overlay" onClick={() => setIsRequestOpen(false)}>
+          <div className="request-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="feedback-modal-close"
+              onClick={() => setIsRequestOpen(false)}
+            >
+              ×
+            </button>
+
+            <h2 className="request-modal-title">Make a request</h2>
+
+            <p className="request-modal-subtitle">
+              Thank you for taking the time to fill out this survey. We look forward to seeing what you build 🚀
+            </p>
+
+            <div className="request-form">
+              <label className="request-label">What best describes your request?</label>
+
+              <label className="request-option">
+                <input
+                  type="radio"
+                  name="request-type"
+                  value="feature"
+                  checked={requestType === 'feature'}
+                  onChange={(e) => setRequestType(e.target.value)}
+                />
+                <div className="request-option-content">
+                  <span className="request-option-icon">🏗️</span>
+                  <div className="request-option-text">
+                    <strong>Feature Request:</strong> a new capability or improvement to the product
+                  </div>
+                </div>
+              </label>
+
+              <label className="request-option">
+                <input
+                  type="radio"
+                  name="request-type"
+                  value="content"
+                  checked={requestType === 'content'}
+                  onChange={(e) => setRequestType(e.target.value)}
+                />
+                <div className="request-option-content">
+                  <span className="request-option-icon">📖</span>
+                  <div className="request-option-text">
+                    <strong>Content Request:</strong> creation, update, or optimization of informational or educational content related to the product
+                  </div>
+                </div>
+              </label>
+
+              <label className="request-option">
+                <input
+                  type="radio"
+                  name="request-type"
+                  value="community"
+                  checked={requestType === 'community'}
+                  onChange={(e) => setRequestType(e.target.value)}
+                />
+                <div className="request-option-content">
+                  <span className="request-option-icon">🌐</span>
+                  <div className="request-option-text">
+                    <strong>Community Request:</strong> ideas on how we can improve our community, for example additional workshops or events
+                  </div>
+                </div>
+              </label>
+
+              <button className="request-next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
