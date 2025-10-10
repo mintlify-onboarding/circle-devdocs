@@ -1,8 +1,13 @@
-export const FeatureGrid = ({ children, cols = 2, backgroundColor = '#f1f8ff' }) => {
+import "./FeatureGrid.css";
+
+export const FeatureGrid = ({ children, cols = 2, backgroundColor }) => {
   const columns = cols === 1 ? 1 : 2
 
   return (
-    <div className="feature-grid-container" style={{ backgroundColor }}>
+    <div
+      className="feature-grid-container"
+      style={backgroundColor ? { backgroundColor } : {}}
+    >
       <div
         className="feature-grid"
         data-cols={columns}
