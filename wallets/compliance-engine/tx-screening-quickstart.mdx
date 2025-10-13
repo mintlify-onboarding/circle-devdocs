@@ -44,7 +44,7 @@ address ending in `9999`:
 
 For example:
 
-```text
+```text Text
 0x7fb49965753A9eC3646fd5d004ee5AeD6Cc89999
 ```
 
@@ -55,7 +55,7 @@ API.
 
 Submit a `POST` request to the screening API using Node.js:
 
-```javascript
+```javascript Javascript
 import axios from "axios";
 
 const options = {
@@ -92,7 +92,7 @@ key.
 If the address is flagged, the response returns a `DENIED` result with some
 actionable compliance recommendations:
 
-```json
+```json JSON
 {
   "result": "DENIED",
   "decision": {
@@ -138,7 +138,7 @@ You can integrate
 [actions and alerts](/wallets/compliance-engine/tx-screening-rule-management)
 into the transaction logic of your application:
 
-```javascript
+```javascript Javascript
 if (response.data.result === "DENIED") {
   const ruleName = response.data.decision.ruleName;
   const actions = response.data.decision.actions;

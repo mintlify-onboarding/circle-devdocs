@@ -73,13 +73,13 @@ services.
 
 #### Testnet (Test) Authorization Header Example
 
-```text
+```text Text
 authorization: Bearer TEST_API_KEY:ebb3ad72232624921abc4b162148bb84:019ef3358ef9cd6d08fc32csfe89a68d
 ```
 
 #### Mainnet (Live) Authorization Header Example
 
-```text
+```text Text
 authorization: Bearer LIVE_API_KEY:ebb3ad72232624921abc4b162148bb84:019ef3358ef9cd6d08fc32csfe89a68d
 ```
 
@@ -88,7 +88,7 @@ authorization: Bearer LIVE_API_KEY:ebb3ad72232624921abc4b162148bb84:019ef3358ef9
 To verify your API key setup, you can use the following `curl` command, for
 example, to retrieve wallets:
 
-```shell
+```shell Shell
 curl --request GET \
      --url https://api.circle.com/v1/w3s/wallets \
      --header 'accept: application/json' \

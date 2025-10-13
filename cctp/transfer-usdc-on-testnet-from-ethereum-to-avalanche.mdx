@@ -48,7 +48,7 @@ required dependencies.
 Create a new directory and initialize a new `Node.js` project with default
 settings:
 
-```shell
+```shell Shell
 mkdir cctp-v2-transfer
 cd cctp-v2-transfer
 npm init -y
@@ -60,7 +60,7 @@ This also creates a default `package.json` file.
 
 In your project directory, install the required dependencies, including `viem`:
 
-```shell
+```shell Shell
 npm install axios@^1.7.9 dotenv@^16.4.7 viem@^2.23.4
 ```
 
@@ -98,7 +98,7 @@ Add `"type": "module"` to the `package.json` file:
 
 Create a `.env` file in your project directory and add your wallet private key:
 
-```shell
+```shell Shell
 echo "PRIVATE_KEY=your-private-key-here" > .env
 ```
 
@@ -120,7 +120,7 @@ associated **wallet address**. The script also predefines the **contract
 addresses**, the **transfer amount**, and the **max fee**. These definitions are
 critical for successfully transferring USDC between the intended wallets.
 
-```javascript
+```javascript Javascript
 // ============ Configuration Constants ============
 
 // Authentication
@@ -155,7 +155,7 @@ The **wallet client** configures the appropriate network settings using `viem`.
 In this example, the script connects to the **Ethereum Sepolia testnet** and the
 **Avalanche Fuji testnet**.
 
-```javascript
+```javascript Javascript
 // Set up the wallet clients
 const sepoliaClient = createWalletClient({
   chain: sepolia,
@@ -185,7 +185,7 @@ deployed on the **Ethereum Sepolia testnet** to withdraw USDC from your wallet
 on that source chain. This allows the contract to withdraw USDC from the
 specified wallet address.
 
-```javascript
+```javascript Javascript
 async function approveUSDC() {
   console.log("Approving USDC transfer...");
   const approveTx = await sepoliaClient.sendTransaction({
@@ -229,7 +229,7 @@ You specify the following parameters:
 - **Finality threshold**: Determines whether it's a **Fast Transfer** or a
   **Standard Transfer**
 
-```javascript
+```javascript Javascript
 async function burnUSDC() {
   console.log("Burning USDC on Ethereum Sepolia...");
   const burnTx = await sepoliaClient.sendTransaction({
@@ -285,7 +285,7 @@ transfer.
 This step is essential for verifying the **burn event** before proceeding with
 the transfer.
 
-```javascript
+```javascript Javascript
 async function retrieveAttestation(transactionHash) {
   console.log("Retrieving attestation...");
   const url = `https://iris-api-sandbox.circle.com/v2/messages/${ETHEREUM_SEPOLIA_DOMAIN}?transactionHash=${transactionHash}`;
@@ -324,7 +324,7 @@ chain.
 This step finalizes the **CCTP transfer**, making the USDC available on the
 destination chain.
 
-```javascript
+```javascript Javascript
 async function mintUSDC(attestation) {
   console.log("Minting USDC on Avalanche Fuji...");
   const mintTx = await avalancheClient.sendTransaction({
@@ -364,7 +364,7 @@ gas fees) and **testnet USDC** to complete the transfer.
 
 ### transfer.js
 
-```javascript
+```javascript Javascript
 // Import environment variables
 import "dotenv/config";
 import { createWalletClient, http, encodeFunctionData } from "viem";
@@ -538,7 +538,7 @@ section, you can test the script.
 
 To test the script, run the following command:
 
-```shell
+```shell Shell
 node transfer.js
 ```
 

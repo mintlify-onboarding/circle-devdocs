@@ -36,7 +36,7 @@ you can use to silo your project from the global Python environment.
 Use the following command to install the SDK with
 [pip](https://pypi.org/project/pip/):
 
-```shell
+```shell Shell
 pip install circle-developer-controlled-wallets
 ```
 
@@ -50,7 +50,7 @@ with your API key and entity secret.
 The following example shows how to import the client and configure it to use
 your API key and entity secret:
 
-```python
+```python Python
 from circle.web3 import utils
 
 client = utils.init_developer_controlled_wallets_client(
@@ -63,7 +63,7 @@ client = utils.init_developer_controlled_wallets_client(
 
 The following example shows how to create a wallet using the client:
 
-```python
+```python Python
 from circle.web3 import developer_controlled_wallets
 
 api_instance = developer_controlled_wallets.WalletSetsApi(client)

@@ -24,7 +24,7 @@ help you determine what's gone wrong.
 In the example below, the request is missing a required field. The HTTP status
 code in this case would be `HTTP/1.1 400 Bad Request`
 
-```json
+```json JSON
 {
   "code": 2,
   "message": "Invalid entity. metadata.email may not be empty (was null)",
@@ -65,7 +65,7 @@ applicable:
 Whenever an API request results in an error, the JSON response contains both an
 error code and a human-readable message in the body.
 
-```json
+```json JSON
 {
   "code": 2,
   "message": "Invalid entity.\n[<error-message1>...\n<error-messageN>]"
@@ -78,7 +78,7 @@ In some cases, you'll receive extended information about why a request has
 failed. For example, if you fail to supply a value for a required field, you'll
 receive the following error response:
 
-```json
+```json JSON
 {
   "code": 2,
   "message": "Invalid entity.\nfield1 may not be null (was null)",

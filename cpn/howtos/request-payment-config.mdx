@@ -27,14 +27,14 @@ Make a request to the
 to receive a list of supported currencies, countries, payment methods, and
 blockchains.
 
-```shell
+```shell Shell
 curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
   -X GET https://api.circle.com/v1/cpn/v1/ofi/configurations/overview
 ```
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "sourceCurrencies": ["USDC"],
@@ -62,14 +62,14 @@ to the
 This example evaluates a route from the US to Mexico, but other routes can be
 evaluated by changing the query parameters.
 
-```shell
+```shell Shell
 curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
   -X GET https://api.circle.com/v1/cpn/v1/ofi/configurations/routes?sourceCurrency=USDC&destinationCountry=MX
 ```
 
 **Response**
 
-```json
+```json JSON
 {
   "data": [
     {

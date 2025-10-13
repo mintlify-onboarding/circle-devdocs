@@ -42,7 +42,7 @@ example request for a quote:
 that time frame.
 </Note>
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quotes' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \
@@ -64,7 +64,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quote
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
@@ -92,7 +92,7 @@ your Circle Mint account in accordance with your settlement schedule.
 
 The following is an example request:
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trades' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \
@@ -106,7 +106,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trade
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
@@ -133,7 +133,7 @@ batch from the
 [`/exchange/trades/settlements`](/api-reference/circle-mint/cross-currency/get-settlements)
 endpoint on your account and review the details of the settlement.
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
@@ -141,7 +141,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades
 
 **Response**
 
-```json
+```json JSON
 {
   "data": [
     {

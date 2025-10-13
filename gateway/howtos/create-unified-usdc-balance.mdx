@@ -45,7 +45,7 @@ Create a new file called `index.js` in the root of your project, and add the
 following code to it. This code calls the `approve()` method on the USDC
 contract to allow the Gateway Wallet contract to transfer USDC from your wallet.
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import { createPublicClient, getContract, http, erc20Abi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -115,7 +115,7 @@ the deposit methods on the wallet contract to get a unified USDC balance.
 
 </Warning>
 
-```javascript
+```javascript Javascript
 const depositTx = await gatewayWallet.write.deposit([
   usdc.address,
   DEPOSIT_AMOUNT,
@@ -127,7 +127,7 @@ const depositTx = await gatewayWallet.write.deposit([
 Once you have added the code to your `index.js` file, run it with the following
 command:
 
-```shell
+```shell Shell
 node index.js
 ```
 

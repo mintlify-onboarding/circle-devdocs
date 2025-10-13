@@ -41,7 +41,7 @@ Follow these steps to install dependencies and set up your script environment.
 
 Create a new directory and initialize it with `npm`:
 
-```shell
+```shell Shell
 mkdir usdc-sei-script
 cd usdc-sei-script
 npm init -y
@@ -52,7 +52,7 @@ npm pkg set type=module
 
 Install `viem` and `dotenv`:
 
-```shell
+```shell Shell
 npm install viem dotenv
 ```
 
@@ -82,7 +82,7 @@ following sections.
 In `index.js`, start by importing dependencies and setting up the chain and
 token configuration:
 
-```ts
+```ts Typescript
 // Load environment variables from .env
 import "dotenv/config";
 
@@ -154,7 +154,7 @@ This makes the ABI compact and easier to understand. Using a minimal ABI:
 
 Next, load your credentials from `.env` and validate them:
 
-```ts
+```ts Typescript
 // Load variables from .env file
 const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
 const RECIPIENT = process.env.RECIPIENT_ADDRESS || process.env.RECIPIENT;
@@ -198,7 +198,7 @@ These checks:
 
 Set up the Viem clients and your account object:
 
-```ts
+```ts Typescript
 // Convert private key to account object
 const account = privateKeyToAccount(PRIVATE_KEY);
 
@@ -235,7 +235,7 @@ Both clients use the same RPC connection but serve different roles.
 
 Now add the logic to check your balance and send tokens:
 
-```ts
+```ts Typescript
 (async () => {
   try {
     // Read the sender's USDC balance using the balanceOf function
@@ -311,7 +311,7 @@ These utilities:
 
 To run your script, use the following command:
 
-```shell
+```shell Shell
 node index.js
 ```
 

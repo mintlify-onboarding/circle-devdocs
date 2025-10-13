@@ -112,7 +112,7 @@ The abiParameters property defines the values to pass to the function. For the c
     - **mintRecipient**: this is the destination address, encoded to a Solidity address representation. This will be the same address as the source wallet.  In your application, you will need to encode the destination address to the correct format using a library like web3js - but we have done it for you here.
     - **burnToken**: the contract address of the token that is being burnt. In this case, it is the USDC contract on the source chain.
 
-```js
+```js Javascript
 const encodedDestinationAddress = web3.eth.abi.encodeParameter(
   "address",
   destinationAddress,

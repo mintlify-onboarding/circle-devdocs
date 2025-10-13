@@ -35,7 +35,7 @@ API endpoint.
 
 **Request**:
 
-```curl
+```curl Curl
 curl --request POST \\
 
 --url https\://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/deposit \\
@@ -55,7 +55,7 @@ curl --request POST \\
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "d51d72d2-9955-4340-b3fd-2f07a82a1e6c",
@@ -83,7 +83,7 @@ In the following example make substitutions for the following placeholder keys:
 - Replace `${YOUR\_API\_KEY}` with your API key.
 - Replace `${TRANSFER\_ID}` with the ID of the transfer you created earlier.
 
-```curl
+```curl Curl
 curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
 
 -X GET https\://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/deposit
@@ -91,7 +91,7 @@ curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
 
 The Get Transfer response should look similar to the following:
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -147,7 +147,7 @@ In the following example make substitutions for the following placeholder keys:
 - Replace `${YOUR\_API\_KEY}`with your API key.
 - Replace `${TRANSFER\_ID}` with the ID of the transfer you created earlier.
 
-```curl
+```curl Curl
 curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
 
 -X GET https\://api-sandbox.circle.com/v1/businessAccount/balances
@@ -155,7 +155,7 @@ curl -H "Authorization: Bearer ${YOUR\_API\_KEY}" \\
 
 The response should look similar to the following: this:
 
-```json
+```json JSON
 {
   "data": {
     "available": [

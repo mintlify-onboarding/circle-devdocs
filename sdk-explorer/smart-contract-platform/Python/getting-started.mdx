@@ -36,7 +36,7 @@ you can use to silo your project from the global Python environment.
 Use the following command to install the SDK with
 [pip](https://pypi.org/project/pip/):
 
-```shell
+```shell Shell
 pip install circle-smart-contract-platform
 ```
 
@@ -50,7 +50,7 @@ with your API key and entity secret.
 The following example shows how to import the client and configure it to use
 your API key and entity secret:
 
-```python
+```python Python
 from circle.web3 import utils
 
 client = utils.init_smart_contract_platform_client(
@@ -63,7 +63,7 @@ client = utils.init_smart_contract_platform_client(
 
 The following example shows how to import a smart contract using the client:
 
-```python
+```python Python
 from circle.web3 import smart_contract_platform
 
 api_instance = smart_contract_platform.DeployImportApi(client)

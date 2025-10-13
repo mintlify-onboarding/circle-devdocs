@@ -49,7 +49,7 @@ The
 endpoint creates a new recipient address in your Mint address book. Use the
 following example request to create a new recipient.
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/addressBook/recipients' \
 --header 'Accept: application/json' \
 --header 'X-Request-Id: fb7980ad-fd01-468b-98ff-2d9ecff67f86' \
@@ -69,7 +69,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/addressBook/re
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
@@ -111,7 +111,7 @@ account. If configured, you'll receive updates when address book recipients are
 created or change status. An example notification showing the recipient status
 change is shown below.
 
-```json
+```json JSON
 {
   "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802",
   "notificationType": "addressBookRecipients",
@@ -145,7 +145,7 @@ endpoint until the response contains the `"status": "active"` parameter.
 Polling consists of calling the endpoint on a regular interval until the desired
 response is returned. The following example is a manual request to the endpoint:
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/addressBook/recipients/dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe' \
 --header 'Accept: application/json' \
 --header 'X-Request-Id: 55990729-c59f-4cda-9edd-838cefaa1e42' \
@@ -154,7 +154,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/addressBook/rec
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "dff5fcb3-2e52-5c13-8a66-0a5be9c7ecbe",
@@ -193,7 +193,7 @@ ensure compliance with the FINCEN
 
 Use the following command to create a payout:
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/payouts' \
 --header 'Accept: application/json' \
 --header 'X-Request-Id: ff422eab-52fa-4a6e-bf07-b6b522786468' \
@@ -237,7 +237,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/payouts' \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "b8627ae8-732b-4d25-b947-1df8f4007a29",
@@ -270,7 +270,7 @@ delivered onchain.
 If you have configured webhook notifications you'll receive a notification for
 each payout status update. The following is an example notification:
 
-```json
+```json JSON
 {
   "clientId": "a03a47ff-b0eb-4070-b3df-dc66752cc802",
   "notificationType": "payout",
@@ -317,7 +317,7 @@ until the response contains the `"status": "complete"` parameter.
 Polling consists of calling the endpoint on a regular interval until the desired
 response is returned. The following example is a manual request to the endpoint:
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/payouts/b8627ae8-732b-4d25-b947-1df8f4007a29' \
 --header 'Accept: application/json' \
 --header 'X-Request-Id: d36f3c00-9c98-4610-bfea-83995379995e' \
@@ -326,7 +326,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/payouts/b8627ae
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "2f3bca9a-2d0e-4aef-a511-026eefd3cc6f",

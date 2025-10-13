@@ -42,7 +42,7 @@ Perform the following installation and setup steps:
 
 1. Create a new project directory and initialize it with `npm`:
 
-```shell
+```shell Shell
 mkdir usdc-transfer-app
 cd usdc-transfer-app
 npm init -y
@@ -50,7 +50,7 @@ npm init -y
 
 2. Install the required dependencies:
 
-```shell
+```shell Shell
 npm install react@latest \
   react-dom@latest \
   @types/react@latest \
@@ -64,7 +64,7 @@ npm install react@latest \
 3. Verify the installation by checking the `package.json` file. It should look
    like this:
 
-```json
+```json JSON
 {
   "name": "usdc-transfer-app",
   "version": "1.0.0",
@@ -95,7 +95,7 @@ If your `package.json` file does not contain the scripts section, copy and paste
 it from the above code into your file. Test that you can run the project with
 the command:
 
-```shell
+```shell Shell
 npm run dev
 ```
 
@@ -107,7 +107,7 @@ application.
 1. Create a new file `src/client.ts` and copy the following code into it. This
    code imports required libraries and sets up the network configuration.
 
-```typescript
+```typescript Typescript
 import { http, createPublicClient, createWalletClient, custom } from "viem";
 import { sonicBlazeTestnet } from "viem/chains";
 
@@ -132,7 +132,7 @@ export const walletClient = createWalletClient({
    `src/constants.ts`. This file contains the contract address and Application
    Binary Interface (ABI) for the USDC token on Sonic Blaze.
 
-```typescript
+```typescript Typescript
 export const USDC_CONTRACT_ADDRESS =
   "0xA4879Fed32Ecbef99399e5cbC247E533421C4eC6";
 
@@ -166,7 +166,7 @@ connect a wallet and transfer USDC.
    code contains the main application component that allows users to connect
    their wallet and transfer USDC.
 
-```typescript
+```typescript Typescript
 import React, { useEffect, useState } from 'react';
 import { publicClient, walletClient } from './clients';
 import { USDC_CONTRACT_ADDRESS, USDC_ABI } from './constants';
@@ -304,7 +304,7 @@ export default USDCApp;
    copying the following code into it. This code sets up the React application
    and renders the `USDCApp` component.
 
-```typescript
+```typescript Typescript
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import USDCApp from './App';
@@ -319,7 +319,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 3. Create a new file `index.html` in the root directory and copy the following
    code into it. This code sets up the HTML structure for the application.
 
-```html
+```html HTML
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -336,7 +336,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 4. Run your application using the following command:
 
-```shell
+```shell Shell
 npm run dev
 ```
 

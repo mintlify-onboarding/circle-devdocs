@@ -363,7 +363,7 @@ dynamically. See the
 - Use the `ImageStore.Img (Enum)` column to customize with the
   `WalletSdkLayoutProvider`:
 
-```swift
+```swift Swift
 func imageStore() -> ImageStore {
     let local: [ImageStore.Img: UIImage] = [
         .naviBack: UIImage(named: "ic_navi_back")!,
@@ -458,7 +458,7 @@ will still refer to the default values.
 
 ## Example CirclePWLocalizable.strings
 
-```swift
+```swift Swift
 /*
  * Loco ios export: iOS Localizable.strings
  * Project: strings.xml conversion
@@ -614,7 +614,7 @@ will still refer to the default values.
 
 ### Example: CirclePWTheme.json
 
-```json
+```json JSON
 {
   "font": {
     "ultraLight": "",
@@ -701,7 +701,7 @@ To programmatically customize the UI refers to the following documents:
 
 ## Example Code
 
-```swift
+```swift Swift
 extension WalletSdkAdapter: WalletSdkLayoutProvider {
 
     func securityQuestions() -> [SecurityQuestion] {
@@ -773,7 +773,7 @@ extension WalletSdkAdapter: WalletSdkLayoutProvider {
 By modifying the `WalletSdkDelegate`, you can get the current view controller
 and control the UI parameters in the controller at run time.
 
-```swift
+```swift Swift
 public protocol WalletSdkDelegate: AnyObject {
 
     /// Tells the delegate that the SDK is about to be presented in the controller.
@@ -788,7 +788,7 @@ public protocol WalletSdkDelegate: AnyObject {
 
 ### Example Code
 
-```swift
+```swift Swift
 extension WalletSdkAdapter: WalletSdkDelegate {
 
     func walletSdk(willPresentController controller: UIViewController) {
@@ -832,7 +832,7 @@ view controller. Change the UI items as you need.
 
 ##  `ApiError` Interface
 
-```swift
+```swift Swift
 public struct ApiError: Error {
 
     public let errorCode: ErrorCode
@@ -849,7 +849,7 @@ By modifying the `ErrorMessenger`, you can customize the `ApiError` messages.
 Your customization replaces the default `ApiError.displayString` for UI usage.
 You can also manage the localized error message.
 
-```swift
+```swift Swift
 public protocol ErrorMessenger {
 
     func getErrorString(_ code: ApiError.ErrorCode) -> String?
@@ -859,7 +859,7 @@ public protocol ErrorMessenger {
 
 ### Example Code
 
-```swift
+```swift Swift
 import CircleProgrammableWalletSDK
 
 class MyErrorMessenger: ErrorMessenger {

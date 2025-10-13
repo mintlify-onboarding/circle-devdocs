@@ -45,7 +45,7 @@ supported.
 Add the maven repository to your gradle file. It's suggested that load settings
 from `local.properties`:
 
-```gradle
+```gradle Gradle
 repositories {
     ...
     maven {
@@ -64,7 +64,7 @@ repositories {
 
 Add the maven setting values in the `local.properties` file:
 
-```gradle
+```gradle Gradle
 pwsdk.maven.url=https://maven.pkg.github.com/circlefin/w3s-android-sdk
 pwsdk.maven.username=<GITHUB_USERNAME>
 # Fine-grained personal access tokens or classic with package write permission.
@@ -73,7 +73,7 @@ pwsdk.maven.password=<GITHUB_PAT>
 
 Add the dependency:
 
-```gradle
+```gradle Gradle
 dependencies {
     implementation 'circle.programmablewallet:sdk:version'
 }
@@ -783,7 +783,7 @@ SecurityQuestion[] questions = new SecurityQuestion[]{
 WalletSdk.setSecurityQuestions(questions);
 ```
 
-```java
+```java Java
 // There are two ways to use Configuration. Below is the way with SettingsManagement.
 // We can use SettingsManagement to bring the setting flag. SettingsManagement provide the setting flag
 // EnableBiometricsPin to enable/disable the function "Use biometrics to protect PIN" currently.
@@ -799,7 +799,7 @@ try {
 
 ```
 
-```java
+```java Java
 // Execute
 WalletSdk.execute(getActivity(), userToken, encryptionKey,
           new String[]{challengeId},
@@ -835,7 +835,7 @@ WalletSdk.execute(getActivity(), userToken, encryptionKey,
 
 ```
 
-```java
+```java Java
 // Extend LayoutProvider and override
 class MyLayoutProvider extends LayoutProvider {
         Context context;
@@ -930,7 +930,7 @@ public IconTextConfig[] getIconTextConfigs(Resource.IconTextsKey key) {
 
 ```
 
-```java
+```java Java
 // Extend ViewSetterProvider and override
     class MyViewSetterProvider extends ViewSetterProvider{
 

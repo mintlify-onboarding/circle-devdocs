@@ -71,7 +71,7 @@ be held in pending status. Please see Help Center articles below for details:
 
 <CodeGroup>
 
-```curl
+```curl Curl
 curl --request POST \
      --url https://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/recipient \
      --header 'accept: application/json' \
@@ -88,7 +88,7 @@ curl --request POST \
 '
 ```
 
-```javascript
+```javascript Javascript
 const options = {
   method: "POST",
   headers: {
@@ -118,7 +118,7 @@ fetch(
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "cfa01bb0-d166-5506-a48a-56f2beab559f",
@@ -158,7 +158,7 @@ using the command below.
 
 <CodeGroup>
 
-```curl
+```curl Curl
 curl --request POST \
      --url https://api-sandbox.circle.com/v1/businessAccount/transfers \
      --header 'accept: application/json' \
@@ -179,7 +179,7 @@ curl --request POST \
 '
 ```
 
-```javascript
+```javascript Javascript
 const options = {
   method: "POST",
   headers: {
@@ -207,7 +207,7 @@ fetch("https://api-sandbox.circle.com/v1/businessAccount/transfers", options)
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",
@@ -238,7 +238,7 @@ the transaction. You can use it as in the command below.
 
 <CodeGroup>
 
-```curl
+```curl Curl
 curl --request GET \
      --url https://api-sandbox.circle.com/v1/businessAccount/transfers/21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea \
      --header 'accept: application/json' \
@@ -253,7 +253,7 @@ const options = {
 };
 ```
 
-```javascript
+```javascript Javascript
 fetch(
   "https://api-sandbox.circle.com/v1/businessAccount/transfers/21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",
   options,
@@ -267,7 +267,7 @@ fetch(
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea",

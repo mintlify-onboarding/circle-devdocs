@@ -405,7 +405,7 @@ curl --request POST \
 
 </CodeGroup>
 
-```json
+```json JSON
 {
   "data": {
     "contractIds": ["b7c35372-ce69-4ccd-bfaa-504c14634f0d"],
@@ -443,7 +443,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request GET \
      --url https://api.circle.com/v1/w3s/transactions/{id} \
      --header 'accept: application/json' \
@@ -547,7 +547,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_developer_transaction_contract_execution: %s\n" % e)
 ```
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/transactions/contractExecution \
   --header 'authorization: Bearer <API_KEY>' \
@@ -572,7 +572,7 @@ curl --request POST \
 **Note** that the address of the `walletId` must have the `MINTER_ROLE` on the
 contract to mint an NFT. Make sure you use the appropriate `walletId`.
 
-```json
+```json JSON
 {
   "data": {
     "id": "601a0815-f749-41d8-b193-22cadd2a8977",
@@ -612,7 +612,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request GET \
      --url https://api.circle.com/v1/w3s/transactions/{id} \
      --header 'accept: application/json' \

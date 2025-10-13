@@ -41,7 +41,7 @@ required clients and smart contracts to interact with Circle Gateway.
 Create a new directory for your project and initialize it with npm. Set the
 package type to `module` and install the necessary dependencies:
 
-```shell
+```shell Shell
 mkdir unified-balance-quickstart && cd unified-balance-quickstart
 npm init -y
 npm pkg set type="module"
@@ -50,14 +50,14 @@ npm install --save viem dotenv
 
 Create a new `.env` file.
 
-```shell
+```shell Shell
 touch .env
 ```
 
 Edit the `.env` file and add the following variables, replacing
 `{YOUR_PRIVATE_KEY}` with the private key for your testnet wallet:
 
-```text
+```text Text
 PRIVATE_KEY={YOUR_PRIVATE_KEY}
 ```
 
@@ -75,7 +75,7 @@ quickstart. See
 for a full description of each contract's methods.
 </Note>
 
-```javascript
+```javascript Javascript
 ///////////////////////////////////////////////////////////////////////////////
 // ABIs used for the Gateway contracts
 
@@ -130,7 +130,7 @@ Create a file called `gateway-client.js` in the project directory and add the
 following code to it. This helper code provides data and methods for interacting
 with the Gateway API.
 
-```javascript
+```javascript Javascript
 /////////////////////////////////////////////////////////////////
 // A lightweight API client for interacting with the Gateway API.
 
@@ -206,7 +206,7 @@ export class GatewayClient {
 Create a file called `typed-data.js` in the project directory and add the
 following code to it:
 
-```javascript
+```javascript Javascript
 import { randomBytes } from "node:crypto";
 import { pad, zeroAddress, maxUint256 } from "viem";
 
@@ -321,7 +321,7 @@ Create a file called `setup.js` in the project directory and add the following
 code to it. This code provides a client and contract addresses on the relevant
 chains for this quickstart:
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import { createPublicClient, getContract, http, erc20Abi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -415,7 +415,7 @@ calls the `approve` function on the USDC contract to allow the Gateway Wallet
 contract to transfer USDC on behalf of your account. Then the code calls the
 `deposit` function on the Gateway Wallet contract to move the USDC.
 
-```javascript
+```javascript Javascript
 import { account, ethereum, base, avalanche } from "./setup.js";
 
 const DEPOSIT_AMOUNT = 10_000000n; // 10 USDC
@@ -474,7 +474,7 @@ for (const chain of [ethereum, base, avalanche]) {
 Run the `deposit.js` script to make the deposits. Note that if you don't have
 enough USDC or testnet native tokens, the code returns an error message.
 
-```shell
+```shell Shell
 node deposit.js
 ```
 
@@ -497,7 +497,7 @@ following code to it. This code performs checks that the API supports the chains
 that you want to interact with, and verifies that your balance on the source
 chains is enough to cover the transfer.
 
-```javascript
+```javascript Javascript
 import { account, ethereum, base, avalanche } from "./setup.js";
 import { GatewayClient } from "./gateway-client.js";
 import { burnIntent, burnIntentTypedData } from "./typed-data.js";
@@ -593,7 +593,7 @@ const request = await Promise.all(
 Add the following code to `transfer.js` to submit the burn intents to the
 Gateway in exchange for an attestation:
 
-```javascript
+```javascript Javascript
 // Request the attestation
 console.log("Requesting attestation from Gateway API...");
 const start = performance.now();
@@ -615,7 +615,7 @@ console.log(
 Add the following code to `transfer.js` to mint USDC on Base Sepolia using the
 attestation:
 
-```javascript
+```javascript Javascript
 // Mint the funds on Base
 console.log("Minting funds on Base...");
 const { attestation, signature } = response;
@@ -633,6 +633,6 @@ process.exit(0);
 Run the `transfer.js` script to perform the USDC transfer from the crosschain
 balance to Base.
 
-```shell
+```shell Shell
 node transfer.js
 ```

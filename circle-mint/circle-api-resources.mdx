@@ -22,7 +22,7 @@ A `payout` object represents a payout to a customer, vendor, or supplier.
 
 #### Example
 
-```json
+```json JSON
 {
   "id": "df3b8e5f-9579-4c1f-9fa9-deac7f4be55c",
   "sourceWalletId": "1000038499",
@@ -133,7 +133,7 @@ Circle wallets.
 
 #### Example
 
-```json
+```json JSON
 {
   "id": "0d46b642-3a5f-4071-a747-4053b7df2f99",
   "source": {
@@ -220,7 +220,7 @@ Sources and destinations can have the following types:
 - `blockchain` for transfers to/from blockchain addresses
 - `wallet` for transfers to/from a Circle `wallet`
 
-```json
+```json JSON
 // "blockchain"
 // A "chain" and "address" together represent the blockchain location.
 {
@@ -245,7 +245,7 @@ consist of an `amount` and a `currency`. Two currencies are supported, `USD` and
 two decimals. In the example below, the amount is represented as 3.14 and the
 currency as `USD`.
 
-```json
+```json JSON
 {
   "amount": "3.14",
   "currency": "USD"
@@ -254,7 +254,7 @@ currency as `USD`.
 
 ### Blockchain addresses
 
-```json
+```json JSON
 {
   "address": "0x8381470ED67C3802402dbbFa0058E8871F017A6F",
   "currency": "USD",

@@ -63,7 +63,7 @@ endpoint, providing the source currency and destination amount. The endpoint
 returns a list of quotes from various BFIs with the rate, expiration time, USDC
 settlement window, and unique ID.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/cpn/quotes \
   --header 'Accept: application/json' \
@@ -90,7 +90,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -174,14 +174,14 @@ returns an object describing the required fields for the compliance check. The
 `optional` field for each parameter defines if the parameter must be included in
 the response constructed in the next step.
 
-```shell
+```shell Shell
 curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
   -X GET "https://api.circle.com/v1/cpn/payments/requirements?quoteId=${QUOTE_ID}"
 ```
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "travelRule": [
@@ -295,7 +295,7 @@ response from the previous step, and the `certificate_json` parameter with the
 `jwk` from the quote response. When you run the script, it outputs the encrypted
 beneficiary and travel rule data to the console.
 
-```python
+```python Python
 """
 CPN Requirements V1 Encryption Quickstart
 
@@ -503,7 +503,7 @@ endpoint returns a unique payment ID and the initial status of the payment.
 you'll need to request a new quote.
 </Note>
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments \
   --header 'Accept: application/json' \
@@ -527,7 +527,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "07dbe320-6bcb-475b-8d21-17b57263cd3e",
@@ -600,7 +600,7 @@ endpoint with the payment ID from the previous step, and other
 transaction-related parameters. The endpoint returns an unsigned onchain
 transaction object and a transaction ID.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions \
   --header 'Accept: application/json' \
@@ -616,7 +616,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "8e0cc03f-799c-4971-ba41-6b790b4f9548",
@@ -716,7 +716,7 @@ your entity secret and wallet ID. The transaction parameter should be
 [stringified](https://jsonformatter.org/json-stringify-online) from the
 `messageToBeSigned` field from the transaction response.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/sign/typedData \
   --header 'Accept: application/json' \
@@ -733,7 +733,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "signature": "0x905d70de3f1d9e86b982f6aee2755807fcd50a11cd9035bf47845c856be920fc3b7af8d06bf953bfdecdcea4cc9250aeaeb178b50116774d6bfab37bcc3757621c"
 }
@@ -745,7 +745,7 @@ replacing the message object values with the corresponding values from the
 response in
 [step 3.1](/cpn/quickstarts/integrate-with-cpn-ofi#31-initiate-the-onchain-transaction).
 
-```python
+```python Python
 from web3 import Web3
 from eth_utils import keccak, to_hex
 from hexbytes import HexBytes
@@ -835,7 +835,7 @@ Next, you must create and sign the raw transaction using the
 endpoint. Include the call data from the script as the `data` field and the
 wallet ID from your Circle Wallet.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/sign/transaction \
   --header 'Accept: application/json' \
@@ -852,7 +852,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "signature": "0xe59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a247cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc00",
   "signedTransaction": "0x02f9019583aa36a70184b2d05e0085104c533c00830249f0941c7d4b196cb0c7b01d743fbc6116a902379c723880b90124e3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651c080a0e59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a24a07cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc",
@@ -868,7 +868,7 @@ endpoint to submit the transaction to be broadcast to the appropriate
 blockchain. You should use the signed transaction and `transactionId` from the
 previous steps to populate the endpoint call.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions/:transactionId/submit \
   --header 'Accept: application/json' \
@@ -883,7 +883,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "1f3ccc13-69e3-4811-9648-755bc9aa26f4",

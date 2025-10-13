@@ -50,7 +50,7 @@ the following request:
 
 **Request** `POST /v1/paymentIntents/{id}/refund`
 
-```json
+```json JSON
 {
   "idempotencyKey": "9aed1aab-292a-427f-aae1-e0e358fef1c9",
   "destination": {
@@ -69,7 +69,7 @@ the following request:
 
 **Response**
 
-```json
+```json JSON
 {
   "id": "d445342e-11c5-3060-9e91-0a93d658c075",
   "type": "refund",
@@ -103,7 +103,7 @@ intent.
 
 **Response**
 
-```json
+```json JSON
 {
   "id":"5a925c4e-959e-4b75-9558-6f9af3ca52af",
   "amount":{
@@ -177,7 +177,7 @@ Returns payment information based on a Payment ID.
 
 **Response**
 
-```json
+```json JSON
 {
   "id": "ba8502e3-515f-3c3a-a409-8ab99a2e72c7",
   "type": "refund",
@@ -214,7 +214,7 @@ passing in payment intent `id` in the query parameter.
 
 **Response**
 
-```json
+```json JSON
 {
   "id": "ba8502e3-515f-3c3a-a409-8ab99a2e72c7",
   "type": "refund",
@@ -244,7 +244,7 @@ passing in payment intent `id` in the query parameter.
 }
 ```
 
-```json
+```json JSON
 {
   "id": "d445342e-11c5-3060-9e91-0a93d658c075",
   "type": "payment",

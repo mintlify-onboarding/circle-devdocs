@@ -42,7 +42,7 @@ article to customize the SDK.
 
 Install using [npm](https://docs.npmjs.com/about-npm):
 
-```shell
+```shell Shell
 npm install @circle-fin/w3s-pw-web-sdk
 ```
 
@@ -64,7 +64,7 @@ The Web SDK supports the API reference enums listed in the following sections.
 
 Enumerates the types of challenges supported.
 
-```javascript
+```javascript Javascript
 enum ChallengeType {
   INITIALIZE,
   SET_PIN,
@@ -88,7 +88,7 @@ enum ChallengeType {
 
 Enumerates the possible status for a challenge.
 
-```javascript
+```javascript Javascript
 enum ChallengeStatus {
   COMPLETE,
   EXPIRED,
@@ -102,7 +102,7 @@ enum ChallengeStatus {
 
 Enumerates the types of security questions.
 
-```javascript
+```javascript Javascript
 enum QuestionType {
   DATE,
   TEXT,
@@ -113,7 +113,7 @@ enum QuestionType {
 
 Enumerates the types of error code.
 
-```javascript
+```javascript Javascript
 enum ErrorCode {
   unknown = -1,
   success = 0,
@@ -1145,7 +1145,7 @@ Sets callback function for **Resend OTP Email** button click event
 
 ### React.js
 
-```javascript
+```javascript Javascript
 import React, { useCallback, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import TextField from '@mui/material/TextField'
@@ -1235,7 +1235,7 @@ function App() {
 
 ### Vanilla JavaScript
 
-```javascript
+```javascript Javascript
 // Assume W3SSdk is globally available
 let sdk = new W3SSdk({
   configs: {

@@ -74,7 +74,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling UsersAndPinsApi->get_user_token: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/users/token' \
      --header 'accept: application/json' \
@@ -124,7 +124,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallets: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/wallets' \
      --header 'accept: application/json' \

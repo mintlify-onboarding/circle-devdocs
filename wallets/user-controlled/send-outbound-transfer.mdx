@@ -87,7 +87,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling UsersAndPinsApi->get_user_token: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/users/token' \
      --header 'accept: application/json' \
@@ -138,7 +138,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallets: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/wallets?pageSize=10' \
      --header 'accept: application/json' \
@@ -194,7 +194,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallet_ballance: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/wallets/{id}/balances' \
      --header 'accept: application/json' \
@@ -264,7 +264,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_transfer_estimate_fee: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/transactions/transfer/estimateFee' \
      --header 'accept: application/json' \
@@ -364,7 +364,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_transfer_estimate_fee: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/user/transactions/transfer' \
      --header 'Content-Type: application/json' \
@@ -475,7 +475,7 @@ except user_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
 ```
 
-```curl
+```curl Curl
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/transactions' \
      --header 'accept: application/json' \

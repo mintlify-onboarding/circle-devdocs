@@ -57,7 +57,7 @@ testnet network.
 In `index.js`, import required modules and define constants for the XDC Apothem
 testnet and the USDC contract:
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import {
   createPublicClient,
@@ -104,7 +104,7 @@ const USDC_ABI = [
 
 Next, load your private key and recipient address from `.env`:
 
-```javascript
+```javascript Javascript
 const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
 const RECIPIENT = process.env.RECIPIENT_ADDRESS;
 
@@ -135,7 +135,7 @@ const PRIVATE_KEY = PRIVATE_KEY_RAW.startsWith("0x")
 Create a public client for reading blockchain data and a wallet client for
 sending transactions:
 
-```javascript
+```javascript Javascript
 const account = privateKeyToAccount(PRIVATE_KEY);
 
 const publicClient = createPublicClient({
@@ -162,7 +162,7 @@ const walletClient = createWalletClient({
 
 Now, write the main logic to check your balance and send a transfer:
 
-```javascript
+```javascript Javascript
 (async () => {
   try {
     // Check balance
@@ -220,7 +220,7 @@ Now, write the main logic to check your balance and send a transfer:
 
 After running the script:
 
-```shell
+```shell Shell
 node index.js
 ```
 

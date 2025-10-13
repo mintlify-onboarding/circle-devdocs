@@ -45,7 +45,7 @@ account, you can repeat these two steps.
 Retrieve a list of the fiat accounts linked to your Circle Mint account using
 the following request:
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/businessAccount/banks/pix' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
@@ -53,7 +53,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/businessAccount
 
 **Response**
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -95,7 +95,7 @@ Register your local fiat account with the Cross-Currency API to make it the
 account that settles trades. The following is an example request to register
 your fiat account:
 
-```shell
+```shell Shell
 curl --location --request PUT 'https://api-sandbox.circle.com/v1/exchange/fxConfigs/accounts' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \
@@ -108,7 +108,7 @@ curl --location --request PUT 'https://api-sandbox.circle.com/v1/exchange/fxConf
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "currency": "MXN",
@@ -132,7 +132,7 @@ locked rate quote. The following is an example request for a quote:
 that time frame.
 </Note>
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quotes' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \
@@ -154,7 +154,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/quote
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "17e1ad29-a223-4ba0-bfb1-cebe861bfed1",
@@ -184,7 +184,7 @@ display the quote to your users and let them confirm the trade.
 Generate another idempotency key, and then use it to confirm the quote and lock
 in the rate using the following example request:
 
-```shell
+```shell Shell
 curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trades' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \
@@ -198,7 +198,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/exchange/trade
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "7a6cba1e-6b8d-4bb8-b236-5c20a12e88f6",
@@ -228,7 +228,7 @@ received, the USDC is transferred to the appropriate address.
 Retrieve unsettled payment batches from the API using the following example
 request:
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
@@ -236,7 +236,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades
 
 **Response**
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -282,7 +282,7 @@ Retrieve the settlement instructions for the currency you are using with the
 following example request. Note that this step only needs to be performed once,
 as the values are static and can be safely cached.
 
-```shell
+```shell Shell
 curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades/settlements/instructions/MXN' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
@@ -290,7 +290,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/exchange/trades
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "currency": "MXN",

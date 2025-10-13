@@ -57,7 +57,7 @@ ETH for gas fees.
 In `index.js`, import required modules and define constants for the Ink Sepolia
 testnet and the USDC contract:
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import {
   createPublicClient,
@@ -107,7 +107,7 @@ Here's what this section does:
 
 Next, load your private key and recipient address from `.env`:
 
-```javascript
+```javascript Javascript
 const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
 const RECIPIENT = process.env.RECIPIENT_ADDRESS;
 
@@ -140,7 +140,7 @@ This section ensures sensitive values are handled safely:
 Create a public client for reading blockchain data and a wallet client for
 sending transactions:
 
-```javascript
+```javascript Javascript
 const account = privateKeyToAccount(PRIVATE_KEY);
 
 const publicClient = createPublicClient({
@@ -168,7 +168,7 @@ These client methods give you read and write access to Ink Sepolia:
 
 Now, write the main logic to check your balance and send a transfer:
 
-```javascript
+```javascript Javascript
 (async () => {
   try {
     // Check balance
@@ -231,7 +231,7 @@ Here's how the transfer process works:
 
 After running the script:
 
-```shell
+```shell Shell
 node index.js
 ```
 

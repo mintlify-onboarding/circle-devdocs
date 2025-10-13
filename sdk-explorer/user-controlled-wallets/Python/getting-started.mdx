@@ -36,7 +36,7 @@ you can use to silo your project from the global Python environment.
 Use the following command to install the SDK with
 [pip](https://pypi.org/project/pip/):
 
-```shell
+```shell Shell
 pip install circle-user-controlled-wallets
 ```
 
@@ -50,7 +50,7 @@ with your API key.
 The following example shows how to import the client and configure it to use
 your API key:
 
-```python
+```python Python
 from circle.web3 import utils
 
 client = utils.init_user_controlled_wallets_client(
@@ -62,7 +62,7 @@ api_key="<your_api_key>"
 
 The following example shows how to create a transaction using the client:
 
-```python
+```python Python
 import uuid
 from circle.web3 import user_controlled_wallets
 

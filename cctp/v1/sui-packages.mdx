@@ -699,7 +699,7 @@ seen below.
 This example assumes the `destination_caller` for the message is set to the auth
 address for your package's `Auth` struct.
 
-```javascript
+```javascript Javascript
 // Prepare the ReceiveMessageTicket by calling create_receive_message_ticket() from within your package.
 let receive_msg_ticket = your_package::prepare_receive_message_ticket(message, attestation);
 // Receive the message on MessageTransmitter.
@@ -717,7 +717,7 @@ message_transmitter::complete_receive_message(stamped_receipt);
 
 A similar example can be seen on the `deposit_for_burn()` side:
 
-```javascript
+```javascript Javascript
 // Prepare the DepositForBurnWithCallerTicket by calling create_deposit_for_burn_with_caller_with_package_auth
 // directly from your package with the input parameters and your Auth struct. Integrators can also take other
 // actions here as needed.
