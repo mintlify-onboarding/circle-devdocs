@@ -8,31 +8,158 @@ documentationItems:
 href: https://developers.circle.com.
 ---
 
-import CreateWeb3ServiceAccount from './create-web3-service-account.mdx'
-import TestnetVsMainnet from './testnet-vs-mainnet.mdx'
-import CreateApiKey from './create-api-key.mdx'
-import PowerOfTestnet from './power-of-testnet.mdx'
+import { FeatureGrid, FeatureItem } from '/snippets/FeatureGrid.mdx';
+import { Grid, GridItem } from '/snippets/Grid.mdx';
 
-<Section>
-  ## Create a Developer Services account
+## Create a Developer Services account
 
-  <CreateWeb3ServiceAccount />
-</Section>
+To access the Developer Services Console, sign up with your email address. Our
+pay-as-you-grow pricing model eliminates upfront fees and contract negotiations,
+starting at a low cost per wallet. The pricing scales as your user base expands.
 
-<Section>
-  ## Understanding Testnet vs Mainnet environments
+To access **Set up your account** on Circle's Developer Services Console.
 
-  <TestnetVsMainnet />
-</Section>
+<Card
+  title="Set up your account"
+  href="/signup"
+  arrow="true"
+  cta="Sign Up"
+>
+  Create an account on Circle's Developer Services Console.
+</Card>
 
-<Section>
-  ## Create your API key
 
-  <CreateApiKey />
-</Section>
 
-<Section>
-  ## The power of Testnet
+## Understanding Testnet vs Mainnet environments
 
-  <PowerOfTestnet />
-</Section>
+<Grid>
+  <GridItem
+    image="/interactive-quickstarts/get-started/images/testnet.png"
+    caption="SANDBOX"
+  />
+  <GridItem>
+    Testnet is akin to a training ground for developers. It's a simulated
+    environment where you can develop, test, and polish your applications with
+    confidence. In this space, you can execute transactions and test various
+    scenarios without any financial implications, as Testnet does not involve
+    real cryptocurrencies or assets.
+  </GridItem>
+  <GridItem
+    image="/interactive-quickstarts/get-started/images/mainnet.png"
+    caption="PRODUCTION"
+  />
+  <GridItem>
+    Mainnet is where everything goes live. This network handles actual
+    transactions with genuine digital currencies. Operating on Mainnet means
+    dealing with real-world consequences and genuine assets. The results of
+    actions performed here are immediate and impactful.
+  </GridItem>
+</Grid>
+
+Before jumping into Mainnet, it is crucial to rigorously test and validate your
+applications within the Testnet environment first. This precaution ensures that
+all systems and functionalities operate correctly before you transition to a
+live environment. Once you have thoroughly vetted your application in Testnet,
+you can migrate to Mainnet operations.
+
+<Note>
+  In our quickstarts, we use Testnet to guarantee a secure learning experience.
+  Your Testnet API key serves as the gateway to this development.
+</Note>
+
+
+
+
+## Create your API key
+
+Generate a standard API key:
+
+<Steps>
+  <Step title="Log in to the console">
+
+    Use your login details to log in to the Circle Developer Services console.
+
+  </Step>
+  <Step title="Go to API Keys">
+
+    On the left hand nav, select the [API Keys](/api-keys) page, and then select **CREATE A KEY**.
+
+    <Frame>
+      <img src="/interactive-quickstarts/get-started/images/api_keys.png" alt="List of API keys" />
+    </Frame>
+
+  </Step>
+  <Step title="Set Up your API key">
+
+    On the **Create an API Key** page, enter a name for your API key, and then select **Standard Key**.
+
+    <Frame>
+      <img src="/interactive-quickstarts/get-started/images/create_key.png" alt="Create new API key form" />
+    </Frame>
+
+  </Step>
+  <Step title="Copy and Store your API key">
+
+    The console displays your key only once after you create it. Make sure to copy the key value and store it in a secure location. You can't retrieve the key value after you close the dialog. If you lose it, you need to create another key. Never share your key with anyone.
+
+    <Frame>
+      <img src="/interactive-quickstarts/get-started/images/api_key_created.png" alt="API key successfully created" />
+    </Frame>
+
+  </Step>
+</Steps>
+
+
+
+## The power of Testnet
+
+
+<FeatureGrid cols={1} backgroundColor="transparent">
+  <FeatureItem title="Test With Assurance" icon="sparkles">
+      Engage in robust testing of your applications, smart contracts, and other
+      blockchain innovations within a safe environment that simulates real-world
+      operations. This sandbox allows for trial and error without any financial
+      stakes, so mistakes carry no monetary risk.
+  </FeatureItem>
+  <FeatureItem title="Achieve Broad Compatibility" icon="arrows-maximize">
+      Testnet serves as a preparatory platform for launches on various
+      blockchains. Whether your focus is on Ethereum, Polygon, or Avalanche,
+      Testnet provides insights into how your applications will perform across
+      different ecosystems.
+  </FeatureItem>
+  <FeatureItem title="Encourage Innovation" icon="lightbulb-on">
+      The Testnet environment is the perfect place to brainstorm and develop new
+      blockchain solutions. Here, you have the license to push boundaries and
+      explore various possibilities without financial constraints.
+  </FeatureItem>
+  <FeatureItem title="Iterate Swiftly" icon="bolt">
+      Benefit from the ability to quickly refine your projects based on
+      immediate feedback and test insights. The adaptable nature of Testnet
+      supports rapid prototyping and swift iteration, which can lead to faster
+      advancements and better outcomes in your development cycle.
+  </FeatureItem>
+</FeatureGrid>
+
+
+**Next: Explore our Quickstarts**
+
+<Columns cols={3}>
+  <Card title="Developer-Controlled Wallet" icon="code" href="/interactive-quickstarts/dev-controlled-wallets" arrow="true" cta="Start Tutorial">
+    Will show you how to set up custodial wallets by establishing your entity secret and how to initiate a transaction.
+  </Card>
+  <Card title="User-Controlled Wallet" icon="code" href="/interactive-quickstarts/user-controlled-wallets" arrow="true" cta="Start Tutorial">
+    Learn how to set up non-custodial wallets for your end-users and initiate a transfer for them.
+  </Card>
+  <Card title="Using CCTP with Circle Wallets" icon="code" href="/interactive-quickstarts/user-controlled-wallets" arrow="true" cta="Start Tutorial">
+    Walkthrough of using the Cross-Chain Transfer Protocol (CCTP) with Circle Wallets, which allows you to bridge USDC across Blockchains.
+  </Card>
+</Columns>
+
+[Developer Services](/w3s/circle-programmable-wallets-an-overview): Bring any
+web or mobile app on-chain. Integrate or create wallets with composable APIs and
+SDKs.
+
+[Stablecoin Protocols](/stablecoins/what-is-usdc): Move USDC securely across
+blockchains for seamless user onboarding, on-demand treasury rebalancing, and
+more. Live on 8 blockchains.
+

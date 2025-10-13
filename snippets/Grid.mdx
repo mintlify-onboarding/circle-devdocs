@@ -1,0 +1,28 @@
+import "./Grid.css";
+
+export const Grid = ({ children }) => {
+  return (
+    <div className="custom-grid">
+      {children}
+    </div>
+  );
+};
+
+export const GridItem = ({ children, image, caption }) => {
+  if (image) {
+    return (
+      <div className="grid-item-image">
+        <div className="image-wrapper">
+          <img src={image} alt={caption || ""} />
+        </div>
+        {caption && <span className="image-caption">{caption}</span>}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid-item-text">
+      <p>{children}</p>
+    </div>
+  );
+};
