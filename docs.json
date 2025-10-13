@@ -96,7 +96,8 @@
                     "group": "Concepts",
                     "pages": [
                       "cpn/concepts/integration-concepts",
-                      "cpn/concepts/block-confirmation-and-finality"
+                      "cpn/concepts/block-confirmation-and-finality",
+                      "cpn/concepts/wallet-nonce-management"
                     ]
                   },
                   {
