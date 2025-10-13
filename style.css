@@ -12,3 +12,30 @@ table thead th,
 table td {
   padding: 8px !important;
 }
+
+/* Accordion with circle-info icon styling */
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) {
+  background-color: #e1f2ff !important;
+  border-color: #c9e1f5 !important;
+}
+
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary {
+  transition: background-color 0.3s ease !important;
+}
+
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary:hover {
+  background-color: #c9e1f5 !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) {
+  background-color: #e1f2ff !important;
+  border-color: #c9e1f5 !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary {
+  transition: background-color 0.3s ease !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary:hover {
+  background-color: #c9e1f5 !important;
+}
