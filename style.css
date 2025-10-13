@@ -28,8 +28,8 @@ table td {
 }
 
 .dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) {
-  background-color: #e1f2ff !important;
-  border-color: #c9e1f5 !important;
+  background-color: #1a2332 !important;
+  border-color: #2d3748 !important;
 }
 
 .dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary {
@@ -37,5 +37,29 @@ table td {
 }
 
 .dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary:hover {
-  background-color: #c9e1f5 !important;
+  background-color: #2d3748 !important;
+}
+
+/* Ensure text is white in dark mode for circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-title"] {
+  color: #ffffff !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] {
+  color: #e5e7eb !important;
+}
+
+/* Links in dark mode circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a {
+  color: #60a5fa !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a:hover {
+  color: #93c5fd !important;
+}
+
+/* Inline code in dark mode circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] code {
+  color: #fbbf24 !important;
+  background-color: #374151 !important;
 }
