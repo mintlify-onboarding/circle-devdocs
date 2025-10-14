@@ -835,6 +835,23 @@ Next, you must create and sign the raw transaction using the
 endpoint. Include the call data from the script as the `data` field and the
 wallet ID from your Circle Wallet.
 
+The raw transaction to be signed can be composed like the following example:
+
+```json JSON
+{
+  "nonce": 1,                                          // The nonce of the sender address, obtained via eth_getTransactionCount RPC call
+  "to": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",  // The target contract address, in this case, the USDC contract address
+  "gas": "150000",                                     // The gas limit for the transaction, from `data.estimatedFee.payload.gasLimit` in the step 3.1 response.
+  "maxFeePerGas": "70000000000",                       // The max fee per gas, from `data.estimatedFee.payload.maxFeePerGas` in the step 3.1 response.
+  "maxPriorityFeePerGas": "3000000000",                // The max priority fee per gas, from `data.estimatedFee.payload.maxPriorityFeePerGas` in the step 3.1 response.
+  "chainId": 11155111,                                 // The chain ID, for Ethereum Sepolia testnet, the chain ID is 11155111
+  // The call data, obtained from the script in step 3.2
+  "data": "0xe3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651"
+}
+```
+
+Use the following endpoint to sign the transaction:
+
 ```shell Shell
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/sign/transaction \

@@ -113,6 +113,7 @@
                       "cpn/howtos/integrate-with-json-schema",
                       "cpn/howtos/encrypt-travel-rule-beneficiary-data",
                       "cpn/howtos/create-an-onchain-txn",
+                      "cpn/howtos/respond-to-rfi",
                       "cpn/howtos/encrypt-files",
                       "cpn/howtos/create-support-ticket"
                     ]
