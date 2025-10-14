@@ -1,43 +1,25 @@
-# Mintlify Starter Kit
+# Migration Checklist
 
-Use the starter kit to get your docs deployed and ready to customize.
+## Content Migration
+- [ ] All content from scoping has been migrated completely
+- [ ] All content has been migrated to Mintlify admonitions (callouts, steps, accordions, release notes, etc.)
+- [ ] Images, videos, and React components have been migrated and are displaying correctly in prod
+- [ ] If docs have a mono-repo set-up, verify they haven't been migrated to a /docs folder
+- [ ] Information architecture/nav structure has been correctly migrated
+- [ ] Migration has been checked for broken links
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## Homepage (if applicable)
+- [ ] Homepage has been built correctly
+- [ ] All cards are equal in length (text shortened as needed)
+- [ ] Adequate padding added to ensure equal appearance across all pages
+- [ ] Hero banner is centered
+- [ ] Font weights match the live site
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
-npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
-```
-
-View your local preview at `http://localhost:3000`.
-
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+## Design & Styling
+- [ ] Logos and favicon have been added correctly
+- [ ] Icons have been added to left-hand side nav and tabs (if applicable)
+- [ ] Appropriate background has been used (gradient or image as applicable)
+- [ ] Custom font has been implemented
+- [ ] Light and dark mode colors are correct with sufficient contrast
+- [ ] Light and dark mode logos are used correctly
+- [ ] Font weights are correct and match the live site
