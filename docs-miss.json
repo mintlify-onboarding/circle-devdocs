@@ -1,0 +1,15 @@
+{
+  "tab": "Interactive Quickstarts",
+  "groups": [
+    {
+      "group": "Interactive Quickstarts",
+      "pages": [
+        "interactive-quickstarts",
+        "interactive-quickstarts/get-started",
+        "interactive-quickstarts/dev-controlled-wallets",
+        "interactive-quickstarts/user-controlled-wallets",
+        "interactive-quickstarts/cctp"
+      ]
+    }
+  ]
+}

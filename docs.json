@@ -136,7 +136,7 @@
                       "cpn/references/rfi-levels",
                       "cpn/references/travel-rule-requirements",
                       "cpn/references/validating-brazil-tax-account-id",
-                      "api-reference/cpn/cpn-platform/get-payment-configurations-overview"
+                      "cpn/references/api-reference"
                     ]
                   }
                 ]
@@ -1101,7 +1101,7 @@
                       "openapi/circle-apis.yaml POST /v1/exchange/trades",
                       "openapi/circle-apis.yaml GET /v1/exchange/trades/{id}",
                       "openapi/circle-apis.yaml PUT /v1/exchange/fxConfigs/accounts",
-                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"	
+                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"
                     ]
                   },
                   {
@@ -1118,7 +1118,7 @@
                       "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/instructions/{currency}"
                     ]
                   }
-                ] 
+                ]
               },
               {
                 "group": "RESERVE MANAGEMENT API",
@@ -1199,21 +1199,6 @@
           {
             "group": "Resources",
             "pages": ["sdk-explorer", "sdks", "sample-projects"]
-          }
-        ]
-      },
-      {
-        "tab": "Interactive Quickstarts",
-        "groups": [
-          {
-            "group": "Interactive Quickstarts",
-            "pages": [
-              "interactive-quickstarts",
-              "interactive-quickstarts/get-started",
-              "interactive-quickstarts/dev-controlled-wallets",
-              "interactive-quickstarts/user-controlled-wallets",
-              "interactive-quickstarts/cctp"
-            ]
           }
         ]
       },
