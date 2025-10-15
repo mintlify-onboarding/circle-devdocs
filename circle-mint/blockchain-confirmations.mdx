@@ -1,46 +1,24 @@
 ---
 title: Blockchain Confirmations
-description: ""
+description: "Each time a new block is added to a blockchain, it confirms the previous blocks."
 sideNav: ""
 tableOfContents: true
 documentationItems:
   - title: Documentation
 ---
 
-## "Reorgs" and associated risks
 
-Transactions in a blockchain are packaged into blocks. Different blockchains
-have different rules for how to decide which transactions get packaged into a
-block, but they often include rules for invalidating recently generated blocks.
+Without a sufficient number of confirmations, transactions may be changed by blockchain reorganization, or reorg. Reorgs occur when validators discard one or more blocks and replace them with a different set of blocks, rewriting part of the chain.
 
-This rewrite of history is called a "reorganization" ("reorg" for short) and
-invalidates any transactions included in the invalidated blocks. You can think
-of invalidated transactions that moved funds as transactions that "never
-happened".
+Each additional block confirmation added after a block makes that block less likely to be removed in a reorg. Each confirmation adds confidence that the transaction is permanent.
 
-Such events can represent a security risk, because an attacker could use a
-cryptocurrency transfer as payment for a good or service, and subsequently
-trigger a reorg, thus invalidating his transfer (and getting his cryptocurrency
-back) while keeping the good or service he paid for.
 
-## Confirmations
+## Confirmation numbers
+Confirmations show how safe a transaction is from reorg. The confirmation number is how many blocks must be added until a block is considered permanent.
 
-To protect against reorg attacks, it's beneficial to wait for a number of
-confirmed blocks before recognizing a transfer as final. As more blocks are
-processed after a given block, the difficulty with which that block may be
-invalidated increases. Therefore, by choosing how many blocks to wait before
-recognizing a transfer, a receiver is able to balance speed (waiting very few
-blocks in order to process the transfer quickly while taking on risk of losing
-money due to a reorg) and security (waiting more blocks to minimize the risk of
-a reorg at the cost of slower transfer processing).
+Each chain's confirmation number is different, and determined by Circle. Confirmation numbers are based on a variety of factors, including the chain's history, potential for reorg, and overall network architecture.
 
-The number of blocks you wait before considering a transfer as final is called
-the "confirmation number", which is typically different for different chains.
-Circle Mint and its APIs use the following confirmation numbers for each
-supported chain. They are based on a variety of factors that Circle has
-considered, including a given chain's historical performance, reorganizations,
-and overall architecture, and they do not reflect the blockchain networks'
-inherent requirements or limits.
+For L2 chains, Circle waits for blocks on the L1 chain. This happens after the L2 block gets included in an L1 block
 
 | Chain                                                                                                                                                                                                                                            | Confirmations/Blocks | Approximate Time  |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- | :---------------- |
@@ -75,76 +53,21 @@ inherent requirements or limits.
 | XRPL ([USDC](https://livenet.xrpl.org/token/5553444300000000000000000000000000000000.rGm7WCVp9gb4jZHWTEtGUr4dd74z2XuWhE))                                                                                                                        | **1**                | ~5 seconds        |
 | ZKsync Era ([USDC](https://explorer.zksync.io/address/0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4))                                                                                                                                               | **65 ETH Blocks**    | ~5 to 7 hours     |
 
-<Warning>
-**Flow** (\*)
-
-Effective Sept 3, 2024 - Circle is discontinuing support for USDC on Flow. For
-details, see
-[Circle is Discontinuing Support for USDC on the Flow (Cadence) blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-flow-cadence-due-to-the-chains-upcoming-network-upgrade).
-
-**TRON** (\*\*)
-
-Effective Feb. 20, 2024 - Circle is discontinuing support for USDC on Tron.
-Withdrawals deprecated. For details, see
-[Circle is Discontinuing Support for USDC on the TRON blockchain](https://www.circle.com/blog/circle-is-discontinuing-support-for-usdc-on-the-tron-blockchain).
-
-</Warning>
-
 <Note>
-**Linea and ZKsync**
-
-Finality is reached approximately 65 Ethereum blocks after the proof for the
-batch is posted to Ethereum L1.
-
-**OP Stack Chains**
-
-These Layer 2 (L2) rollup chains are built on the OP Stack and post periodic
-batched transaction data to Layer 1 (L1) Ethereum for security. Circle
-recognizes transaction finality on these networks only after the batch has
-been submitted to Ethereum and received the required number of confirmations.
-You can view transactions using L2 block explorers such as
-[BaseScan](https://basescan.org) and
-[Optimistic Etherscan](https://optimistic.etherscan.io/), even while Circle is
-still processing finality.
-
 **Hedera**
 
-Hedera is built on a hashgraph rather than a blockchain. For this reason,
-there isn't a count of confirmations/blocks before Circle determines the
-transfer to be valid. Instead, this determination is performed on Hedera
-directly and is then shared back to Circle. Please see the following link to
-learn more about [Hedera consensus](https://hedera.com/how-it-works).
-
-**Polygon PoS**
-
-Circle's platform requires 50 confirmations for transactions on Polygon PoS
-before marking them as complete, which takes ~2 minutes.
+Hedera is built on a hashgraph, not a blockchain. As such, there isn't a count of confirmations before Circle considers a transfer valid. This determination is performed on Hedera directly and is then shared back to Circle. See [Hedera consensus](https://hedera.com/how-it-works) to learn more.
 </Note>
 
-## Confirmations and transfer status
+## Transfer status
+When an incoming transfer is included in a block, the API makes it available for you. However, the transfer remains in the running status. It won't credit the balance of the associated wallet with the transfer amount until the required number of confirmations has been reached.
 
-As soon as an incoming transfer is included in a block, the API will make it
-available for you (whether you poll the
-[get transfers endpoint](/api-reference/circle-mint/account/get-business-transfer)
-or subscribe to notifications). However, the transfer will have a `running`
-status and it will not credit the balance of the associated hosted wallet with
-the transfer amount until the required number of confirmations has been reached.
+Once the confirmation number is reached, the transfer status changes to completed. If you subscribed to webhook notifications, you'll get a message about this change.
 
-At that point the transfer status will change to `completed`. If you have
-subscribed to notifications, you will receive a message indicating such status
-change.
+You can use transfers in your processes before they reach completed status. This comes with risk. Chain reorgs are rare, but they can happen. If you use transfers before they get enough confirmations, you take on this risk.
 
-You might want to deem an incoming transfer completed before such a status
-change and fulfill your business process that depends on that transfer. But note
-that you will be doing so at your own risk, as you might never actually receive
-the funds in case there is a reorg before the number of confirmations has been
-reached.
+<Card>
+  Waiting for confirmations only applies to onchain transfers. These are transfers where the `source` is type `blockchain`. Transfers between hosted wallets don't need to wait. These transfers have a `source` type of `wallet` and happen instantly.
+</Card>
 
-<Warning>
 
-Please note that waiting for confirmations before crediting a wallet only
-applies for on-chain transfers, where the `source` is of type `blockchain`.
-Transfers between hosted wallets, where the `source` is of type `wallet` do not
-require waiting on confirmations and are credited instantly.
-
-</Warning>
