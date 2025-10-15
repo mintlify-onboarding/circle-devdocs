@@ -63,3 +63,8 @@ table td {
   color: #fbbf24 !important;
   background-color: #374151 !important;
 }
+
+/* Bold text for all dropdown buttons in sidebar */
+#sidebar-content button[aria-label^="Toggle"] {
+  font-weight: bold !important;
+}
