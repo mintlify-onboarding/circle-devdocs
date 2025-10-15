@@ -93,7 +93,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->get_wallets: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/wallets' \
      --header 'accept: application/json' \
@@ -162,7 +162,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallet_ballance: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/wallets/{id}/balances' \
      --header 'accept: application/json' \
@@ -337,7 +337,7 @@ except smart_contract_platform.ApiException as e:
     print("Exception when calling DeployImportApi->deploy_contract: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/contracts/deploy' \
      --header 'accept: application/json' \
@@ -399,7 +399,7 @@ except smart_contract_platform.ApiException as e:
     print("Exception when calling ViewUpdateApi->get_contract: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url 'https://api.circle.com/v1/w3s/contracts/{id}' \
      --header 'accept: application/json' \

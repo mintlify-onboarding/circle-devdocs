@@ -80,7 +80,7 @@ outbound transaction.
 In the [console](https://console.circle.com):
 
 1. Navigate to the **Templates** tab via the left navigation.
-2. Select **NFT** ERC-721**.**
+2. Select **NFT** ERC-721.
 3. Fill in the contract template deployment parameters:
 
    1. **Name**: The off-chain name of the contract. This will only be
@@ -445,7 +445,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url https://api.circle.com/v1/w3s/transactions/{id} \
      --header 'accept: application/json' \
@@ -614,7 +614,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url https://api.circle.com/v1/w3s/transactions/{id} \
      --header 'accept: application/json' \

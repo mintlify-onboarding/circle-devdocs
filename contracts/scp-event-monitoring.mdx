@@ -9,19 +9,19 @@ In this guide you'll set up real-time push notifications for specific Events tha
 
 Before you begin:
 
-- Create a Circle Developer Account and API key
+- Create a [Circle Developer Account](/w3s/circle-developer-account) and API key
 
 Perform the steps below:
 
-1. Step 1. Configure Your Webhook for Notifications
-2. Step 2. Import Your Smart Contract
-3. Step 3. Create an Event Monitor
-4. Step 4. Fetch Event History
+1. [Step 1. Configure Your Webhook for Notifications](/contracts/scp-event-monitoring#step-1-configure-your-webhook-for-notifications)
+2. [Step 2. Import Your Smart Contract](/contracts/scp-event-monitoring#step-2-import-your-smart-contract)
+3. [Step 3. Create an Event Monitor](/contracts/scp-event-monitoring#step-3-create-an-event-monitor)
+4. [Step 4. Fetch Event History](/contracts/scp-event-monitoring#step-4-fetch-event-history)
 
 ### Step 1. Configure Your Webhook for Notifications
 To receive notifications from Circle, you must expose a publicly accessible subscriber endpoint on your side. This endpoint should handle POST requests over HTTPS.
 
-For more information on setting up a webhook, refer to the Webhooks Quickstart, and optionally watch the following video about Webhook Configurations.
+For more information on setting up a webhook, refer to the [Webhooks Quickstart](/wallets/webhook-notifications), and optionally watch the following video about Webhook Configurations.
 
 <Accordion title="Video Tutorial: Webhook Configuration">
 <iframe
@@ -83,7 +83,7 @@ Notification
 ### Step 2. Import Your Smart Contract
 Before creating an event monitor, import your smart contract into the Contracts system. This ensures the Contracts platform is aware of your contract and can manage event monitors effectively:
 
-```javascript
+```javascript javascript
 const importResponse = await circleContractSdk.importContract({
   // The address of the smart contract to be imported.
   address: "0x6bc50ff08414717f000431558c0b585332c2a53d",
@@ -200,7 +200,7 @@ const eventHistoryResponse = await circleContractSdk.getEventHistory({
 });
 ```
 
-The data returned will mirror the information in your Webhook Logs in the Circle Console:
+The data returned will mirror the information in your Webhook Logs in the [Circle Console](https://console.circle.com/):
 
 ```json JSON
 {
@@ -250,4 +250,4 @@ The data returned will mirror the information in your Webhook Logs in the Circle
 Event history for a monitor will always be available; however, the resource will stop being populated once the monitor is deleted.
 </Note>
 
-For more information, see the [Event Monitoring APIs](/api-reference/event-monitors/get-event-monitors) and join our Discord - Build on Circle channel.
+For more information, see the [Event Monitoring APIs](/api-reference/event-monitors/get-event-monitors) and join our [Discord - Build on Circle](https://discord.com/invite/buildoncircle) channel.

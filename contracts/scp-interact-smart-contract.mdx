@@ -508,7 +508,7 @@ except smart_contract_platform.ApiException as e:
     print("Exception when calling InteractApi->read_contract: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request POST \
   --url https://api.circle.com/v1/w3s/contracts/query \
   --header "Authorization: Bearer $API_KEY" \
@@ -584,7 +584,7 @@ except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_developer_transaction_contract_execution: %s\n" % e)
 ```
 
-```curl Curl
+```curl Bash
 curl --request POST \
      --url 'https://api.circle.com/v1/w3s/developer/transactions/contractExecution' \
      --header 'accept: application/json' \
