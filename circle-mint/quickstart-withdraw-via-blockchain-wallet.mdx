@@ -1,6 +1,6 @@
 ---
 title: "Quickstart: Withdraw via Blockchain Wallet"
-description: 
+description: Learn the basics of sending funds from your Circle account to an external blockchain wallet.
 sideNav: ""
 tableOfContents: true
 documentationItems: 
@@ -71,7 +71,7 @@ be held in pending status. Please see Help Center articles below for details:
 
 <CodeGroup>
 
-```curl Curl
+```curl Bash
 curl --request POST \
      --url https://api-sandbox.circle.com/v1/businessAccount/wallets/addresses/recipient \
      --header 'accept: application/json' \
@@ -158,7 +158,7 @@ using the command below.
 
 <CodeGroup>
 
-```curl Curl
+```curl Bash
 curl --request POST \
      --url https://api-sandbox.circle.com/v1/businessAccount/transfers \
      --header 'accept: application/json' \
@@ -238,7 +238,7 @@ the transaction. You can use it as in the command below.
 
 <CodeGroup>
 
-```curl Curl
+```curl Bash
 curl --request GET \
      --url https://api-sandbox.circle.com/v1/businessAccount/transfers/21fd4ec4-bad1-4eb2-9fc5-60320dedc7ea \
      --header 'accept: application/json' \
