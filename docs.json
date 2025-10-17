@@ -968,6 +968,12 @@
                 "group": "CORE FUNCTIONALITY",
                 "pages": [
                   {
+                    "group": "Health",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /ping"
+                    ]
+                  },
+                  {
                     "group": "Balances",
                     "pages": [
                       "openapi/circle-apis.yaml GET /v1/businessAccount/balances"
@@ -1122,6 +1128,7 @@
                       "openapi/circle-apis.yaml POST /v1/exchange/trades",
                       "openapi/circle-apis.yaml GET /v1/exchange/trades/{id}",
                       "openapi/circle-apis.yaml PUT /v1/exchange/fxConfigs/accounts",
+                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits",
                       "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"
                     ]
                   },
@@ -1210,19 +1217,6 @@
                   }
                 ]
               }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDK Reference",
-        "groups": [
-          {
-            "group": "Resources",
-            "pages": [
-              "sdk-explorer",
-              "sdks",
-              "sample-projects"
             ]
           }
         ]

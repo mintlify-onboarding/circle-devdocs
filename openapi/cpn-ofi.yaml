@@ -443,8 +443,7 @@ paths:
         - BearerAuth: []
       operationId: getPayment
       description: >-
-        Returns the PII fields needed to collect to make this payment (i.e.
-        travel rule and beneficiary account data)
+        Returns the PII fields needed to collect to make this payment (i.e. travel rule and beneficiary account data)
       parameters:
         - $ref: '#/components/parameters/PaymentId'
       responses:
@@ -510,7 +509,7 @@ paths:
       security:
         - BearerAuth: []
       operationId: getTransaction
-      description: Retrieves a specific transaction by its ID for a given payment
+      description: Retrieves info for a single transaction using it's unique identifier.
       parameters:
         - $ref: '#/components/parameters/PaymentId'
         - $ref: '#/components/parameters/TransactionId'

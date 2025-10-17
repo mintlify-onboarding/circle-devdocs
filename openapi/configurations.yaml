@@ -242,7 +242,7 @@ paths:
       description: >
         Create a notification subscription by configuring an endpoint to receive
         notifications. For details, see the [Notification
-        Flows](https://developers.circle.com/w3s/docs/notification-flows) guide.
+        Flows](/wallets/webhook-notification-flows) guide.
       operationId: createSubscription
       security:
         - BearerAuth: []
