@@ -922,19 +922,19 @@
                   {
                     "group": "CCTP V1",
                     "pages": [
-                      "openapi/cctp.yaml GET /v1/attestations/{messageHash}",
-                      "openapi/cctp.yaml GET /v1/publicKeys",
-                      "openapi/cctp.yaml GET /v1/messages/{sourceDomainId}/{transactionHash}"
+                      "api-reference/cctp/all/get-attestation",
+                      "api-reference/cctp/all/get-public-keys",
+                      "api-reference/cctp/all/get-messages"
                     ]
                   },
                   {
                     "group": "CCTP V2",
                     "pages": [
-                      "openapi/cctp.yaml GET /v2/publicKeys",
-                      "openapi/cctp.yaml GET /v2/messages/{sourceDomainId}",
-                      "openapi/cctp.yaml POST /v2/reattest/{nonce}",
-                      "openapi/cctp.yaml GET /v2/fastBurn/USDC/allowance",
-                      "openapi/cctp.yaml GET /v2/burn/USDC/fees/{sourceDomainId}/{destDomainId}"
+                      "api-reference/cctp/all/get-public-keys-v-2",
+                      "api-reference/cctp/all/get-messages-v-2",
+                      "api-reference/cctp/all/reattest-message",
+                      "api-reference/cctp/all/get-fast-burn-usdc-allowance",
+                      "api-reference/cctp/all/get-burn-usdc-fees"
                     ]
                   }
                 ]
@@ -951,9 +951,10 @@
                   {
                     "group": "Gateway",
                     "pages": [
-                      "openapi/gateway.yaml POST /v1/balances",
-                      "openapi/gateway.yaml GET /v1/info",
-                      "openapi/gateway.yaml POST /v1/transfer"
+                      "/api-reference/gateway/all/get-token-balances",
+                      "/api-reference/gateway/all/get-gateway-info",
+                      "/api-reference/gateway/all/create-transfer-attestation",
+                      "/api-reference/gateway/all/get-transfer-spec"
                     ]
                   }
                 ]

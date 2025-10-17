@@ -1,20 +1,10 @@
 {
   "base_url": "",
-  "total_links": 14,
+  "total_links": 4,
   "links": [
-    "api-reference/contracts/smart-contract-platform/estimate-contract-template-deploy",
-    "api-reference/contracts/smart-contract-platform/deploy-contract-template",
-    "api-reference/contracts/smart-contract-platform/list-contracts",
-    "api-reference/contracts/smart-contract-platform/get-contract",
-    "api-reference/contracts/smart-contract-platform/update-contract",
-    "api-reference/contracts/smart-contract-platform/query-contract",
-    "api-reference/contracts/smart-contract-platform/import-contract",
-    "api-reference/contracts/smart-contract-platform/estimate-contract-deploy",
-    "api-reference/contracts/smart-contract-platform/deploy-contract",
-    "api-reference/contracts/smart-contract-platform/get-event-monitors",
-    "api-reference/contracts/smart-contract-platform/create-event-monitor",
-    "api-reference/contracts/smart-contract-platform/update-event-monitor",
-    "api-reference/contracts/smart-contract-platform/delete-event-monitor",
-    "api-reference/contracts/smart-contract-platform/list-event-logs"
+    "/api-reference/gateway/all/get-token-balances",
+    "/api-reference/gateway/all/get-gateway-info",
+    "/api-reference/gateway/all/create-transfer-attestation",
+    "/api-reference/gateway/all/get-transfer-spec"
   ]
 }

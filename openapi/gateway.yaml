@@ -73,6 +73,49 @@ paths:
           description: Invalid request parameters or invalid burn intent(s)
         '500':
           description: Internal server error
+  /v1/transferSpec/{transferSpecHash}:
+    get:
+      summary: Get Transfer Spec
+      operationId: getTransferSpec
+      tags:
+        - Transfers
+      parameters:
+        - name: transferSpecHash
+          in: path
+          required: true
+          description: Hash that identifies the transfer spec.
+          schema:
+            type: string
+            description: Hex-encoded string (with 0x prefix).
+            example: "0x1234abcd5678ef90..."
+      responses:
+        "200":
+          description: Transfer spec retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferSpec"
+              examples:
+                sample:
+                  value:
+                    version: 1
+                    sourceDomain: 0
+                    destinationDomain: 4
+                    sourceContract: "0x000000000000000000000000557777735b1dd18194f1b84256be2a3cdee6cb6f"
+                    destinationContract: "0x000000000000000000000000552222279206cb0434128e0cae4558a25779c79f"
+                    sourceToken: "0x0000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238"
+                    destinationToken: "0x000000000000000000000000036cbd53842c5426634e7929541ec2318f3dcf7e"
+                    sourceDepositor: "0x0000000000000000000000002b45eF6A547A73eA248A1bCED808575c5a4839eE"
+                    destinationRecipient: "0x0000000000000000000000008BA1f109551bD432803012645aac136c95e5431"
+                    sourceSigner: "0x000000000000000000000000742d35Cc6623C026c893b7c2FD85c4E4A0EF4321"
+                    destinationCaller: "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    value: "1000000"
+                    salt: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+                    hookData: "0x"
+        "400":
+          description: Bad request.
+        "404":
+          description: Transfer spec not found.
 components:
   schemas:
     Token:
@@ -242,6 +285,10 @@ components:
       pattern: ^0x[a-fA-F0-9]*$
       example: '0x1a2b3c4d'
       description: A hex string.
+    HexString:
+      type: string
+      description: Hex-encoded string with `0x` prefix.
+      pattern: "^0x[0-9a-fA-F]*$"
     TransferSpec:
       type: object
       properties:
