@@ -448,61 +448,6 @@ paths:
           $ref: '#/components/responses/NotAuthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /v1/w3s/wallets/{id}:
-    get:
-      tags:
-        - Wallets
-      summary: Retrieve a wallet
-      description: Retrieve an existing wallet
-      operationId: getWallet
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/Id'
-        - $ref: '#/components/parameters/XRequestId'
-      responses:
-        '200':
-          description: Successfully retrieved wallet.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WalletResponse'
-          headers:
-            X-Request-Id:
-              $ref: '#/components/headers/XRequestId'
-        '401':
-          $ref: '#/components/responses/NotAuthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags:
-        - Wallets
-      summary: Update a wallet
-      description: Updates info metadata of a wallet.
-      operationId: updateWallet
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/Id'
-        - $ref: '#/components/parameters/XRequestId'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateWallet'
-      responses:
-        '200':
-          description: Successfully updated wallet metadata.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WalletResponse'
-          headers:
-            X-Request-Id:
-              $ref: '#/components/headers/XRequestId'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/NotAuthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
   /v1/w3s/wallets/{id}/nfts:
     get:
       tags:
