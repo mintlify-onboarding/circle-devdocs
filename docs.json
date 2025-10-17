@@ -1252,8 +1252,7 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "https://www.circle.com"
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
