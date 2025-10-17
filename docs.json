@@ -872,40 +872,40 @@
                   {
                     "group": "Templates",
                     "pages": [
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/templates/{id}/deploy/estimateFee",
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/templates/{id}/deploy"
+                      "api-reference/contracts/smart-contract-platform/estimate-contract-template-deploy",
+                      "api-reference/contracts/smart-contract-platform/deploy-contract-template"
                     ]
                   },
                   {
                     "group": "View / Update",
                     "pages": [
-                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts",
-                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/{id}",
-                      "openapi/smart-contract-platform.yaml PATCH /v1/w3s/contracts/{id}"
+                      "api-reference/contracts/smart-contract-platform/list-contracts",
+                      "api-reference/contracts/smart-contract-platform/get-contract",
+                      "api-reference/contracts/smart-contract-platform/update-contract"
                     ]
                   },
                   {
                     "group": "Interact",
                     "pages": [
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/query"
+                      "api-reference/contracts/smart-contract-platform/query-contract"
                     ]
                   },
                   {
                     "group": "Deploy / Import",
                     "pages": [
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/import",
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/deploy/estimateFee",
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/deploy"
+                      "api-reference/contracts/smart-contract-platform/import-contract",
+                      "api-reference/contracts/smart-contract-platform/estimate-contract-deploy",
+                      "api-reference/contracts/smart-contract-platform/deploy-contract"
                     ]
                   },
                   {
                     "group": "Event Monitors",
                     "pages": [
-                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/monitors",
-                      "openapi/smart-contract-platform.yaml POST /v1/w3s/contracts/monitors",
-                      "openapi/smart-contract-platform.yaml PUT /v1/w3s/contracts/monitors/{id}",
-                      "openapi/smart-contract-platform.yaml DELETE /v1/w3s/contracts/monitors/{id}",
-                      "openapi/smart-contract-platform.yaml GET /v1/w3s/contracts/events"
+                      "api-reference/contracts/smart-contract-platform/get-event-monitors",
+                      "api-reference/contracts/smart-contract-platform/create-event-monitor",
+                      "api-reference/contracts/smart-contract-platform/update-event-monitor",
+                      "api-reference/contracts/smart-contract-platform/delete-event-monitor",
+                      "api-reference/contracts/smart-contract-platform/list-event-logs"
                     ]
                   }
                 ]
