@@ -1195,24 +1195,24 @@
                   {
                     "group": "Transactions",
                     "pages": [
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/transactions/{transactionId}",
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions/{transactionId}/submit",
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/transactions/accelerate"
+                      "api-reference/cpn/cpn-platform/create-transaction",
+                      "api-reference/cpn/cpn-platform/get-transaction",
+                      "api-reference/cpn/cpn-platform/submit-transaction",
+                      "api-reference/cpn/cpn-platform/accelerate-transaction"
                     ]
                   },
                   {
                     "group": "Requests for information",
                     "pages": [
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/rfis/{rfiId}",
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/submit",
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments/{paymentId}/rfis/{rfiId}/files"
+                      "api-reference/cpn/cpn-platform/get-rfi",
+                      "api-reference/cpn/cpn-platform/submit-rfi",
+                      "api-reference/cpn/cpn-platform/upload-rfi-file"
                     ]
                   },
                   {
                     "group": "Support Tickets",
                     "pages": [
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/supportTickets"
+                      "api-reference/cpn/cpn-platform/create-support-ticket"
                     ]
                   }
                 ]
