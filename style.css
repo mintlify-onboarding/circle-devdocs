@@ -68,3 +68,21 @@ table td {
 #sidebar-content button[aria-label^="Toggle"] {
   font-weight: bold !important;
 }
+
+/* Card gradient border on hover */
+.card {
+  border: 1px solid #1118271A !important;
+  border-radius: 1rem !important;
+}
+
+.card:hover {
+  border: 1px solid transparent !important;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
+  border-radius: 1rem !important;
+}
+
+.dark .card:hover {
+  background: linear-gradient(#1f2937, #1f2937) padding-box,
+              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
+}

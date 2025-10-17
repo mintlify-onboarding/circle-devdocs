@@ -3,89 +3,120 @@ mode: "custom"
 title: "Circle Developer Docs"
 ---
 
-<div className="relative w-full flex items-center justify-center" style={{ height: '28rem', overflow: 'hidden'}}>
+import { TryItOutComponent } from '/snippets/TryItOutComponent.jsx';
+import { CustomCard } from '/snippets/CustomCard.jsx';
 
-  <div
-    id="background-div"
-    className="absolute inset-0 h-full dark:bg-[#080d0d] bg-[#eff0fb] bg-cover bg-center rounded-xl" style={{backgroundImage: 'url(https://mintlify-assets.b-cdn.net/1password-background.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
-  </div>
-
-  <div
-    style={{
-      position: 'absolute', textAlign: 'center', padding: '0 1rem',
-    }}
-  >
-    <div
-      className="text-5xl text-white font-extrabold w-full mt-12 leading-[1.2] tracking-tight"
-    >
-      Welcome to Circle Docs!
+<div className="max-w-[1142px] mx-auto px-[1.25rem] flex flex-col gap-[40px]">
+  <div className="relative w-full flex items-center justify-between mt-[48px]" >
+    <div>
+      <h1 className="text-5xl font-bold text-black dark:text-white mb-[16px]">Circle developers</h1>
+      <p className="mb-[24px] text-[#4B5563]">Bridge chains. Move money. Build faster.</p>
+      <div className="flex gap-[16px]">
+        <a className="cursor-pointer border border-[#0073C380] text-[#0073C3] h-[40px] px-4 rounded-md inline-flex items-center gap-2 hover:bg-[#0073C31A] transition-all duration-300">
+          <Icon icon="server" color="#0073C3" size={24} />
+          Build with MCP Server
+        </a>
+        <a href="https://developers.circle.com/ai-codegen" target="_blank" rel="noopener noreferrer" className="cursor-pointer border border-[#0073C380] text-[#0073C3] h-[40px] px-4 rounded-md inline-flex items-center gap-2 hover:bg-[#0073C31A] transition-all duration-300">
+          <Icon icon="sparkles" color="#0073C3" size={24} />
+          Code with AI
+        </a>
+      </div>
     </div>
 
-    <p className=" text-base text-white font-bold">
-      Explore our guides and examples to build on the Circle platform.
-    </p>
-
-    <div className="flex items-center justify-center" style={{ maxWidth: '800px', margin: '0 auto' }}>
-      <button
-        type="button"
-        className="hidden w-full lg:flex items-center text-sm leading-6 py-4 pl-4 pr-4 text-gray-500 rounded-full"
-        id="home-search-entry"
-        style={{
-          marginTop: '2rem',
-          maxWidth: '40rem',
-          background: '#FFF',
-          boxShadow: '0px 1px 4px 0px rgba(8, 9, 10, 0.25), 0px 0px 0px 4px rgba(255, 255, 255, 0.20)',
-          cursor: 'pointer',
-          textAlign: 'left',
-        }}
-        onClick={()=> document.getElementById('search-bar-entry').click()}
-      >
-        <svg
-          className="h-4 w-4 ml-1.5 flex-none bg-primary hover:bg-gray-600 dark:bg-primary-dark dark:hover:bg-white/70"
-          style={{
-          marginRight: '0.5rem',
-          maskImage:
-            'url("https://mintlify.b-cdn.net/v6.5.1/solid/magnifying-glass.svg")',
-          maskRepeat: 'no-repeat',
-          maskPosition: 'center center',
-          }}
-        />
-        Search or ask...
-      </button>
+    <div className="hidden md:block">
+      <img src="images/home/hero.svg" alt="hero image" />
     </div>
   </div>
+
+  <div className="border border-[#B5E1FF] bg-[#f7f8ff] rounded-2xl flex flex-col lg:flex-row  items-start lg:items-center justify-between min-h-[124px] px-[24px] py-[24px] lg:py-0 gap-[16px] lg:gap-0 mb-[40px]">
+    <div>
+      <h2 className="text-2xl font-bold text-black mb-[8px]">Build fast with Kits</h2>
+      <p className="text-[#4B5563]">Pre-configured SDKs that handle setup, keys, and chains.</p>
+    </div>
+    <div className="border border-[#1118271A] bg-[#FFFFFF] px-[24px] py-[16px] rounded-lg flex items-center justify-between w-full lg:w-auto">
+      <div className="flex flex-col gap-[8px] md:w-[474px]">
+        <h3 className="text-lg font-bold text-black">Bridging Kit</h3>
+        <p className="text-[#4B5563]">Connect assets and wallets across chains.</p>
+      </div>
+      <Icon icon="chevron-right" color="#6B6580" size={20} />
+    </div>
+  </div>
+
+  <div>
+    <h2 className="text-2xl font-bold text-black dark:text-white mb-[32px]">Scalable solutions with stablecoins</h2>
+    <Columns cols={3}>
+      <div className="border border-[#1118271A] rounded-xl p-[24px] flex flex-col gap-[16px] hover:border-[#0073C3] select-none transition-all duration-300">
+        <span className="w-min p-[16px] rounded-full bg-[#F6F2FF]">
+          <Icon icon="wallet" color="#9F72FF" size={24} />
+        </span> 
+        <h3 className="text-lg font-bold text-black dark:text-white">Integrate USDC into your app</h3>
+        <p>Embed USDC payments and wallets directly in your app.</p>
+        <a href="/stablecoins/what-is-usdc" className="cursor-pointer text-[#0073C3] font-bold w-fit">
+          Wallets
+        </a>
+      </div>
+
+      <div className="border border-[#1118271A] rounded-xl p-[24px] flex flex-col gap-[16px] hover:border-[#0073C3] select-none transition-all duration-300">
+        <span className="inline-flex items-center justify-center w-[52px] h-[52px] rounded-full bg-[#E1F2FF] rotate-45">
+          <Icon icon="arrow-up-arrow-down" color="#1894E8" size={20} />
+        </span>
+        <h3 className="text-lg font-bold text-black dark:text-white">Integrate USDC into your app</h3>
+        <p>Embed USDC payments and wallets directly in your app.</p>
+        <a href="/cctp" className="cursor-pointer text-[#0073C3] font-bold w-fit">
+          CCTP
+        </a>
+      </div>
+
+      <div className="border border-[#1118271A] rounded-xl p-[24px] flex flex-col gap-[16px] hover:border-[#0073C3] select-none transition-all duration-300">
+        <span className="w-min p-[16px] rounded-full bg-[#E2FDF2]">
+          <Icon icon="coin-blank" color="#0B9C4A" size={24} />
+        </span> 
+        <h3 className="text-lg font-bold text-black dark:text-white">Integrate USDC into your app</h3>
+        <p>Embed USDC payments and wallets directly in your app.</p>
+        <a href="/wallets/user-controlled/receive-inbound-transfer" className="cursor-pointer text-[#0073C3] font-bold w-fit">
+          StableFX
+        </a>
+      </div>
+    </Columns>
+  </div>
+
+  <div>
+    <h2 className="text-2xl font-bold text-black dark:text-white mb-[24px]">Try it out</h2>
+    <TryItOutComponent />
+  </div>
+
+  <div className="mt-[24px]">
+    <h2 className="text-2xl font-bold text-black dark:text-white mb-[24px]">Explore our products</h2>
+    <Columns cols={3}>
+      <Card title="Wallets" href="/wallets" icon="wallet" color="#B090F5">
+        Embed secure wallets in any app
+      </Card>
+      <Card title="Paymaster" href="/paymaster" icon="coin-vertical" color="#9F72FF">
+        Allow transaction fees in USDC
+      </Card>
+      <Card title="Gas station" href="/wallets/gas-station" icon="gas-pump" color="#9F72FF">
+        Mint and redeem USDC with Circle.
+      </Card>
+      <Card title="Mint" href="/circle-mint/introducing-circle-mint" icon="arrows-rotate-reverse" color="#B090F5">
+        Access and distribute USDC liquidity
+      </Card>
+      <Card title="CPN" href="/cpn" icon="globe" color="#9F72FF">
+        Global, real-time settlement
+      </Card>
+       <Card title="CCPT" href="/cctp" icon="arrow-up-arrow-down" color="#9F72FF">
+        Move USDC natively between chains
+      </Card>
+      <Card title="Gateway" href="/gateway" icon="arrows-maximize" color="#B090F5">
+        Enable a unified USDC balance
+      </Card>
+      <Card title="Circle Unified Bridge" href="/gateway/howtos/create-unified-usdc-balance" icon="link" color="#9F72FF">
+        Move USDC cross-chain with one API
+      </Card>
+      <Card title="Contracts" href="/contracts" icon="globe" color="#9F72FF">
+        Build and manage smart contracts
+      </Card>
+    </Columns>
+  </div>
+
 </div>
-
-<div
-  style={{marginTop: '2rem', marginBottom: '8rem', maxWidth: '70rem', marginLeft: 'auto',
-  marginRight: 'auto', paddingLeft: '1.25rem',
-  paddingRight: '1.25rem' }}
->
-
-<Columns cols={4}>
-  <Card title="Interactive Quickstarts" cta="Try it out" icon="code" href="/interactive-quickstarts">
-    Experience our guided tutorials before diving into the code.
-  </Card>
-
-  <Card title="SDKs" icon="code" cta="View now" href="/sdks">
-    Explore our server-side and client-side SDKs to start building fast.
-  </Card>
-
-  <Card title="Sample APIS" icon="lightbulb" cta="View demos" href="/sample-projects">
-    Explore our range of open-source sample projects for inspiration.
-  </Card>
-
-  <Card title="API Reference" icon="book-open" cta="View reference" href="/api-reference/overview">
-    See code snippets for Circle's APIs in Node.js, Python, and more.
-  </Card>
-</Columns>
-<Columns cols={2}>
-  <Card title="Testnet Faucet" horizontal cta="View reference" href="/api-reference/w3s/common/ping">
-    Get free testnet USDC & EURC.
-  </Card>
-
-  <Card title="Token Addresses" horizontal cta="View reference" href="/api-reference/w3s/common/ping">
-    Verify the token addresses for USDC and EURC on supported blockchains.
-  </Card>
-</Columns>
-</div>
+ 
