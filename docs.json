@@ -639,18 +639,18 @@
                   {
                     "group": "Health",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /ping"
+                      "api-reference/wallets/common/ping"
                     ]
                   },
                   {
                     "group": "Webhook Subscriptions",
                     "pages": [
-                      "openapi/configurations.yaml GET /v2/notifications/subscriptions",
-                      "openapi/configurations.yaml POST /v2/notifications/subscriptions",
-                      "openapi/configurations.yaml GET /v2/notifications/subscriptions/{id}",
-                      "openapi/configurations.yaml PATCH /v2/notifications/subscriptions/{id}",
-                      "openapi/configurations.yaml DELETE /v2/notifications/subscriptions/{id}",
-                      "openapi/configurations.yaml GET /v2/notifications/publicKey/{id}"
+                      "api-reference/wallets/common/get-subscriptions",
+                      "api-reference/wallets/common/create-subscription",
+                      "api-reference/wallets/common/get-subscription",
+                      "api-reference/wallets/common/update-subscription",
+                      "api-reference/wallets/common/delete-subscription",
+                      "api-reference/wallets/common/get-notification-signature"
                     ]
                   }
                 ]
@@ -667,24 +667,24 @@
                   {
                     "group": "Monitor Tokens",
                     "pages": [
-                      "openapi/configurations.yaml GET /v1/w3s/config/entity/monitoredTokens",
-                      "openapi/configurations.yaml POST /v1/w3s/config/entity/monitoredTokens",
-                      "openapi/configurations.yaml PUT /v1/w3s/config/entity/monitoredTokens",
-                      "openapi/configurations.yaml PUT /v1/w3s/config/entity/monitoredTokens/scope",
-                      "openapi/configurations.yaml POST /v1/w3s/config/entity/monitoredTokens/delete"
+                      "/api-reference/wallets/programmable-wallets/list-monitored-tokens",
+                      "/api-reference/wallets/programmable-wallets/create-monitored-tokens",
+                      "/api-reference/wallets/programmable-wallets/update-monitored-tokens",
+                      "/api-reference/wallets/programmable-wallets/update-monitored-tokens-scope",
+                      "/api-reference/wallets/programmable-wallets/delete-monitored-tokens"
                     ]
                   },
                   {
                     "group": "Developer Account",
                     "pages": [
-                      "openapi/configurations.yaml GET /v1/w3s/config/entity",
-                      "openapi/configurations.yaml GET /v1/w3s/config/entity/publicKey"
+                      "api-reference/wallets/programmable-wallets/get-public-key",
+                      "api-reference/wallets/programmable-wallets/get-entity-config"
                     ]
                   },
                   {
                     "group": "Faucet",
                     "pages": [
-                      "openapi/configurations.yaml POST /v1/faucet/drips"
+                      "api-reference/wallets/programmable-wallets/faucet"
                     ]
                   }
                 ]
@@ -695,32 +695,32 @@
                   {
                     "group": "Wallet Sets",
                     "pages": [
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/walletSets",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/walletSets/{id}",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/walletSets",
-                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/developer/walletSets/{id}"
+                      "api-reference/wallets/developer-controlled-wallets/get-wallet-sets",
+                      "api-reference/wallets/developer-controlled-wallets/get-wallet-set",
+                      "api-reference/wallets/developer-controlled-wallets/create-wallet-set",
+                      "api-reference/wallets/developer-controlled-wallets/update-wallet-set"
                     ]
                   },
                   {
                     "group": "Wallets",
                     "pages": [
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/wallets",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}",
-                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/wallets/{id}",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/developer/wallets/balances",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/balances",
-                      "openapi/developer-controlled-wallets.yaml PUT /v1/w3s/developer/wallets/{id}/blockchains/{blockchain}",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/nfts"
+                      "api-reference/wallets/developer-controlled-wallets/create-wallet",
+                      "api-reference/wallets/developer-controlled-wallets/get-wallets",
+                      "api-reference/wallets/developer-controlled-wallets/get-wallet",
+                      "api-reference/wallets/developer-controlled-wallets/update-wallet",
+                      "api-reference/wallets/developer-controlled-wallets/get-wallets-with-balances",
+                      "api-reference/wallets/developer-controlled-wallets/list-wallet-balance",
+                      "api-reference/wallets/developer-controlled-wallets/derive-wallet",
+                      "api-reference/wallets/developer-controlled-wallets/list-wallet-nfts"
                     ]
                   },
                   {
                     "group": "Signing",
                     "pages": [
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/message",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/typedData",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/transaction",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/sign/delegateAction"
+                      "api-reference/wallets/developer-controlled-wallets/sign-message",
+                      "api-reference/wallets/developer-controlled-wallets/sign-typed-data",
+                      "api-reference/wallets/developer-controlled-wallets/sign-transaction",
+                      "api-reference/wallets/developer-controlled-wallets/sign-delegate-action"
                     ]
                   },
                   {
