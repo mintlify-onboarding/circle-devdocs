@@ -33,9 +33,9 @@
     "tabs": [
       {
         "tab": "Documentation",
-        "groups": [
+        "anchors": [
           {
-            "group": "Stablecoins",
+            "anchor": "Stablecoins",
             "pages": [
               {
                 "group": "USDC",
@@ -72,7 +72,7 @@
             ]
           },
           {
-            "group": "Tokenized Funds",
+            "anchor": "Tokenized Funds",
             "pages": [
               {
                 "group": "USYC",
@@ -86,7 +86,7 @@
             ]
           },
           {
-            "group": "Circle Payments Network",
+            "anchor": "Circle Payments Network",
             "pages": [
               {
                 "group": "CPN",
@@ -96,12 +96,15 @@
                     "group": "Concepts",
                     "pages": [
                       "cpn/concepts/integration-concepts",
-                      "cpn/concepts/block-confirmation-and-finality"
+                      "cpn/concepts/block-confirmation-and-finality",
+                      "cpn/concepts/wallet-nonce-management"
                     ]
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": ["cpn/quickstarts/integrate-with-cpn-ofi"]
+                    "pages": [
+                      "cpn/quickstarts/integrate-with-cpn-ofi"
+                    ]
                   },
                   {
                     "group": "How-tos",
@@ -112,6 +115,7 @@
                       "cpn/howtos/integrate-with-json-schema",
                       "cpn/howtos/encrypt-travel-rule-beneficiary-data",
                       "cpn/howtos/create-an-onchain-txn",
+                      "cpn/howtos/respond-to-rfi",
                       "cpn/howtos/encrypt-files",
                       "cpn/howtos/create-support-ticket"
                     ]
@@ -134,7 +138,7 @@
                       "cpn/references/rfi-levels",
                       "cpn/references/travel-rule-requirements",
                       "cpn/references/validating-brazil-tax-account-id",
-                      "api-reference/cpn/cpn-platform/get-payment-configurations-overview"
+                      "cpn/references/api-reference"
                     ]
                   }
                 ]
@@ -142,7 +146,7 @@
             ]
           },
           {
-            "group": "Developer Services",
+            "anchor": "Developer Services",
             "pages": [
               {
                 "group": "Wallets",
@@ -151,11 +155,162 @@
                   {
                     "group": "Wallets Products",
                     "pages": [
-                      "wallets/modular",
-                      "wallets/user-controlled",
-                      "wallets/dev-controlled",
-                      "wallets/gas-station",
-                      "wallets/compliance-engine"
+                      {
+                        "group": "Wallets: Modular",
+                        "pages": [
+                          "wallets/modular",
+                          {
+                            "group": "Concepts",
+                            "pages": [
+                              "wallets/modular/key-features",
+                              "wallets/modular/passkeys"
+                            ]
+                          },
+                          {
+                            "group": "Quickstarts",
+                            "pages": [
+                              "wallets/modular/create-a-wallet-and-send-gasless-txn"
+                            ]
+                          },
+                          {
+                            "group": "Tutorials",
+                            "pages": [
+                              "wallets/modular/console-setup",
+                              "wallets/modular/recover-passkey",
+                              "wallets/modular/dynamic-integration"
+                            ]
+                          },
+                          {
+                            "group": "References",
+                            "pages": [
+                              "wallets/modular/modules",
+                              {
+                                "group": "SDKs",
+                                "pages": [
+                                  "wallets/modular/web-sdk",
+                                  "wallets/modular/ios-sdk",
+                                  "wallets/modular/android-sdk"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Wallets: User-Controlled",
+                        "pages": [
+                          "wallets/user-controlled",
+                          {
+                            "group": "Quickstarts",
+                            "pages": [
+                              "wallets/user-controlled/create-your-first-wallet-with-social-logins",
+                              "wallets/user-controlled/create-your-first-wallet-with-email",
+                              "wallets/user-controlled/create-your-first-wallet-with-pin"
+                            ]
+                          },
+                          {
+                            "group": "Tutorials",
+                            "pages": [
+                              "wallets/user-controlled/send-an-outbound-transfer-or-execute-contract",
+                              "wallets/user-controlled/initiate-a-signature-request",
+                              "wallets/user-controlled/receive-inbound-transfer",
+                              "wallets/user-controlled/send-outbound-transfer",
+                              "wallets/user-controlled/reset-account-pin",
+                              "wallets/user-controlled/recover-account"
+                            ]
+                          },
+                          {
+                            "group": "References",
+                            "pages": [
+                              "wallets/user-controlled/authentication-methods",
+                              "wallets/user-controlled/confirmation-uis",
+                              "wallets/user-controlled/sdk-architecture",
+                              {
+                                "group": "SDKs",
+                                "pages": [
+                                  "wallets/user-controlled/sdks",
+                                  "wallets/user-controlled/web-sdk",
+                                  "wallets/user-controlled/ios-sdk",
+                                  "wallets/user-controlled/android-sdk",
+                                  "wallets/user-controlled/react-native-sdk",
+                                  "wallets/user-controlled/web-sdk-ui-customizations",
+                                  "wallets/user-controlled/ios-sdk-ui-customization-api",
+                                  "wallets/user-controlled/android-sdk-ui-customization-api",
+                                  "wallets/user-controlled/react-native-sdk-ui-customization-api"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Wallets: Dev-Controlled",
+                        "pages": [
+                          "wallets/dev-controlled",
+                          {
+                            "group": "Quickstarts",
+                            "pages": [
+                              "wallets/dev-controlled/register-entity-secret",
+                              "wallets/dev-controlled/create-your-first-wallet",
+                              "wallets/dev-controlled/receive-an-inbound-transfer",
+                              "wallets/dev-controlled/transfer-tokens-across-wallets"
+                            ]
+                          },
+                          {
+                            "group": "Tutorials",
+                            "pages": [
+                              "wallets/dev-controlled/entity-secret-management",
+                              "wallets/dev-controlled/onboard-users"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Gas Station",
+                        "pages": [
+                          "wallets/gas-station",
+                          {
+                            "group": "Quickstarts",
+                            "pages": [
+                              "wallets/gas-station/send-a-gasless-transaction"
+                            ]
+                          },
+                          {
+                            "group": "References",
+                            "pages": [
+                              "wallets/gas-station/contract-addresses",
+                              "wallets/gas-station/billing",
+                              "wallets/gas-station/policy-management"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Compliance Engine",
+                        "pages": [
+                          "wallets/compliance-engine",
+                          {
+                            "group": "Concepts",
+                            "pages": [
+                              "wallets/compliance-engine/tx-screening"
+                            ]
+                          },
+                          {
+                            "group": "Quickstarts",
+                            "pages": [
+                              "wallets/compliance-engine/tx-screening-quickstart"
+                            ]
+                          },
+                          {
+                            "group": "Tutorials",
+                            "pages": [
+                              "wallets/compliance-engine/tx-screening-testing",
+                              "wallets/compliance-engine/tx-screening-rule-management",
+                              "wallets/compliance-engine/tx-screening-alert-management"
+                            ]
+                          }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -173,7 +328,9 @@
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": ["wallets/webhook-notifications"]
+                    "pages": [
+                      "wallets/webhook-notifications"
+                    ]
                   },
                   {
                     "group": "Tutorials",
@@ -199,164 +356,14 @@
                 ]
               },
               {
-                "group": "Gas Station",
-                "pages": [
-                  "wallets/gas-station",
-                  {
-                    "group": "Quickstarts",
-                    "pages": ["wallets/gas-station/send-a-gasless-transaction"]
-                  },
-                  {
-                    "group": "References",
-                    "pages": [
-                      "wallets/gas-station/contract-addresses",
-                      "wallets/gas-station/billing",
-                      "wallets/gas-station/policy-management"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Compliance Engine",
-                "pages": [
-                  "wallets/compliance-engine",
-                  {
-                    "group": "Concepts",
-                    "pages": ["wallets/compliance-engine/tx-screening"]
-                  },
-                  {
-                    "group": "Quickstarts",
-                    "pages": [
-                      "wallets/compliance-engine/tx-screening-quickstart"
-                    ]
-                  },
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "wallets/compliance-engine/tx-screening-testing",
-                      "wallets/compliance-engine/tx-screening-rule-management",
-                      "wallets/compliance-engine/tx-screening-alert-management"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Wallets: Dev-Controlled",
-                "pages": [
-                  "wallets/dev-controlled",
-                  {
-                    "group": "Quickstarts",
-                    "pages": [
-                      "wallets/dev-controlled/register-entity-secret",
-                      "wallets/dev-controlled/create-your-first-wallet",
-                      "wallets/dev-controlled/receive-an-inbound-transfer",
-                      "wallets/dev-controlled/transfer-tokens-across-wallets"
-                    ]
-                  },
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "wallets/dev-controlled/entity-secret-management",
-                      "wallets/dev-controlled/onboard-users"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Wallets: User-Controlled",
-                "pages": [
-                  "wallets/user-controlled",
-                  {
-                    "group": "Quickstarts",
-                    "pages": [
-                      "wallets/user-controlled/create-your-first-wallet-with-social-logins",
-                      "wallets/user-controlled/create-your-first-wallet-with-email",
-                      "wallets/user-controlled/create-your-first-wallet-with-pin"
-                    ]
-                  },
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "wallets/user-controlled/send-an-outbound-transfer-or-execute-contract",
-                      "wallets/user-controlled/initiate-a-signature-request",
-                      "wallets/user-controlled/receive-inbound-transfer",
-                      "wallets/user-controlled/send-outbound-transfer",
-                      "wallets/user-controlled/reset-account-pin",
-                      "wallets/user-controlled/recover-account"
-                    ]
-                  },
-                  {
-                    "group": "References",
-                    "pages": [
-                      "wallets/user-controlled/authentication-methods",
-                      "wallets/user-controlled/confirmation-uis",
-                      "wallets/user-controlled/sdk-architecture",
-                      {
-                        "group": "SDKs",
-                        "pages": [
-                          "wallets/user-controlled/sdks",
-                          "wallets/user-controlled/web-sdk",
-                          "wallets/user-controlled/ios-sdk",
-                          "wallets/user-controlled/android-sdk",
-                          "wallets/user-controlled/react-native-sdk",
-                          "wallets/user-controlled/web-sdk-ui-customizations",
-                          "wallets/user-controlled/ios-sdk-ui-customization-api",
-                          "wallets/user-controlled/android-sdk-ui-customization-api",
-                          "wallets/user-controlled/react-native-sdk-ui-customization-api"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Wallets: Modular",
-                "pages": [
-                  "wallets/modular",
-                  {
-                    "group": "Concepts",
-                    "pages": [
-                      "wallets/modular/key-features",
-                      "wallets/modular/passkeys"
-                    ]
-                  },
-                  {
-                    "group": "Quickstarts",
-                    "pages": [
-                      "wallets/modular/create-a-wallet-and-send-gasless-txn"
-                    ]
-                  },
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "wallets/modular/console-setup",
-                      "wallets/modular/recover-passkey",
-                      "wallets/modular/dynamic-integration"
-                    ]
-                  },
-                  {
-                    "group": "References",
-                    "pages": [
-                      "wallets/modular/modules",
-                      {
-                        "group": "SDKs",
-                        "pages": [
-                          "wallets/modular/web-sdk",
-                          "wallets/modular/ios-sdk",
-                          "wallets/modular/android-sdk"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
                 "group": "Contracts",
                 "pages": [
                   "contracts",
                   {
                     "group": "Concepts",
-                    "pages": ["contracts/scp-templates-overview"]
+                    "pages": [
+                      "contracts/scp-templates-overview"
+                    ]
                   },
                   {
                     "group": "Quickstarts",
@@ -385,7 +392,10 @@
                   "cctp",
                   {
                     "group": "Concepts",
-                    "pages": ["cctp/technical-guide", "cctp/cctp-faq"]
+                    "pages": [
+                      "cctp/technical-guide",
+                      "cctp/cctp-faq"
+                    ]
                   },
                   {
                     "group": "Quickstarts",
@@ -400,7 +410,9 @@
                       "cctp/evm-smart-contracts",
                       {
                         "group": "Non-EVM Contracts and Interfaces",
-                        "pages": ["cctp/solana-programs"]
+                        "pages": [
+                          "cctp/solana-programs"
+                        ]
                       },
                       "cctp/required-block-confirmations",
                       "api-reference/w3s/cctp/get-public-keys-v-2",
@@ -468,7 +480,9 @@
                   },
                   {
                     "group": "Quickstarts",
-                    "pages": ["gateway/quickstarts/unified-balance"]
+                    "pages": [
+                      "gateway/quickstarts/unified-balance"
+                    ]
                   },
                   {
                     "group": "How-tos",
@@ -495,18 +509,21 @@
                   "paymaster",
                   {
                     "group": "Quickstarts",
-                    "pages": ["paymaster/pay-gas-fees-usdc"]
+                    "pages": [
+                      "paymaster/pay-gas-fees-usdc"
+                    ]
                   },
                   {
                     "group": "References",
-                    "pages": ["paymaster/addresses-and-events"]
+                    "pages": [
+                      "paymaster/addresses-and-events"
+                    ]
                   }
                 ]
               },
               {
                 "group": "References",
                 "pages": [
-                  "w3s/supported-blockchains-and-currencies",
                   {
                     "group": "Supported Blockchains",
                     "pages": [
@@ -538,7 +555,7 @@
             ]
           },
           {
-            "group": "Liquidity Services",
+            "anchor": "Liquidity Services",
             "pages": [
               {
                 "group": "Mint",
@@ -621,7 +638,9 @@
                   "api-reference",
                   {
                     "group": "Health",
-                    "pages": ["openapi/circle-apis.yaml GET /ping"]
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /ping"
+                    ]
                   },
                   {
                     "group": "Webhook Subscriptions",
@@ -949,6 +968,12 @@
                 "group": "CORE FUNCTIONALITY",
                 "pages": [
                   {
+                    "group": "Health",
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /ping"
+                    ]
+                  },
+                  {
                     "group": "Balances",
                     "pages": [
                       "openapi/circle-apis.yaml GET /v1/businessAccount/balances"
@@ -1027,7 +1052,9 @@
                 "pages": [
                   {
                     "group": "Management",
-                    "pages": ["openapi/circle-apis.yaml GET /v1/configuration"]
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/configuration"
+                    ]
                   },
                   {
                     "group": "Subscriptions",
@@ -1039,7 +1066,9 @@
                   },
                   {
                     "group": "Stablecoins",
-                    "pages": ["openapi/circle-apis.yaml GET /v1/stablecoins"]
+                    "pages": [
+                      "openapi/circle-apis.yaml GET /v1/stablecoins"
+                    ]
                   }
                 ]
               },
@@ -1099,7 +1128,8 @@
                       "openapi/circle-apis.yaml POST /v1/exchange/trades",
                       "openapi/circle-apis.yaml GET /v1/exchange/trades/{id}",
                       "openapi/circle-apis.yaml PUT /v1/exchange/fxConfigs/accounts",
-                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"	
+                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits",
+                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"
                     ]
                   },
                   {
@@ -1116,7 +1146,7 @@
                       "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/instructions/{currency}"
                     ]
                   }
-                ] 
+                ]
               },
               {
                 "group": "RESERVE MANAGEMENT API",
@@ -1192,30 +1222,6 @@
         ]
       },
       {
-        "tab": "SDK Reference",
-        "groups": [
-          {
-            "group": "Resources",
-            "pages": ["sdk-explorer", "sdks", "sample-projects"]
-          }
-        ]
-      },
-      {
-        "tab": "Interactive Quickstarts",
-        "groups": [
-          {
-            "group": "Interactive Quickstarts",
-            "pages": [
-              "interactive-quickstarts",
-              "interactive-quickstarts/get-started",
-              "interactive-quickstarts/dev-controlled-wallets",
-              "interactive-quickstarts/user-controlled-wallets",
-              "interactive-quickstarts/cctp"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Release Notes",
         "pages": [
           "release-notes",
@@ -1246,8 +1252,7 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "https://www.circle.com"
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
@@ -1276,6 +1281,11 @@
     }
   },
   "contextual": {
-    "options": ["copy", "chatgpt", "claude", "view"]
+    "options": [
+      "copy",
+      "chatgpt",
+      "claude",
+      "view"
+    ]
   }
 }

@@ -80,7 +80,7 @@ paths:
         Creates a new developer-controlled wallet set.
 
         **Note:** A developer account can create up to 1,000 wallet sets, with each set supporting up to 10 million wallets.
-        To ensure EVM wallets are created with the same address across chains, see [Unified Wallet Addressing on EVM Chains](/w3s/unified-wallet-addressing-evm).
+        To ensure EVM wallets are created with the same address across chains, see [Unified Wallet Addressing on EVM Chains](/wallets/unified-wallet-addressing-evm).
       operationId: createWalletSet
       security:
         - BearerAuth: []
@@ -323,7 +323,7 @@ paths:
       tags:
         - Signing
       summary: Sign message
-      description: 'Sign a message from a specified developer-controlled wallet. This endpoint supports message signing for Ethereum-based blockchains (using EIP-191), Solana and Aptos (using Ed25519 signatures). Note that Smart Contract Accounts (SCA) are specific to Ethereum and EVM-compatible chains. The difference between Ethereum''s EOA and SCA can be found in the [account types guide](https://developers.circle.com/w3s/docs/programmable-wallets-account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
+      description: 'Sign a message from a specified developer-controlled wallet. This endpoint supports message signing for Ethereum-based blockchains (using EIP-191), Solana and Aptos (using Ed25519 signatures). Note that Smart Contract Accounts (SCA) are specific to Ethereum and EVM-compatible chains. The difference between Ethereum''s EOA and SCA can be found in the [account types guide](/wallets/account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
       operationId: signMessage
       security:
         - BearerAuth: []
@@ -352,7 +352,7 @@ paths:
       tags:
         - Signing
       summary: Sign typed data
-      description: 'Sign the EIP-712 typed structured data from a specified developer-controlled wallet. This endpoint only supports Ethereum and EVM-compatible blockchains. Please note that not all Dapps currently support Smart Contract Accounts (SCA); the difference between Ethereum''s EOA and SCA can be found in the [account types guide](https://developers.circle.com/w3s/docs/programmable-wallets-account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
+      description: 'Sign the EIP-712 typed structured data from a specified developer-controlled wallet. This endpoint only supports Ethereum and EVM-compatible blockchains. Please note that not all Dapps currently support Smart Contract Accounts (SCA); the difference between Ethereum''s EOA and SCA can be found in the [account types guide](/wallets/account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
       operationId: signTypedData
       security:
         - BearerAuth: []
@@ -384,7 +384,7 @@ paths:
       description: |-
         Sign a transaction from a specific developer-controlled wallet.
 
-        NOTE: This endpoint is only available for the following chains: `SOL`, `SOL-DEVNET`, `NEAR`, `NEAR-TESTNET`, `EVM`, `EVM-TESTNET`. Each chain defines its own standard, please refer to [Signing APIs doc](https://learn.circle.com/w3s/signing-apis).
+        NOTE: This endpoint is only available for the following chains: `SOL`, `SOL-DEVNET`, `NEAR`, `NEAR-TESTNET`, `EVM`, `EVM-TESTNET`. Each chain defines its own standard, please refer to [Signing APIs doc](/wallets/signing-apis).
       operationId: signTransaction
       security:
         - BearerAuth: []

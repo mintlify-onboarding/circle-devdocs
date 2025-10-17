@@ -81,7 +81,7 @@ then be used later to recover their passkey and associated smart account.
 the only credential for recovery if the passkey is lost.
 </Note>
 
-```ts
+```ts Typescript
 import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
 import { recoveryActions } from "@circle-fin/modular-wallets-core";
 
@@ -107,7 +107,7 @@ This creates a mapping between the smart account and the recovery address.
 If a user loses their passkey, they can use the mnemonic from the recovery
 address to start the recovery flow.
 
-```ts
+```ts Typescript
 // Recreate the recovery account from the saved mnemonic
 const localAccount = mnemonicToAccount(savedMnemonic);
 
@@ -133,7 +133,7 @@ passkey to replace the lost one.
 After registering the new passkey, call `executeRecovery` to complete the
 recovery and restore access to the smart account.
 
-```ts
+```ts Typescript
 await recoveryClient.executeRecovery({
   account: newAccount, // Temporary account used for signing
   credential: newCredential, // New WebAuthn credential
@@ -148,7 +148,7 @@ This associates the new `WebAuthn` credential with the smart account.
 After a successful recovery, the user can access the smart account using their
 new passkey.
 
-```ts
+```ts Typescript
 const recoveredAccount = await toCircleSmartAccount({
   client,
   owner: toWebAuthnAccount({ credential: newCredential }) as WebAuthnAccount,
@@ -174,7 +174,7 @@ as it creates a smoother experience.
 1. **Sponsor gas fees** using Circle Gas Station.
 2. **Estimate gas fees** and display them to users:
 
-```ts
+```ts Typescript
 const registerGasEstimate =
   await recoveryClient.estimateRegisterRecoveryAddressGas({
     account,

@@ -34,7 +34,7 @@ Developer SDK.
 
 <CodeGroup>
 
-```javascript
+```javascript Javascript
 const response = await circleDeveloperSdk.createWallets({
   accountType: "EOA",
   blockchains: ["SOLANA-DEVNET"],
@@ -59,7 +59,7 @@ tokens on Jupiter. Note that this code is purely for example purposes only.
 
 <CodeGroup>
 
-```javascript
+```javascript Javascript
 // Get quote for swapping SOL to USDC with input 0.01 SOL and 0.5% slippage
 const quoteResponse = await (
   await fetch(
@@ -93,7 +93,7 @@ The following example code shows how to sign the raw transaction.
 
 <CodeGroup>
 
-```javascript
+```javascript Javascript
 const response = await circleDeveloperSdk.signTransaction({
   walletId: "FILL-YOUR-SOL-WALLET-ID",
   rawTransaction: swapTransaction,
@@ -112,7 +112,7 @@ Base64 encoded string in JavaScript.
 
 <CodeGroup>
 
-```javascript
+```javascript Javascript
 const web3 = require("@solana/web3.js");
 const {
   initiateDeveloperControlledWalletsClient,

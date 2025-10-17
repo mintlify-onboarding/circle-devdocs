@@ -1,6 +1,6 @@
 ---
 title: "Quickstart: Deposit via Funds Transfer"
-description: 
+description: Learn the basics of sending funds to your Circle account from an external bank account.
 sideNav: ""
 tableOfContents: true
 documentationItems: 
@@ -49,7 +49,7 @@ details.
 
 Replace `${YOUR_API_KEY}` with your API key.
 
-```shell
+```shell Shell
 curl --request POST \
 --url https://api-sandbox.circle.com/v1/businessAccount/banks/wires \
 --header 'accept: application/json' \
@@ -83,7 +83,7 @@ curl --request POST \
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "9d1fa351-b24d-442a-8aa5-e717db1ed636",
@@ -127,14 +127,14 @@ Replace `${YOUR_API_KEY}` with your API key.
 
 Replace `${TRANSFER_ID}` with the ID of the transfer you created earlier.
 
-```curl
+```curl Curl
 curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
 -X GET https\://api-sandbox.circle.com/v1/businessAccount/banks/wires/${TRANSFER_ID}/instructions?currency=USD
 ```
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "trackingRef": "CIR22FEP33",
@@ -180,7 +180,7 @@ with the account number returned in step 3.
 
 Replace `${YOUR_API_KEY}` with your API key.
 
-```shell
+```shell Shell
 curl --request POST \
 --url https://api-sandbox.circle.com/v1/businessAccount/banks/wires \
 --header 'accept: application/json' \
@@ -202,7 +202,7 @@ curl --request POST \
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "trackingRef": "CIR22FEP33",

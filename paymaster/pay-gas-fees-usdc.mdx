@@ -50,7 +50,7 @@ initialize a new smart account.
 Create a new project, set the package type to `module`, and install the
 necessary dependencies.
 
-```shell
+```shell Shell
 npm init
 npm pkg set type="module"
 npm install --save viem @circle-fin/modular-wallets-core dotenv
@@ -58,14 +58,14 @@ npm install --save viem @circle-fin/modular-wallets-core dotenv
 
 Create a new `.env` file.
 
-```shell
+```shell Shell
 touch .env
 ```
 
 Edit the `.env` file and add the following variables, replacing
 `{YOUR_PRIVATE_KEY}` and `{RECIPIENT_ADDRESS}` with your own values:
 
-```text
+```text 
 OWNER_PRIVATE_KEY={YOUR_PRIVATE_KEY}
 RECIPIENT_ADDRESS={RECIPIENT_ADDRESS}
 PAYMASTER_V07_ADDRESS=0x31BE08D380A21fc740883c0BC434FcFc88740b58
@@ -80,7 +80,7 @@ transfer.
 Create a file called `index.js` and add the following code to set up the
 necessary clients and account:
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import { createPublicClient, http, getContract } from "viem";
 import { arbitrumSepolia } from "viem/chains";
@@ -100,7 +100,7 @@ const account = await toCircleSmartAccount({ client, owner });
 
 Check the smart account's USDC balance using the following code:
 
-```javascript
+```javascript Javascript
 import { erc20Abi } from "viem";
 const usdc = getContract({ client, address: usdcAddress, abi: erc20Abi });
 const usdcBalance = await usdc.read.balanceOf([account.address]);
@@ -127,7 +127,7 @@ allowance without submitting a separate transaction.
 Create a new file called `permit.js` with the following code to sign EIP-2612
 permits:
 
-```javascript
+```javascript Javascript
 import { maxUint256, erc20Abi, parseErc6492Signature } from "viem";
 
 // Adapted from https://github.com/vacekj/wagmi-permit/blob/main/src/permit.ts
@@ -249,7 +249,7 @@ export async function signPermit({
 In the `index.js` file, use the Circle permit implementation to build paymaster
 data:
 
-```javascript
+```javascript Javascript
 import { encodePacked } from "viem";
 import { signPermit } from "./permit.js";
 
@@ -291,7 +291,7 @@ operation to transfer USDC.
 
 In `index.js`, set up the bundler client with the following code:
 
-```javascript
+```javascript Javascript
 import { createBundlerClient } from "viem/account-abstraction";
 import { hexToBigInt } from "viem";
 
@@ -318,7 +318,7 @@ const bundlerClient = createBundlerClient({
 Finally, submit a user operation to transfer USDC, using the paymaster to pay
 for the network fee in USDC. In `index.js` add the following code:
 
-```javascript
+```javascript Javascript
 const recipientAddress = process.env.RECIPIENT_ADDRESS;
 
 const hash = await bundlerClient.sendUserOperation({
@@ -394,7 +394,7 @@ initialize a new smart account.
 Create a new project, set the package type to `module`, and install the
 necessary dependencies.
 
-```shell
+```shell Shell
 npm init
 npm pkg set type="module"
 npm install --save viem dotenv
@@ -402,14 +402,14 @@ npm install --save viem dotenv
 
 Create a new `.env` file.
 
-```shell
+```shell Shell
 touch .env
 ```
 
 Edit the `.env` file and add the following variables, replacing
 `{YOUR_PRIVATE_KEY}` and `{RECIPIENT_ADDRESS}` with your own values:
 
-```text
+```text 
 OWNER_PRIVATE_KEY={YOUR_PRIVATE_KEY}
 RECIPIENT_ADDRESS={RECIPIENT_ADDRESS}
 PAYMASTER_V08_ADDRESS=0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966
@@ -424,7 +424,7 @@ transfer.
 Create a file called `index.js` and add the following code to set up the
 necessary clients and 7702 account:
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import { createPublicClient, http, getContract } from "viem";
 import { arbitrumSepolia } from "viem/chains";
@@ -447,7 +447,7 @@ const account = await toSimple7702SmartAccount({ client, owner });
 
 Check the smart account's USDC balance using the following code:
 
-```javascript
+```javascript Javascript
 import { erc20Abi } from "viem";
 const usdc = getContract({ client, address: usdcAddress, abi: erc20Abi });
 const usdcBalance = await usdc.read.balanceOf([account.address]);
@@ -474,7 +474,7 @@ allowance without submitting a separate transaction.
 Create a new file called `permit.js` with the following code to sign EIP-2612
 permits:
 
-```javascript
+```javascript Javascript
 import { maxUint256, erc20Abi, parseErc6492Signature, getContract } from "viem";
 
 // Adapted from https://github.com/vacekj/wagmi-permit/blob/main/src/permit.ts
@@ -596,7 +596,7 @@ export async function signPermit({
 In the `index.js` file, use the Circle permit implementation to build paymaster
 data:
 
-```javascript
+```javascript Javascript
 import { encodePacked } from "viem";
 import { signPermit } from "./permit.js";
 
@@ -638,7 +638,7 @@ operation to transfer USDC.
 
 In `index.js`, set up the bundler client with the following code:
 
-```javascript
+```javascript Javascript
 import { createBundlerClient } from "viem/account-abstraction";
 import { hexToBigInt } from "viem";
 
@@ -665,7 +665,7 @@ const bundlerClient = createBundlerClient({
 For 7702 smart accounts, you need to sign an authorization to set the code of
 the account to a 7702 smart account before submitting the user operation:
 
-```javascript
+```javascript Javascript
 const recipientAddress = process.env.RECIPIENT_ADDRESS;
 
 // Sign authorization for 7702 account

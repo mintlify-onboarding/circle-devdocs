@@ -1,0 +1,159 @@
+---
+title: "How-to: Respond to an RFI"
+sidebarTitle: "Respond to an RFI"
+---
+
+This guide explains how to respond to an RFI request that is system-initiated. In a system-initiated RFI, you are notified either synchronously when a payment is created, or asynchronously by an RFI webhook.
+
+This guide doesn't cover how to respond to an RFI when it is initiated by a support ticket. For RFIs initiated this way, you must follow the support ticket workflow.
+
+## Steps
+
+Use the following steps to respond to an RFI.
+
+When a system-initiated RFI is created by a BFI, you are notified in one of two ways:
+
+1. In the synchronous response to the payment creation endpoint. When you create a payment, the endpoint responds with the created payment record containing a non-null activeRfi field.
+2. Asynchronously by an RFI webhook. This can occur at any time in the payment flow after the payment is created. The RFI webhook doesn't contain the entire RFI object.
+
+Once you have the full RFI object, you can use the following steps to respond to the RFI.
+
+### Step 1: Get the RFI requirements and certificate
+
+Before you respond to an RFI, you need to get the requirements and the certificate used for encrypting RFI responses.
+
+The RFI requirements are available in the RFI object. If the RFI was created synchronously, the full object is included in the activeRfi field of the payment object. If the RFI was created asynchronously, you must retrieve the full object using the [get details for an RFI endpoint](/api-reference/requests-for-information/get-details-for-an-rfi). The following is an example RFI object:
+
+```json JSON
+{
+  "id": "48dfd36c-cf6c-4d9d-b065-69bdbe9bfea1",
+  "paymentId": "90dfd86c-cf6c-4d9d-b065-69bdbe9bfec8",
+  "status": "INFORMATION_REQUIRED",
+  "level": "LEVEL_1",
+  "expireDate": "2025-01-28T19:41:33.076Z",
+  "fieldRequirements": {
+    "version": 1,
+    "schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "RFI Requirements",
+      "type": "object",
+      "description": "RFI Requirements",
+      "properties": {
+        "DATE_OF_BIRTH": {
+          "description": "Individual's date of birth (YYYY-MM-DD)",
+          "type": "string"
+        },
+        "NAME": {
+          "description": "Individual's full name",
+          "type": "string"
+        }
+      },
+      "required": ["NAME", "DATE_OF_BIRTH"]
+    }
+  },
+  "fileRequirements": [
+    {
+      "fileName": "PROOF_OF_ADDRESS",
+      "required": false
+    },
+    {
+      "fileName": "ORG_STRUCTURE",
+      "required": false
+    }
+  ],
+  "certificate": {
+    "id": "0cc3c5fe-fa88-4e79-b5eb-1c5194a19b08",
+    "certPem": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tTUlJQmpUQ0NBVE9nQXdJQkFnSVVMaWk2Mk5KME0rdTZOTDZWV0hWRkhIZmJCWUl3Q2dZSUtvWkl6ajBFQXdJd0tqRVhNQlVHQTFVRUF3d09ZWEJwTG1OcGNtTnNaUzVqYjIweER6QU5CZ05WQkFvTUJrTnBjbU5zWlRBZUZ3MHlOVEF6TVRjeU1EQXdNVFJhRncweU5qQXpNVGN5TURBd01UUmFNQ294RnpBVkJnTlZCQU1NRG1Gd2FTNWphWEpqYkdVdVkyOXRNUTh3RFFZRFZRUUtEQVpEYVhKamJHVXdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBUmgyTTU0Q2FVMTlaWFRFaXZJVUNLOXluMmgvYld6Uno0bUhJWVE0ZzFYWnArdHRiM3Z6bGY2ZDQzYUhNYlRaQUpPTG1pbkdFZGwxbUZMdFRUTXdYb3ZvemN3TlRBekJnTlZIUkVFTERBcWdnNWhjR2t1WTJseVkyeGxMbU52YllJU2QzZDNMbUZ3YVM1amFYSmpiR1V1WTI5dGh3UUtBQUFCTUFvR0NDcUdTTTQ5QkFNQ0EwZ0FNRVVDSUExbksrNUxBUC9ueUlxRFlUaVVLYmlHNWYwTjVPUmFMb2Y1VXpXU0dsUEJBaUVBaEVOcDFxakRydG41aGFpMHdKeTNORzJKZ2xra084Y1QzellhN21mRTBiST0tLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0t",
+    "domain": "api.circle.com",
+    "jwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "kid": "263521881931753643998528753619816524468853605762",
+      "x": "YdjOeAmlNfWV0xIryFAivcp9of21s0c-JhyGEOINV2Y",
+      "y": "n621ve_OV_p3jdocxtNkAk4uaKcYR2XWYUu1NMzBei8"
+    }
+  }
+}
+```
+
+### Step 2: Create the RFI response
+
+You must provide all of the fields that are marked as required. Circle recommends providing the fields marked as optional for the highest likelihood of an approved RFI. If you do not have the requested information about the sender, you should request it.
+
+Once you have all of the required information, you can create the RFI response. Format it into the appropriate JSON format, based on the schema provided in the fieldRequirements parameter.
+
+Before encrypting and sending the response, you should validate the JSON response object against the JSON schema. See [How-to: Integrate with JSON Schema](/cpn/howtos/integrate-with-json-schema) for more information.
+
+The following is an example RFI response:
+
+```json JSON
+{
+  "ADDRESS": {
+    "city": "San Francisco",
+    "country": "US",
+    "postalCode": "94105",
+    "stateProvince": "CA",
+    "street": "123 Market Street"
+  },
+  "NAME": "Alice Johnson",
+  "DATE_OF_BIRTH": "1990-10-10",
+  "NATIONAL_IDENTIFICATION_NUMBER": "12-9483432",
+  "SOURCE_OF_FUNDS": "Company revenue",
+  "METHOD_OF_VERIFICATION": "Electronic"
+}
+```
+
+### Step 3: Encrypt the RFI response
+
+The RFI response must be encrypted before it is sent to the BFI. It is encrypted in the same manner as the travel rule and beneficiary account data. For a full guide on the encryption process, see [How-to: Encrypt Travel Rule and Beneficiary Account Data](/cpn/howtos/encrypt-travel-rule-beneficiary-data).
+
+### Step 4: Submit the RFI response
+
+Submit the encrypted RFI response with the [submit RFI data endpoint](/api-reference/requests-for-information/submit-rfi-data). The request should include the encrypted data and the version of the RFI JSON Schema. The version should match the version in the fieldRequirements parameter of the RFI object. An example request body is shown below:
+
+```json JSON
+{
+  "rfi": {
+    "version": 1,
+    "data": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhHQ00iLCJlcGsiOnsiY3J2IjoiUC0yNTYiLCJrdHkiOiJFQyIsIngiOiJ4ZzFRelVtaFRGdWV0Ti1Qd0N5dzdfRXd4SldKdk9ZTTFRLTNBRXFxZHdzIiwieSI6IjA0Z0dFMEsyT2ttVVZTMlhFUXZvR2hBUkJLWHQyWGRDRnRDNXpRMjQ3ajQifX0.Zaev1iHNNwG9_x0l3nwBcYlWBmlW9fP3.fmd2QQL_xKswDntW.1lYKjSoBZ_j7SKH4Q-kV8Zajcurh_zow1_e07zegfDNNEQ3DhsURPrjhDhyngtBe86T-WmDBM20j_1aChh1xwOS2vgKc-Kcv_4cNUzz0398ngYf2_xkEfvVckEexpX84omj5lmfqa0aleIQGldUVSuVV8fBl4YnH2oik5kDgvvQ4ap4MYhSTRqYJsi0bm6col7buPhnQJpojAjpp3ttoCYuOxbuDs5V_eNLIGuHPxF9KK7hS-l0qjLnNPcTnCbLL_fIveButXOzU54qB6lLssrE86O4xCH_d47_PAtaxJ296qtjGIB02dLSlrnORbVnvjrn17dhf8DmhkMy5GmFgtTs.TcOP8NKlgtgEaakORE1lXQ"
+  }
+}
+```
+
+### Step 5: Upload required files
+
+If the RFI includes a fileRequirements field, you must upload documentation about the sender in addition to submitting the RFI response. Files must be encrypted and uploaded one at a time to the [upload RFI file endpoint](/api-reference/requests-for-information/upload-rfi-file). You can upload files before or after submitting the RFI response, as long as it is before the RFI decision is made.
+
+See [How-to: Encrypt Files for RFI Transmission](/cpn/howtos/encrypt-files) for more information on how to encrypt files.
+
+The [upload RFI file endpoint](/api-reference/requests-for-information/upload-rfi-file) accepts a multipart/form-data request body in three parts. The request body should include the encrypted file, the encryption details, and the file metadata. The file metadata should include the filename, file type, and file key. The file key should match the fileKey in the fileRequirements field of the RFI object.
+
+The following is an example request body:
+
+```text
+------WebKitFormBoundary
+Content-Disposition: form-data; name="fileMetadata"
+Content-Type: application/json
+
+{
+ "fileName": "example.pdf",
+ "fileType": "application/pdf",
+ "fileKey": "PROOF_OF_ADDRESS"
+}
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="encryption"
+Content-Type: application/json
+
+{
+ "encryptedAesKey": "<base64-encoded-encrypted-aes-key>",
+ "iv": "<base64-encoded-iv-for-file-encryption>"}
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="encryptedFile"; filename="encrypted_data.bin"
+Content-Type: application/octet-stream
+
+[BINARY FILE DATA]
+```
+
+Once you submit the RFI response, you receive the decision on the RFI via webhook. If the BFI approves the RFI, you can continue with the payment, or create a new payment for the sender if the existing payment has expired.

@@ -1,6 +1,6 @@
 ---
 title: Transfer USDC on testnet from Ethereum to Avalanche using CCTP V1
-description: 
+description: Explore this script to transfer USDC on testnet between two EVM-compatible chains via CCTP V1
 sideNav: ""
 tableOfContents: true
 documentationItems: 
@@ -39,7 +39,7 @@ The script has five steps:
    This step approves the Ethereum Sepolia **TokenMessenger** contract to
    withdraw USDC from the provided Ethereum Sepolia wallet address.
 
-```javascript
+```javascript Javascript
 const approveTx = await usdcEthContract.methods
   .approve(ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS, amount)
   .send({ gas: approveTxGas });
@@ -50,7 +50,7 @@ const approveTx = await usdcEthContract.methods
    Ethereum Sepolia **TokenMessenger** contract deployed on
    [Sepolia testnet](https://sepolia.etherscan.io/address/0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5).
 
-```javascript
+```javascript Javascript
 const burnTx = await ethTokenMessengerContract.methods
   .depositForBurn(
     amount,
@@ -66,7 +66,7 @@ const burnTx = await ethTokenMessengerContract.methods
    `depositForBurn` transaction logs and hashes the retrieved `messageBytes`
    using the **keccak256** hashing algorithm.
 
-```javascript
+```javascript Javascript
 const transactionReceipt = await web3.eth.getTransactionReceipt(
   burnTx.transactionHash,
 );
@@ -89,7 +89,7 @@ requests per second, the service blocks all API requests for the next 5
 minutes and returns an HTTP 429 response.
 </Note>
 
-```javascript
+```javascript Javascript
 let attestationResponse = { status: "pending" };
 while (attestationResponse.status != "complete") {
   const response = await fetch(
@@ -105,7 +105,7 @@ while (attestationResponse.status != "complete") {
    **MessageTransmitter** contract to receive USDC at the Avalanche Fuji wallet
    address.
 
-```javascript
+```javascript Javascript
 const receiveTx = await avaxMessageTransmitterContract.receiveMessage(
   receivingMessageBytes,
   signature,

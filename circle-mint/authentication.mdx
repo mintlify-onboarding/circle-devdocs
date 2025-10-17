@@ -45,7 +45,7 @@ curl -H 'Accept: application/json' \
   -X GET --url https://api-sandbox.circle.com/v1/configuration
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -65,13 +65,13 @@ getAccountConfig();
 
 Successful Response:
 
-```json
+```json JSON
 { "data": { "payments": { "masterWalletId": "1234567890" } } }
 ```
 
 Error Response:
 
-```json
+```json JSON
 {
   "code": 401,
   "message": "Malformed authorization. Are the credentials properly encoded?"

@@ -47,7 +47,7 @@ Perform the following installation and setup steps:
 1. **Project Setup**: Create a new project directory and initialize it with
    `npm`:
 
-```shell
+```shell Shell
 npx create-next-app@latest usdc-transfer-app
 ```
 
@@ -62,13 +62,13 @@ npx create-next-app@latest usdc-transfer-app
 
 3. Navigate to the project directory:
 
-```shell
+```shell Shell
 cd usdc-transfer-app
 ```
 
 4. Install additional dependencies:
 
-```shell
+```shell Shell
 npm install @mysten/dapp-kit @mysten/sui @mysten/wallet-kit @tanstack/react-query
 ```
 
@@ -77,7 +77,7 @@ npm install @mysten/dapp-kit @mysten/sui @mysten/wallet-kit @tanstack/react-quer
 5. The code provided will be updated in the `src/app/page.tsx` file. This
    section imports necessary libraries and sets up the network configuration.
 
-```javascript
+```javascript Javascript
 'use client'
 import { useState, useEffect } from 'react'
 import {
@@ -103,7 +103,7 @@ wallet connection token definition, and token transfer.
 
 **a. Define USDC testnet token contract**
 
-```javascript
+```javascript Javascript
 // Define the USDC token type on Sui testnet
 // This is the unique identifier for the USDC token on Sui
 const USDC_TYPE =
@@ -115,7 +115,7 @@ const USDC_TYPE =
 Define state variables to manage the connection status, amount, recipient
 address, and transaction status.
 
-```javascript
+```javascript Javascript
 function HomeContent() {
   // Use the wallet kit to get the current account and transaction signing function
   const { currentAccount, signAndExecuteTransactionBlock } = useWalletKit();
@@ -132,7 +132,7 @@ function HomeContent() {
 Use `useEffect()` to update the connection status whenever the `currentAccount`
 changes.
 
-```javascript
+```javascript Javascript
 // Update the connection status when the current account changes
 useEffect(() => {
   setConnected(!!currentAccount)
@@ -144,7 +144,7 @@ useEffect(() => {
 Define the function to handle sending tokens, including validation and
 transaction execution.
 
-```javascript
+```javascript Javascript
 const handleSendTokens = async () => {
   if (!currentAccount || !amount || !recipientAddress) {
     setTxStatus('Please connect wallet and fill all fields')
@@ -193,7 +193,7 @@ const handleSendTokens = async () => {
 Render the main UI components, including input fields for amount and recipient
 address, and a button to send tokens.
 
-```javascript
+```javascript Javascript
    return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm">
@@ -241,7 +241,7 @@ address, and a button to send tokens.
 This component wraps the `HomeContent()` function with the necessary providers
 for state management and wallet connection.
 
-```javascript
+```javascript Javascript
 export default function Home() {
   return (
     // Wrap the app with necessary providers
@@ -261,7 +261,7 @@ export default function Home() {
 
 6. Start the development server:
 
-```shell
+```shell Shell
 npm run dev
 ```
 

@@ -56,7 +56,7 @@ endpoint as a subscriber to webhook notifications by doing the following:
 5. At this stage, you should receive a Hello World test notification indicating
    you have subscribed to your endpoint successfully:
 
-```json
+```json JSON
 {
   "subscriptionId": "00000000-0000-0000-0000-000000000000",
   "notificationId": "00000000-0000-0000-0000-000000000000",
@@ -103,7 +103,7 @@ notification message on your local server shell that looks like the following:
 
 **Sample Challenge Notification**:
 
-```json
+```json JSON
 {
   "subscriptionId": "a68cd974-d209-46cd-8dbf-b7a081fbd627",
   "notificationId": "eaa4a4fe-24b8-4329-a4c6-6dfd557dbcb2",
@@ -145,7 +145,7 @@ notification message on your local server shell that looks like the following:
    public key and algorithm used to sign the message:
    [`GET /v2/notifications/publicKey/{keyId)`](/api-reference/w3s/common/get-notification-signature)
 
-```shell
+```shell Shell
 # Replace ${YOUR_API_KEY} with your API key
 # Replace ${PUBLIC_KEY_ID} with your public key id
 curl --request GET \

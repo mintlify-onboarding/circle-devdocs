@@ -2513,6 +2513,7 @@ paths:
       - $ref: '#/components/parameters/PageAfter'
       - $ref: '#/components/parameters/PageSize'
       summary: List all payouts
+      description: ''
       operationId: listPayouts
       tags:
       - Payouts

@@ -740,7 +740,7 @@ For the full list of actions and detailed documentation, see the
 - Description: Represents a client for interacting with modular wallets.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type CircleModularWalletClient: Client<
     Transport,
     Chain | undefined,
@@ -757,7 +757,7 @@ type CircleModularWalletClient: Client<
   accounts.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type CircleSmartAccountImplementation = Assign<
   SmartAccountImplementation<
     typeof entryPoint07Abi,
@@ -788,7 +788,7 @@ type CircleSmartAccountImplementation = Assign<
 - Description: The return type for adding an address mapping.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 CreateAddressMappingReturnType: AddressMappingResponse[]
 ```
 
@@ -797,7 +797,7 @@ CreateAddressMappingReturnType: AddressMappingResponse[]
 - Description: The RPC schema for adding an address mapping.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type CreateAddressMappingRpcSchema = {
   Method: "circle_createAddressMapping";
   Parameters: [CreateAddressMappingParameters];
@@ -811,7 +811,7 @@ type CreateAddressMappingRpcSchema = {
   combining standard client error types and additional error types.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type CreateRpClientErrorType = CreateClientErrorType | ErrorType
 ```
 
@@ -822,7 +822,7 @@ type CreateRpClientErrorType = CreateClientErrorType | ErrorType
   otherwise, it defaults to the Modular Wallet RPC schema.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type ExtendedRpcSchema = rpcSchema extends RpcSchema
   ? [...ModularWalletRpcSchema, ...rpcSchema]
   : ModularWalletRpcSchema
@@ -833,7 +833,7 @@ type ExtendedRpcSchema = rpcSchema extends RpcSchema
 - Description: The return type for getting an address mapping.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 GetAddressMappingReturnType: AddressMappingResponse[]
 ```
 
@@ -842,7 +842,7 @@ GetAddressMappingReturnType: AddressMappingResponse[]
 - Description: Get the address mapping for the specified owner.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetAddressMappingRpcSchema = {
   Method: "circle_getAddressMapping";
   Parameters: [GetAddressMappingParameters];
@@ -855,7 +855,7 @@ type GetAddressMappingRpcSchema = {
 - Description: Defines the parameters required for retrieving an address.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetAddressParameters = [
   {
     metadata?: { name?: string };
@@ -877,7 +877,7 @@ type GetAddressParameters = [
 - Description: The Get Circle modular wallet address response.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetAddressReturnType = ModularWallet
 ```
 
@@ -886,7 +886,7 @@ type GetAddressReturnType = ModularWallet
 - Description: Defines the RPC schema for the circle_getAddress method
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetAddressRpcSchema = {
   Method: "circle_getAddress";
   Parameters?: [
@@ -911,7 +911,7 @@ type GetAddressRpcSchema = {
 - Description: Defines the parameters required to retrieve login options.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetLoginOptionsParameters = {
   userId: string;
 }
@@ -922,7 +922,7 @@ type GetLoginOptionsParameters = {
 - Description: Defines the parameters required to retrieve login options.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetLoginOptionsReturnType = CustomPublicKeyCredentialRequestOptions
 ```
 
@@ -931,7 +931,7 @@ type GetLoginOptionsReturnType = CustomPublicKeyCredentialRequestOptions
 - Description: Defines the RPC schema for the rp_getLoginOptions method.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetLoginOptionsRpcSchema = {
   Method: "rp_getLoginOptions";
   Parameters?: [userId: string];
@@ -944,7 +944,7 @@ type GetLoginOptionsRpcSchema = {
 - Description: Defines the parameters required to verify a login attempt.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetLoginVerificationParameters = {
   credential: PublicKeyCredential;
 }
@@ -955,7 +955,7 @@ type GetLoginVerificationParameters = {
 - Description: Defines the RPC schema for the rp_getLoginVerification method.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetLoginVerificationRpcSchema = {
   Method: "rp_getLoginVerification";
   Parameters?: [authenticationCredential: PublicKeyCredential];
@@ -968,7 +968,7 @@ type GetLoginVerificationRpcSchema = {
 - Description: Defines the parameters required to retrieve registration options.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetRegistrationOptionsParameters = {
   username: string;
 }
@@ -979,7 +979,7 @@ type GetRegistrationOptionsParameters = {
 - Description: Represents the return type for retrieving registration options.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetRegistrationOptionsReturnType = CustomPublicKeyCredentialCreationOptions
 ```
 
@@ -988,7 +988,7 @@ type GetRegistrationOptionsReturnType = CustomPublicKeyCredentialCreationOptions
 - Description: Defines the RPC schema for the rp_getRegistrationOptions method.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetRegistrationOptionsRpcSchema = {
   Method: "rp_getRegistrationOptions";
   Parameters?: [username: string];
@@ -1001,7 +1001,7 @@ type GetRegistrationOptionsRpcSchema = {
 - Description: Defines the parameters required to verify a registration attempt.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetRegistrationVerificationParameters = {
   credential: PublicKeyCredential;
 }
@@ -1013,7 +1013,7 @@ type GetRegistrationVerificationParameters = {
   method.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetRegistrationVerificationRpcSchema = {
   Method: "rp_getRegistrationVerification";
   Parameters?: [registrationCredential: PublicKeyCredential];
@@ -1027,7 +1027,7 @@ type GetRegistrationVerificationRpcSchema = {
   method.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type GetUserOperationGasPriceRpcSchema = {
   Method: "circle_getUserOperationGasPrice";
   Parameters?: [];
@@ -1040,7 +1040,7 @@ type GetUserOperationGasPriceRpcSchema = {
 - Description: Represents the available actions for a modular wallet,
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type ModularWalletActions = {
   getAddress: (
     parameters: GetAddressParameters,
@@ -1053,7 +1053,7 @@ type ModularWalletActions = {
 - Description: Represents the RPC schema for modular wallets.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type ModularWalletRpcSchema = [GetAddressRpcSchema]
 ```
 
@@ -1063,7 +1063,7 @@ type ModularWalletRpcSchema = [GetAddressRpcSchema]
   process.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type RecoveryActions = {
     estimateExecuteRecoveryGas: (
         parameters: EstimateExecuteRecoveryGasParameters,
@@ -1085,7 +1085,7 @@ type RecoveryActions = {
 - Description: Represents the actions available for the RP (Relying Party) API.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type RpActions = {
   getLoginOptions: (
     parameters: GetLoginOptionsParameters,
@@ -1107,7 +1107,7 @@ type RpActions = {
 - Description: Represents a prettified RP (Relying Party) client.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type RpClient = Prettify<
   Client<
     transport,
@@ -1127,7 +1127,7 @@ type RpClient = Prettify<
   Party) client.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type RpClientConfig = Prettify<
   Pick<
     ClientConfig<transport, undefined, undefined, rpcSchema>,
@@ -1146,7 +1146,7 @@ type RpClientConfig = Prettify<
 - Description: Represents the RPC schema for the RP (Relying Party) client.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type RpRpcSchema = [
   GetLoginOptionsRpcSchema,
   GetLoginVerificationRpcSchema,
@@ -1160,7 +1160,7 @@ type RpRpcSchema = [
 - Description: Defines the parameters required to create a Circle Smart Account.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type ToCircleSmartAccountParameters = {
   address?: Address;
   client: Client;
@@ -1175,7 +1175,7 @@ type ToCircleSmartAccountParameters = {
 - Description: Represents the return type for creating a Circle Smart Account.
 - Type Definition:
 
-```javascript
+```javascript Javascript
 type ToCircleSmartAccountReturnType = Prettify<
   SmartAccount<CircleSmartAccountImplementation>
 >

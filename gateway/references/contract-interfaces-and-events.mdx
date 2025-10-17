@@ -26,7 +26,7 @@ GatewayMinter smart contracts. The full ABIs are available on GitHub.
 Deposit tokens after approving this contract for the token. The resulting
 balance belongs to the function caller.
 
-```solidity
+```solidity Solidity
 function deposit(address token, uint256 value) external;
 ```
 
@@ -43,7 +43,7 @@ Deposit tokens on behalf of another address after approving this contract for
 the token. The resulting balance belongs to the address specified by the
 `depositor` parameter, not the function caller.
 
-```solidity
+```solidity Solidity
 function depositFor(address token, address depositor, uint256 value) external;
 ```
 
@@ -61,7 +61,7 @@ Deposit tokens with an EIP-2612 permit. The resulting balance belongs to the
 `owner` specified in the permit. The permit's `spender` must be the address of
 the GatewayWallet contract. The full permitted `value` is always deposited.
 
-```solidity
+```solidity Solidity
 function depositWithPermit(address token, address owner, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 ```
 
@@ -85,7 +85,7 @@ to the `owner` specified in the permit. The permit's `spender` must be the
 address of the GatewayWallet contract. The full permitted `value` is always
 deposited. EOA wallet signatures should be packed in the order of r, s, v.
 
-```solidity
+```solidity Solidity
 function depositWithPermit(address token, address owner, uint256 value, uint256 deadline, bytes calldata signature) external;
 ```
 
@@ -105,7 +105,7 @@ Deposit tokens with an ERC-3009 authorization. The resulting balance in this
 contract belongs to the `from` specified in the authorization. The
 authorization's `to` must be the address of the GatewayWallet contract.
 
-```solidity
+```solidity Solidity
 function depositWithAuthorization(address token, address from, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external;
 ```
 
@@ -132,7 +132,7 @@ authorization's `to` must be the address of this contract. The transfer will be
 done via `receiveWithAuthorization`. EOA wallet signatures should be packed in
 the order of r, s, v.
 
-```solidity
+```solidity Solidity
 function depositWithAuthorization(address token, address from, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, bytes calldata signature) external;
 ```
 
@@ -153,7 +153,7 @@ function depositWithAuthorization(address token, address from, uint256 value, ui
 Returns the total balance of a depositor for a given token. This will always be
 equal to the sum of `availableBalance` and `withdrawingBalance`.
 
-```solidity
+```solidity Solidity
 function totalBalance(address token, address depositor) public view returns (uint256);
 ```
 
@@ -175,7 +175,7 @@ function totalBalance(address token, address depositor) public view returns (uin
 Returns the balance that is available to the depositor, subject to deposits
 being observed by Circle in a finalized block and excepting in-flight transfers.
 
-```solidity
+```solidity Solidity
 function availableBalance(address token, address depositor) public view returns (uint256);
 ```
 
@@ -197,7 +197,7 @@ function availableBalance(address token, address depositor) public view returns 
 Returns the balance that is in the process of being withdrawn from the
 GatewayWallet contract.
 
-```solidity
+```solidity Solidity
 function withdrawingBalance(address token, address depositor) public view returns (uint256);
 ```
 
@@ -219,7 +219,7 @@ function withdrawingBalance(address token, address depositor) public view return
 Returns the balance that is withdrawable as of the current block. This will
 either be 0 or `withdrawingBalance`.
 
-```solidity
+```solidity Solidity
 function withdrawableBalance(address token, address depositor) public view returns (uint256);
 ```
 
@@ -244,7 +244,7 @@ compatible with ERC-1155. The "token" `id` is encoded as
 where `BALANCE_TYPE` is 0 for `Total`, 1 for `Available`, 2 for `Withdrawing`,
 and 3 for `Withdrawable`.
 
-```solidity
+```solidity Solidity
 function balanceOf(address depositor, uint256 id) public view returns (uint256 balance);
 ```
 
@@ -267,7 +267,7 @@ The batch version of `balanceOf`, compatible with ERC-1155. `depositors` and
 `ids` must be the same length. See the documentation for `balanceOf` for the
 format of `ids`.
 
-```solidity
+```solidity Solidity
 function balanceOfBatch(address[] calldata depositors, uint256[] calldata ids) external view override returns (uint256[] memory balances);
 ```
 
@@ -290,7 +290,7 @@ Allow a delegate to transfer the caller's balance of the specified token. This
 acts as a full allowance for `delegate` on the `token` balance of the function
 caller.
 
-```solidity
+```solidity Solidity
 function addDelegate(address token, address delegate) external;
 ```
 
@@ -307,7 +307,7 @@ Stop allowing a delegate to transfer the caller's balance of the specified
 token. This revocation is not respected for burn intents that have already been
 signed, so that burns cannot be prevented by removing the delegate.
 
-```solidity
+```solidity Solidity
 function removeDelegate(address token, address delegate) external;
 ```
 
@@ -323,7 +323,7 @@ function removeDelegate(address token, address delegate) external;
 Returns whether an address is authorized to transfer tokens on behalf of a
 depositor.
 
-```solidity
+```solidity Solidity
 function isAuthorizedForBalance(address token, address depositor, address addr) public view returns (bool);
 ```
 
@@ -346,7 +346,7 @@ function isAuthorizedForBalance(address token, address depositor, address addr) 
 Returns the number of blocks that must pass after calling `initiateWithdrawal`
 before a withdrawal can be completed.
 
-```solidity
+```solidity Solidity
 function withdrawalDelay() public view returns (uint256);
 ```
 
@@ -361,7 +361,7 @@ function withdrawalDelay() public view returns (uint256);
 Returns the block height at which an in-progress withdrawal is withdrawable, or
 0 if there is no in-progress withdrawal.
 
-```solidity
+```solidity Solidity
 function withdrawalBlock(address token, address depositor) public view returns (uint256);
 ```
 
@@ -385,7 +385,7 @@ called to complete the withdrawal. Once a withdrawal has been initiated, that
 amount can no longer be used. Repeated calls will add to the amount and reset
 the timer.
 
-```solidity
+```solidity Solidity
 function initiateWithdrawal(address token, uint256 value) external;
 ```
 
@@ -402,7 +402,7 @@ Completes a withdrawal that was initiated at least `withdrawalDelay` blocks ago.
 The funds are sent to the depositor (who must be the caller of this function).
 The full amount that is in the process of being withdrawn is always withdrawn.
 
-```solidity
+```solidity Solidity
 function withdraw(address token) external;
 ```
 
@@ -421,7 +421,7 @@ containing the `keccak256` hash of the encoded `TransferSpec` (which is the same
 for the corresponding burn that will happen on the source domain), to be used as
 a cross-chain identifier and for replay protection.
 
-```solidity
+```solidity Solidity
 function gatewayMint(bytes memory attestationPayload, bytes memory signature) external;
 ```
 
@@ -441,7 +441,7 @@ contracts.
 
 The domain assigned to the chain this contract is deployed on.
 
-```solidity
+```solidity Solidity
 function domain() public view returns (uint32);
 ```
 
@@ -455,7 +455,7 @@ function domain() public view returns (uint32);
 
 Whether or not a token is supported.
 
-```solidity
+```solidity Solidity
 function isTokenSupported(address token) public view returns (bool);
 ```
 
@@ -475,7 +475,7 @@ function isTokenSupported(address token) public view returns (bool);
 
 Whether or not a transfer spec hash has been used.
 
-```solidity
+```solidity Solidity
 function isTransferSpecHashUsed(bytes32 transferSpecHash) public view returns (bool);
 ```
 
@@ -495,7 +495,7 @@ function isTransferSpecHashUsed(bytes32 transferSpecHash) public view returns (b
 
 Whether or not a given address is denied from interacting with the contract.
 
-```solidity
+```solidity Solidity
 function isDenylisted(address addr) public view returns (bool);
 ```
 
@@ -520,7 +520,7 @@ function isDenylisted(address addr) public view returns (bool);
 Emitted when a deposit is made. The `sender` will always be the same as
 `depositor`, except when a deposit is made using `depositFor`.
 
-```solidity
+```solidity Solidity
 event Deposited(address indexed token, address indexed depositor, address indexed sender, uint256 value);
 ```
 
@@ -537,7 +537,7 @@ event Deposited(address indexed token, address indexed depositor, address indexe
 
 Emitted when a delegate is authorized for a depositor's balance.
 
-```solidity
+```solidity Solidity
 event DelegateAdded(address indexed token, address indexed depositor, address delegate);
 ```
 
@@ -553,7 +553,7 @@ event DelegateAdded(address indexed token, address indexed depositor, address de
 
 Emitted when a delegate's authorization is revoked.
 
-```solidity
+```solidity Solidity
 event DelegateRemoved(address indexed token, address indexed depositor, address delegate);
 ```
 
@@ -569,7 +569,7 @@ event DelegateRemoved(address indexed token, address indexed depositor, address 
 
 Emitted when a withdrawal is initiated.
 
-```solidity
+```solidity Solidity
 event WithdrawalInitiated(
     address indexed token,
     address indexed depositor,
@@ -596,7 +596,7 @@ event WithdrawalInitiated(
 Emitted when a withdrawal is completed and funds have been transferred to the
 depositor.
 
-```solidity
+```solidity Solidity
 event WithdrawalCompleted(address indexed token, address indexed depositor, uint256 value);
 ```
 
@@ -612,7 +612,7 @@ event WithdrawalCompleted(address indexed token, address indexed depositor, uint
 
 Emitted when Circle burns tokens that have been minted on another domain
 
-```solidity
+```solidity Solidity
 event GatewayBurned(
     address indexed token,
     address indexed depositor,
@@ -648,7 +648,7 @@ event GatewayBurned(
 
 Emitted when an attestation is used.
 
-```solidity
+```solidity Solidity
 event AttestationUsed(
     address indexed token,
     address indexed recipient,
@@ -681,7 +681,7 @@ contracts.
 
 Emitted when an address is added to the denylist.
 
-```solidity
+```solidity Solidity
 event Denylisted(address indexed addr);
 ```
 
@@ -695,7 +695,7 @@ event Denylisted(address indexed addr);
 
 Emitted when an address is removed from the denylist.
 
-```solidity
+```solidity Solidity
 event UnDenylisted(address indexed addr);
 ```
 
@@ -709,7 +709,7 @@ event UnDenylisted(address indexed addr);
 
 Emitted when a token is added to the set of supported tokens.
 
-```solidity
+```solidity Solidity
 event TokenSupported(address token);
 ```
 

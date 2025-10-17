@@ -59,7 +59,7 @@ curl --location --request POST 'https://api-sandbox.circle.com/v1/paymentIntents
 }'
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -223,7 +223,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/paymentIntents/
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -414,7 +414,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/paymentIntents/
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -508,7 +508,7 @@ curl --location --request GET 'https://api-sandbox.circle.com/v1/payments/{id}' 
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -579,7 +579,7 @@ required parameters are `paymentIntentId` , which can be retrieved from the
 `GET /paymentIntent` response or webhook notification; and `endUserAddress`
 which is the consumer wallet address.
 
-```curl
+```curl Curl
 curl --location 'https://api-sandbox.circle.com/v1/payments/presign?paymentIntentId=6e4d4047-db14-4c09-b238-1215aee50d03&endUserAddress=0x8381470ED67C3802402dbbFa0058E8871F017A6F' \
 --header 'X-Requested-Id: ${GUID}' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}'
@@ -685,7 +685,7 @@ signatures.
 With a customer’s raw signature, Circle can create a crypto payment with the
 `POST /payment/crypto` endpoint.
 
-```curl
+```curl Curl
 curl --location 'https://api-sandbox.circle.com/v1/payments/crypto' \
 --header 'X-Requested-Id: ${GUID}' \
 --header 'Authorization: Bearer ${YOUR_API_KEY}' \

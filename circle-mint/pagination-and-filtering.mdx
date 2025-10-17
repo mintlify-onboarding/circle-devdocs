@@ -40,11 +40,11 @@ request would look like this:
 
 <CodeGroup>
 
-```bash
+```bash Bash
 curl 'https://api-sandbox.circle.com/v1/payments?from=2020-01-01T00:00:00Z&to=2020-01-31T23:59:59Z'
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -130,7 +130,7 @@ a pagination cursor Link header for a page of payments looks like this:
 curl -I 'https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageAfter=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e'i
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -165,7 +165,7 @@ listPayments()
 
 Look for the relevant pagination cursor information in the response headers:
 
-```text
+```text 
 Link: https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e; rel="self", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50; rel="first", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=6f14b84d-7a98-4675-a6b9-d7b0c1912091; rel="next", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageBefore=5c5abf90-b2ad-4c8c-8ce3-dbb6a06a040e; rel="prev"
 ```
 
@@ -179,7 +179,7 @@ what’s different:
 curl -I 'https://api-sandbox.circle.com/v1/payments
 ```
 
-```javascript
+```javascript Javascript
 /**
  * See installation instructions at
  * https://developers.circle.com/circle-mint/circle-sdks
@@ -199,7 +199,7 @@ listPayments()
 
 The response Link header differs from the previous example:
 
-```text
+```text 
 Link: https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:01:00Z&pageSize=50; rel="self", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50; rel="first", https://api-sandbox.circle.com/v1/payments?to=2020-06-02T12:00:00Z&pageSize=50&pageAfter=12cd8527-5270-4acd-a1d4-431bd09f2a0e; rel="next"
 ```
 

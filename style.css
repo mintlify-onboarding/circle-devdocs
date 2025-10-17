@@ -12,3 +12,77 @@ table thead th,
 table td {
   padding: 8px !important;
 }
+
+/* Accordion with circle-info icon styling */
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) {
+  background-color: #e1f2ff !important;
+  border-color: #c9e1f5 !important;
+}
+
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary {
+  transition: background-color 0.3s ease !important;
+}
+
+.accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary:hover {
+  background-color: #c9e1f5 !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) {
+  background-color: #1a2332 !important;
+  border-color: #2d3748 !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary {
+  transition: background-color 0.3s ease !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) summary:hover {
+  background-color: #2d3748 !important;
+}
+
+/* Ensure text is white in dark mode for circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-title"] {
+  color: #ffffff !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] {
+  color: #e5e7eb !important;
+}
+
+/* Links in dark mode circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a {
+  color: #60a5fa !important;
+}
+
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a:hover {
+  color: #93c5fd !important;
+}
+
+/* Inline code in dark mode circle-info accordions */
+.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] code {
+  color: #fbbf24 !important;
+  background-color: #374151 !important;
+}
+
+/* Bold text for all dropdown buttons in sidebar */
+#sidebar-content button[aria-label^="Toggle"] {
+  font-weight: bold !important;
+}
+
+/* Card gradient border on hover */
+.card {
+  border: 1px solid #1118271A !important;
+  border-radius: 1rem !important;
+}
+
+.card:hover {
+  border: 1px solid transparent !important;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
+  border-radius: 1rem !important;
+}
+
+.dark .card:hover {
+  background: linear-gradient(#1f2937, #1f2937) padding-box,
+              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
+}

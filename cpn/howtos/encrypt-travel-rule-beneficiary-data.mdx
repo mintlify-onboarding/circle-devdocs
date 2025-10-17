@@ -47,7 +47,7 @@ travel rule data, but the same encryption scheme applies for RFI data as well.
 Quote responses include a certificate field with required parameters to
 establish encryption with the BFI. A sample (truncated) quote response is below:
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -87,7 +87,7 @@ verify the following:
 - The verifiable public key of the certificate matches the `jwk` field in the
   response
 
-```java
+```java Java
 public static void verify() throws Exception {
     // Assume the API response is stored in a file "response.json"
     String responseStr = new String(Files.readAllBytes(Paths.get("response.json")));
@@ -165,7 +165,7 @@ From the `certificate` field, extract the JWK parameters: `kty`, `crv`, `kid`,
 `x`, `y` and create the JWK object in your code using a suitable library (for
 example, Nimbus JOSE+JWT in Java).
 
-```java
+```java Java
 import com.nimbusds.jose.jwk.JWK;
 
 public static JWK parseJwkFromJson() throws ParseException {
@@ -201,7 +201,7 @@ An example of each is shown below:
 
 **travelRuleData**
 
-```json
+```json JSON
 [
   {
     "name": "BENEFICIARY_ADDRESS",
@@ -254,7 +254,7 @@ An example of each is shown below:
 
 **beneficiaryAccountData**
 
-```json
+```json JSON
 [
   {
     "name": "BANK_NAME",
@@ -283,7 +283,7 @@ encrypt it. Ensure that the following parameters are used:
 - Algorithm: ECDH-ES+A128KW
 - Encryption method: A128GCM
 
-```java
+```java Java
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;

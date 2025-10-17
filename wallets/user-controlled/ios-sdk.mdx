@@ -128,7 +128,7 @@ To learn more, see
 
 ### SettingsManagement
 
-```swift
+```swift Swift
 public struct SettingsManagement {
 
     /// Enable biometrics to protect PIN code
@@ -151,13 +151,13 @@ your app to use biometrics (Face ID).
 
 ### ExecuteCompletion
 
-```swift
+```swift Swift
 public typealias ExecuteCompletion = ((ExecuteCompletionStruct) -> Void)
 ```
 
 ### ExecuteCompletionStruct
 
-```swift
+```swift Swift
 public struct ExecuteCompletionStruct {
     public let challenges: [String]
     public let result: Result<ExecuteResult, ApiError>
@@ -173,7 +173,7 @@ public struct ExecuteCompletionStruct {
 
 ### ExecuteResult
 
-```swift
+```swift Swift
 public struct ExecuteResult {
 
   /// The type of the operation that the challenge represents.
@@ -189,7 +189,7 @@ public struct ExecuteResult {
 
 ### ChallengeType
 
-```swift
+```swift Swift
 public enum ChallengeType: String, Decodable {
   case SET_PIN
   case CHANGE_PIN
@@ -212,7 +212,7 @@ public enum ChallengeType: String, Decodable {
 
 ### ChallengeStatus
 
-```swift
+```swift Swift
 public enum ChallengeStatus: String, Decodable {
   case PENDING
   case IN_PROGRESS
@@ -224,7 +224,7 @@ public enum ChallengeStatus: String, Decodable {
 
 ### ExecuteResultData
 
-```swift
+```swift Swift
 public struct ExecuteResultData: Decodable {
 
     /// The signature for SIGN_MESSAGE and SIGN_TYPEDDATA
@@ -251,7 +251,7 @@ public struct ExecuteResultData: Decodable {
 
 ### ExecuteWarning
 
-```swift
+```swift Swift
 public struct ExecuteWarning {
 
     /// The warning type of the operation (the challenge execution is success)
@@ -264,7 +264,7 @@ public struct ExecuteWarning {
 
 ### WarningType
 
-```swift
+```swift Swift
 public enum WarningType: Int {
 
     // Biometrics
@@ -282,13 +282,13 @@ public enum WarningType: Int {
 
 ### LoginCompletion
 
-```swift
+```swift Swift
 public typealias LoginCompletion = ((LoginCompletionStruct) -> Void)
 ```
 
 ### LoginCompletionStruct
 
-```swift
+```swift Swift
 public struct LoginCompletionStruct {
     public let result: Result<LoginResult, ApiError>
     public let onErrorController: UIViewController?
@@ -297,7 +297,7 @@ public struct LoginCompletionStruct {
 
 ### LoginResult
 
-```swift
+```swift Swift
 public struct LoginResult {
     public let userToken: String
     public let encryptionKey: String
@@ -323,7 +323,7 @@ public struct OauthInfo: Decodable {
 
 `SocialUserInfo` for Social login
 
-```swift
+```swift Swift
 public struct OauthInfo: Decodable {
     public struct SocialUserInfo: Decodable {
         public let name: String?
@@ -341,7 +341,7 @@ public struct OauthInfo: Decodable {
 
 ### LogoutCompletion
 
-```swift
+```swift Swift
 public typealias LogoutCompletion = ((Result<Void, Error>) -> Void)
 ```
 
@@ -430,7 +430,7 @@ case walletSetIdNotFound = 156005
 Specify a social provider to operate on. See **WalletSdk.performLogin** and
 **WalletSdk.performLogout**.
 
-```swift
+```swift Swift
 public enum SocialProvider: String {
     case Google
     case Facebook
@@ -442,7 +442,7 @@ public enum SocialProvider: String {
 
 Set **WalletSdkLayoutProvider** for layout customization.
 
-```swift
+```swift Swift
 public protocol WalletSdkLayoutProvider: AnyObject {
   /// Set security question list
   ///
@@ -547,7 +547,7 @@ requestIcon
 Methods for managing **CircleProgrammableWalletSDK** process and customizing
 controllers.
 
-```swift
+```swift Swift
 public protocol WalletSdkDelegate: AnyObject {
   /// Tells the delegate that the SDK is about to be present the controller.
   /// You can customize the layout as you wish dynamically.
@@ -574,7 +574,7 @@ public protocol WalletSdkDelegate: AnyObject {
 Define the customized error description. All error codes are listed in
 ApiError.ErrorCode.
 
-```swift
+```swift Swift
 public protocol ErrorMessenger {
   func getErrorString(_ code: ApiError.ErrorCode) -> String?
 }
@@ -586,7 +586,7 @@ public protocol ErrorMessenger {
 
 Provide with a strings file **CirclePWLocalizable.strings**
 
-```swift
+```swift Swift
 "circlepw_show_pin" = "Show PIN";
 "circlepw_hide_pin" = "Hide PIN";
 "circlepw_continue" = "Continue";
@@ -599,7 +599,7 @@ Provide with a strings file **CirclePWLocalizable.strings**
 
 provide with a JSON file **CirclePWTheme.json**
 
-```swift
+```swift Swift
 {
     "font": {
         "regular": "Arial",
@@ -658,7 +658,7 @@ provide with a JSON file **CirclePWTheme.json**
 
 ### Set endpoint
 
-```swift
+```swift Swift
 let configuration = WalletSdk.Configuration(endPoint: endPoint, appId: appId)
 
 do {
@@ -671,7 +671,7 @@ do {
 
 ### Set endpoint and enable biometrics
 
-```swift
+```swift Swift
 let settings: WalletSdk.SettingsManagement = .init(enableBiometricsPin: true)
 let configuration = WalletSdk.Configuration(endPoint: endPoint, appId: _appId, settingsManagement: settings)
 
@@ -685,7 +685,7 @@ do {
 
 ### Execute
 
-```swift
+```swift Swift
 Wallets.shared.execute(userToken: "USERTOKEN",
                        encryptionKey: "ENCRYPTIONKEY",
                        challengeIds: ["challengeId_1", "challengeId_2"])
@@ -694,14 +694,14 @@ Wallets.shared.execute(userToken: "USERTOKEN",
 
 ### Set Biometrics Pin
 
-```swift
+```swift Swift
 WalletSdk.shared.setBiometricsPin(userToken: "USERTOKEN",
                                   encryptionKey: "ENCRYPTIONKEY")
 ```
 
 ### WalletSdkLayoutProvider
 
-```swift
+```swift Swift
 class SomeClass: WalletSdkLayoutProvider {
 
     func securityQuestions() -> [SecurityQuestion] {
@@ -729,7 +729,7 @@ WalletSdk.shared.setLayoutProvider(SomeClass())
 
 ### Set Error Messages
 
-```swift
+```swift Swift
 class CustomErrorMessenger: ErrorMessenger {
 
     func getErrorString(_ code: ApiError.ErrorCode) -> String? {
@@ -762,7 +762,7 @@ WalletSdk.shared.setErrorMessenger(CustomErrorMessenger())
 
 ### Confirm the delegate for customizing the UI
 
-```swift
+```swift Swift
 class SomeClass: WalletSdkDelegate {
 func walletSdk(willPresentController controller: UIViewController) {
 
@@ -780,7 +780,7 @@ func walletSdk(willPresentController controller: UIViewController) {
 
 ### PerformLogin Flow
 
-```swift
+```swift Swift
 WalletSdk.shared.performLogin(provider: ”SOCIAL_PROVIDER”,
                               deviceToken: “DEVICE_TOKEN”,
                               encryptionKey: “DEVICE_ENCRYPTION_KEY”) { response in
@@ -791,7 +791,7 @@ WalletSdk.shared.performLogin(provider: ”SOCIAL_PROVIDER”,
 
 ### VerifyOTP flow
 
-```swift
+```swift Swift
 WalletSdk.shared.verifyOTP(deviceToken: “DEVICE_TOKEN”,
                            encryptionKey: “DEVICE_ENCRYPTION_KEY”
                            otpToken: ”OTP_TOKEN”) { response in
@@ -802,7 +802,7 @@ WalletSdk.shared.verifyOTP(deviceToken: “DEVICE_TOKEN”,
 
 ### PerformLogout Flow
 
-```swift
+```swift Swift
 WalletSdk.shared.performLogout(provider:  ”SOCIAL_PROVIDER”) { result in
     ......
 }

@@ -47,7 +47,7 @@ following code to it. This code creates
 [burn intents](/gateway/concepts/technical-guide#burn-intent) for 5 USDC on
 Ethereum Sepolia and 5 USDC on Base Sepolia.
 
-```javascript
+```javascript Javascript
 import "dotenv/config";
 import { randomBytes } from "node:crypto";
 import { http, maxUint256, zeroAddress } from "viem";
@@ -126,7 +126,7 @@ intents for submission to the Gateway API.
 **Note:** The additional imports should be added at the top of the file.
 </Note>
 
-```javascript
+```javascript Javascript
 import { pad } from "viem";
 
 const domain = { name: "GatewayWallet", version: "1" };
@@ -211,7 +211,7 @@ const baseRequest = {
 Add the following code to `index.js`. This code constructs a Gateway API request
 to the /transfer endpoint and obtains the attestation from that endpoint.
 
-```javascript
+```javascript Javascript
 const request = [ethereumRequest, baseRequest];
 
 const response = await fetch(
@@ -238,7 +238,7 @@ chain.
 **Note:** The additional imports should be added at the top of the file.
 </Note>
 
-```javascript
+```javascript Javascript
 import { createPublicClient, getContract } from "viem";
 import * as chains from "viem/chains";
 
@@ -287,6 +287,6 @@ const mintTx = await avalancheGatewayMinterContract.write.gatewayMint([
 Once you have added the code to your `index.js` file, run it with the following
 command:
 
-```shell
+```shell Shell
 node index.js
 ```

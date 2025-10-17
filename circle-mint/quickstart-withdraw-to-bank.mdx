@@ -1,6 +1,6 @@
 ---
 title: 'Quickstart: Withdraw to Bank'
-description: 
+description: Learn the basics of sending funds from your Circle account to an external bank account.
 sideNav: ""
 tableOfContents: true
 documentationItems: 
@@ -48,7 +48,7 @@ accounts that aren't IBAN supported. Please see the above link for details.
 
 <CodeGroup>
 
-```curl
+```curl Bash
 curl --request POST \\
 --url https\://api-sandbox.circle.com/v1/businessAccount/banks/wires \\
 --header 'accept: application/json' \\
@@ -78,7 +78,7 @@ curl --request POST \\
 '
 ```
 
-```javascript
+```javascript Javascript
 const options = {
   method: 'POST',
 
@@ -105,7 +105,7 @@ fetch('https\://api-sandbox.circle.com/v1/businessAccount/banks/wires', options)
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "9d1fa351-b24d-442a-8aa5-e717db1ed636",
@@ -180,7 +180,7 @@ curl --request POST \\
 '
 ```
 
-```javascript
+```javascript Javascript
 const options = {
   method: 'POST',
 
@@ -212,7 +212,7 @@ fetch('https\://api-sandbox.circle.com/v1/businessAccount/payouts', options)
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "9cf38c76-cac4-40d8-a516-f46e9a610a85",
@@ -244,14 +244,14 @@ as in the command below.
 
 <CodeGroup>
 
-```curl
+```curl Curl
 curl --request GET \\
 --url https\://api-sandbox.circle.com/v1/businessAccount/payouts/9cf38c76-cac4-40d8-a516-f46e9a610a85 \\
 --header 'accept: application/json' \\
 --header 'authorization: Bearer ${YOUR\_API\_KEY}'
 ```
 
-```javascript
+```javascript Javascript
 const options = {
   method: 'GET',
 
@@ -276,7 +276,7 @@ fetch('https\://api-sandbox.circle.com/v1/businessAccount/payouts/id', options)
 
 **RESPONSE**
 
-```json
+```json JSON
 {
   "data": {
     "id": "9cf38c76-cac4-40d8-a516-f46e9a610a85",

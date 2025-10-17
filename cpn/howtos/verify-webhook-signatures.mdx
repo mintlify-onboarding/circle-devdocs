@@ -38,7 +38,7 @@ Using the `X-Circle-Key-Id` value, query the
 [`/v2/cpn/notifications/publicKey/{keyId}`](/api-reference/cpn/common/get-notification-signature)
 endpoint.
 
-```shell
+```shell Shell
 curl --request GET \
      --url "https://api.circle.com/v2/cpn/notifications/publicKey/${PUBLIC_KEY_ID}" \
      --header "Accept: application/json" \
@@ -47,7 +47,7 @@ curl --request GET \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "879dc113-5ca4-4ff7-a6b7-54652083fcf8",
@@ -72,7 +72,7 @@ webhook's payload.
 The following Python code demonstrates how to verify the `X-Circle-Signature`
 value:
 
-```python
+```python Python
 import base64
 import json
 

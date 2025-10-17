@@ -65,7 +65,7 @@ yarn add @circle-fin/modular-wallets-core
    **Client URL** obtained from the
    [Modular Wallet Console Setup](/wallets/modular/console-setup) page:
 
-```text
+```text 
 VITE_CLIENT_KEY=YOUR-CLIENT-KEY
 VITE_CLIENT_URL=YOUR-CLIENT-URL
 ```
@@ -123,7 +123,7 @@ Once you have your Swift package set up, adding CircleModularWalletsCore as a
 dependency is as easy as adding it to the `dependencies` value of your
 `Package.swift` or the Package list in Xcode.
 
-```swift
+```swift Swift
 dependencies: [
     .package(url: "https://github.com/circlefin/modularwallets-ios-sdk.git", .upToNextMajor(from: "1.0.0"))
 ]
@@ -131,7 +131,7 @@ dependencies: [
 
 Normally you'll want to depend on the `CircleModularWalletsCore` target:
 
-```swift
+```swift Swift
 .product(name: "CircleModularWalletsCore", package: "CircleModularWalletsCore")
 ```
 
@@ -141,7 +141,7 @@ Normally you'll want to depend on the `CircleModularWalletsCore` target:
 Add the maven repository to your gradle file. It's suggested that load settings
 from `local.properties`:
 
-```gradle
+```gradle Gradle
 repositories {
     ...
     maven {
@@ -160,7 +160,7 @@ repositories {
 
 Add the maven setting values in `local.properties` file:
 
-```properties
+```properties Properties
 mwsdk.maven.url=https://maven.pkg.github.com/circlefin/modularwallets-android-sdk
 mwsdk.maven.username=<GITHUB_USERNAME>
 # Fine-grained personal access tokens or classic with package write permission.
@@ -169,7 +169,7 @@ mwsdk.maven.password=<GITHUB_PAT>
 
 Add the dependency:
 
-```gradle
+```gradle Gradle
 dependencies {
     implementation 'circle.modularwallets:core:version'
 }

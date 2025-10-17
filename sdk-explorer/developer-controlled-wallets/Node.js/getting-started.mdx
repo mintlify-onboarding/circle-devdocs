@@ -84,7 +84,7 @@ const client = initiateDeveloperControlledWalletsClient({
 
 The following example shows how to create a wallet using the client:
 
-```javascript
+```javascript Javascript
 const walletSetResponse = await client.createWalletSet({ name: "WalletSet 1" });
 console.log("Created WalletSet", walletSetResponse.data?.walletSet);
 const walletsResponse = await client.createWallets({
@@ -99,7 +99,7 @@ console.log("Created Wallets", walletsResponse.data?.wallets);
 
 The following example shows how to create a transaction using the client:
 
-```javascript
+```javascript Javascript
 const response = await client.createTransaction({
   amounts: ["0.01"],
   destinationAddress: "0xa51c9c604b79a0fadbfed35dd576ca1bce71da0a",

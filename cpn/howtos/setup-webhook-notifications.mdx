@@ -42,7 +42,7 @@ For testing purposes, you can create an endpoint using
 Set up an endpoint to receive notifications instead of polling for event updates
 using the `/v2/subscriptions` endpoint.
 
-```shell
+```shell Shell
 curl --request POST \
   --url https://api.circle.com/v2/cpn/notifications/subscriptions \
   --header 'Accept: application/json' \
@@ -60,7 +60,7 @@ curl --request POST \
 
 **Response**
 
-```json
+```json JSON
 {
   "data": {
     "id": "1609aa1c-510a-448d-b9b9-3a13566ff922",

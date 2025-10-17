@@ -367,7 +367,10 @@ paths:
       tags:
         - Wallets
       summary: Create wallets
-      description: Generates a challenge to create a new user-controlled wallet or a batch of wallets. You must specify the blockchain and wallet name.
+      description: |- 
+        Creates a new developer-controlled wallet or a batch of wallets within a wallet set, given the target blockchain and wallet name. 
+
+        Note: Each walletSetId supports a maximum of 10 million wallets.
       operationId: createUserWallet
       security:
         - BearerAuth: []
@@ -983,7 +986,7 @@ paths:
       tags:
         - Signing
       summary: Create a challenge to sign message
-      description: 'Generates a challenge for signing a message from a specified user-controlled wallet. This endpoint supports Ethereum-based blockchains (using EIP-191), Solana and Aptos (using Ed25519 signatures). Note that Smart Contract Accounts (SCA) are specific to Ethereum and EVM-compatible chains. The difference between Ethereum''s EOA and SCA can be found in the [account types guide](https://developers.circle.com/w3s/docs/programmable-wallets-account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
+      description: 'Generates a challenge for signing a message from a specified user-controlled wallet. This endpoint supports Ethereum-based blockchains (using EIP-191), Solana and Aptos (using Ed25519 signatures). Note that Smart Contract Accounts (SCA) are specific to Ethereum and EVM-compatible chains. The difference between Ethereum''s EOA and SCA can be found in the [account types guide](/wallets/account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
       operationId: signUserMessage
       security:
         - BearerAuth: []
@@ -1022,7 +1025,7 @@ paths:
       tags:
         - Signing
       summary: Create a challenge to sign typed data
-      description: 'Generates a challenge for signing the EIP-712 typed structured data from a specified user-controlled wallet. This endpoint only supports Ethereum and EVM-compatible blockchains. Please note that not all Dapps currently support Smart Contract Accounts (SCA); the difference between Ethereum''s EOA and SCA can be found in the [account types guide](https://developers.circle.com/w3s/docs/programmable-wallets-account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
+      description: 'Generates a challenge for signing the EIP-712 typed structured data from a specified user-controlled wallet. This endpoint only supports Ethereum and EVM-compatible blockchains. Please note that not all Dapps currently support Smart Contract Accounts (SCA); the difference between Ethereum''s EOA and SCA can be found in the [account types guide](/wallets/account-types). You can also check the list of Ethereum Dapps that support SCA: https://eip1271.io/.'
       operationId: signUserTypedData
       security:
         - BearerAuth: []

@@ -176,7 +176,7 @@ You will need to use native gas tokens to pay the transaction (gas) fee:
    1. You can use a REST client to make a POST request to the address recipients
       endpoint. The sandbox app does not support `SOL` blockchain:
 
-      ```shell
+      ```shell Shell
       curl -X POST \
         --url https://api-sandbox.circle.com/v1/addressBook/recipients \
         --header 'accept: application/json' \
@@ -260,7 +260,7 @@ In your text editor, create a new JavaScript file called `send10.js`. Review the
 commented code below to understand its structure. Copy and paste it into your
 new file:
 
-```javascript
+```javascript Javascript
 // Write JavaScript Code
 const bs58 = require("bs58");
 const {
@@ -344,14 +344,14 @@ Save the Javascript file.
 From the terminal command line, enter the following command to execute the code
 and transfer USDC:
 
-```sh
+```sh Shell
 node filename.js
 ```
 
 You should see a similar output to the following example if your file executes
 successfully:
 
-```text
+```text 
 Transaction signature: dsLFw3rtDEWT2b3vpzournXspeTbeEZvzVAh3bmNaLzrqQB7nWrgj4rdh4j9gVb51p4mkDm1ivFUgkuC6Q7aehT
 You can verify the transaction on https://explorer.solana.com/tx/dsLFw3rtDEWT2b3vpzournXspeTbeEZvzVAh3bmNaLzrqQB7nWrgj4rdh4j9gVb51p4mkDm1ivFUgkuC6Q7aehT?cluster=devnet
 ```

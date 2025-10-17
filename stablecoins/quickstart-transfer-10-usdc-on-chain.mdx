@@ -43,7 +43,7 @@ To begin building the sample app, first set up your project environment and
 install dependencies. Create a new project directory and initialize a project in
 it:
 
-```shell
+```shell Shell
 mkdir usdc-transfer-app
 cd usdc-transfer-app
 npm init -y
@@ -51,7 +51,7 @@ npm init -y
 
 In your project directory, install the required dependencies:
 
-```shell
+```shell Shell
 npm install react@^18.2.0 \
 react-dom@^18.2.0 \
 @types/react@^18.0.27 \
@@ -66,7 +66,7 @@ for building a React app with TypeScript and Vite.
 
 Finally, install viem:
 
-```shell
+```shell Shell
 npm install viem
 ```
 
@@ -81,7 +81,7 @@ this guide.
 The public client interacts with the blockchain network. In this example, you
 should specify the Ethereum Sepolia network.
 
-```typescript
+```typescript Typescript
 import { http, createPublicClient } from "viem";
 import { sepolia } from "viem/chains";
 
@@ -96,7 +96,7 @@ const publicClient = createPublicClient({
 The wallet client interacts with Ethereum accounts to retrieve balances, execute
 transactions, and sign messages.
 
-```typescript
+```typescript Typescript
 import { createWalletClient } from "viem";
 import { sepolia } from "viem/chains";
 
@@ -115,7 +115,7 @@ Sepolia contract address. See
 [USDC Contract Addresses](/stablecoins/usdc-contract-addresses) for a full list
 of addresses for the USDC smart contract.
 
-```typescript
+```typescript Typescript
 const USDC_CONTRACT_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238";
 const USDC_ABI = [
   {
@@ -136,7 +136,7 @@ const USDC_ABI = [
 Create a function to connect to the user's wallet in MetaMask and retrieve the
 wallet address.
 
-```typescript
+```typescript Typescript
 const connect = async () => {
   const [address] = await walletClient.requestAddresses();
   setAccount(address);
@@ -149,7 +149,7 @@ Create a function to send the USDC transfer transaction. This function encodes
 the transfer function data and sends the transaction to the blockchain using the
 wallet client.
 
-```typescript
+```typescript Typescript
 const data = encodeFunctionData({
   abi: USDC_ABI,
   functionName: "transfer",
@@ -168,7 +168,7 @@ const hash = await walletClient.sendTransaction({
 Use the public client to wait for the transaction receipt, which confirms that
 the transaction was included in a block.
 
-```typescript
+```typescript Typescript
 useEffect(() => {
   (async () => {
     if (hash) {
@@ -189,7 +189,7 @@ native testnet tokens (to pay for gas fees) and testnet USDC.
 
 `index.tsx`
 
-```typescript
+```typescript Typescript
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
@@ -297,7 +297,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 `index.html`
 
-```html
+```html HTML
 <!DOCTYPE html>
 <html lang="en">
   <head>
