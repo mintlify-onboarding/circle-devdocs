@@ -726,22 +726,22 @@
                   {
                     "group": "Transactions",
                     "pages": [
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/transactions",
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/transactions/{id}",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/transfer",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/validateAddress",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/contractExecution/estimateFee",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/transactions/transfer/estimateFee",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/contractExecution",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/walletUpgrade",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/{id}/cancel",
-                      "openapi/developer-controlled-wallets.yaml POST /v1/w3s/developer/transactions/{id}/accelerate"
+                      "api-reference/wallets/developer-controlled-wallets/list-transactions",
+                      "api-reference/wallets/developer-controlled-wallets/get-transaction",
+                      "api-reference/wallets/developer-controlled-wallets/create-developer-transaction-transfer",
+                      "api-reference/wallets/developer-controlled-wallets/create-validate-address",
+                      "api-reference/wallets/developer-controlled-wallets/create-transaction-estimate-fee",
+                      "api-reference/wallets/developer-controlled-wallets/create-transfer-estimate-fee",
+                      "api-reference/wallets/developer-controlled-wallets/create-developer-transaction-contract-execution",
+                      "api-reference/wallets/developer-controlled-wallets/create-developer-transaction-wallet-upgrade",
+                      "api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel",
+                      "api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate"
                     ]
                   },
                   {
                     "group": "Token Lookup",
                     "pages": [
-                      "openapi/developer-controlled-wallets.yaml GET /v1/w3s/tokens/{id}"
+                      "api-reference/wallets/developer-controlled-wallets/get-token-id"
                     ]
                   }
                 ]
@@ -752,24 +752,24 @@
                   {
                     "group": "Transfers",
                     "pages": [
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/transfers",
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/transfers/{id}"
+                      "api-reference/wallets/buidl/list-transfers",
+                      "api-reference/wallets/buidl/get-transfer"
                     ]
                   },
                   {
                     "group": "UserOps",
                     "pages": [
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/userOps",
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/userOps/{id}"
+                      "api-reference/wallets/buidl/list-user-ops",
+                      "api-reference/wallets/buidl/get-user-op"
                     ]
                   },
                   {
                     "group": "Wallets",
                     "pages": [
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{id}/balances",
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{id}/nfts",
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{blockchain}/{address}/balances",
-                      "openapi/buidl-wallets.yaml GET /v1/w3s/buidl/wallets/{blockchain}/{address}/nfts"
+                      "api-reference/wallets/buidl/list-wallet-balances-by-id",
+                      "api-reference/wallets/buidl/list-wallet-nf-ts-by-id",
+                      "api-reference/wallets/buidl/list-wallet-balances-by-blockchain-address",
+                      "api-reference/wallets/buidl/list-wallet-nf-ts-by-blockchain-address"
                     ]
                   }
                 ]
@@ -780,71 +780,71 @@
                   {
                     "group": "Social/ Email Authentication",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/social/token",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/email/token",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/token/refresh",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/email/resendOTP"
+                      "/api-reference/wallets/user-controlled-wallets/create-device-token-social-login",
+                      "/api-reference/wallets/user-controlled-wallets/create-device-token-email-login",
+                      "/api-reference/wallets/user-controlled-wallets/refresh-user-token",
+                      "/api-reference/wallets/user-controlled-wallets/resend-otp"
                     ]
                   },
                   {
                     "group": "PIN Authentication",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/users/token",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/pin",
-                      "openapi/user-controlled-wallets.yaml PUT /v1/w3s/user/pin",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/pin/restore"
+                      "/api-reference/wallets/user-controlled-wallets/create-user",
+                      "/api-reference/wallets/user-controlled-wallets/get-user-token",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-pin-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/update-user-pin-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-pin-restore-challenge"
                     ]
                   },
                   {
                     "group": "Users",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/initialize",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/users",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/users/{id}",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user/challenges",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user/challenges/{id}",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/user"
+                      "/api-reference/wallets/user-controlled-wallets/create-user-with-pin-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/list-users",
+                      "/api-reference/wallets/user-controlled-wallets/get-user",
+                      "/api-reference/wallets/user-controlled-wallets/list-user-challenges",
+                      "/api-reference/wallets/user-controlled-wallets/get-user-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/get-user-by-token"
                     ]
                   },
                   {
                     "group": "Wallets",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/wallets",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/balances",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}/nfts",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets/{id}",
-                      "openapi/user-controlled-wallets.yaml PUT /v1/w3s/wallets/{id}",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/wallets"
+                      "/api-reference/wallets/user-controlled-wallets/create-user-wallet",
+                      "/api-reference/wallets/user-controlled-wallets/list-wallet-balance",
+                      "/api-reference/wallets/user-controlled-wallets/list-wallet-nfts",
+                      "/api-reference/wallets/user-controlled-wallets/get-wallet",
+                      "/api-reference/wallets/user-controlled-wallets/update-wallet",
+                      "/api-reference/wallets/user-controlled-wallets/list-wallets"
                     ]
                   },
                   {
                     "group": "Transactions",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/transfer",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/{id}/accelerate",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/{id}/cancel",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/contractExecution",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/transactions/walletUpgrade",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/transactions",
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/transactions/{id}",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/transfer/estimateFee",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/contractExecution/estimateFee",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/transactions/validateAddress"
+                      "/api-reference/wallets/user-controlled-wallets/create-user-transaction-transfer-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-transaction-accelerate-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-transaction-cancel-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-transaction-contract-execution-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/create-user-transaction-wallet-upgrade-challenge",
+                      "/api-reference/wallets/user-controlled-wallets/list-transactions",
+                      "/api-reference/wallets/user-controlled-wallets/get-transaction",
+                      "/api-reference/wallets/user-controlled-wallets/create-transfer-estimate-fee",
+                      "/api-reference/wallets/user-controlled-wallets/create-transaction-estimate-fee",
+                      "/api-reference/wallets/user-controlled-wallets/create-validate-address"
                     ]
                   },
                   {
                     "group": "Token Lookup",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml GET /v1/w3s/tokens/{id}"
+                      "/api-reference/wallets/user-controlled-wallets/get-token-id"
                     ]
                   },
                   {
                     "group": "Signing",
                     "pages": [
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/message",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/typedData",
-                      "openapi/user-controlled-wallets.yaml POST /v1/w3s/user/sign/transaction"
+                      "/api-reference/wallets/user-controlled-wallets/sign-user-message",
+                      "/api-reference/wallets/user-controlled-wallets/sign-user-typed-data",
+                      "/api-reference/wallets/user-controlled-wallets/sign-user-transaction"
                     ]
                   }
                 ]
@@ -855,7 +855,7 @@
                   {
                     "group": "Address Screening",
                     "pages": [
-                      "openapi/compliance.yaml POST /v1/w3s/compliance/screening/addresses"
+                      "api-reference/wallets/compliance/screen-address"
                     ]
                   }
                 ]
