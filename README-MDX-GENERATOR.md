@@ -52,6 +52,7 @@ api-reference/
 ### Example Output File
 
 For an endpoint with:
+
 - **operationId**: `createSubscription`
 - **summary**: "Create a notification subscription"
 - **method**: POST
@@ -66,7 +67,7 @@ The script generates:
 ```mdx
 ---
 title: Create a notification subscription
-openapi: "openapi/configurations.yaml POST /v2/notifications/subscriptions"
+openapi: "/openapi/configurations.yaml POST /v2/notifications/subscriptions"
 ---
 ```
 
@@ -84,13 +85,17 @@ openapi: "openapi/configurations.yaml POST /v2/notifications/subscriptions"
 ## Naming Conventions
 
 ### Folder Names (Tags)
+
 Tags are converted to kebab-case:
+
 - "Webhook Subscriptions" → `webhook-subscriptions`
 - "Monitor Tokens" → `monitor-tokens`
 - "CCTP v1" → `cctp-v1`
 
 ### File Names (Operation IDs)
+
 Operation IDs are converted to kebab-case:
+
 - `createSubscription` → `create-subscription.mdx`
 - `getPublicKey` → `get-public-key.mdx`
 - `updateMonitoredTokens` → `update-monitored-tokens.mdx`
@@ -98,6 +103,7 @@ Operation IDs are converted to kebab-case:
 ## Statistics
 
 The last run generated:
+
 - **199 total MDX files**
 - Processed **11 OpenAPI specification files**
 - Created **48 tag-based folders**
@@ -123,17 +129,21 @@ To regenerate all files:
 ## Troubleshooting
 
 ### No files generated
+
 - Ensure the `openapi/` directory exists in the same location as the script
 - Verify YAML files are valid OpenAPI specifications
 - Check that endpoints have `operationId` fields
 
 ### Missing dependencies
+
 ```bash
 pip install pyyaml
 ```
 
 ### Permission errors
+
 Ensure you have write permissions in the script directory:
+
 ```bash
 chmod +w .
 ```
@@ -143,6 +153,7 @@ chmod +w .
 After generating the files, you may need to update your `mint.json` configuration to include the new API reference pages in your navigation structure.
 
 Example navigation entry:
+
 ```json
 {
   "group": "API Reference",

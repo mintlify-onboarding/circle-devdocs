@@ -1,0 +1,10 @@
+{
+  "base_url": "",
+  "total_links": 4,
+  "links": [
+    "/api-reference/gateway/all/get-token-balances",
+    "/api-reference/gateway/all/get-gateway-info",
+    "/api-reference/gateway/all/create-transfer-attestation",
+    "/api-reference/gateway/all/get-transfer-spec"
+  ]
+}
