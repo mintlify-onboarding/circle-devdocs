@@ -10,12 +10,6 @@
   "appearance": {
     "default": "light"
   },
-  "background": {
-    "color": {
-      "light": "#fcfbff"
-    },
-    "decoration": "gradient"
-  },
   "favicon": "/favicon.ico",
   "fonts": {
     "heading": {
