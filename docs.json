@@ -968,81 +968,75 @@
                 "group": "CORE FUNCTIONALITY",
                 "pages": [
                   {
-                    "group": "Health",
-                    "pages": [
-                      "openapi/circle-apis.yaml GET /ping"
-                    ]
-                  },
-                  {
                     "group": "Balances",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/balances"
+                      "api-reference/circle-mint/account/list-business-balances"
                     ]
                   },
                   {
                     "group": "Payouts",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/payouts",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/payouts",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/payouts/{id}",
-                      "openapi/circle-apis.yaml GET /v1/fees/redemption/dailyReports"
+                      "api-reference/circle-mint/account/list-business-payouts",
+                      "api-reference/circle-mint/account/create-business-payout",
+                      "api-reference/circle-mint/account/get-business-payout",
+                      "api-reference/circle-mint/account/list-net-burn-fee-daily-calculations"
                     ]
                   },
                   {
                     "group": "Wires",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/wires",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires/{id}",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/wires/{id}/instructions"
+                      "api-reference/circle-mint/account/list-business-wire-accounts",
+                      "api-reference/circle-mint/account/create-business-wire-account",
+                      "api-reference/circle-mint/account/get-business-wire-account",
+                      "api-reference/circle-mint/account/get-business-wire-account-instructions"
                     ]
                   },
                   {
                     "group": "CUBIX",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/cubix",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix/{id}",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/cubix/{id}/instructions"
+                      "api-reference/circle-mint/account/list-business-cubix-accounts",
+                      "api-reference/circle-mint/account/create-business-cubix-account",
+                      "api-reference/circle-mint/account/get-business-cubix-account",
+                      "api-reference/circle-mint/account/get-business-cubix-account-instructions"
                     ]
                   },
                   {
                     "group": "PIX",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/banks/pix",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix/{id}",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/banks/pix/{id}/instructions"
+                      "api-reference/circle-mint/account/list-business-pix-accounts",
+                      "api-reference/circle-mint/account/create-business-pix-account",
+                      "api-reference/circle-mint/account/get-business-pix-account",
+                      "api-reference/circle-mint/account/get-business-pix-account-instructions"
                     ]
                   },
                   {
                     "group": "Transfers",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/transfers",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/transfers",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/transfers/{id}"
+                      "api-reference/circle-mint/account/list-business-transfers",
+                      "api-reference/circle-mint/account/create-business-transfer",
+                      "api-reference/circle-mint/account/get-business-transfer"
                     ]
                   },
                   {
                     "group": "Addresses",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/wallets/addresses/deposit",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/wallets/addresses/deposit",
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/wallets/addresses/recipient",
-                      "openapi/circle-apis.yaml POST /v1/businessAccount/wallets/addresses/recipient",
-                      "openapi/circle-apis.yaml DELETE /v1/businessAccount/wallets/addresses/recipient/{id}"
+                      "api-reference/circle-mint/account/list-business-recipient-addresses",
+                      "api-reference/circle-mint/account/create-business-deposit-address",
+                      "api-reference/circle-mint/account/list-business-recipient-addresses",
+                      "api-reference/circle-mint/account/create-business-recipient-address",
+                      "api-reference/circle-mint/account/delete-business-recipient-address"
                     ]
                   },
                   {
                     "group": "Deposits",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/businessAccount/deposits"
+                      "api-reference/circle-mint/account/list-business-deposits"
                     ]
                   },
                   {
                     "group": "Payments",
                     "pages": [
-                      "openapi/circle-apis.yaml POST /v1/mocks/payments/wire"
+                      "api-reference/circle-mint/account/create-mock-wire-payment"
                     ]
                   }
                 ]
@@ -1051,23 +1045,29 @@
                 "group": "API OVERVIEW",
                 "pages": [
                   {
+                    "group": "Health",
+                    "pages": [
+                      "api-reference/circle-mint/general/ping"
+                    ]
+                  },
+                  {
                     "group": "Management",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/configuration"
+                      "api-reference/circle-mint/general/get-account-config"
                     ]
                   },
                   {
                     "group": "Subscriptions",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/notifications/subscriptions",
-                      "openapi/circle-apis.yaml POST /v1/notifications/subscriptions",
-                      "openapi/circle-apis.yaml DELETE /v1/notifications/subscriptions/{id}"
+                      "api-reference/circle-mint/general/list-subscriptions",
+                      "api-reference/circle-mint/general/create-subscription",
+                      "api-reference/circle-mint/general/delete-subscription"
                     ]
                   },
                   {
                     "group": "Stablecoins",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/stablecoins"
+                      "api-reference/circle-mint/general/list-stablecoins"
                     ]
                   }
                 ]
@@ -1078,18 +1078,18 @@
                   {
                     "group": "Payments",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/payments",
-                      "openapi/circle-apis.yaml GET /v1/payments/{id}"
+                      "api-reference/circle-mint/payments/list-payments",
+                      "api-reference/circle-mint/payments/get-payment"
                     ]
                   },
                   {
                     "group": "Crypto Payments Intents",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/paymentIntents",
-                      "openapi/circle-apis.yaml POST /v1/paymentIntents",
-                      "openapi/circle-apis.yaml GET /v1/paymentIntents/{id}",
-                      "openapi/circle-apis.yaml POST /v1/paymentIntents/{id}/expire",
-                      "openapi/circle-apis.yaml POST /v1/paymentIntents/{id}/refund"
+                      "api-reference/circle-mint/payments/list-payment-intents",
+                      "api-reference/circle-mint/payments/create-payment-intent",
+                      "api-reference/circle-mint/payments/get-payment-intent",
+                      "api-reference/circle-mint/payments/expire-payment-intent",
+                      "api-reference/circle-mint/payments/refund-payment-intent"
                     ]
                   }
                 ]
@@ -1100,19 +1100,19 @@
                   {
                     "group": "Payouts",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/payouts",
-                      "openapi/circle-apis.yaml POST /v1/payouts",
-                      "openapi/circle-apis.yaml GET /v1/payouts/{id}"
+                      "api-reference/circle-mint/payouts/list-payouts",
+                      "api-reference/circle-mint/payouts/create-payout",
+                      "api-reference/circle-mint/payouts/get-payout"
                     ]
                   },
                   {
                     "group": "Crypto Address Book",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/addressBook/recipients",
-                      "openapi/circle-apis.yaml POST /v1/addressBook/recipients",
-                      "openapi/circle-apis.yaml GET /v1/addressBook/recipients/{id}",
-                      "openapi/circle-apis.yaml PATCH /v1/addressBook/recipients/{id}",
-                      "openapi/circle-apis.yaml DELETE /v1/addressBook/recipients/{id}"
+                      "api-reference/circle-mint/payouts/list-address-book-recipients",
+                      "api-reference/circle-mint/payouts/create-address-book-recipient",
+                      "api-reference/circle-mint/payouts/get-address-book-recipient",
+                      "api-reference/circle-mint/payouts/modify-address-book-recipient",
+                      "api-reference/circle-mint/payouts/delete-address-book-recipient"
                     ]
                   }
                 ]
@@ -1123,27 +1123,26 @@
                   {
                     "group": "Trades",
                     "pages": [
-                      "openapi/circle-apis.yaml POST /v1/exchange/quotes",
-                      "openapi/circle-apis.yaml GET /v1/exchange/trades",
-                      "openapi/circle-apis.yaml POST /v1/exchange/trades",
-                      "openapi/circle-apis.yaml GET /v1/exchange/trades/{id}",
-                      "openapi/circle-apis.yaml PUT /v1/exchange/fxConfigs/accounts",
-                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits",
-                      "openapi/circle-apis.yaml GET /v1/exchange/fxConfigs/dailyLimits"
+                      "api-reference/circle-mint/cross-currency/get-quote",
+                      "api-reference/circle-mint/cross-currency/get-fx-trades",
+                      "api-reference/circle-mint/cross-currency/create-fx-trade",
+                      "api-reference/circle-mint/cross-currency/get-fx-trade-id",
+                      "api-reference/circle-mint/cross-currency/create-fx-account",
+                      "api-reference/circle-mint/cross-currency/get-daily-fx-limits"
                     ]
                   },
                   {
                     "group": "Payments",
                     "pages": [
-                      "openapi/circle-apis.yaml POST /v1/mocks/payments/pix"
+                      "api-reference/circle-mint/reserve-management/cross-currency/create-mock-pix-payment"
                     ]
                   },
                   {
                     "group": "Settlements",
                     "pages": [
-                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements",
-                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/{id}",
-                      "openapi/circle-apis.yaml GET /v1/exchange/trades/settlements/instructions/{currency}"
+                      "api-reference/circle-mint/reserve-management/cross-currency/get-settlements",
+                      "api-reference/circle-mint/reserve-management/cross-currency/get-settlement-id",
+                      "api-reference/circle-mint/reserve-management/cross-currency/get-settlement-instructions"
                     ]
                   }
                 ]
@@ -1154,7 +1153,7 @@
                   {
                     "group": "Reserve Management",
                     "pages": [
-                      "openapi/circle-apis.yaml POST /v2/reserveManagement/dailyCustodyBalances"
+                      "api-reference/circle-mint/reserve-management/report-daily-custody-balances"
                     ]
                   }
                 ]
@@ -1171,25 +1170,25 @@
                   {
                     "group": "Configurations",
                     "pages": [
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/configurations/overview",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/configurations/routes"
+                      "api-reference/cpn/cpn-platform/get-payment-configurations-overview",
+                      "api-reference/cpn/cpn-platform/list-routes"
                     ]
                   },
                   {
                     "group": "Quotes",
                     "pages": [
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/quotes",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/quotes/{quoteId}"
+                      "api-reference/cpn/cpn-platform/create-quotes",
+                      "api-reference/cpn/cpn-platform/get-quote"
                     ]
                   },
                   {
                     "group": "Payments",
                     "pages": [
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments",
-                      "openapi/cpn-ofi.yaml POST /v1/cpn/payments",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/requirements",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}",
-                      "openapi/cpn-ofi.yaml GET /v1/cpn/payments/{paymentId}/refunds/{refundId}"
+                      "api-reference/cpn/cpn-platform/list-payments",
+                      "api-reference/cpn/cpn-platform/create-payment",
+                      "api-reference/cpn/cpn-platform/get-payment-requirements",
+                      "api-reference/cpn/cpn-platform/get-payment",
+                      "api-reference/cpn/cpn-platform/get-refund"
                     ]
                   },
                   {
