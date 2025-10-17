@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 export const InitializeUser = () => {
   const [apiKey, setApiKey] = useState("");
   const [userId, setUserId] = useState("");

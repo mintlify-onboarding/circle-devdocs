@@ -415,7 +415,7 @@
                         ]
                       },
                       "cctp/required-block-confirmations",
-                      "api-reference/w3s/cctp/get-public-keys-v-2",
+                      "cctp/api",
                       "cctp/sample-projects",
                       "cctp/v1"
                     ]
@@ -461,7 +461,7 @@
                       },
                       "cctp/v1/required-block-confirmations",
                       "cctp/v1/supported-domains",
-                      "api-reference/cctp/all/get-attestation",
+                      "cctp/v1/api",
                       "cctp/sample-projects"
                     ]
                   }
@@ -498,7 +498,7 @@
                       "gateway/references/supported-blockchains",
                       "gateway/references/contract-addresses",
                       "gateway/references/contract-interfaces-and-events",
-                      "api-reference/gateway/all/get-token-balances"
+                      "gateway/api"
                     ]
                   }
                 ]

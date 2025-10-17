@@ -1,5 +1,3 @@
-import { Icon } from "@mintlify/components";
-
 export const SDKCard = ({
   id,
   title,
@@ -260,118 +258,120 @@ export const SDKCard = ({
         {/* Header Section */}
         <div className="mb-4">
           <div className="flex flex-row items-center gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 icon-circle-${finalIconColor}`}>
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 icon-circle-${finalIconColor}`}
+            >
               {selectedIcon}
             </div>
-          <div className="flex-1">
-            <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{title}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">{description}</div>
+            <div className="flex-1">
+              <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{title}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{description}</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Details Section */}
-      <div className="flex flex-wrap gap-6 mb-4">
-        {/* Product */}
-        {finalProduct && (
-          <div data-testid="sdk-sample-card-product">
-            <div data-testid="card-detail">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Product
-              </h3>
-              <div className="text-sm text-gray-700 dark:text-gray-300">{finalProduct}</div>
+        {/* Details Section */}
+        <div className="flex flex-wrap gap-6 mb-4">
+          {/* Product */}
+          {finalProduct && (
+            <div data-testid="sdk-sample-card-product">
+              <div data-testid="card-detail">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+                  Product
+                </h3>
+                <div className="text-sm text-gray-700 dark:text-gray-300">{finalProduct}</div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Languages */}
-        {finalLanguages && (
-          <div data-testid="sdk-sample-card-languages">
-            <div data-testid="card-detail">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Languages
-              </h3>
-              <div className="text-sm text-gray-700 dark:text-gray-300">{finalLanguages}</div>
+          {/* Languages */}
+          {finalLanguages && (
+            <div data-testid="sdk-sample-card-languages">
+              <div data-testid="card-detail">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+                  Languages
+                </h3>
+                <div className="text-sm text-gray-700 dark:text-gray-300">{finalLanguages}</div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Platforms (Optional) */}
-        {finalPlatforms && finalPlatforms.length > 0 && (
-          <div data-testid="sdk-sample-card-platforms">
-            <div data-testid="card-detail">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Platforms
-              </h3>
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-                <div className="flex flex-wrap items-center gap-3 font-semibold">
-                  {finalPlatforms.map((platform, index) => {
-                    const platformName = typeof platform === "string" ? platform : platform.name;
-                    let platformIcon = typeof platform === "string" ? null : platform.icon;
+          {/* Platforms (Optional) */}
+          {finalPlatforms && finalPlatforms.length > 0 && (
+            <div data-testid="sdk-sample-card-platforms">
+              <div data-testid="card-detail">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+                  Platforms
+                </h3>
+                <div className="text-sm text-gray-700 dark:text-gray-300">
+                  <div className="flex flex-wrap items-center gap-3 font-semibold">
+                    {finalPlatforms.map((platform, index) => {
+                      const platformName = typeof platform === "string" ? platform : platform.name;
+                      let platformIcon = typeof platform === "string" ? null : platform.icon;
 
-                    // Auto-detect icon based on platform name if not provided
-                    if (!platformIcon) {
-                      const lowerName = platformName.toLowerCase();
-                      if (lowerName.includes("react")) {
-                        platformIcon = "react";
-                      } else if (lowerName.includes("web")) {
-                        platformIcon = "globe";
-                      } else if (lowerName.includes("android")) {
-                        platformIcon = "android";
-                      } else if (lowerName.includes("ios")) {
-                        platformIcon = "apple";
+                      // Auto-detect icon based on platform name if not provided
+                      if (!platformIcon) {
+                        const lowerName = platformName.toLowerCase();
+                        if (lowerName.includes("react")) {
+                          platformIcon = "react";
+                        } else if (lowerName.includes("web")) {
+                          platformIcon = "globe";
+                        } else if (lowerName.includes("android")) {
+                          platformIcon = "android";
+                        } else if (lowerName.includes("ios")) {
+                          platformIcon = "apple";
+                        }
                       }
-                    }
 
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 shrink-0"
-                        data-testid="sdk-sample-card-platform-item"
-                      >
-                        {platformIcon &&
-                          (platformIcon.endsWith(".svg") ? (
-                            <img
-                              alt={platformName}
-                              loading="lazy"
-                              width="20"
-                              height="20"
-                              decoding="async"
-                              src={platformIcon}
-                              className="shrink-0"
-                            />
-                          ) : (
-                            <Icon icon={platformIcon} className="w-5 h-5 shrink-0" />
-                          ))}
-                        {platformName}
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 shrink-0"
+                          data-testid="sdk-sample-card-platform-item"
+                        >
+                          {platformIcon &&
+                            (platformIcon.endsWith(".svg") ? (
+                              <img
+                                alt={platformName}
+                                loading="lazy"
+                                width="20"
+                                height="20"
+                                decoding="async"
+                                src={platformIcon}
+                                className="shrink-0"
+                              />
+                            ) : (
+                              <Icon icon={platformIcon} className="w-5 h-5 shrink-0" />
+                            ))}
+                          {platformName}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Links Section */}
-      <div className="flex flex-wrap gap-2" data-testid="sdk-sample-card-relevant-links">
-        {finalLinks.map((link, index) => (
-          <a
-            key={index}
-            data-testid="sdk-sample-card-relevant-link"
-            href={link.url || link.href}
-            rel="noreferrer noopener nofollow"
-            target="_blank"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium no-underline border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200"
-          >
-            {link.icon && <Icon icon={link.icon} className="w-5 h-5 shrink-0" />}
-            {link.type === "github" && <Icon icon="github" className="w-5 h-5 shrink-0" />}
-            {link.label}
-          </a>
-        ))}
+        {/* Links Section */}
+        <div className="flex flex-wrap gap-2" data-testid="sdk-sample-card-relevant-links">
+          {finalLinks.map((link, index) => (
+            <a
+              key={index}
+              data-testid="sdk-sample-card-relevant-link"
+              href={link.url || link.href}
+              rel="noreferrer noopener nofollow"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium no-underline border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200"
+            >
+              {link.icon && <Icon icon={link.icon} className="w-5 h-5 shrink-0" />}
+              {link.type === "github" && <Icon icon="github" className="w-5 h-5 shrink-0" />}
+              {link.label}
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
     </>
   );
 };
