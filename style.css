@@ -41,48 +41,66 @@ table td {
 }
 
 /* Ensure text is white in dark mode for circle-info accordions */
-.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-title"] {
+.dark
+  .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"])
+  [data-component-part="accordion-title"] {
   color: #ffffff !important;
 }
 
-.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] {
+.dark
+  .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"])
+  [data-component-part="accordion-content"] {
   color: #e5e7eb !important;
 }
 
 /* Links in dark mode circle-info accordions */
-.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a {
+.dark
+  .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"])
+  [data-component-part="accordion-content"]
+  a {
   color: #60a5fa !important;
 }
 
-.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] a:hover {
+.dark
+  .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"])
+  [data-component-part="accordion-content"]
+  a:hover {
   color: #93c5fd !important;
 }
 
 /* Inline code in dark mode circle-info accordions */
-.dark .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"]) [data-component-part="accordion-content"] code {
+.dark
+  .accordion:has([data-component-part="accordion-icon"] svg[style*="circle-info.svg"])
+  [data-component-part="accordion-content"]
+  code {
   color: #fbbf24 !important;
   background-color: #374151 !important;
 }
 
-/* Bold text for all dropdown buttons in sidebar */
-#sidebar-content button[aria-label^="Toggle"] {
-  font-weight: bold !important;
-}
-
-/* Card gradient border on hover */
-.card {
-  border: 1px solid #1118271A !important;
-  border-radius: 1rem !important;
-}
-
 .card:hover {
   border: 1px solid transparent !important;
-  background: linear-gradient(white, white) padding-box,
-              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
   border-radius: 1rem !important;
 }
 
-.dark .card:hover {
-  background: linear-gradient(#1f2937, #1f2937) padding-box,
-              linear-gradient(68deg, #5FBFFF 0%, #B090F5 100%) border-box !important;
+/* TryItOut Component code block styling */
+.TryItOutComponent pre,
+.TryItOutComponent code {
+  background-color: transparent !important;
+}
+
+.TryItOutComponent .code-container {
+  background-color: white !important;
+}
+
+.dark .TryItOutComponent .code-container {
+  background-color: #1f1f1f !important;
+}
+
+.home_code_container .code-block {
+  margin: 0 !important;
+  height: 100%;
+}
+
+.home_code_container .code-block .code-block-background {
+  height: 100% !important;
 }

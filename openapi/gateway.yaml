@@ -77,13 +77,14 @@ paths:
     get:
       summary: Get Transfer Spec
       operationId: getTransferSpec
+      description: Retrieve the full TransferSpec for a given transferSpecHash.
       tags:
         - Transfers
       parameters:
         - name: transferSpecHash
           in: path
           required: true
-          description: Hash that identifies the transfer spec.
+          description: The keccak256 hash of the TransferSpec
           schema:
             type: string
             description: Hex-encoded string (with 0x prefix).
@@ -112,10 +113,6 @@ paths:
                     value: "1000000"
                     salt: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                     hookData: "0x"
-        "400":
-          description: Bad request.
-        "404":
-          description: Transfer spec not found.
 components:
   schemas:
     Token:

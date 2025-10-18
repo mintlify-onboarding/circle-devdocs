@@ -28,7 +28,7 @@ export const TryItOutComponent = () => {
           continue;
         } else {
           // It's a string value
-          parts.push({ text: line.substring(keyStart, i), color: "#BB1DCA" });
+          parts.push({ text: line.substring(keyStart, i), color: "#C41E8C" });
           continue;
         }
       }
@@ -37,7 +37,7 @@ export const TryItOutComponent = () => {
       if (/\d/.test(line[i])) {
         const numStart = i;
         while (i < line.length && /[\d.]/.test(line[i])) i++;
-        parts.push({ text: line.substring(numStart, i), color: "#BB1DCA" });
+        parts.push({ text: line.substring(numStart, i), color: "#C41E8C" });
         continue;
       }
 
@@ -45,11 +45,11 @@ export const TryItOutComponent = () => {
       const otherStart = i;
       while (i < line.length && line[i] !== '"' && !/\d/.test(line[i])) i++;
       if (i > otherStart) {
-        parts.push({ text: line.substring(otherStart, i), color: "#000000" });
+        parts.push({ text: line.substring(otherStart, i), color: "#1F2937" });
       }
     }
 
-    return parts.length > 0 ? parts : [{ text: line, color: "#000000" }];
+    return parts.length > 0 ? parts : [{ text: line, color: "#1F2937" }];
   };
 
   const items = [
@@ -102,66 +102,58 @@ export const TryItOutComponent = () => {
   const codeLines = items[selectedItem].code.split("\n");
 
   return (
-    <div
-      className="rounded-2xl overflow-hidden flex flex-col lg:flex-row min-h-[280px]"
-      style={{ background: "linear-gradient(88.57deg, rgba(241, 235, 255, 0.5) 0%, rgba(225, 242, 255, 0.5) 94.58%)" }}
-    >
+    <div className="TryItOutComponent rounded-2xl overflow-hidden flex flex-col lg:flex-row min-h-[400px] bg-[#F5F5F7] dark:bg-[#1A1A1A]">
       {/* Left side - Menu items */}
-      <div className="flex flex-col gap-[4px] lg:w-[454px] p-[24px]">
+      <div className="flex flex-col gap-[8px] lg:w-[340px] p-[24px]">
         {items.map((item, index) => (
           <div
             key={index}
             onClick={() => setSelectedItem(index)}
-            className={`flex items-start gap-[12px] p-[16px] rounded-lg cursor-pointer transition-all  ${
-              selectedItem === index ? "bg-white" : "hover:bg-[#F9F9FC]"
+            className={`flex items-start gap-[12px] p-[16px] rounded-lg cursor-pointer transition-all ${
+              selectedItem === index
+                ? "bg-white dark:bg-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                : "hover:bg-white/50 dark:hover:bg-[#252525]"
             }`}
           >
-            {/* item.icon == arrow-up-arrow-down rotate-45 */}
             <div className={`mt-[2px] flex-shrink-0 ${item.icon === "arrow-up-arrow-down" ? "rotate-45" : ""}`}>
               <Icon icon={item.icon} color="#6B7280" size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold mb-[2px] text-[#111827] m-0">{item.title}</h3>
-              <p className="text-xs text-[#6B7280] m-0">{item.subtitle}</p>
+              <h3 className="text-[15px] font-semibold mb-[4px] text-[#111827] dark:text-white m-0 leading-tight">
+                {item.title}
+              </h3>
+              <p className="text-[13px] text-[#6B7280] dark:text-[#9CA3AF] m-0 leading-tight">{item.subtitle}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Right side - Code block with line numbers */}
-      <div className="flex-1 flex flex-col p-[24px] pl-0 self-stretch max-h-[378px] max-w-[630px]">
-        <div
-          className="flex-1 flex rounded-lg border border-[#1118271A] p-[12px] h-full relative"
-          style={{ backgroundColor: "#FFFFFF" }}
-        >
+      <div className="flex-1 flex flex-col p-[24px] pl-[16px] self-stretch">
+        <div className="flex-1 flex rounded-lg border border-[#E5E5E7] dark:border-[#3A3A3A] overflow-hidden h-full relative bg-white dark:bg-[#1F1F1F] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className={`absolute top-[24px] right-[24px] z-10 p-[4px] hover:opacity-70 transition-opacity ${
-              copied ? "" : "rotate-90"
-            }`}
-            title={copied ? "copied!" : "copy code"}
+            className="absolute top-[16px] right-[16px] z-10 p-[6px] hover:bg-[#F5F5F7] dark:hover:bg-[#2A2A2A] rounded-md transition-all"
+            title={copied ? "Copied!" : "Copy code"}
           >
             <Icon
               icon={copied ? "check" : "clone"}
-              color={copied ? "#10B981" : "#6B6580"}
-              size={20}
+              color={copied ? "#10B981" : "#6B7280"}
+              size={18}
               iconType="duotone"
             />
           </button>
 
-          <div className="flex-1 flex rounded-md overflow-auto" style={{ backgroundColor: "#F9F9FC" }}>
-            <div className="flex min-w-max">
+          <div className="code-container flex-1 flex overflow-auto bg-white dark:bg-[#1F1F1F]">
+            <div className="flex min-w-max w-full">
               {/* Line numbers */}
-              <div
-                className="px-[16px] py-[16px] pr-0 border-[#1118271A] select-none sticky left-0 z-10"
-                style={{ backgroundColor: "#F9F9FC" }}
-              >
+              <div className="pl-[20px] pr-[12px] py-[16px] select-none sticky left-0 z-10 bg-white dark:bg-[#1F1F1F]">
                 {codeLines.map((_, index) => (
                   <div
                     key={index}
-                    className="text-sm font-mono text-right min-w-[20px]"
-                    style={{ backgroundColor: "#F9F9FC", lineHeight: "21px", height: "21px", color: "#9CA3AF" }}
+                    className="text-[13px] font-mono text-right min-w-[20px] text-[#9CA3AF] dark:text-[#6B7280]"
+                    style={{ lineHeight: "22px", height: "22px" }}
                   >
                     {index + 1}
                   </div>
@@ -169,10 +161,10 @@ export const TryItOutComponent = () => {
               </div>
 
               {/* Code content */}
-              <div className="px-[16px] py-[16px]" style={{ backgroundColor: "#F9F9FC" }}>
-                <pre className="text-sm font-mono m-0" style={{ backgroundColor: "#F9F9FC", lineHeight: "21px" }}>
+              <div className="pr-[20px] pl-[12px] py-[16px] flex-1 !bg-white dark:!bg-[#1F1F1F]">
+                <pre className="text-[13px] font-mono m-0 text-[#1F2937] dark:text-[#E5E7EB] !bg-transparent" style={{ lineHeight: "22px", backgroundColor: "transparent !important" }}>
                   {codeLines.map((line, index) => (
-                    <div key={index} style={{ lineHeight: "21px", height: "21px" }}>
+                    <div key={index} style={{ lineHeight: "22px", height: "22px" }}>
                       {tokenizeJSON(line).map((part, partIndex) => (
                         <span key={partIndex} style={{ color: part.color }}>
                           {part.text}

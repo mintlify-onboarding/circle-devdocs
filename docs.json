@@ -30,6 +30,7 @@
         "anchors": [
           {
             "anchor": "Stablecoins",
+            "icon": "coin",
             "pages": [
               {
                 "group": "USDC",
@@ -67,6 +68,7 @@
           },
           {
             "anchor": "Tokenized Funds",
+            "icon": "square-binary",
             "pages": [
               {
                 "group": "USYC",
@@ -81,6 +83,7 @@
           },
           {
             "anchor": "Circle Payments Network",
+            "icon": "ethernet",
             "pages": [
               {
                 "group": "CPN",
@@ -141,6 +144,7 @@
           },
           {
             "anchor": "Developer Services",
+            "icon": "code-simple",
             "pages": [
               {
                 "group": "Wallets",
@@ -550,6 +554,7 @@
           },
           {
             "anchor": "Liquidity Services",
+            "icon": "water",
             "pages": [
               {
                 "group": "Mint",
@@ -612,7 +617,7 @@
                       "circle-mint/webhook-subscription-management"
                     ]
                   },
-                  "api-reference/circle-mint/account/list-business-balances"
+                  "circle-mint/account/list-business-balances"
                 ]
               }
             ]
@@ -623,8 +628,8 @@
         "tab": "API Reference",
         "dropdowns": [
           {
-            "dropdown": "API OVERVIEW",
-            "icon": "magnifying-glass",
+            "dropdown": "API Overview",
+            "icon": "code",
             "groups": [
               {
                 "group": "API OVERVIEW",
@@ -937,20 +942,15 @@
           },
           {
             "dropdown": "Gateway",
-            "icon": "torii-gate",
+            "icon": "dungeon",
             "groups": [
               {
-                "group": "Circle Gateway",
+                "group": "CIRCLE GATEWAY",
                 "pages": [
-                  {
-                    "group": "Gateway",
-                    "pages": [
-                      "/api-reference/gateway/all/get-token-balances",
-                      "/api-reference/gateway/all/get-gateway-info",
-                      "/api-reference/gateway/all/create-transfer-attestation",
-                      "/api-reference/gateway/all/get-transfer-spec"
-                    ]
-                  }
+                  "/api-reference/gateway/all/get-token-balances",
+                  "/api-reference/gateway/all/get-gateway-info",
+                  "/api-reference/gateway/all/create-transfer-attestation",
+                  "/api-reference/gateway/all/get-transfer-spec"
                 ]
               }
             ]
