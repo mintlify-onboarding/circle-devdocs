@@ -22,7 +22,7 @@ The following steps utilize Circle's sample applications in combination with API
 requests that can be done via Circle's API references or cURL requests. cURL
 request will be provided inline, while API references will be linked from the
 API endpoint code text. You can find instructions on using it in the
-[testing via the reference pages](/w3s/api-references) guide.
+[testing via the reference pages](/api-reference) guide.
 
 ## 1. Run Sample App
 
@@ -42,7 +42,7 @@ Once you have one of the web, iOS, or Android
 ## 2. Acquire a Session Token
 
 You will start by making a request to
-[`POST /users/token`](/api-reference/w3s/user-controlled-wallets/get-user-token)
+[`POST /users/token`](/api-reference/wallets/user-controlled-wallets/get-user-token)
 using a previously created user ID. The `userToken` is a 60-minute session token
 to initiate requests requiring a user challenge (PIN code entry). After 60
 minutes, the session expires, and a new `userToken` must be generated via the

@@ -15,7 +15,7 @@ tokens end-users can see, providing a more streamlined and personalized
 experience.
 
 By utilizing the API endpoint
-[`POST config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/create-monitored-tokens),
+[`POST config/entity/monitoredTokens`](/api-reference/wallets/programmable-wallets/create-monitored-tokens),
 developers can easily add tokens via their unique token IDs. This guide walks
 you through the steps to interact with the Monitored Tokens feature, including
 retrieving token IDs, adding tokens, and using API endpoints to get transaction
@@ -24,7 +24,7 @@ and wallet balances for specific tokens.
 <Note>
 By default, there are no Monitored Tokens. This means that the system monitors
 all tokens as no filter exists. Calling
-[`GET /entity/config/monitoredTokens`](/api-reference/w3s/programmable-wallets/list-monitored-tokens)
+[`GET /entity/config/monitoredTokens`](/api-reference/wallets/programmable-wallets/list-monitored-tokens)
 before configuring, returns 204, a no-content response.
 </Note>
 
@@ -50,7 +50,7 @@ To add tokens to the monitored token list, follow these steps:
        also retrieves the token IDs for inbound or outbound transactions.
 
 2. Add tokens into the monitored token list: Once you have the token ID, make a
-   [`POST config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/create-monitored-tokens)
+   [`POST config/entity/monitoredTokens`](/api-reference/wallets/programmable-wallets/create-monitored-tokens)
    request with the token IDs specified in the required field.
 
 ### USDC token IDs
@@ -75,14 +75,14 @@ To add tokens to the monitored token list, follow these steps:
 ## Remove Monitored Tokens
 
 To remove tokens from Monitored Tokens, use
-[`POST /config/entity/monitoredTokens/delete`](/api-reference/w3s/programmable-wallets/delete-monitored-tokens)
+[`POST /config/entity/monitoredTokens/delete`](/api-reference/wallets/programmable-wallets/delete-monitored-tokens)
 to remove specific tokens. Specify the token IDs you want to delete, and they
 are excluded from the list.
 
 ## Update Monitor
 
 To replace tokens with Monitored Tokens, use
-[`PUT /config/entity/monitoredTokens`](/api-reference/w3s/programmable-wallets/update-monitored-tokens)
+[`PUT /config/entity/monitoredTokens`](/api-reference/wallets/programmable-wallets/update-monitored-tokens)
 to entirely replace the existing monitored token list by specifying the tokens
 you want to monitor. The previous list is overwritten with the new tokens
 provided.
@@ -99,7 +99,7 @@ APIs, and webhook callbacks.
 However, after adding tokens to Monitored Tokens, the Monitored Tokens scope is
 set to SELECTED by default, which means only the provided tokens are returned in
 the preceding APIs and callbacks. To revert to monitoring all tokens, call
-[`PUT /config/entity/monitoredTokens/scope`](/api-reference/w3s/programmable-wallets/update-monitored-tokens-scope)
+[`PUT /config/entity/monitoredTokens/scope`](/api-reference/wallets/programmable-wallets/update-monitored-tokens-scope)
 and set the scope to MONITOR_ALL.
 
 It's important to note that even when the monitored token scope is set with

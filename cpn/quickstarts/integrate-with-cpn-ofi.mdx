@@ -710,7 +710,7 @@ curl --request POST \
 ### 3.2. Sign the call data
 
 Using the
-[`/sign/typedData`](/api-reference/w3s/developer-controlled-wallets/sign-typed-data)
+[`/sign/typedData`](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)
 endpoint, input the `messageToBeSigned` object from the previous step along with
 your entity secret and wallet ID. The transaction parameter should be
 [stringified](https://jsonformatter.org/json-stringify-online) from the
@@ -831,7 +831,7 @@ When run, the script outputs the final call data.
 
 In the previous step, you signed the call data to authorize the transaction.
 Next, you must create and sign the raw transaction using the
-[`/sign-transaction`](/api-reference/w3s/developer-controlled-wallets/sign-transaction)
+[`/sign-transaction`](/api-reference/wallets/developer-controlled-wallets/sign-transaction)
 endpoint. Include the call data from the script as the `data` field and the
 wallet ID from your Circle Wallet.
 

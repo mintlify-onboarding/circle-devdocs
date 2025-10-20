@@ -23,7 +23,7 @@ user-controlled wallet. You'll learn to use Circle's sample application and how
 to make API requests via Circle's API references or cURL requests. In this
 guide, you'll find cURL requests presented inline, while API references are
 linked from the API endpoint text. You can find instructions on using it in the
-[testing via the reference pages](/w3s/api-references) guide.
+[testing via the reference pages](/api-reference) guide.
 
 - As with most of our quickstarts, all API calls and transactions in this guide
   occur within the Testnet environment; no real-world funds will be transferred.
@@ -33,7 +33,7 @@ linked from the API endpoint text. You can find instructions on using it in the
 ## 1. Acquire a Session Token
 
 Make a request to
-[`POST /users/token`](/api-reference/w3s/user-controlled-wallets/get-user-token)
+[`POST /users/token`](/api-reference/wallets/user-controlled-wallets/get-user-token)
 using a previously created user ID. The `userToken` is a 60-minute session token
 to initiate requests requiring a user challenge (PIN code entry). After 60
 minutes, the session expires, and a new `userToken` must be generated via the
