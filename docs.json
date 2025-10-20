@@ -683,7 +683,7 @@
                   {
                     "group": "Faucet",
                     "pages": [
-                      "api-reference/wallets/programmable-wallets/faucet"
+                      "api-reference/wallets/programmable-wallets/request-testnet-tokens"
                     ]
                   }
                 ]

@@ -77,11 +77,6 @@ table td {
   background-color: #374151 !important;
 }
 
-.card:hover {
-  border: 1px solid transparent !important;
-  border-radius: 1rem !important;
-}
-
 /* TryItOut Component code block styling */
 .TryItOutComponent pre,
 .TryItOutComponent code {
