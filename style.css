@@ -99,3 +99,11 @@ table td {
 .home_code_container .code-block .code-block-background {
   height: 100% !important;
 }
+
+.home_mint_cards a.card svg {
+  background-color: #6b6580 !important;
+}
+
+.home_mint_cards a.card:hover svg {
+  background: linear-gradient(135deg, #5fbfff 0%, #b090f5 100%) !important;
+}
