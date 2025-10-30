@@ -81,8 +81,7 @@ this guide.
 The public client interacts with the blockchain network. In this example, you
 should specify the Ethereum Sepolia network.
 
-```typescript Typescript
-import { http, createPublicClient } from "viem";
+```typescript import { http, createPublicClient } from "viem";
 import { sepolia } from "viem/chains";
 
 const publicClient = createPublicClient({
@@ -96,8 +95,7 @@ const publicClient = createPublicClient({
 The wallet client interacts with Ethereum accounts to retrieve balances, execute
 transactions, and sign messages.
 
-```typescript Typescript
-import { createWalletClient } from "viem";
+```typescript import { createWalletClient } from "viem";
 import { sepolia } from "viem/chains";
 
 const walletClient = createWalletClient({
@@ -115,8 +113,7 @@ Sepolia contract address. See
 [USDC Contract Addresses](/stablecoins/usdc-contract-addresses) for a full list
 of addresses for the USDC smart contract.
 
-```typescript Typescript
-const USDC_CONTRACT_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238";
+```typescript const USDC_CONTRACT_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238";
 const USDC_ABI = [
   {
     constant: false,
@@ -136,8 +133,7 @@ const USDC_ABI = [
 Create a function to connect to the user's wallet in MetaMask and retrieve the
 wallet address.
 
-```typescript Typescript
-const connect = async () => {
+```typescript const connect = async () => {
   const [address] = await walletClient.requestAddresses();
   setAccount(address);
 };
@@ -149,8 +145,7 @@ Create a function to send the USDC transfer transaction. This function encodes
 the transfer function data and sends the transaction to the blockchain using the
 wallet client.
 
-```typescript Typescript
-const data = encodeFunctionData({
+```typescript const data = encodeFunctionData({
   abi: USDC_ABI,
   functionName: "transfer",
   args: [to, valueInWei],
@@ -168,8 +163,7 @@ const hash = await walletClient.sendTransaction({
 Use the public client to wait for the transaction receipt, which confirms that
 the transaction was included in a block.
 
-```typescript Typescript
-useEffect(() => {
+```typescript useEffect(() => {
   (async () => {
     if (hash) {
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -189,8 +183,7 @@ native testnet tokens (to pay for gas fees) and testnet USDC.
 
 `index.tsx`
 
-```typescript Typescript
-import React, { useEffect, useState } from 'react';
+```typescript import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   http,

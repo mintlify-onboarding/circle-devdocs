@@ -1,0 +1,27 @@
+---
+title: "Specify Recipient Address"
+permalink: "specify-recipient-address"
+'og:title': "Specify Recipient Address"
+'twitter:title': "Specify Recipient Address"
+---
+
+By default, tokens go to the same address as your signing wallet. Bridge Kit
+lets you specify a recipient wallet address so that you can send tokens to a
+different address.
+
+This example transfers 100.00 USDC from your wallet address on Ethereum to a
+different address on Base:
+
+
+```typescript
+// Send from your wallet address to a different recipient address on the destination chain
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: {
+    adapter,
+    chain: "Base",
+    recipientAddress: "0x1234abcd1234abcd1234abcd1234abcd1234abcd", // Specify a recipient address
+  },
+  amount: "100.00",
+});
+```

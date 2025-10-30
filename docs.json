@@ -520,6 +520,161 @@
                 ]
               },
               {
+                "group": "Bridge Kit",
+                "pages": [
+                  "bridge-kit",
+                  {
+                    "group": "Concepts",
+                    "pages": [
+                      "bridge-kit/concepts/adapter-setups"
+                    ]
+                  },
+                  {
+                    "group": "Quickstarts",
+                    "pages": [
+                      "bridge-kit/quickstarts/transfer-usdc-from-base-to-ethereum",
+                      "bridge-kit/quickstarts/transfer-usdc-from-ethereum-to-solana"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "bridge-kit/tutorials/installation",
+                      "bridge-kit/tutorials/estimate-costs",
+                      "bridge-kit/tutorials/configure-transfer-speed",
+                      "bridge-kit/tutorials/specify-recipient-address",
+                      "bridge-kit/tutorials/collect-a-transfer-fee"
+                    ]
+                  },
+                  {
+                    "group": "References",
+                    "pages": [
+                      "bridge-kit/references/sdk-reference",
+                      "bridge-kit/references/event-handling",
+                      "bridge-kit/references/error-recovery-and-troubleshooting"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Interactive Quickstarts",
+                "pages": [
+                  "interactive-quickstarts",
+                  "interactive-quickstarts/try-it-out",
+                  "interactive-quickstarts/quickstarts",
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "interactive-quickstarts/get-started",
+                      "interactive-quickstarts/get-started/testnet-vs-mainnet",
+                      "interactive-quickstarts/get-started/power-of-testnet",
+                      "interactive-quickstarts/get-started/create-web3-service-account",
+                      "interactive-quickstarts/get-started/create-api-key"
+                    ]
+                  },
+                  {
+                    "group": "Common",
+                    "pages": [
+                      "interactive-quickstarts/common/prerequisites"
+                    ]
+                  },
+                  {
+                    "group": "Dev-Controlled Wallets",
+                    "pages": [
+                      "interactive-quickstarts/dev-controlled-wallets",
+                      "interactive-quickstarts/dev-controlled-wallets/introduction",
+                      "interactive-quickstarts/dev-controlled-wallets/setup-entity-secret",
+                      "interactive-quickstarts/dev-controlled-wallets/create-wallet",
+                      "interactive-quickstarts/dev-controlled-wallets/initiate-transaction",
+                      "interactive-quickstarts/dev-controlled-wallets/next-steps"
+                    ]
+                  },
+                  {
+                    "group": "User-Controlled Wallets",
+                    "pages": [
+                      "interactive-quickstarts/user-controlled-wallets",
+                      "interactive-quickstarts/user-controlled-wallets/introduction",
+                      "interactive-quickstarts/user-controlled-wallets/configure-app",
+                      "interactive-quickstarts/user-controlled-wallets/create-user-wallet",
+                      "interactive-quickstarts/user-controlled-wallets/initiate-transaction",
+                      "interactive-quickstarts/user-controlled-wallets/next-steps"
+                    ]
+                  },
+                  {
+                    "group": "CCTP",
+                    "pages": [
+                      "interactive-quickstarts/cctp",
+                      "interactive-quickstarts/cctp/introduction",
+                      "interactive-quickstarts/cctp/prerequisites",
+                      "interactive-quickstarts/cctp/approve-burn",
+                      "interactive-quickstarts/cctp/burn-usdc",
+                      "interactive-quickstarts/cctp/mint-usdc",
+                      "interactive-quickstarts/cctp/next-steps"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "SDK Explorer",
+                "pages": [
+                  "sdk-explorer",
+                  {
+                    "group": "Developer-Controlled Wallets",
+                    "pages": [
+                      {
+                        "group": "Node.js",
+                        "pages": [
+                          "sdk-explorer/developer-controlled-wallets/Node.js/getting-started"
+                        ]
+                      },
+                      {
+                        "group": "Python",
+                        "pages": [
+                          "sdk-explorer/developer-controlled-wallets/Python/getting-started"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "User-Controlled Wallets",
+                    "pages": [
+                      {
+                        "group": "Node.js",
+                        "pages": [
+                          "sdk-explorer/user-controlled-wallets/Node.js/getting-started"
+                        ]
+                      },
+                      {
+                        "group": "Python",
+                        "pages": [
+                          "sdk-explorer/user-controlled-wallets/Python/getting-started"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Smart Contract Platform",
+                    "pages": [
+                      {
+                        "group": "Node.js",
+                        "pages": [
+                          "sdk-explorer/smart-contract-platform/Node.js/getting-started"
+                        ]
+                      },
+                      {
+                        "group": "Python",
+                        "pages": [
+                          "sdk-explorer/smart-contract-platform/Python/getting-started"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "ai-codegen",
+              "sample-projects",
+              "sdks",
+              {
                 "group": "References",
                 "pages": [
                   {
@@ -866,6 +1021,28 @@
             "icon": "file-contract",
             "groups": [
               {
+                "group": "COMMON",
+                "pages": [
+                  {
+                    "group": "Health",
+                    "pages": [
+                      "api-reference/contracts/common/ping"
+                    ]
+                  },
+                  {
+                    "group": "Webhook Subscriptions",
+                    "pages": [
+                      "api-reference/contracts/common/get-subscriptions",
+                      "api-reference/contracts/common/create-subscription",
+                      "api-reference/contracts/common/get-subscription",
+                      "api-reference/contracts/common/update-subscription",
+                      "api-reference/contracts/common/delete-subscription",
+                      "api-reference/contracts/common/get-notification-signature"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "CIRCLE CONTRACTS",
                 "pages": [
                   {
@@ -1159,6 +1336,28 @@
             "dropdown": "Circle Payments Network",
             "icon": "chart-network",
             "groups": [
+              {
+                "group": "COMMON",
+                "pages": [
+                  {
+                    "group": "Health",
+                    "pages": [
+                      "api-reference/cpn/common/ping"
+                    ]
+                  },
+                  {
+                    "group": "Webhook Subscriptions",
+                    "pages": [
+                      "api-reference/cpn/common/get-subscriptions",
+                      "api-reference/cpn/common/create-subscription",
+                      "api-reference/cpn/common/get-subscription",
+                      "api-reference/cpn/common/update-subscription",
+                      "api-reference/cpn/common/delete-subscription",
+                      "api-reference/cpn/common/get-notification-signature"
+                    ]
+                  }
+                ]
+              },
               {
                 "group": "CPN OFI",
                 "pages": [

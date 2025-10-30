@@ -1,59 +1,58 @@
 ---
 title: "Quickstart: Integrate with CPN as an OFI"
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "Integrate with CPN as an OFI"
+permalink: "integrate-with-cpn-ofi"
+'og:title': "Quickstart: Integrate with CPN as an OFI"
+'twitter:title': "Quickstart: Integrate with CPN as an OFI"
 ---
-
-{/* <!-- markdownlint-disable MD036 --> */}
 
 This guide walks you through the steps to request, lock, and fulfill your first
 quote using CPN.
 
 ## Prerequisites
 
-<Note>
+<Info>
+
 **Note:** This quickstart uses Circle Wallets to demonstrate how to create and
 execute a payment on CPN. To create and manage a Circle Wallet, you also need
 a Circle Developer account. You don't need to use Circle Wallets (or a Circle
 Developer account) in your production implementation, however. You can bring
 your own wallet provider as long as it meets the
 [requirements for CPN](/cpn/references/wallet-provider-compatibility).
-</Note>
+
+</Info>
 
 Before you begin this quickstart, ensure you have:
 
-- Obtained an API key for CPN from Circle
-- Created a [Circle Developer](https://console.circle.com/signin) Account
+* Obtained an API key for CPN from Circle
+* Created a [Circle Developer](https://console.circle.com/signin) Account
 
-  - [Registered your entity secret](/wallets/dev-controlled/register-entity-secret)
-  - [Created a new wallet set](/wallets/dev-controlled/create-your-first-wallet)
+  + [Registered your entity secret](/wallets/dev-controlled/register-entity-secret)
+  + [Created a new wallet set](/wallets/dev-controlled/create-your-first-wallet)
     using the API
-  - Created at least one EOA wallet on `EVM-TESTNET` in the wallet set (see the
+  + Created at least one EOA wallet on `EVM-TESTNET` in the wallet set (see the
     link in the previous bullet)
-  - Have access to the wallet ID for the EOA wallet
-  - Funded the wallet with [testnet USDC](https://faucet.circle.com) and
+  + Have access to the wallet ID for the EOA wallet
+  + Funded the wallet with [testnet USDC](https://faucet.circle.com) and
     [testnet ETH](https://cloud.google.com/application/web3/faucet/ethereum).
+* Python installed on your development machine
 
-- Python installed on your development machine
-  - The latest `jwcrypto`, `web3`, `eth_utils`, `hexbytes`, and `eth_abi`
+  + The latest `jwcrypto`, `web3`, `eth_utils`, `hexbytes`, and `eth_abi`
     libraries are installed with the `pip` package manager
-- cURL installed on your development machine
-- (Optional) a
+* cURL installed on your development machine
+* (Optional) a
   [configured webhook notification endpoint](/cpn/howtos/setup-webhook-notifications)
 
 This quickstart provides API requests in cURL format, along with example
 responses.
 
-<Note>
+<Info>
+
 **Note:** The base URL for all API endpoints is
 `https://api-staging.circle.com/v1/cpn` for both sandbox and production
 environments. The API determines if a request is for testnet or mainnet based
 on the key used to authenticate the request.
-</Note>
+
+</Info>
 
 ## Part 1: Request a quote
 
@@ -63,7 +62,8 @@ endpoint, providing the source currency and destination amount. The endpoint
 returns a list of quotes from various BFIs with the rate, expiration time, USDC
 settlement window, and unique ID.
 
-```shell Shell
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/cpn/quotes \
   --header 'Accept: application/json' \
@@ -90,7 +90,9 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+
+```json
 {
   "data": [
     {
@@ -174,14 +176,16 @@ returns an object describing the required fields for the compliance check. The
 `optional` field for each parameter defines if the parameter must be included in
 the response constructed in the next step.
 
-```shell Shell
+
+```bash
 curl -H "Authorization: Bearer ${YOUR_API_KEY}" \
   -X GET "https://api.circle.com/v1/cpn/payments/requirements?quoteId=${QUOTE_ID}"
 ```
 
 **Response**
 
-```json JSON
+
+```json
 {
   "data": {
     "travelRule": [
@@ -295,7 +299,8 @@ response from the previous step, and the `certificate_json` parameter with the
 `jwk` from the quote response. When you run the script, it outputs the encrypted
 beneficiary and travel rule data to the console.
 
-```python Python
+
+```python
 """
 CPN Requirements V1 Encryption Quickstart
 
@@ -498,12 +503,15 @@ After the quote is accepted, create a payment by calling the
 to provide the quote ID and encrypted sender and receiver information. The
 endpoint returns a unique payment ID and the initial status of the payment.
 
-<Note>
+<Info>
+
 **Note:** You must create the payment before the quote expires, otherwise
 you'll need to request a new quote.
-</Note>
 
-```shell Shell
+</Info>
+
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments \
   --header 'Accept: application/json' \
@@ -527,7 +535,8 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+```json
 {
   "data": {
     "id": "07dbe320-6bcb-475b-8d21-17b57263cd3e",
@@ -586,11 +595,13 @@ curl --request POST \
 Use the API to create a blockchain transaction to transfer USDC. Sign the
 transaction locally, and use the API to broadcast it to the blockchain.
 
-<Note>
+<Info>
+
 **Note:** This quickstart uses Circle Wallets to act as the originator wallet
 for the onchain payment. This section uses the wallet ID from the EOA wallet
 mentioned in the [prerequisites](#prerequisites) section.
-</Note>
+
+</Info>
 
 ### 3.1. Initiate the onchain transaction
 
@@ -600,7 +611,8 @@ endpoint with the payment ID from the previous step, and other
 transaction-related parameters. The endpoint returns an unsigned onchain
 transaction object and a transaction ID.
 
-```shell Shell
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions \
   --header 'Accept: application/json' \
@@ -616,7 +628,8 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+```json
 {
   "data": {
     "id": "8e0cc03f-799c-4971-ba41-6b790b4f9548",
@@ -710,13 +723,14 @@ curl --request POST \
 ### 3.2. Sign the call data
 
 Using the
-[`/sign/typedData`](/api-reference/wallets/developer-controlled-wallets/sign-typed-data)
+[`/sign/typedData`](/api-reference/w3s/developer-controlled-wallets/sign-typed-data)
 endpoint, input the `messageToBeSigned` object from the previous step along with
 your entity secret and wallet ID. The transaction parameter should be
 [stringified](https://jsonformatter.org/json-stringify-online) from the
 `messageToBeSigned` field from the transaction response.
 
-```shell Shell
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/sign/typedData \
   --header 'Accept: application/json' \
@@ -733,9 +747,11 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+
+```json
 {
-  "signature": "0x905d70de3f1d9e86b982f6aee2755807fcd50a11cd9035bf47845c856be920fc3b7af8d06bf953bfdecdcea4cc9250aeaeb178b50116774d6bfab37bcc3757621c"
+"signature": "0x905d70de3f1d9e86b982f6aee2755807fcd50a11cd9035bf47845c856be920fc3b7af8d06bf953bfdecdcea4cc9250aeaeb178b50116774d6bfab37bcc3757621c"
 }
 ```
 
@@ -745,7 +761,8 @@ replacing the message object values with the corresponding values from the
 response in
 [step 3.1](/cpn/quickstarts/integrate-with-cpn-ofi#31-initiate-the-onchain-transaction).
 
-```python Python
+
+```python
 from web3 import Web3
 from eth_utils import keccak, to_hex
 from hexbytes import HexBytes
@@ -831,13 +848,14 @@ When run, the script outputs the final call data.
 
 In the previous step, you signed the call data to authorize the transaction.
 Next, you must create and sign the raw transaction using the
-[`/sign-transaction`](/api-reference/wallets/developer-controlled-wallets/sign-transaction)
+[`/sign-transaction`](/api-reference/w3s/developer-controlled-wallets/sign-transaction)
 endpoint. Include the call data from the script as the `data` field and the
 wallet ID from your Circle Wallet.
 
 The raw transaction to be signed can be composed like the following example:
 
-```json JSON
+
+```json
 {
   "nonce": 1,                                          // The nonce of the sender address, obtained via eth_getTransactionCount RPC call
   "to": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",  // The target contract address, in this case, the USDC contract address
@@ -852,7 +870,8 @@ The raw transaction to be signed can be composed like the following example:
 
 Use the following endpoint to sign the transaction:
 
-```shell Shell
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/w3s/developer/sign/transaction \
   --header 'Accept: application/json' \
@@ -869,7 +888,9 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+
+```json
 {
   "signature": "0xe59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a247cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc00",
   "signedTransaction": "0x02f9019583aa36a70184b2d05e0085104c533c00830249f0941c7d4b196cb0c7b01d743fbc6116a902379c723880b90124e3ee160e00000000000000000000000039fd73b03a01c6230b5e0d946e1960d79db44fd80000000000000000000000003eebc158f254838e2f6275b892e6a0621e3ea321000000000000000000000000000000000000000000000000000000000098968000000000000000000000000000000000000000000000000000000000680bc9e000000000000000000000000000000000000000000000000000000000680be8863a30a084fe9ef623cf95ea778067b98b69accf602b8f240f55073339f4c2f2b2000000000000000000000000000000000000000000000000000000000000001bd6960c1cc4c28482a3c96ea35e5c0cfe84f4e466f734de02023b15101c9735a04830dbfeeccd565705c1e8b92b3dd038d720130f5a3101bf43160be49e0f1651c080a0e59d32312a920b6c63ad4c7344bb76d8e7cae2615f79f707649e325abea00a24a07cddec90138bb6790e68e01998fdf77efc9496a91b3b4b42e59fd0e8ad89d0bc",
@@ -885,7 +906,8 @@ endpoint to submit the transaction to be broadcast to the appropriate
 blockchain. You should use the signed transaction and `transactionId` from the
 previous steps to populate the endpoint call.
 
-```shell Shell
+
+```bash
 curl --request POST \
   --url https://api.circle.com/v1/cpn/payments/:paymentId/transactions/:transactionId/submit \
   --header 'Accept: application/json' \
@@ -900,7 +922,8 @@ curl --request POST \
 
 **Response**
 
-```json JSON
+
+```json
 {
   "data": {
     "id": "1f3ccc13-69e3-4811-9648-755bc9aa26f4",

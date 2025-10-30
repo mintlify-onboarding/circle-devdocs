@@ -107,8 +107,7 @@ application.
 1. Create a new file `src/client.ts` and copy the following code into it. This
    code imports required libraries and sets up the network configuration.
 
-```typescript Typescript
-import { http, createPublicClient, createWalletClient, custom } from "viem";
+```typescript import { http, createPublicClient, createWalletClient, custom } from "viem";
 import { sonicBlazeTestnet } from "viem/chains";
 
 declare global {
@@ -132,8 +131,7 @@ export const walletClient = createWalletClient({
    `src/constants.ts`. This file contains the contract address and Application
    Binary Interface (ABI) for the USDC token on Sonic Blaze.
 
-```typescript Typescript
-export const USDC_CONTRACT_ADDRESS =
+```typescript export const USDC_CONTRACT_ADDRESS =
   "0xA4879Fed32Ecbef99399e5cbC247E533421C4eC6";
 
 export const USDC_ABI = [
@@ -166,8 +164,7 @@ connect a wallet and transfer USDC.
    code contains the main application component that allows users to connect
    their wallet and transfer USDC.
 
-```typescript Typescript
-import React, { useEffect, useState } from 'react';
+```typescript import React, { useEffect, useState } from 'react';
 import { publicClient, walletClient } from './clients';
 import { USDC_CONTRACT_ADDRESS, USDC_ABI } from './constants';
 import { type Address, encodeFunctionData, type Hash, type TransactionReceipt, stringify } from 'viem';
@@ -304,8 +301,7 @@ export default USDCApp;
    copying the following code into it. This code sets up the React application
    and renders the `USDCApp` component.
 
-```typescript Typescript
-import React from 'react';
+```typescript import React from 'react';
 import ReactDOM from 'react-dom/client';
 import USDCApp from './App';
 

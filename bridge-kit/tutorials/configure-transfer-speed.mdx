@@ -1,0 +1,52 @@
+---
+title: "Configure Transfer Speed and Maximum Cost"
+permalink: "configure-transfer-speed"
+'og:title': "Configure Transfer Speed and Maximum Cost"
+'twitter:title': "Configure Transfer Speed and Maximum Cost"
+---
+
+By default, Bridge Kit uses CCTP's [Fast Transfer](/cctp) feature to optimize
+for speed. However,
+[this can incur higher fees](/cctp/technical-guide#cctp-v2-fees). If performance
+is not a concern, you can specify a slow transfer speed, which uses CCTP's
+Standard Transfer feature.
+
+To balance performance and cost, you can set the maximum fee you want to pay on
+fast transfers. The transfer switches to slow if the cost is above your limit.
+
+## Configure slow speed
+
+This code configures a slow transfer speed:
+
+
+```typescript
+// Slow transfer speed
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: { adapter, chain: "Base" },
+  amount: "100.00",
+  config: { transferSpeed: "SLOW" }, // Slow transfer speed
+});
+```
+
+## Configure maximum fee
+
+Set the maximum fee that you want to pay for the CCTP fast burn.
+
+This code configures a maximum fee of 5 USDC:
+
+
+```typescript
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: {
+    adapter,
+    chain: "Base",
+  },
+  amount: "100.00",
+  config: {
+    transferSpeed: "FAST", // Fast transfer speed (can be omitted)
+    maxFee: "5000000", // Max 5 USDC fee (in smallest units)
+  },
+});
+```

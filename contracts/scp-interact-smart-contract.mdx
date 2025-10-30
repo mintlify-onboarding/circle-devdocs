@@ -58,7 +58,7 @@ scpClient = utils.init_smart_contract_platform_client(api_key=key, entity_secret
 api_instance = smart_contract_platform.ViewUpdateApi(scpClient)
 try:
     resposne = api_instance.get_contract(id='0189db84-72b7-7fcc-832b-5bf886b9a0ef')
-    print(resposne)
+    print(response)
 except smart_contract_platform.ApiException as e:
     print("Exception when calling ViewUpdateApi->get_contract: %s\n" % e)
 ```
@@ -579,7 +579,7 @@ try:
         "feeLevel": 'MEDIUM'
     })
     resposne = api_instance.create_developer_transaction_contract_execution(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_developer_transaction_contract_execution: %s\n" % e)
 ```

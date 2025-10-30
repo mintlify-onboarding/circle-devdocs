@@ -82,8 +82,7 @@ following sections.
 In `index.js`, start by importing dependencies and setting up the chain and
 token configuration:
 
-```ts Typescript
-// Load environment variables from .env
+```ts // Load environment variables from .env
 import "dotenv/config";
 
 // Import Viem utilities for blockchain interaction
@@ -154,8 +153,7 @@ This makes the ABI compact and easier to understand. Using a minimal ABI:
 
 Next, load your credentials from `.env` and validate them:
 
-```ts Typescript
-// Load variables from .env file
+```ts // Load variables from .env file
 const PRIVATE_KEY_RAW = process.env.PRIVATE_KEY;
 const RECIPIENT = process.env.RECIPIENT_ADDRESS || process.env.RECIPIENT;
 
@@ -198,8 +196,7 @@ These checks:
 
 Set up the Viem clients and your account object:
 
-```ts Typescript
-// Convert private key to account object
+```ts // Convert private key to account object
 const account = privateKeyToAccount(PRIVATE_KEY);
 
 // Create a client for reading chain state (for example, balanceOf)
@@ -235,8 +232,7 @@ Both clients use the same RPC connection but serve different roles.
 
 Now add the logic to check your balance and send tokens:
 
-```ts Typescript
-(async () => {
+```ts (async () => {
   try {
     // Read the sender's USDC balance using the balanceOf function
     const balance = await publicClient.readContract({

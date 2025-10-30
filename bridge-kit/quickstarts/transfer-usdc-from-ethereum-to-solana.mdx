@@ -1,0 +1,227 @@
+---
+title: "Quickstart: Transfer USDC from Ethereum to Solana"
+permalink: "transfer-usdc-from-ethereum-to-solana"
+'og:title': "Quickstart: Transfer USDC from Ethereum to Solana"
+'twitter:title': "Quickstart: Transfer USDC from Ethereum to Solana"
+---
+
+This quickstart helps you write a script that transfers USDC from Ethereum to
+Solana.
+
+## Prerequisites
+
+Before you begin, ensure that you've:
+
+* Installed [Node.js v22+](https://nodejs.org/) and
+  [npm](https://www.npmjs.com/).
+* Created an Ethereum Sepolia wallet and Solana Devnet wallet. You will fund
+  these wallets in this quickstart.
+
+## Step 1. Set up the project
+
+This step shows you how to prepare your project and environment.
+
+### 1.1. Set up your development environment
+
+Create a new directory and install Bridge Kit and its dependencies:
+
+
+```bash
+# Set up your directory and initialize the project
+mkdir bridge-kit-quickstart-transfer-eth-to-sol
+cd bridge-kit-quickstart-transfer-eth-to-sol
+npm init -y
+
+# Install Bridge Kit and tools
+npm install @circle-fin/bridge-kit @circle-fin/adapter-viem-v2 @circle-fin/adapter-solana @solana/web3.js @solana/spl-token viem typescript tsx dotenv
+```
+
+### 1.2. Initialize and configure the project
+
+First, initialize the project. This command creates a `tsconfig.json` file:
+
+
+```bash
+# Initialize a TypeScript project
+npx tsc --init
+```
+
+Then, edit the `tsconfig.json` file:
+
+```bash
+# Replace the contents of the generated file
+cat <<'EOF' > tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true
+  }
+}
+EOF
+```
+
+### 1.3. Configure environment variables
+
+Create an `.env` file in the project directory and add your wallet private key,
+replacing `{YOUR_PRIVATE_KEY}` with the private key for your Ethereum Sepolia
+wallet and `{YOUR_SOLANA_PRIVATE_KEY}` with the Base58-encoded private key for
+your Solana Devnet wallet.
+
+<Info>
+
+**Tip**: You can find and export your private keys in
+[MetaMask](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/)
+and
+[Phantom](https://help.phantom.com/hc/en-us/articles/25334064171795-How-to-export-your-recovery-phrase-or-private-key-in-Phantom).
+
+</Info>
+
+
+
+```bash
+echo "PRIVATE_KEY={YOUR_PRIVATE_KEY}
+SOLANA_PRIVATE_KEY={YOUR_SOLANA_PRIVATE_KEY}" > .env
+```
+
+<Note>
+
+**Warning:** This is strictly for testing purposes. **Never share your private
+key**.
+
+</Note>
+
+### 1.4. Fund your wallets (optional)
+
+For this quickstart, you need USDC and native tokens in your Ethereum testnet
+wallet and native tokens in your Solana testnet wallet. If you need USDC testnet
+tokens, use the [Circle Faucet](https://faucet.circle.com/) to get 10 USDC on
+the Ethereum Sepolia and Solana Devnet testnets.
+
+Use the following faucets to get testnet native tokens in your wallets.
+
+* [Ethereum Sepolia faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
+* [Solana Devnet faucet](https://faucet.solana.com/)
+
+## Step 2. Bridge USDC
+
+This step shows you how to set up your script, execute the bridge transfer, and
+check the result.
+
+### 2.1. Create the script
+
+Create an `index.ts` file in the project directory and add the following code.
+This code sets up your script and transfers 10 USDC from Ethereum Sepolia to
+Solana Devnet.
+
+
+```typescript
+// Import Bridge Kit and dependencies
+import "dotenv/config";
+import { BridgeKit } from "@circle-fin/bridge-kit";
+import { createAdapterFromPrivateKey as createViemAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
+import { createAdapterFromPrivateKey as createSolanaAdapterFromPrivateKey } from "@circle-fin/adapter-solana";
+import { inspect } from "util";
+
+// Initialize the SDK
+const kit = new BridgeKit();
+
+const bridgeUSDC = async (): Promise<void> => {
+  try {
+    // Initialize the Viem adapter which lets you transfer tokens from your wallet on any EVM-compatible chain
+    const viemAdapter = createViemAdapterFromPrivateKey({
+      privateKey: process.env.PRIVATE_KEY as string,
+    });
+
+    // Initialize the Solana adapter which lets you transfer tokens on Solana
+    const solanaAdapter = createSolanaAdapterFromPrivateKey({
+      privateKey: process.env.SOLANA_PRIVATE_KEY as string,
+    });
+
+    console.log("---------------Starting Bridging---------------");
+
+    // Transfer 10 USDC from Ethereum to Solana
+    const result = await kit.bridge({
+      from: { adapter: viemAdapter, chain: "Ethereum_Sepolia" },
+      to: { adapter: solanaAdapter, chain: "Solana_Devnet" },
+      amount: "10.00",
+    });
+
+    console.log("RESULT", inspect(result, false, null, true));
+  } catch (err) {
+    console.log("ERROR", inspect(err, false, null, true));
+  }
+};
+
+void bridgeUSDC();
+```
+
+To transfer from Solana Devnet to Ethereum Sepolia, switch the source and
+destination adapter and chain in your bridge call:
+
+
+```typescript
+// Transfer 10 USDC from Solana to Ethereum
+const result = await kit.bridge({
+  // Specify Solana as the source chain
+  from: { adapter: solanaAdapter, chain: "Solana_Devnet" },
+  // Specify Ethereum as the destination chain
+  to: { adapter: viemAdapter, chain: "Ethereum_Sepolia" },
+  amount: "10.00",
+});
+```
+
+<Info>
+
+**Tip**:
+[Collect a fee on transfers](/bridge-kit/tutorials/collect-a-transfer-fee) and
+[estimate gas and provider fees](/bridge-kit/tutorials/estimate-costs) before
+a transfer, only proceeding if the cost is acceptable.
+
+</Info>
+
+### 2.2. Run the script
+
+Save the `index.ts` file and run the script in your terminal:
+
+
+
+```bash
+npx tsx index.ts
+```
+
+### 2.3. Verify the transfer
+
+After the script finishes, find the returned `steps` array in the terminal
+output. Each transaction step includes an `explorerUrl`. Use that link to verify
+that the USDC amount matches the amount you transferred.
+
+The following code is an example of how an `approve` step might look in the
+terminal output. The values are used in this example only and are not a real
+transaction:
+
+
+
+```bash
+steps: [
+  {
+    name: "approve",
+    state: "success",
+    txHash: "0xdeadbeefcafebabe1234567890abcdef1234567890abcdef1234567890abcd",
+    data: {
+      txHash:
+        "0xdeadbeefcafebabe1234567890abcdef1234567890abcdef1234567890abcd",
+      status: "success",
+      cumulativeGasUsed: 17138643n,
+      gasUsed: 38617n,
+      blockNumber: 8778959n,
+      blockHash:
+        "0xbeadfacefeed1234567890abcdef1234567890abcdef1234567890abcdef12",
+      transactionIndex: 173,
+      effectiveGasPrice: 1037232n,
+    explorerUrl:
+      "https://sepolia.etherscan.io/tx/0xdeadbeefcafebabe1234567890abcdef1234567890abcdef1234567890abcd",
+  },
+];
+```

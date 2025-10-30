@@ -375,7 +375,7 @@ try:
       "feeLevel": 'MEDIUM'
       })
     resposne = api_instance.deploy_contract_template("aea21da6-0aa2-4971-9a1a-5098842b1248", request)
-    print(resposne)
+    print(response)
 except smart_contract_platform.ApiException as e:
     print("Exception when calling TemplatesApi->deploy_contract_template: %s\n" % e)
 ```
@@ -440,7 +440,7 @@ api_instance = developer_controlled_wallets.TransactionsApi(client)
 
 try:
     resposne = api_instance.list_transactions()
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->list_transactions: %s\n" % e)
 ```
@@ -544,7 +544,7 @@ try:
         "feeLevel": 'MEDIUM',
     })
     resposne = api_instance.create_developer_transaction_contract_execution(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_developer_transaction_contract_execution: %s\n" % e)
 ```
@@ -609,7 +609,7 @@ api_instance = developer_controlled_wallets.TransactionsApi(client)
 
 try:
     resposne = api_instance.get_transaction(id='601a0815-f749-41d8-b193-22cadd2a8977')
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
 ```

@@ -210,8 +210,7 @@ curl --location 'https://api.circle.com/v1/w3s/users/social/token' \
    `useEffect` hook so you can correctly capture the SDK response. Put the
    context provider in the root component of the web application:
 
-```typescript Typescript
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+```typescript import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { W3SSdk } from '@circle-fin/w3s-pw-web-sdk'
 import { EmailLoginResult, Error, SocialLoginResult } from '@circle-fin/w3s-pw-web-sdk/dist/src/types'
 
