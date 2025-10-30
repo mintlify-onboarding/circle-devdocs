@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Circle Docs",
   "colors": {
-    "primary": "#8D7DDA",
-    "light": "#8D7DDA",
-    "dark": "#8D7DDA"
+    "primary": "#0073C3",
+    "light": "#0073C3",
+    "dark": "#0073C3"
   },
   "appearance": {
     "default": "light"

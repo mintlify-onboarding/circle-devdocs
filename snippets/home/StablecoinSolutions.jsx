@@ -72,8 +72,8 @@ export const StablecoinSolutions = () => {
           >
             <Icon icon={card.icon} color={card.iconColor} size={card.iconSize} />
           </span>
-          <h3 className="text-lg font-bold text-black dark:text-white mt-0 mb-[16px]">{card.title}</h3>
-          <p className="text-[#4B5563] dark:text-[#9CA3AF] m-0 mb-[16px] flex-grow">{card.description}</p>
+          <h3 className="text-lg font-bold text-[#29233B] dark:text-white mt-0 mb-[16px]">{card.title}</h3>
+          <p className="text-[#6B6580] dark:text-[#9CA3AF] m-0 mb-[16px] flex-grow">{card.description}</p>
           <a
             href={card.linkHref}
             className="cursor-pointer text-[#0073C3] dark:!text-[#0073C3] font-bold w-fit no-underline hover:underline border-b-0 mt-auto"
