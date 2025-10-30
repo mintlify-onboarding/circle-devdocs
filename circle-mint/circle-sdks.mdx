@@ -50,7 +50,8 @@ python3 -m pip install circle-sdk
 
 <CodeGroup>
 
-```typescript import { Circle, CircleEnvironments } from "@circle-fin/circle-sdk";
+```typescript
+import { Circle, CircleEnvironments } from "@circle-fin/circle-sdk";
 
 const circle = new Circle(
   "<your-api-key>",
@@ -80,7 +81,8 @@ circle.api_key = '<replace-me-with-your-api-key>'
 
 <CodeGroup>
 
-```typescript async function listBalances() {
+```typescript 
+async function listBalances() {
   const balancesRes = await circle.balances.listBalances();
 }
 ```
@@ -127,7 +129,8 @@ except circle.ApiException as e:
 
 <CodeGroup>
 
-```typescript async function createCryptoPayment() {
+```typescript 
+async function createCryptoPayment() {
   const createCryptoPaymentRes =
     await circle.paymentIntents.createPaymentIntent({
       idempotencyKey: "5c6e9b91-6563-47ec-8c6d-0ce1103c50b3",
@@ -229,7 +232,8 @@ except circle.ApiException as ex:
 
 <CodeGroup>
 
-```typescript async function getCryptoPayment(id: string) {
+```typescript 
+async function getCryptoPayment(id: string) {
   const cryptoPayment = await circle.paymentIntents.getPaymentIntent(id);
 }
 ```

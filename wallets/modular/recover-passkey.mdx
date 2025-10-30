@@ -81,7 +81,8 @@ then be used later to recover their passkey and associated smart account.
 the only credential for recovery if the passkey is lost.
 </Note>
 
-```ts import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
+```ts
+import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
 import { recoveryActions } from "@circle-fin/modular-wallets-core";
 
 // Extend bundler client with recovery actions
@@ -106,7 +107,8 @@ This creates a mapping between the smart account and the recovery address.
 If a user loses their passkey, they can use the mnemonic from the recovery
 address to start the recovery flow.
 
-```ts // Recreate the recovery account from the saved mnemonic
+```ts
+// Recreate the recovery account from the saved mnemonic
 const localAccount = mnemonicToAccount(savedMnemonic);
 
 // Initialize a temporary smart account using the recovery EOA
@@ -131,7 +133,8 @@ passkey to replace the lost one.
 After registering the new passkey, call `executeRecovery` to complete the
 recovery and restore access to the smart account.
 
-```ts await recoveryClient.executeRecovery({
+```ts
+await recoveryClient.executeRecovery({
   account: newAccount, // Temporary account used for signing
   credential: newCredential, // New WebAuthn credential
   paymaster: true, // Optional: use a paymaster to sponsor gas
@@ -145,7 +148,8 @@ This associates the new `WebAuthn` credential with the smart account.
 After a successful recovery, the user can access the smart account using their
 new passkey.
 
-```ts const recoveredAccount = await toCircleSmartAccount({
+```ts
+const recoveredAccount = await toCircleSmartAccount({
   client,
   owner: toWebAuthnAccount({ credential: newCredential }) as WebAuthnAccount,
 });
@@ -170,7 +174,8 @@ as it creates a smoother experience.
 1. **Sponsor gas fees** using Circle Gas Station.
 2. **Estimate gas fees** and display them to users:
 
-```ts const registerGasEstimate =
+```ts
+const registerGasEstimate =
   await recoveryClient.estimateRegisterRecoveryAddressGas({
     account,
     recoveryAddress: recoveryEoa.address,

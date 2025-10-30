@@ -83,7 +83,8 @@ or token balances.
 
 Configure the client to connect to the Sepolia testnet:
 
-```typescript import { http, createPublicClient } from "viem";
+```typescript
+import { http, createPublicClient } from "viem";
 import { sepolia } from "viem/chains";
 
 const publicClient = createPublicClient({
@@ -97,7 +98,8 @@ const publicClient = createPublicClient({
 The wallet client lets you interact with user accounts and sign transactions. To
 connect it to MetaMask in the browser:
 
-```typescript import { createWalletClient, custom } from "viem";
+```typescript
+import { createWalletClient, custom } from "viem";
 import { sepolia } from "viem/chains";
 
 const walletClient = createWalletClient({
@@ -114,7 +116,8 @@ token contract address varies by blockchain. This example uses the Ethereum
 Sepolia contract address. For the full list of EURC smart contract addresses,
 see [EURC Contract Addresses](/stablecoins/eurc-contract-addresses).
 
-```typescript const EURC_CONTRACT_ADDRESS = "0x08210f9170f89ab7658f0b5e3ff39b0e03c594d4";
+```typescript
+const EURC_CONTRACT_ADDRESS = "0x08210f9170f89ab7658f0b5e3ff39b0e03c594d4";
 const EURC_ABI = [
   {
     constant: false,
@@ -134,7 +137,8 @@ const EURC_ABI = [
 Create a function to connect to the user's wallet in MetaMask and retrieve the
 wallet address:
 
-```typescript const connect = async () => {
+```typescript
+const connect = async () => {
   const [address] = await walletClient.requestAddresses();
   setAccount(address);
 };
@@ -146,7 +150,8 @@ Create a function to send the EURC transfer transaction. This function encodes
 the transfer function data and sends the transaction to the blockchain using the
 wallet client.
 
-```typescript const data = encodeFunctionData({
+```typescript
+const data = encodeFunctionData({
   abi: EURC_ABI,
   functionName: "transfer",
   args: [to, valueInWei],
@@ -164,7 +169,8 @@ const hash = await walletClient.sendTransaction({
 Use the public client to wait for the transaction receipt, which confirms that
 the transaction was included in a block.
 
-```typescript useEffect(() => {
+```typescript 
+useEffect(() => {
   (async () => {
     if (hash) {
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -184,7 +190,8 @@ must contain native testnet tokens (to pay for gas fees) and testnet EURC.
 
 ### index.tsx
 
-```typescript import React, { useEffect, useState } from 'react';
+```typescript
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   http,
