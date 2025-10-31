@@ -1,0 +1,39 @@
+---
+title: "Estimate Costs Before Transferring"
+permalink: "estimate-costs"
+'og:title': "Estimate Costs Before Transferring"
+'twitter:title': "Estimate Costs Before Transferring"
+---
+
+Bridge Kit can estimate gas fees and provider fees before a transfer. Estimating
+costs is optional but recommended.
+
+This example estimates costs for a transfer of 10 USDC from Base to Ethereum:
+
+
+```typescript Typescript
+import type { BridgeParams } from "@circle-fin/bridge-kit";
+
+const params: BridgeParams = {
+  from: { adapter, chain: "Base" },
+  to: { adapter, chain: "Ethereum" },
+  amount: "10.00",
+};
+
+// Estimate costs
+const estimate = await kit.estimate(params);
+console.log("Estimated fees:", estimate);
+
+const providerFee = estimate.fees.find((f) => f.type === "provider")?.amount;
+
+// Only proceed if the provider fee is less than 0.10 USDC
+// Also proceed if the `providerFee` variable is null/undefined since there is no provider fee to charge
+if (providerFee == null || parseFloat(providerFee) < 0.1) {
+  // Execute the crosschain transfer
+  const result = await kit.bridge(params);
+  console.log("Bridge completed:", result);
+  // Error if the cost is over 5 USDC
+} else {
+  console.log("Provider fee is above threshold:", providerFee, "USDC");
+}
+```

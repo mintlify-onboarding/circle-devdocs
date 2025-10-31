@@ -1,11 +1,8 @@
 ---
 title: "How-to: Encrypt Files for RFI Transmission"
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "Encrypt Files for RFI Transmission"
+permalink: "encrypt-files"
+'og:title': "How-to: Encrypt Files for RFI Transmission"
+'twitter:title': "How-to: Encrypt Files for RFI Transmission"
 ---
 
 This guide explains how to set up encryption and decryption between an OFI and a
@@ -32,6 +29,7 @@ an OFI to a BFI through the RFI endpoint.
 Using your chosen implementation language, generate a random 128-bit AES key for
 AES-128-GCM encryption.
 
+
 ```java Java
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -54,6 +52,8 @@ public static SecretKey generateAesKey() throws GeneralSecurityException {
 
 Using your chosen implementation language, generate a 12-byte IV.
 
+
+
 ```java Java
 import java.security.SecureRandom;
 
@@ -71,6 +71,8 @@ public static byte[] generateIv() {
 
 Encrypt the file contents using AES-128-GCM using the key and IV from the
 previous steps.
+
+
 
 ```java Java
 import javax.crypto.Cipher;
@@ -99,7 +101,14 @@ public static byte[] encryptPayload(byte[] plaintextPayload, SecretKey aesKey, b
 Using the JWK data from the quote response, encrypt the AES key that was used to
 encrypt the file contents with the following parameters using JWE:
 
+* Algorithm: ECDH-ES+A128KW
+* Encryption method: A128GCM
+
+
+
 ```java Java
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -107,41 +116,148 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.ECDHEncrypter;
+import java.util.Base64;
 import javax.crypto.SecretKey;
 import java.security.interfaces.ECPublicKey;
 
+   /**
+    * @param aesKey The AES key to wrap.
+    * @param bfiPublicKey The recipient's Elliptic Curve public key.
+    * @return A compact, serialized JWE string representing the encrypted key.
+    * @throws JOSEException if an error occurs during JWE creation or encryption.
+    */
+   public static String wrapAesKey(SecretKey aesKey, ECPublicKey bfiPublicKey) throws JOSEException {
+  // Create the JWEHeader using ECDH_ES+AS128KW and AES-128-GCM
+        JWEHeader header = new JWEHeader(
+            JWEAlgorithm.ECDH_ES_A128KW,
+            EncryptionMethod.A128GCM
+        );
 
-/**
- * @param aesKey The AES key to wrap.
- * @param bfiPublicKey The recipient's Elliptic Curve public key.
- * @return A compact, serialized JWE string representing the encrypted key.
- * @throws JOSEException if an error occurs during JWE creation or encryption.
- */
-public static String wrapAesKey(SecretKey aesKey, ECPublicKey bfiPublicKey) throws JOSEException {
-// Create the JWEHeader using ECDH_ES+AS128KW and AES-128-GCM
-  JWEHeader header = new JWEHeader(
-      JWEAlgorithm.ECDH_ES_A128KW,
-      EncryptionMethod.A128GCM
-  );
-  Payload jwePayload = new Payload(aesKey.getEncoded());
-  JWEObject jweObject = new JWEObject(header, jwePayload);
-  JWEEncrypter encrypter = new ECDHEncrypter(bfiPublicKey);
-  jweObject.encrypt(encrypter);
-  return jweObject.serialize();
-}
+    // Base64 encode the AES key and wrap in JSON string
+       String base64AesKey = Base64.getEncoder().encodeToString(aesKey.getEncoded());
+       ObjectMapper objectMapper = new ObjectMapper();
+       String jsonPayload = objectMapper.writeValueAsString(base64AesKey);
+
+       Payload jwePayload = new Payload(jsonPayload);
+       JWEObject jweObject = new JWEObject(header, jwePayload);
+       JWEEncrypter encrypter = new ECDHEncrypter(bfiPublicKey);
+       jweObject.encrypt(encrypter);
+       return jweObject.serialize();
+   }
 ```
 
 ### Step 5: Transmit the encrypted payload
 
 After performing the encryption steps from the previous steps, you should have
-the AES-encrypted file, the compact JWE string representing the AES key, and the
-12-byte IV. Assemble those components into a `multipart/form-data` request as
-shown below and send it to the
+three components:
+
+* The AES-encrypted file content
+* The JWE string containing the encrypted AES key
+* The base64-encoded 12-byte IV
+
+Use these components to create a `multipart/form-data` request to the
 [upload RFI file endpoint](/api-reference/cpn/cpn-platform/upload-rfi-file). A
 `200` response from the API indicates that the encryption was performed
 correctly and the BFI can decrypt the file's contents.
 
-```text 
+<Warning>
+
+**Important:** Don't manually set the `Content-Type` header. Let your HTTP
+client library set it automatically. The header must include a boundary
+parameter like:
+
+
+```text
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+```
+
+If you manually set `Content-Type: multipart/form-data`, the request will fail.
+
+</Warning>
+
+
+```java Java
+import okhttp3.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.UUID;
+
+/**
+* Upload an encrypted RFI file using multipart/form-data.
+*
+* @param paymentId The payment UUID.
+* @param rfiId The RFI UUID.
+* @param encryptedFile The encrypted file to upload.
+* @param fileName The original file name.
+* @param fileType The file type (e.g., "PDF", "JPEG").
+* @param fileKey The file key (e.g., "ID_DOCUMENT", "PROOF_OF_ADDRESS_DOCUMENT").
+* @param encryptedAesKey The JWE-wrapped AES key.
+* @param iv The Base64-encoded initialization vector.
+* @param accessToken The Bearer token for authentication.
+* @throws IOException if the HTTP request fails.
+*/
+public static void uploadRfiFile(UUID paymentId, UUID rfiId, File encryptedFile,
+                               String fileName, String fileType, String fileKey,
+                               String encryptedAesKey, byte[] iv, String accessToken) throws IOException {
+
+   OkHttpClient client = new OkHttpClient();
+   ObjectMapper objectMapper = new ObjectMapper();
+
+   // Create data objects
+   FileMetadata fileMetadata = new FileMetadata(fileName, fileType, fileKey);
+   FileEncryption encryption = new FileEncryption(encryptedAesKey, Base64.getEncoder().encodeToString(iv));
+
+   // Build multipart request
+   RequestBody requestBody = new MultipartBody.Builder()
+       .setType(MultipartBody.FORM)
+       .addFormDataPart("fileMetadata", objectMapper.writeValueAsString(fileMetadata))
+       .addFormDataPart("encryption", objectMapper.writeValueAsString(encryption))
+       .addFormDataPart("encryptedFile", fileName,
+           RequestBody.create(encryptedFile, MediaType.parse("application/octet-stream")))
+       .build();
+
+   Request request = new Request.Builder()
+       .url(String.format("https://api.circle.com/v1/payments/%s/rfis/%s/files", paymentId, rfiId))
+       .header("Authorization", "Bearer " + accessToken)
+       .post(requestBody)
+       .build();
+
+   try (Response response = client.newCall(request).execute()) {
+       if (!response.isSuccessful()) {
+           throw new IOException("Upload failed: " + response.code());
+       }
+   }
+}
+
+public static class FileMetadata {
+   public final String fileName;
+   public final String fileType;
+   public final String fileKey;
+
+   public FileMetadata(String fileName, String fileType, String fileKey) {
+       this.fileName = fileName;
+       this.fileType = fileType;
+       this.fileKey = fileKey;
+   }
+}
+
+public static class FileEncryption {
+   public final String encryptedAesKey;
+   public final String iv;
+
+   public FileEncryption(String encryptedAesKey, String iv) {
+       this.encryptedAesKey = encryptedAesKey;
+       this.iv = iv;
+   }
+}
+```
+
+An example request body is shown below:
+
+```text
 ------WebKitFormBoundary
 Content-Disposition: form-data; name="fileMetadata"
 Content-Type: application/json

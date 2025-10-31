@@ -1,0 +1,62 @@
+---
+title: "Bridge Kit Installation"
+permalink: "installation"
+'og:title': "Bridge Kit Installation"
+'twitter:title': "Bridge Kit Installation"
+---
+
+
+Install Bridge Kit and the adapters for each blockchain you plan to transfer
+between.
+
+* **EVM only**: Install either the Viem adapter or the Ethers adapter, both
+  isn't necessary.
+* **EVM and Solana**: Install the Solana adapter and either the Viem adapter or
+  the Ethers adapter.
+
+## Install with Viem adapter
+
+Use your preferred package manager to install Bridge Kit with the Viem adapter
+to transfer between EVM-compatible blockchains.
+
+<CodeGroup>
+```bash yarn
+yarn add @circle-fin/bridge-kit @circle-fin/adapter-viem-v2 viem
+```
+
+```bash npm
+npm install @circle-fin/bridge-kit @circle-fin/adapter-viem-v2 viem
+```
+</CodeGroup>
+
+
+## Install with Ethers adapter
+
+Use your preferred package manager to install Bridge Kit with the Ethers adapter
+to transfer between EVM-compatible chains.
+
+<CodeGroup>
+```bash yarn
+yarn add @circle-fin/bridge-kit @circle-fin/adapter-ethers-v6 ethers
+```
+
+```bash npm
+npm install @circle-fin/bridge-kit @circle-fin/adapter-ethers-v6 ethers
+```
+</CodeGroup>
+
+## Install with Solana adapter
+
+After you install Viem or Ethers, install the Solana adapter to transfer to or
+from Solana.
+
+
+<CodeGroup>
+```bash yarn
+yarn add @circle-fin/adapter-solana @solana/web3.js @solana/spl-token
+```
+
+```bash npm
+npm install @circle-fin/adapter-solana @solana/web3.js @solana/spl-token
+```
+</CodeGroup>

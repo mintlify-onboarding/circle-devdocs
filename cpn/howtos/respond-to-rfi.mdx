@@ -1,28 +1,46 @@
 ---
 title: "How-to: Respond to an RFI"
-sidebarTitle: "Respond to an RFI"
+permalink: "respond-to-rfi"
+'og:title': "How-to: Respond to an RFI"
+'twitter:title': "How-to: Respond to an RFI"
 ---
 
-This guide explains how to respond to an RFI request that is system-initiated. In a system-initiated RFI, you are notified either synchronously when a payment is created, or asynchronously by an RFI webhook.
+This guide explains how to respond to an RFI request that is system-initiated.
+In a system-initiated RFI, you are notified either synchronously when a payment
+is created, or asynchronously by an RFI webhook.
 
-This guide doesn't cover how to respond to an RFI when it is initiated by a support ticket. For RFIs initiated this way, you must follow the support ticket workflow.
+This guide doesn't cover how to respond to an RFI when it is initiated by a
+support ticket. For RFIs initiated this way, you must follow the support ticket
+workflow.
 
 ## Steps
 
-Use the following steps to respond to an RFI.
+When a system-initiated RFI is created by a BFI, you are notified in one of two
+ways:
 
-When a system-initiated RFI is created by a BFI, you are notified in one of two ways:
+1. In the synchronous response to the payment creation endpoint. When you create
+   a payment, the endpoint responds with the created payment record containing a
+   non-null `activeRfi` field.
+2. Asynchronously by an RFI webhook. This can occur at any time in the payment
+   flow after the payment is created. The RFI webhook doesn't contain the entire
+   RFI object.
 
-1. In the synchronous response to the payment creation endpoint. When you create a payment, the endpoint responds with the created payment record containing a non-null activeRfi field.
-2. Asynchronously by an RFI webhook. This can occur at any time in the payment flow after the payment is created. The RFI webhook doesn't contain the entire RFI object.
-
-Once you have the full RFI object, you can use the following steps to respond to the RFI.
+Once you have the full RFI object, you can use the following steps to respond to
+the RFI.
 
 ### Step 1: Get the RFI requirements and certificate
 
-Before you respond to an RFI, you need to get the requirements and the certificate used for encrypting RFI responses.
+Before you respond to an RFI, you need to get the requirements and the
+certificate used for encrypting RFI responses.
 
-The RFI requirements are available in the RFI object. If the RFI was created synchronously, the full object is included in the activeRfi field of the payment object. If the RFI was created asynchronously, you must retrieve the full object using the [get details for an RFI endpoint](/api-reference/requests-for-information/get-details-for-an-rfi). The following is an example RFI object:
+The RFI requirements are available in the RFI object. If the RFI was created
+synchronously, the full object is included in the `activeRfi` field of the
+payment object. If the RFI was created asynchronously, you must retrieve the
+full object using the
+[get details for an RFI endpoint](/api-reference/cpn/cpn-platform/get-rfi). The
+following is an example RFI object:
+
+
 
 ```json JSON
 {
@@ -78,13 +96,23 @@ The RFI requirements are available in the RFI object. If the RFI was created syn
 
 ### Step 2: Create the RFI response
 
-You must provide all of the fields that are marked as required. Circle recommends providing the fields marked as optional for the highest likelihood of an approved RFI. If you do not have the requested information about the sender, you should request it.
+You must provide all of the fields that are marked as required. Circle
+recommends providing the fields marked as optional for the highest likelihood of
+an approved RFI. If you do not have the requested information about the sender,
+you should request it.
 
-Once you have all of the required information, you can create the RFI response. Format it into the appropriate JSON format, based on the schema provided in the fieldRequirements parameter.
+Once you have all of the required information, you can create the RFI response.
+Format it into the appropriate JSON format, based on the schema provided in the
+`fieldRequirements` parameter.
 
-Before encrypting and sending the response, you should validate the JSON response object against the JSON schema. See [How-to: Integrate with JSON Schema](/cpn/howtos/integrate-with-json-schema) for more information.
+Before encrypting and sending the response, you should validate the JSON
+response object against the JSON schema. See
+[How-to: Integrate with JSON Schema](/cpn/howtos/integrate-with-json-schema) for
+more information.
 
 The following is an example RFI response:
+
+
 
 ```json JSON
 {
@@ -105,11 +133,19 @@ The following is an example RFI response:
 
 ### Step 3: Encrypt the RFI response
 
-The RFI response must be encrypted before it is sent to the BFI. It is encrypted in the same manner as the travel rule and beneficiary account data. For a full guide on the encryption process, see [How-to: Encrypt Travel Rule and Beneficiary Account Data](/cpn/howtos/encrypt-travel-rule-beneficiary-data).
+The RFI response must be encrypted before it is sent to the BFI. It is encrypted
+in the same manner as the travel rule and beneficiary account data. For a full
+guide on the encryption process, see
+[How-to: Encrypt Travel Rule and Beneficiary Account Data](/cpn/howtos/encrypt-travel-rule-beneficiary-data).
 
 ### Step 4: Submit the RFI response
 
-Submit the encrypted RFI response with the [submit RFI data endpoint](/api-reference/requests-for-information/submit-rfi-data). The request should include the encrypted data and the version of the RFI JSON Schema. The version should match the version in the fieldRequirements parameter of the RFI object. An example request body is shown below:
+Submit the encrypted RFI response with the
+[submit RFI data endpoint](/api-reference/cpn/cpn-platform/submit-rfi) . The
+request should include the encrypted data and the version of the RFI JSON
+Schema. The version should match the version in the `fieldRequirements`
+parameter of the RFI object. An example request body is shown below:
+
 
 ```json JSON
 {
@@ -122,15 +158,27 @@ Submit the encrypted RFI response with the [submit RFI data endpoint](/api-refer
 
 ### Step 5: Upload required files
 
-If the RFI includes a fileRequirements field, you must upload documentation about the sender in addition to submitting the RFI response. Files must be encrypted and uploaded one at a time to the [upload RFI file endpoint](/api-reference/requests-for-information/upload-rfi-file). You can upload files before or after submitting the RFI response, as long as it is before the RFI decision is made.
+If the RFI includes a `fileRequirements` field, you must upload documentation
+about the sender in addition to submitting the RFI response. Files must be
+encrypted and uploaded one at a time to the
+[upload RFI file endpoint](/api-reference/cpn/cpn-platform/upload-rfi-file). You
+can upload files before or after submitting the RFI response, as long as it is
+before the RFI decision is made.
 
-See [How-to: Encrypt Files for RFI Transmission](/cpn/howtos/encrypt-files) for more information on how to encrypt files.
+See [How-to: Encrypt Files for RFI Transmission](/cpn/howtos/encrypt-files) for
+more information on how to encrypt files.
 
-The [upload RFI file endpoint](/api-reference/requests-for-information/upload-rfi-file) accepts a multipart/form-data request body in three parts. The request body should include the encrypted file, the encryption details, and the file metadata. The file metadata should include the filename, file type, and file key. The file key should match the fileKey in the fileRequirements field of the RFI object.
+The [upload RFI file endpoint](/api-reference/cpn/cpn-platform/upload-rfi-file)
+accepts a `multipart/form-data` request body in three parts. The request body
+should include the encrypted file, the encryption details, and the file
+metadata. The file metadata should include the filename, file type, and file
+key. The file key should match the `fileKey` in the `fileRequirements` field of
+the RFI object.
 
 The following is an example request body:
 
-```text
+
+```text Text
 ------WebKitFormBoundary
 Content-Disposition: form-data; name="fileMetadata"
 Content-Type: application/json
@@ -156,4 +204,6 @@ Content-Type: application/octet-stream
 [BINARY FILE DATA]
 ```
 
-Once you submit the RFI response, you receive the decision on the RFI via webhook. If the BFI approves the RFI, you can continue with the payment, or create a new payment for the sender if the existing payment has expired.
+Once you submit the RFI response, you receive the decision on the RFI via
+webhook. If the BFI approves the RFI, you can continue with the payment, or
+create a new payment for the sender if the existing payment has expired.

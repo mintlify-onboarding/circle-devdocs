@@ -1,0 +1,75 @@
+---
+title: "Event Handling"
+permalink: "event-handling"
+'og:title': "Event Handling"
+'twitter:title': "Event Handling"
+---
+
+You can listen to bridge events that occur during the transfer lifecycle for
+each provider in the kit. Events for the built-in CCTP provider follow its
+[transaction steps](/bridge-kit/references/error-recovery-and-troubleshooting#transaction-steps-overview).
+You can subscribe to each event multiple times with different callbacks.
+
+## Event types
+
+This section lists the CCTP event types to which you can subscribe.
+
+### Approve
+
+Emitted when the transaction is approved. This happens when the transaction
+signer has approved the transfer amount on the source chain.
+
+```typescript Typescript
+kit.on("approve", (payload) => {
+  console.log("Approval completed:", payload.values.txHash);
+});
+```
+
+### Burn
+
+Emitted when tokens are burned on the source chain.
+
+
+
+```typescript Typescript
+kit.on("burn", (payload) => {
+  console.log("Burn completed:", payload.values.txHash);
+});
+```
+
+### Attestation
+
+Emitted when the kit receives the attestation, which serves as proof of the
+burn.
+
+
+
+```typescript Typescript
+kit.on("fetchAttestation", (payload) => {
+  console.log("Attestation completed:", payload.values.data.attestation);
+});
+```
+
+### Mint
+
+Emitted when tokens are minted on the destination chain.
+
+
+
+```typescript Typescript
+kit.on("mint", (payload) => {
+  console.log("Mint completed:", payload.values.txHash);
+});
+```
+
+### \*
+
+Listen to all events.
+
+
+
+```typescript Typescript
+kit.on("\*", (payload) => {
+  console.log("Event received:", payload);
+});
+```

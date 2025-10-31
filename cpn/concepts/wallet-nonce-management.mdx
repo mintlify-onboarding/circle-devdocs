@@ -1,54 +1,73 @@
 ---
-
-title: Wallet Nonce Management
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems:
-  - title: Documentation
-sidebarTitle: Wallet Nonce Management
+title: "Wallet Nonce Management"
+permalink: "wallet-nonce-management"
+'og:title': "Wallet Nonce Management"
+'twitter:title': "Wallet Nonce Management"
 ---
 
-This topic explains how nonces work in Ethereum Virtual Machine (EVM) transactions. It also gives you tips for managing nonces when you handle many transactions at once.
+This topic explains how nonces work in Ethereum Virtual Machine (EVM)
+transactions. It also gives you tips for managing nonces when you handle many
+transactions at once.
 
-Before you read this, you should know the basics about EVM wallets and how transactions are signed.
+Before you read this, you should know the basics about EVM wallets and how
+transactions are signed.
 
 ## What is a nonce?
-In EVM-based blockchains, a wallet nonce is a counter. It tracks how many transactions you sent from a specific wallet address. Each transaction must use a different nonce. You must use nonces in order, one after another.
+
+In EVM-based blockchains, a wallet nonce is a counter. It tracks how many
+transactions you sent from a specific wallet address. Each transaction must use
+a different nonce. You must use nonces in order, one after another.
 
 Key points:
 
-- New wallets start with nonce 0
-- Each successful transaction adds 1 to the nonce
-- You must use nonces in order (no gaps)
-- Each wallet address has its own nonce count
+* New wallets start with nonce 0
+* Each successful transaction adds 1 to the nonce
+* You must use nonces in order (no gaps)
+* Each wallet address has its own nonce count
 
-## Problems with nonce management
-Problems can happen when you create many transactions at the same time from one wallet address.
+## Nonce conflicts in concurrent transactions
 
-This problem often happens when many users create transactions at once, and your system uses the same EVM wallet for all these requests.
+Problems can happen when you create many transactions at the same time from one
+wallet address.
 
-When signing transactions, multiple threads in your system might try to get the wallet's current nonce at the same time. If this race condition occurs, multiple transactions might get assigned the same nonce number. When this occurs, only the first transaction works. The others fail.
+This problem often happens when many users create transactions at once, and your
+system uses the same EVM wallet for all these requests.
 
-Another common problem happens when transactions get stuck in the blockchain's mempool and block later transactions. Here's an example:
+When signing transactions, multiple threads in your system might try to get the
+wallet's current nonce at the same time. If this race condition occurs, multiple
+transactions might get assigned the same nonce number. When this occurs, only
+the first transaction works. The others fail.
 
-- Your CPN integration signs two transactions from the same wallet in the right order:
-  - Transaction A with nonce 5
-  - Transaction B with nonce 6
-- Transaction A gets rejected by CPN because it has the wrong parameters
-- Transaction B goes to the blockchain but gets stuck in the mempool because the blockchain needs nonce 5 first
-- All future transactions from this wallet get blocked until you fix the gap
+Another common problem happens when transactions get stuck in the blockchain's
+mempool and block later transactions. Here's an example:
 
-## Best practices for nonce management
+* Your CPN integration signs two transactions from the same wallet in the right
+  order:
+  + Transaction A with nonce 5
+  + Transaction B with nonce 6
+* Transaction A gets rejected by CPN because it has the wrong parameters
+* Transaction B goes to the blockchain but gets stuck in the mempool because the
+  blockchain needs nonce 5 first
+* All future transactions from this wallet get blocked until you fix the gap
 
-Your integration may vary based on your systems. Here are some general tips for managing nonces:
+## Best practices for managing nonces
 
-**Set up one central system to track nonces for each wallet.** This system should safely handle nonce assignment when multiple threads request to sign transactions at once. Make sure each nonce gets assigned only once to prevent duplicates. You can use a locking system or a queue system to manage nonce assignment when handling multiple operations.
+Your integration may vary based on your systems. Here are some general tips for
+managing nonces:
 
-**Keep your system in sync with the blockchain to track the latest nonce numbers.** Your local nonce tracking should reset its counter if it gets out of sync with the blockchain's nonce state. Set up regular health checks to find nonce gaps.
+**Set up one central system to track nonces for each wallet.** This system
+should safely handle nonce assignment when multiple threads request to sign
+transactions at once. Make sure each nonce gets assigned only once to prevent
+duplicates. You can use a locking system or a queue system to manage nonce
+assignment when handling multiple operations.
+
+**Keep your system in sync with the blockchain to track the latest nonce
+numbers.** Your local nonce tracking should reset its counter if it gets out of
+sync with the blockchain's nonce state. Set up regular health checks to find
+nonce gaps.
 
 You should sync with the blockchain:
 
-- Before starting new transaction batches
-- After transactions fail or get rejected
-- When your systems restart after downtime
+* Before starting new transaction batches
+* After transactions fail or get rejected
+* When your systems restart after downtime

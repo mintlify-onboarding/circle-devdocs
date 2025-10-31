@@ -1,32 +1,29 @@
 ---
-title: Wallets API Rate Limits
-description:
-sideNav: ""
-documentationItems: 
-- title: Documentation
-sidebarTitle: "API Rate Limits"
+title: "Wallets API Rate Limits"
+permalink: "api-rate-limits"
+'og:title': "Wallets API Rate Limits"
+'twitter:title': "Wallets API Rate Limits"
 ---
 
-Circle's Developer Services handle a high volume of API requests. To ensure
-optimum performance, we implemented rate limits for API requests per second
-(RPS) per developer entity. These limits ensure the availability, stability, and
-reliability of Developer Services.
+Circle APIs handle a large number of API requests. There are limits on how many
+requests you can make per second. This keeps the API working well for everyone.
 
-Rate limits apply to all Wallets APIs. The default limit per endpoint is 5
-requests per second. The following table lists the endpoints with custom limits.
+The default rate limit for all Wallets API endpoints is 5 requests per second
+(RPS). The table below lists all endpoints that have a different rate limit.
 
-| Method | Endpoint                                                  | RPS Limit |
-| ------ | :-------------------------------------------------------- | --------- |
-| `POST` | `/v1/w3s/developer/wallets`                               | 10        |
-| `PUT`  | `/v1/w3s/developer/wallets/{id}/blockchains/{blockchain}` | 10        |
-| `POST` | `/v1/w3s/transactions/transfer/estimateFee`               | 10        |
-| `POST` | `/v1/w3s/transactions/contractExecution/estimateFee`      | 10        |
-| `POST` | `/v1/w3s/users/token`                                     | 10        |
-| `POST` | `/v1/w3s/user/sign/transaction`                           | 10        |
-| `POST` | `/v1/w3s/user/sign/message`                               | 10        |
-| `POST` | `/v1/w3s/user/sign/typedData`                             | 10        |
-| `POST` | `/v1/w3s/developer/sign/transaction`                      | 10        |
-| `POST` | `/v1/w3s/developer/sign/message`                          | 10        |
-| `POST` | `/v1/w3s/developer/sign/typedData`                        | 10        |
-| `POST` | `/v1/w3s/developer/sign/delegateAction`                   | 10        |
-| `GET`  | All endpoints                                             | 20        |
+| Method | Endpoint | Maximum requests per second |
+| --- | --- | --- |
+| `POST` | `/v1/w3s/developer/wallets` | 10 |
+| `PUT` | `/v1/w3s/developer/wallets/{id}/blockchains/{blockchain}` | 10 |
+| `POST` | `/v1/w3s/transactions/transfer/estimateFee` | 10 |
+| `POST` | `/v1/w3s/transactions/contractExecution/estimateFee` | 10 |
+| `POST` | `/v1/w3s/users/token` | 10 |
+| `POST` | `/v1/w3s/user/sign/transaction` | 10 |
+| `POST` | `/v1/w3s/user/sign/message` | 10 |
+| `POST` | `/v1/w3s/user/sign/typedData` | 10 |
+| `POST` | `/v1/w3s/developer/sign/transaction` | 10 |
+| `POST` | `/v1/w3s/developer/sign/message` | 10 |
+| `POST` | `/v1/w3s/developer/sign/typedData` | 10 |
+| `POST` | `/v1/w3s/developer/sign/delegateAction` | 10 |
+| `GET` | All endpoints | 20 |
+| `POST` | All other endpoints | 5 |

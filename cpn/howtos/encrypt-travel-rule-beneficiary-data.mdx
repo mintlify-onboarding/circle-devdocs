@@ -1,14 +1,9 @@
 ---
 title: "How-to: Encrypt Travel Rule and Beneficiary Data"
-description: Establish encrypted messaging during the payment process
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "Encrypt Travel Rule and Beneficiary Data"
+permalink: "encrypt-travel-rule-beneficiary-data"
+'og:title': "How-to: Encrypt Travel Rule and Beneficiary Data"
+'twitter:title': "How-to: Encrypt Travel Rule and Beneficiary Data"
 ---
-
-{/* <!-- markdownlint-disable MD036 --> */}
 
 This guide explains how to set up encryption and decryption between an OFI and a
 BFI so that messages can be passed securely during payment flow. CPN uses
@@ -21,20 +16,22 @@ Both OFI and BFI can implement this encryption system in any programming
 language that supports the required primitives. This encryption scheme is
 required when performing the following tasks in CPN:
 
-- **Creating a payment**: for encrypting the travel rule and beneficiary account
+* **Creating a payment**: for encrypting the travel rule and beneficiary account
   data
-- **Submitting an RFI**: for encrypting the RFI JSON response
+* **Submitting an RFI**: for encrypting the RFI JSON response
 
 <Note>
+
 **Note:** If your RFI response includes a file, that file is
 [encrypted in a different manner](/cpn/howtos/encrypt-files).
+
 </Note>
 
 Regardless of the language used to implement the encryption, the following
 parameters must be followed:
 
-- Key agreement: ECDH-ES+A128KW
-- Encryption method: A128-GCM
+* Key agreement: ECDH-ES+A128KW
+* Encryption method: A128-GCM
 
 ## Steps
 
@@ -46,6 +43,7 @@ travel rule data, but the same encryption scheme applies for RFI data as well.
 
 Quote responses include a certificate field with required parameters to
 establish encryption with the BFI. A sample (truncated) quote response is below:
+
 
 ```json JSON
 {
@@ -79,13 +77,14 @@ From the `certificate` object in the quote response, extract the `base64`
 encoded format of the certificate from the `certPem` field, decode it, and
 verify the following:
 
-- The certificate is not expired
-- The certificate is signed by a Circle-approved Certificate Authority listed in
+* The certificate is not expired
+* The certificate is signed by a Circle-approved Certificate Authority listed in
   the Circle-provided CA bundle file
-- The common name of the certificate is for a CPN BFI and matches the `domain`
+* The common name of the certificate is for a CPN BFI and matches the `domain`
   field in the response
-- The verifiable public key of the certificate matches the `jwk` field in the
+* The verifiable public key of the certificate matches the `jwk` field in the
   response
+
 
 ```java Java
 public static void verify() throws Exception {
@@ -165,6 +164,7 @@ From the `certificate` field, extract the JWK parameters: `kty`, `crv`, `kid`,
 `x`, `y` and create the JWK object in your code using a suitable library (for
 example, Nimbus JOSE+JWT in Java).
 
+
 ```java Java
 import com.nimbusds.jose.jwk.JWK;
 
@@ -201,8 +201,9 @@ An example of each is shown below:
 
 **travelRuleData**
 
+
 ```json JSON
-[
+[[
   {
     "name": "BENEFICIARY_ADDRESS",
     "value": {
@@ -254,6 +255,7 @@ An example of each is shown below:
 
 **beneficiaryAccountData**
 
+
 ```json JSON
 [
   {
@@ -280,8 +282,9 @@ An example of each is shown below:
 Convert the data from the previous step into a JSON string, then use the JWK to
 encrypt it. Ensure that the following parameters are used:
 
-- Algorithm: ECDH-ES+A128KW
-- Encryption method: A128GCM
+* Algorithm: ECDH-ES+A128KW
+* Encryption method: A128GCM
+
 
 ```java Java
 import com.nimbusds.jose.EncryptionMethod;
@@ -337,8 +340,9 @@ public static <T> String encrypt(T payload, JWK recipientJwk) throws JOSEExcepti
 ### Step 6: Send and verify the encrypted payload
 
 Send the encrypted payload in the API request to
-[create a payment](/api-reference/cpn/cpn-platform/create-payment). The above
-example uses version 1 for `beneficiaryAccountData` and `travelRuleData` fields.
+[create a payment](/api-reference/cpn/cpn-platform/create-payment). The
+preceding example uses version 1 for `beneficiaryAccountData` and
+`travelRuleData` fields.
 
 The API returns a `200` response if the data is properly encrypted and can be
 decrypted by the BFI, otherwise an

@@ -1,11 +1,8 @@
 ---
 title: "How-to: Integrate with JSON Schema"
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "Integrate with JSON Schema"
+permalink: "integrate-with-json-schema"
+'og:title': "How-to: Integrate with JSON Schema"
+'twitter:title': "How-to: Integrate with JSON Schema"
 ---
 
 To facilitate the effective passing of RFI data, CPN provides
@@ -29,8 +26,8 @@ be transmitted in the RFI response.
 
 Using the schema as a blueprint, construct your RFI data as a JSON object. For
 example, if the schema requires the `address` field, you should create a nested
-JSON object for the address, as defined by the schema's `properties` and
-`$defs`.
+JSON object for the address, as defined by the `properties` and `$defs` in the
+schema.
 
 ### Step 3: Validate the response
 
@@ -52,6 +49,8 @@ Send the encrypted payload to the
 [submit RFI data endpoint](/api-reference/cpn/cpn-platform/submit-rfi).
 
 The following is an example payload:
+
+
 
 ```json JSON
 {

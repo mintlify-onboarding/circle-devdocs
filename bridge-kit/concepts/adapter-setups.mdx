@@ -1,0 +1,252 @@
+---
+title: "Adapter Setups"
+permalink: "adapter-setups"
+'og:title': "Adapter Setups"
+'twitter:title': "Adapter Setups"
+---
+
+Bridge Kit uses adapters to abstract away the complexity of different blockchain
+architectures. Each adapter manages the blockchain-specific bridging operations
+for a network.
+
+The following table shows ways to set up adapters and when to use each one.
+
+| Setup method | Description | Use case |
+| --- | --- | --- |
+| [Standard](#standard-setup) | Standard setup that creates an adapter from a private wallet key. Uses default built-in public RPC endpoints and factory functions. | Testing environments where you want to get started quickly without configuring RPCs. |
+| [Custom RPC](#custom-rpc) | Private key setup that lets you configure an RPC endpoint. | Production environments that need reliable RPCs. |
+| [Browser wallet](#browser-wallet) | Uses an injected wallet provider, such as MetaMask or Phantom, to create an adapter in the browser. | Browser environments using wallet providers. |
+
+Bridge Kit works with these adapter libraries:
+
+* [`viem`](https://viem.sh/) v2 for EVM-compatible blockchains
+* [`ethers`](https://ethers.org/) v6 for EVM-compatible blockchains
+* [`solana`](https://solana.com/) for the Solana blockchain
+
+Pick one Ethereum adapter, either Viem or Ethers. Add the Solana adapter only if
+you need to transfer to or from Solana.
+
+## Standard setup
+
+This setup is the fastest way to start. Create one adapter from your wallet
+private key to transfer tokens between EVM-compatible blockchains. Add the
+Solana adapter to transfer tokens to or from Solana.
+
+This setup uses public RPC endpoints and factory functions. For production, you
+should configure a [custom RPC](#custom-rpc). Public connections have rate
+limits and might be slow.
+
+Select the tab to see code examples for your adapter choice.
+
+<Tabs>
+<Tab title="Viem">
+
+This code block initializes the Viem adapter to transfer tokens between
+EVM-compatible chains:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
+
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.PRIVATE_KEY as string,
+});
+```
+
+</Tab>
+<Tab title="Ethers">
+
+This code block initializes the Ethers adapter to transfer tokens between
+EVM-compatible chains:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-ethers-v6";
+
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.PRIVATE_KEY as string,
+});
+```
+
+</Tab>
+<Tab title="Solana">
+
+This code block initializes the Solana adapter to bridge on Solana:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-solana";
+
+// Solana accepts Base58, Base64, or JSON array format private keys
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.PRIVATE_KEY as string,
+});
+```
+
+</Tab>
+</Tabs>
+
+## Custom RPC
+
+You can replace the public RPC from the [standard setup](#standard-setup) with
+your own connection. For production, you should use a paid service like
+[Alchemy](https://www.alchemy.com/) or [QuickNode](https://www.quicknode.com/).
+These services are more reliable than free connections.
+
+The following code shows how to set up your own RPC. Pick your adapter to see
+the code.
+
+<Tabs>
+
+<Tab title="Viem">
+To use your own connection, replace the default one and add your custom RPC
+endpoint. This example uses an Alchemy connection:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
+import { createPublicClient, http } from "viem";
+
+// Create an adapter
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.PRIVATE_KEY as string,
+  // Replace the default connection
+  getPublicClient: ({ chain }) =>
+    createPublicClient({
+      chain,
+      // Use an Alchemy connection
+      transport: http(
+        `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
+        {
+          retryCount: 3,
+          timeout: 10000,
+        },
+      ),
+    }),
+});
+```
+</Tab>
+<Tab title="Ethers">
+To use your own connection, replace the default one and add your custom RPC
+endpoint. This example uses an Alchemy connection:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-ethers-v6";
+import { JsonRpcProvider } from "ethers";
+
+// Create an adapter
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.PRIVATE_KEY as string,
+  // Replace the default connection
+  getProvider: ({ chain }) =>
+    // Use an Alchemy connection
+    new JsonRpcProvider(
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
+    ),
+});
+```
+</Tab>
+<Tab title="Solana">
+To use your own connection, create a custom connection to your RPC endpoint.
+Point to that connection when making a Solana adapter. This example creates a
+custom connection using Alchemy:
+
+
+```typescript Typescript
+import { createAdapterFromPrivateKey } from "@circle-fin/adapter-solana";
+import { Connection } from "@solana/web3.js";
+
+// Create a connection to an Alchemy endpoint
+const customConnection = new Connection(
+  `https://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+  {
+    commitment: "confirmed",
+    wsEndpoint: `wss://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+  },
+);
+
+// Create a Solana adapter
+const adapter = createAdapterFromPrivateKey({
+  privateKey: process.env.SOLANA_PRIVATE_KEY as string,
+  connection: customConnection,
+});
+```
+
+</Tab>
+</Tabs>
+
+## Browser wallet
+
+You can create an adapter from browser wallet apps like
+[MetaMask](https://metamask.io/) or [Phantom](https://phantom.com/).
+
+The following code creates an adapter from a MetaMask wallet. Pick your adapter
+to see the code.
+
+* Viem
+* Ethers
+* Solana
+
+<Tabs>
+<Tab title="Viem">
+
+```typescript Typescript
+import { createAdapterFromProvider } from "@circle-fin/adapter-viem-v2";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { EIP1193Provider } from "viem";
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+  }
+}
+
+const adapter = createAdapterFromProvider({
+  provider: window.ethereum as EIP1193Provider,
+});
+```
+
+</Tab>
+<Tab title="Ethers">
+
+```typescript Typescript
+import { createAdapterFromProvider } from "@circle-fin/adapter-ethers-v6";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { EIP1193Provider } from "ethers";
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+  }
+}
+
+const adapter = createAdapterFromProvider({
+  provider: window.ethereum as EIP1193Provider,
+});
+```
+
+</Tab>
+<Tab title="Solana">
+
+```typescript Typescript
+import {
+  createAdapterFromProvider,
+  CreateAdapterFromProviderParams,
+} from "@circle-fin/adapter-solana";
+
+declare global {
+  interface Window {
+    solana?: CreateAdapterFromProviderParams["provider"];
+  }
+}
+
+if (window.solana) {
+  const adapter = createAdapterFromProvider({
+    provider: window.solana,
+  });
+}
+```
+
+</Tab>
+</Tabs>

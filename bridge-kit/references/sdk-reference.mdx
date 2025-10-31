@@ -1,0 +1,679 @@
+---
+title: "Bridge Kit SDK Reference"
+permalink: "sdk-reference"
+'og:title': "Bridge Kit SDK Reference"
+'twitter:title': "Bridge Kit SDK Reference"
+---
+
+This reference guide describes the public interfaces, methods, and types
+available in the Bridge Kit SDK.
+
+## BridgeKit class
+
+Bridge Kit lets you perform cost estimates and crosschain transfers. You can
+also add event listeners for each bridging provider.
+
+## constructor(config?)
+
+Creates a new BridgeKit instance.
+
+
+```typescript Typescript
+constructor(config?: BridgeKitConfig)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| config | [BridgeKitConfig](#bridgekitconfig) | Optionally adds extra bridging providers |
+
+**Usage example**
+
+
+```typescript Typescript
+// Standard setup
+const kit = new BridgeKit();
+
+// Setup with an additional provider
+const provider = new MyCustomBridgingProvider();
+const kit = new BridgeKit({ providers: [provider] });
+```
+
+### BridgeKitConfig
+
+Optionally adds extra bridging providers.
+
+
+```typescript Typescript
+interface BridgeKitConfig {
+  /**
+   * Add an array of bridging providers available for routing transfers.
+   *
+   * Each provider must implement the BridgingProvider interface and declare
+   * which chains and tokens it supports. The kit will automatically select
+   * the appropriate provider based on order and the transfer parameters.
+   */
+  providers?: BridgingProvider[];
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| providers | BridgingProvider | Bridging providers to use in addition to CCTP (optional) |
+
+### CustomFeePolicy
+
+Global configuration for
+[collecting a transfer fee](/bridge-kit/tutorials/collect-a-transfer-fee).
+
+
+```typescript Typescript
+export interface CustomFeePolicy {
+  /**
+   * A function that returns the fee to charge for the bridge transfer.
+   * The value returned from the function represents an absolute fee in the smallest unit of the token.
+   * It does not represent a percentage fee, only an absolute value.
+   *
+   * For example: if you want to charge 1 USDC, you would return `'1000000'`.
+   *
+   * Note: returning `'0'` will result in no fee being charged.
+   */
+  calculateFee: (params: BridgeParams) => Promise<string> | string;
+  /**
+   * A function that returns the fee recipient for a bridge transfer.
+   * The value returned from the function represents the address that will receive the fee on the source chain of the bridge transfer.
+   * The fee recipient address **must be a valid address for the source chain** of the bridge transfer.
+   *
+   * For example: if you are bridging from Ethereum to Solana you would return `'0x1234567890123456789012345678901234567890'`,
+   * because the source chain of the bridge transfer is Ethereum.
+   */
+  resolveFeeRecipientAddress: (
+    feePayoutChain: ChainDefinition,
+    params: BridgeParams,
+  ) => Promise<string> | string;
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| calculateFee | function | Lets you use the [bridging params](#bridgeparams) passed to calculate the fee you want to charge |
+| resolveFeeRecipientAddress | function | Lets you use both the blockchain on which the fee payout will occur and the [bridging params](#bridgeparams) to determine the recipient wallet address |
+
+**Usage example**
+
+
+```typescript Typescript
+// Use in BridgeKit initialization
+const kit = new BridgeKit();
+
+// Set a global policy to calculate the fee and choose your fee recipient
+kit.setCustomFeePolicy({
+  calculateFee: (params) => {
+    // Charge a 1.00 USDC fee if the source chain is Ethereum Sepolia and 1.50 USDC on other blockchains
+    return params.source.chain.chain == Blockchain.Ethereum_Sepolia
+      ? "1.00"
+      : "1.50";
+  },
+  resolveFeeRecipientAddress: (feePayoutChain, params) => {
+    // Change the recipient address if the source chain is Ethereum Sepolia
+    return params.source.chain.chain == Blockchain.Ethereum_Sepolia
+      ? "YOUR_WALLET_ADDRESS"
+      : "YOUR_OTHER_WALLET_ADDRESS";
+  },
+});
+```
+
+## Methods
+
+### bridge(params: BridgeParams)
+
+Executes crosschain transfers.
+
+
+```typescript Typescript
+async bridge(params: BridgeParams): Promise
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| params | [BridgeParams](#bridgeparams) | Bridge transfer parameters |
+
+**Returns**
+
+[`BridgeResult`](#bridgeresult)
+
+**Usage example**
+
+
+```typescript Typescript
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum_Sepolia" },
+  to: { adapter, chain: "Base_Sepolia" },
+  amount: "10.00",
+});
+
+console.log("Transfer completed:", result.state);
+```
+
+### estimate(params: BridgeParams)
+
+Estimates costs before transferring.
+
+
+```typescript Typescript
+async estimate(params: BridgeParams): Promise
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| params | [BridgeParams](#bridgeparams) | Bridge transfer parameters |
+
+**Returns**
+
+[`EstimateResult`](#estimateresult)
+
+**Usage example**
+
+
+```typescript Typescript
+// Estimate costs
+const estimate = await kit.estimate({
+  from: { adapter, chain: "Ethereum" },
+  to: { adapter, chain: "Base" },
+  amount: "10.00",
+});
+console.log("Estimated fees:", estimate);
+
+const cctpFee = estimate.fees.find((f) => f.type === "provider")?.amount;
+
+// Only proceed if the CCTP protocol fee is less than 0.10 USDC
+// Also proceed if the `cctpFee` variable is null/undefined since there is no protocol fee to charge
+if (cctpFee == null || parseFloat(cctpFee) < 0.1) {
+  // Execute the crosschain transfer
+  const result = await kit.bridge({
+    from: { adapter, chain: "Ethereum" },
+    to: { adapter, chain: "Base" },
+    amount: "10.00",
+  });
+  console.log("Bridge completed:", result);
+  // Error if the cost is over 5 USDC
+} else {
+  console.log("CCTP fee is above threshold:", cctpFee, "USDC");
+}
+```
+
+### getSupportedChains()
+
+Returns a list of available blockchains.
+
+
+```typescript Typescript
+getSupportedChains(): ChainDefinition[]
+```
+
+**Returns**
+
+`ChainDefinition[]` An array of blockchains, each object containing:
+
+* `chain` - String identifier of the blockchain, used in bridge parameters
+* `name` - Human-readable name of the blockchain, used in UI displays
+* `type` - Blockchain type
+* `chainId` - Network ID for EVM chains only
+* `usdcAddress` - USDC token contract address on the chain
+* `cctp` - CCTP configuration including domain ID and contract addresses
+
+**Return example**
+
+
+```typescript Typescript
+const chains = kit.getSupportedChains();
+console.log(chains);
+```
+
+**Usage example**
+
+This code shows how to use the data returned by `ChainDefinition[]`:
+
+
+```typescript Typescript
+import { BridgeKit, ChainDefinition } from '@circle-fin/bridge-kit'
+
+const kit = new BridgeKit()
+const chains = kit.getSupportedChains()
+
+// Use 'name' property to display in your UI
+function showChainSelector(chains: ChainDefinition[]) {
+  return chains.map(chain => (
+    <option value={chain.chain}>
+      {chain.name}
+    </option>
+  ))
+}
+```
+
+### on(action: string, handler: function)
+
+Adds an event listener.
+
+
+```typescript Typescript
+on(
+  action: string,
+  handler: (payload: AllActions) => void
+): void
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| action | string | [Event type](/bridge-kit/references/event-handling) or `*` for all events. Events are type-safe and defined by the providers. |
+| handler | function | Event handler |
+
+**Returns**
+
+`void`
+
+**Usage example**
+
+
+```typescript Typescript
+// Listen to specific events
+kit.on("approve", (payload) => {
+  console.log("Approval completed:", payload.values.txHash);
+});
+kit.on("mint", (payload) => {
+  console.log("Mint completed:", payload.values.txHash);
+});
+
+// Listen to all events
+kit.on("*", (event) => {
+  console.log(`[${event.method}] Progress:`, event.values);
+});
+```
+
+### off(action: string, handler: function)
+
+Removes an event listener.
+
+
+```typescript Typescript
+off(
+  action: string,
+  handler: (payload: AllActions) => void
+): void
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| action | string | [Event type](/bridge-kit/references/event-handling) or `*` for all events. |
+| handler | function | Event handler |
+
+**Returns**
+
+`void`
+
+**Usage example**
+
+
+```typescript Typescript
+const mintHandler = (event) => console.log("Mint:", event.values.txHash);
+
+// Register handler
+kit.on("mint", mintHandler);
+
+// Remove handler
+kit.off("mint", mintHandler);
+```
+
+## Method parameters
+
+### BridgeParams
+
+Parameters to execute a crosschain bridge transfer.
+
+
+```typescript Typescript
+interface BridgeParams {
+  from: AdapterContext;
+  to: BridgeDestination;
+  amount: string;
+  config?: BridgeConfig;
+  token?: "USDC";
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| from | [AdapterContext](#adaptercontext) | The source adapter and the specific chain on which the source address exists |
+| to | [BridgeDestination](#bridgedestination) | The destination adapter, the destination chain, and a recipient address (optional, if different than adapter's default address) |
+| amount | string | The amount of tokens to transfer |
+| config | [BridgeConfig](#bridgeconfig) | Configuration of transfer speed (optional) |
+| token | `USDC` | The type of token to transfer (optional, defaults to `USDC` if omitted) |
+
+**Usage example**
+
+
+```typescript Typescript
+// Basic transfer with default transfer speed (fast) and token (USDC)
+const basicParams: BridgeParams = {
+  from: { adapter, chain: "Base" },
+  to: { adapter, chain: "Polygon" },
+  amount: "10.00",
+};
+
+// Basic transfer with speed and token configuration
+const fastParams: BridgeParams = {
+  from: { adapter, chain: "Base" },
+  to: { adapter, chain: "Polygon" },
+  amount: "25.00",
+  config: { transferSpeed: "SLOW" },
+  token: "USDC",
+};
+
+// Transfer to a custom recipient address
+const customParams: BridgeParams = {
+  from: { adapter, chain: "Base" },
+  to: {
+    recipientAddress: "0x1111abcd1234abcd1234abcd1234abcd1234abcd",
+    adapter,
+    chain: "Polygon",
+  },
+  amount: "50.00",
+  config: { transferSpeed: "SLOW" },
+};
+```
+
+### BridgeConfig
+
+Configuration for transfer speed.
+
+
+```typescript Typescript
+interface BridgeConfig {
+  transferSpeed?: "FAST" | "SLOW";
+  maxFee?: string;
+  customFee?: CustomFee | undefined;
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| transferSpeed | `FAST` | `SLOW` | The speed of the transfer (optional, defaults to `FAST` if omitted) |
+| maxFee | string | `FAST` transfers only: the maximum fee per transfer, in the smallest token units. If less than the specified fee, the transfer speed switches to `SLOW`. |
+| customFee | CustomFee | A custom fee that you can add to the transfer |
+
+**Usage example**
+
+
+```typescript Typescript
+// Slow transfer speed
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: { adapter, chain: "Base" },
+  amount: "100.00",
+  config: { transferSpeed: "SLOW" }, // Transfer speed
+});
+
+// Fast transfer with maximum fee
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: { adapter, chain: "Base" },
+  amount: "100.00",
+  config: {
+    transferSpeed: "FAST", // Transfer speed
+    maxFee: "5000000", // Max 5 USDC fee (in smallest units)
+  },
+});
+```
+
+### AdapterContext
+
+The adapter and its associated chain.
+
+
+```typescript Typescript
+type AdapterContext = {
+  adapter: Adapter;
+  chain: ChainIdentifier;
+};
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| adapter | Adapter | The adapter instance that handles blockchain operations |
+| chain | ChainIdentifier | The identifier of the blockchain |
+
+**Usage example**
+
+
+```typescript Typescript
+// Use in bridge operations
+await kit.bridge({
+  from: { adapter, chain: "Base" }, // AdapterContext to transfer from Base
+  to: { adapter, chain: "Polygon" }, // AdapterContext to transfer to Polygon
+  amount: "25.00",
+});
+```
+
+### BridgeDestination
+
+Specifies where tokens should be sent.
+
+
+```typescript Typescript
+type BridgeDestination = AdapterContext | BridgeDestinationWithAddress;
+```
+
+**Types**
+
+| Type | Description |
+| --- | --- |
+| [AdapterContext](#adaptercontext) | The adapter's address on the destination chain |
+| [BridgeDestinationWithAddress](#bridgedestinationwithaddress) | Includes a specific recipient address used to override the default adapter's address |
+
+**Usage example**
+
+
+```typescript Typescript
+// Usage in bridge calls
+await kit.bridge({
+  from: { adapter, chain: "Base" },
+  // Tokens sent to your adapter's default address on Polygon
+  to: { adapter, chain: "Polygon" },
+  amount: "10.00",
+});
+
+await kit.bridge({
+  from: { adapter, chain: "Base" },
+  to: {
+    adapter,
+    chain: "Polygon",
+    // Tokens sent to your custom address on Polygon
+    recipientAddress: "0x1234abcd1234abcd1234abcd1234abcd1234abcd",
+  },
+  amount: "20.00",
+});
+```
+
+### BridgeDestinationWithAddress
+
+Specifies a recipient wallet address.
+
+
+```typescript Typescript
+type BridgeDestinationWithAddress = AdapterContext & {
+  recipientAddress: string;
+};
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| adapter | Adapter | The adapter |
+| chain | ChainIdentifier | The chain identifier |
+| recipientAddress | string | The recipient wallet address on the destination chain |
+
+**Usage example**
+
+
+```typescript Typescript
+// Use in bridge operation
+await kit.bridge({
+  from: { adapter: myAdapter, chain: "Ethereum" },
+  to: {
+    adapter: myAdapter,
+    chain: "Arbitrum",
+    recipientAddress: "0x1234abcd1234abcd1234abcd1234abcd1234abcd", //Custom address
+  },
+  amount: "50.0",
+});
+```
+
+## Method results
+
+### BridgeResult
+
+Shows the transfer state, transaction step, source and destination chain
+information, and the transfer amount. Returned by the [bridge](#bridgeparams)
+method.
+
+
+```typescript Typescript
+interface BridgeResult {
+  amount: string;
+  token: "USDC";
+  state: "pending" | "success" | "error";
+  config?: BridgeConfig;
+  provider: string;
+  source: {
+    address: string;
+    chain: ChainDefinition;
+  };
+  destination: {
+    address: string;
+    chain: ChainDefinition;
+  };
+  steps: BridgeStep[];
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| amount | string | The amount of the transfer |
+| token | string | The token to transfer, defaults to `USDC` |
+| state | `success` | `error` | The state of the transfer |
+| config | [BridgeConfig](#bridgeconfig) | The bridge configurations passed in the transfer |
+| source | object | Source chain information |
+| destination | object | Destination chain and address |
+| steps | BridgeStep[] | Array of transaction steps, each containing the transaction state and hash |
+
+**Example**
+
+
+```typescript Typescript
+{
+  "state": "success",
+  "steps": [
+    {
+      "name": "approve",
+      "state": "success",
+      "txHash": "0x1234567890abcdef1234567890abcdef12345678",
+      "explorerUrl": "https://basescan.org/tx/0x1234567890abcdef1234567890abcdef12345678"
+    },
+    {
+      "name": "burn",
+      "state": "success",
+      "txHash": "0xabcdef1234567890abcdef1234567890abcdef12",
+      "explorerUrl": "https://basescan.org/tx/0xabcdef1234567890abcdef1234567890abcdef12"
+    },
+    {
+      "name": "fetchAttestation",
+      "state": "success",
+      "attestation": "0x9876543210fedcba9876543210fedcba98765432"
+    },
+    {
+      "name": "mint",
+      "state": "success",
+      "txHash": "0xfedcba9876543210fedcba9876543210fedcba98",
+      "explorerUrl": "https://polygonscan.com/tx/0xfedcba9876543210fedcba9876543210fedcba98"
+    }
+  ],
+  "source": {
+    "address": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    "blockchain": "Base"
+  },
+  "destination": {
+    "address": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    "blockchain": "Polygon"
+  },
+  "amount": "25.0"
+}
+```
+
+### EstimateResult
+
+Estimated costs of the transaction, returned by the [estimate](#estimateparams)
+method.
+
+
+```typescript Typescript
+interface EstimateResult {
+  gasFees: {
+    name: string;
+    token: string;
+    blockchain: Blockchain;
+    fees: EstimatedGas | null;
+    error?: unknown;
+  }[];
+  fees: {
+    type: "kit" | "provider";
+    token: "USDC";
+    amount: string | null;
+    error?: unknown;
+  }[];
+}
+```
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| gasFees | object | Gas costs for source and destination |
+| fees | object | Protocol and developer fees |
+
+**Example:**
+
+
+```typescript Typescript
+{
+  "gasFees": {
+    "source": "0.025000",      // ~$0.025 gas on Ethereum
+    "destination": "0.001200"   // ~$0.0012 gas on Base
+  },
+  "fees": {
+    "protocol": "0.000000",     // CCTP has no protocol fees
+    "developer": "1.000000"     // Custom developer fee (optional)
+  },
+}
+```

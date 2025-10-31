@@ -1,0 +1,64 @@
+---
+title: "Collect a Transfer Fee"
+permalink: "collect-a-transfer-fee"
+'og:title': "Collect a Transfer Fee"
+'twitter:title': "Collect a Transfer Fee"
+---
+
+Bridge Kit lets you collect a transfer fee from your end users. You can set this
+fee globally for the kit or on each bridge call. Per-call fees override the
+global fee. You can set a flat or dynamic fee based on the parameters.
+
+<Note>
+
+**Note**: If you use this feature, Circle keeps 10% of the transfer fee you
+collect from your end users.
+
+</Note>
+
+## Set fee per bridge call
+
+This example configures your bridge call to collect a fee of 1.50 USDC for a
+specific bridge transfer:
+
+
+```typescript Typescript
+// Transfer 1 USDC
+const result = await kit.bridge({
+  from: { adapter, chain: "Ethereum" },
+  to: { adapter, chain: "Base" },
+  amount: "1.00",
+  // Collect a fee of 1.50 USDC on this transfer and override the global fee, if set
+  config: {
+    customFee: {
+      value: "1.50",
+      recipientAddress: "YOUR_WALLET_ADDRESS",
+    },
+  },
+});
+```
+
+## Set fee globally
+
+This example configures your global setup to collect a fee of 1 USDC on
+transfers from Ethereum and 1.50 USDC on transfers from other blockchains:
+
+
+
+```typescript Typescript
+import { Blockchain } from "@circle-fin/bridge-kit";
+const kit = new BridgeKit();
+
+kit.setCustomFeePolicy({
+  calculateFee: (params) => {
+    // Charge 1 USDC if the source chain is Ethereum and 1.50 USDC on other blockchains
+    return params.source.chain.chain == Blockchain.Ethereum ? "1.00" : "1.50";
+  },
+  resolveFeeRecipientAddress: (feePayoutChain, params) => {
+    // Change the recipient address if the source chain is Ethereum
+    return params.source.chain.chain == Blockchain.Ethereum
+      ? "YOUR_WALLET_ADDRESS"
+      : "YOUR_OTHER_WALLET_ADDRESS";
+  },
+});
+```

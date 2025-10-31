@@ -79,7 +79,7 @@ try:
         "name": "Entity WalletSet A",
     })
     resposne = api_instance.create_wallet_set(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletSetsApi->create_wallet_set: %s\n" % e)
 ```
@@ -156,7 +156,7 @@ try:
         "walletSetId": '<wallet-set-id>'
     })
     resposne = api_instance.create_wallet(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->create_wallet: %s\n" % e)
 ```
@@ -242,7 +242,7 @@ try:
         "walletSetId": '<wallet-set-id>'
     })
     resposne = api_instance.create_wallet(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->create_wallet: %s\n" % e)
 ```

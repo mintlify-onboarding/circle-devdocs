@@ -1,11 +1,8 @@
 ---
 title: "JSON Schema"
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "JSON Schema"
+permalink: "json-schema"
+'og:title': "JSON Schema"
+'twitter:title': "JSON Schema"
 ---
 
 CPN uses [JSON Schema](https://json-schema.org/) to define and validate the
@@ -17,13 +14,13 @@ Schema standard.
 Using JSON Schema to define the structure of this data has the following
 benefits:
 
-- **Clarity:** the schema defines every requirement programmatically, including
+* **Clarity:** the schema defines every requirement programmatically, including
   required fields, data types, formats, and structures. This eliminates
   guesswork.
-- **Client-side validation:** OFIs can validate their response against the
+* **Client-side validation:** OFIs can validate their response against the
   schema before making the API call, providing instant feedback for developers
   and preventing common integration errors.
-- **Rich data structures:** schemas support complex requirements like nested
+* **Rich data structures:** schemas support complex requirements like nested
   address objects and conditional logic.
 
 ## Interpreting JSON Schema
@@ -33,10 +30,10 @@ When you call the
 API returns the JSON Schema for the required response data. The following are
 key parts of the schemas to understand when reading them:
 
-- `properties`: defines the fields you can provide in your JSON response
-- `required`: contains a list of field names that must be present in the
+* `properties`: defines the fields you can provide in your JSON response
+* `required`: contains a list of field names that must be present in the
   response
-- `$defs` and `$ref`: usable complex objects (defined in `$defs` and referenced
+* `$defs` and `$ref`: usable complex objects (defined in `$defs` and referenced
   using the `$ref` directive)
 
 ## Client-side validation
@@ -48,10 +45,11 @@ to reduce API errors and failed payments.
 
 Common libraries for JSON Schema validation are:
 
-- **Java:**
-  [networknt/json-schema-validator](https://github.com/networknt/json-schema-validator)
-- **Python:** [jsonschema](https://python-jsonschema.readthedocs.io/en/stable/)
-- **Node.js:** [ajv](https://ajv.js.org/)
+* **Java:**
+  [`networknt/json-schema-validator`](https://github.com/networknt/json-schema-validator)
+* **Python:**
+  [`jsonschema`](https://python-jsonschema.readthedocs.io/en/stable/)
+* **Node.js:** [`ajv`](https://ajv.js.org/)
 
 ### Additional validation
 

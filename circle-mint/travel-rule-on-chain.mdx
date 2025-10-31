@@ -1,34 +1,29 @@
 ---
-title: Onchain Travel Rule
-description:
-  Avoid errors when performing $3000+ transfers by complying with the FinCEN
-  Travel Rule.
-sideNav: ""
-tableOfContents: true
-documentationItems:
-  - title: Documentation
+title: "Onchain Travel Rule"
+permalink: "travel-rule-on-chain"
+'og:title': "Onchain Travel Rule"
+'og:description': "Avoid errors when performing $3000+ transfers by complying with the FinCEN Travel Rule."
+'twitter:title': "Onchain Travel Rule"
+'twitter:description': "Avoid errors when performing $3000+ transfers by complying with the FinCEN Travel Rule."
 ---
 
-_Due to FinCEN guidance regarding transfers of $3,000 or more, Circle APIs may
-require you to share KYC information about the originator of the transaction to
-prevent the transfer from failing. According to FinCEN guidance regarding
-applicability of the Travel Rule to transfers of $3,000 or more (or matching
-cryptocurrency), the originating institution must transmit KYC information about
-the originator of a transaction to the beneficiary institution. Circle requires
-the sharing of this information for transfers made on the following
-blockchains:_
+Avoid errors when performing \$3000+ transfers by complying with the FinCEN Travel Rule.
 
-- _Ethereum (ETH)_
-- _Solana (SOL)_
-- _Stellar (XLM)_
-- _Avalanche (AVAX)_
-- _Polygon (POLY)_
-- _Celo (CELO)_
-- _Arbitrum (ARB)_
-- _Near (NEAR)_
-- _Base (BASE)_
-- _Aptos (APTOS)_
-- _Ripple (XRPL)_
+Due to FinCEN guidance regarding transfers of \$3,000 or more, Circle APIs may require you to share KYC information about the originator of the transaction to prevent the transfer from failing. According to FinCEN guidance regarding applicability of the Travel Rule to transfers of $3,000 or more (or matching cryptocurrency), the originating institution must transmit KYC information about the originator of a transaction to the beneficiary institution. Circle requires the sharing of this information for transfers made on the following blockchains:
+
+* *Algorand (ALGO)*
+* *Aptos (APTOS)*
+* *Arbitrum (ARB)*
+* *Avalanche (AVAX)*
+* *Base (BASE)*
+* *Celo (CELO)*
+* *Ethereum (ETH)*
+* *Near (NEAR)*
+* *OP Mainnet (OP)*
+* *Polygon (POLY)*
+* *Ripple (XRPL)*
+* *Solana (SOL)*
+* *Stellar (XLM)*
 
 For more information on these requirements and how data is securely collected
 and shared, please see our
@@ -49,10 +44,12 @@ In technical terms, the originator’s identity is required for
 3. `amount.amount` >= $3,000 in value
 
 <Note>
-  If the `POST /v1/transfers` request requires an originator's identity and the
-  transfer does not contain an originator's identity, the transfer will fail.
-  You will receive a webhook notification with `data.status: fail`,
-  `riskEvaluation.decision: denied`, and `riskEvaluation.reason: 3220`.
+
+If the `POST /v1/transfers` request requires an originator's identity and the
+transfer does not contain an originator's identity, the transfer will fail.
+You will receive a webhook notification with `data.status: fail`,
+`riskEvaluation.decision: denied`, and `riskEvaluation.reason: 3220`.
+
 </Note>
 
 ## Sending Transfers (Crypto Payouts)
@@ -69,8 +66,10 @@ when:
 2. `amount.amount` >= $3,000 in value
 
 <Note>
-  If the `POST /v1/payouts` request requires an originator's identity and the
-  transfer does not contain an originator's identity, the transfer will fail.
+
+If the `POST /v1/payouts` request requires an originator's identity and the
+transfer does not contain an originator's identity, the transfer will fail.
+
 </Note>
 
 ## Sending Transfers (Business Account)
@@ -90,34 +89,35 @@ notifications of type transfer in addition to `GET /v1/transfers` and
 `GET /v1/transfers/{id}`. However, originator data will not be associated with a
 transfer until it is marked with a status of complete.
 
-- At this time, not all sending institutions are participating in the on-chain
+* At this time, not all sending institutions are participating in the on-chain
   Travel Rule requirement. Therefore, not all transfers valued at $3,000 or more
   will have the originating person associated.
-
-- If you are a financial institution and do not see the originator’s identity,
+* If you are a financial institution and do not see the originator’s identity,
   please reach out to a Circle representative.
 
 <Note>
-  Non-bank financial institutions will not see the originator’s identity for
-  received transfers.
+
+Non-bank financial institutions will not see the originator’s identity for
+received transfers.
+
 </Note>
 
 ## Identities Schema
 
-| Field                                      | Type                                     | Definition                                                                                                                                                                                                                                                                                                                                    |
-| ------------------------------------------ | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Identities.type [REQUIRED]                 | String [enum]\: `individual`, `business` | individual - A uniquely distinguishable individual. <br /> <br />business - Any entity other than a natural person that can establish a permanent customer relationship with an affected entity or otherwise own property. This can include companies, foundations, anstalt, partnerships, associations and other relevantly similar entities |
-| Identities.name [REQUIRED]                 | String [max length 1024]                 | Full name of the originator.                                                                                                                                                                                                                                                                                                                  |
-| Identities.addresses.line1 [REQUIRED]      | String [max length 1024]                 | Line one of the street address. <br /> <br />Note: If the originator is a business, this is the principal place of business address. If the originator is an individual, this is the current residential address.                                                                                                                             |
-| identities.addresses.line2                 | String [max length 1024]                 | Line two of the street address.                                                                                                                                                                                                                                                                                                               |
-| Identities.addresses.city [REQUIRED]       | String [max length 1024]                 | City portion of the address.                                                                                                                                                                                                                                                                                                                  |
-| identities.addresses.district              | String [max length 16]                   | State / County / Province / Region portion of the address. If the country is US or Canada district is required and should use the two-letter code for the subdivision.                                                                                                                                                                        |
-| Identities.addresses.country [REQUIRED]    | String [max length 2]                    | Country portion of the address. Formatted as a two-letter country code specified in ISO 3166-1 alpha-2.                                                                                                                                                                                                                                       |
-| identities.addresses.postalCode [REQUIRED] | String [max length 16]                   | Postal / ZIP code of the address.                                                                                                                                                                                                                                                                                                             |
+| Field | Type | Definition |
+| --- | --- | --- |
+| Identities.type [REQUIRED] | String [enum]: `individual`, `business` | individual - A uniquely distinguishable individual.    business - Any entity other than a natural person that can establish a permanent customer relationship with an affected entity or otherwise own property. This can include companies, foundations, anstalt, partnerships, associations and other relevantly similar entities |
+| Identities.name [REQUIRED] | String [max length 1024] | Full name of the originator. |
+| Identities.addresses.line1 [REQUIRED] | String [max length 1024] | Line one of the street address.    Note: If the originator is a business, this is the principal place of business address. If the originator is an individual, this is the current residential address. |
+| identities.addresses.line2 | String [max length 1024] | Line two of the street address. |
+| Identities.addresses.city [REQUIRED] | String [max length 1024] | City portion of the address. |
+| identities.addresses.district | String [max length 16] | State / County / Province / Region portion of the address. If the country is US or Canada district is required and should use the two-letter code for the subdivision. |
+| Identities.addresses.country [REQUIRED] | String [max length 2] | Country portion of the address. Formatted as a two-letter country code specified in ISO 3166-1 alpha-2. |
+| identities.addresses.postalCode [REQUIRED] | String [max length 16] | Postal / ZIP code of the address. |
 
 ## Example: POST /v1/payouts
 
-```json Request 
+```json Request
 {
   "idempotencyKey": "ba943ff1-ca16-49b2-ba55-1057e70ca5c7",
   "source": {
@@ -151,6 +151,7 @@ transfer until it is marked with a status of complete.
   }
 }
 ```
+
 
 ```json Response
 {
@@ -196,7 +197,7 @@ transfer until it is marked with a status of complete.
 
 ## Example: GET /v1/payouts?returnIdentities=true
 
-**returnIdentities[boolean]\:** Specify if you would like to see identities in
+**returnIdentities[boolean]:** Specify if you would like to see identities in
 the response. Restricts maximum returned items to 5. By default returnIdentities
 is false, resulting in the response not returning `data.source.identities`.
 
@@ -242,9 +243,9 @@ is false, resulting in the response not returning `data.source.identities`.
 }
 ```
 
-## Example: GET /v1/payouts/\{id}?returnIdentities=true
+## Example: GET /v1/payouts/{id}?returnIdentities=true
 
-**returnIdentities[boolean]\:** Specify if you would like to see identities in
+**returnIdentities[boolean]:** Specify if you would like to see identities in
 the response. Restricts maximum returned items to 5. By default returnIdentities
 is false, resulting in the response not returning `data.source.identities`.
 

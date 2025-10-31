@@ -1,12 +1,13 @@
 ---
-title: Cross-Chain Transfer Protocol
-description: Move USDC securely across blockchains and simplify user experience
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "CCTP Overview"
+title: "Cross-Chain Transfer Protocol"
+permalink: "cctp"
+'og:title': "Cross-Chain Transfer Protocol"
+'og:description': "Move USDC securely across blockchains and simplify user experience"
+'twitter:title': "Cross-Chain Transfer Protocol"
+'twitter:description': "Move USDC securely across blockchains and simplify user experience"
 ---
+
+Move USDC securely across blockchains and simplify user experience
 
 ## Overview
 
@@ -18,9 +19,12 @@ blockchains. CCTP enables developers to build multichain applications that allow
 users to perform 1:1 transfers of USDC securely across blockchains.
 
 <Note>
-   **Tip**: Use Bridge Kit for easy crosschain transfers through CCTP.
 
-[Bridge Kit](/bridge-kit) is an SDK that uses CCTP as its protocol provider to let you transfer USDC between blockchains in just a few lines of code
+**Tip**: Use Bridge Kit for easy crosschain transfers through CCTP.
+
+[Bridge Kit](/bridge-kit) is an SDK that uses CCTP as its protocol provider to
+let you transfer USDC between blockchains in just a few lines of code.
+
 </Note>
 
 CCTP V2 supports both **Fast Transfer** and **Standard Transfer**, and also
@@ -32,9 +36,11 @@ post-transfer. For more details, see the
 [Hooks](/cctp/technical-guide#cctp-hooks) section.
 
 <Note>
+
 **Note:** CCTP V2 uses a separate set of contracts and is not backward
 compatible with earlier versions. Developers who need to continue using
 Standard Transfer should consider upgrading to the latest CCTP version.
+
 </Note>
 
 ## Background and Design
@@ -43,24 +49,25 @@ The following sections provide additional context on CCTP’s evolution, the
 challenges it addresses, and its architectural principles. Expand any to explore
 these deeper technical details.
 
-<br />
-
 <AccordionGroup>
 <Accordion title="Differences between CCTP V2 and CCTP V1">
+
 To better understand the evolution of CCTP, the following table highlights the
 key differences between CCTP V2 and CCTP V1:
 
-| Feature                    | CCTP V2                                                                                                                                                                                                                                                                                                                                                                                                         | CCTP V1                                                                                                                  |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Finality Time**          | **Fast Transfer:** faster-than-finality, ~8-20 seconds for EVM chains <br /><br /> **Standard Transfer:** <Tooltip tip="The point at which a transaction is fully finalized on-chain and can no longer be reversed or reorganized. This ensures the highest level of security and certainty before attestation. Hard Finality requires the transaction to reach full consensus on the source blockchain, typically resulting in longer processing times.">hard finality</Tooltip>, ~13-19 minutes for Ethereum and L2 chains                                                                                                                                                                                                                          | **Standard Transfer:** hard finality, ~15 to 19 minutes for Ethereum and L2 chains                                       |
-| **Supported Blockchains**  | **Standard Transfer:** Arbitrum, Avalanche, Base, Codex, Ethereum, HyperEVM, Ink, Linea, OP Mainnet, Plume, Polygon PoS, Sei, Solana, Sonic, Unichain, World Chain, XDC <br /><br /> **Fast Transfer:** Arbitrum, Avalanche*, Base, Codex, Ethereum, HyperEVM*, Ink, Linea, OP Mainnet, Plume, Polygon PoS*, Sei*, Solana, Sonic*, Unichain, World Chain, XDC* <br /><br /> (\*) Destination chains only <br /> | **Standard Transfer:** Aptos, Arbitrum, Avalanche, Base, Ethereum, Noble, OP Mainnet, Polygon PoS, Solana, Sui, Unichain |
-| **Pricing**                | **Standard Transfer:** onchain [fee](/cctp/technical-guide#cctp-fees) (0) <br /><br /> **Fast Transfer:** onchain [fee](/cctp/technical-guide#cctp-fees) (per chain)                                                                                                                                                                                                                                            | **Standard Transfer:** No fee                                                                                            |
-| **User Experience**        | Advanced cross-chain functionality, optimized for speed and composability                                                                                                                                                                                                                                                                                                                                       | Standard cross-chain functionality                                                                                       |
-| **Liquidity**              | Enables native USDC transfers post <Tooltip tip="The point at which a transaction is considered sufficiently secure for attestation, even though it has not yet reached hard finality. This allows for faster message processing while balancing the risk of chain reorganizations.">soft finality</Tooltip> and/or hard finality via a burn and mint method                                                                                                                                                                                                                                                                                            | Enables native USDC transfers post hard finality via a burn and mint method                                              |
-| **Backward Compatibility** | Not backward compatible; forms a distinct network                                                                                                                                                                                                                                                                                                                                                               | N/A                                                                                                                      |
-</Accordion>
+| Feature | CCTP V2 | CCTP V1 |
+| --- | --- | --- |
+| **Finality Time** | **Fast Transfer:** faster-than-finality, ~8-20 seconds for EVM chains    **Standard Transfer:** hard finality, ~13-19 minutes for Ethereum and L2 chains | **Standard Transfer:** hard finality, ~15 to 19 minutes for Ethereum and L2 chains |
+| **Supported Blockchains** | **Standard Transfer:** Arbitrum, Avalanche, Base, Codex, Ethereum, HyperEVM, Ink, Linea, OP Mainnet, Plume, Polygon PoS, Sei, Solana, Sonic, Unichain, World Chain, XDC    **Fast Transfer:** Arbitrum, Avalanche\*, Base, Codex, Ethereum, HyperEVM\*, Ink, Linea, OP Mainnet, Plume, Polygon PoS\*, Sei\*, Solana, Sonic\*, Unichain, World Chain, XDC\*    (\*) Destination chains only | **Standard Transfer:** Aptos, Arbitrum, Avalanche, Base, Ethereum, ble, OP Mainnet, Polygon PoS, Solana, Sui, Unichain |
+| **Pricing** | **Standard Transfer:** onchain [fee](/cctp/technical-guide#cctp-fees) (0)    **Fast Transfer:** onchain [fee](/cctp/technical-guide#cctp-fees) (per chain) | **Standard Transfer:** No fee |
+| **User Experience** | Advanced cross-chain functionality, optimized for speed and composability | Standard cross-chain functionality |
+| **Liquidity** | Enables native USDC transfers post soft finality and/or hard finality via a burn and mint method | Enables native USDC transfers post hard finality via a burn and mint method |
+| **Backward Compatibility** | Not backward compatible; forms a distinct network | N/A |
 
+</Accordion>
+  
 <Accordion title="Understanding the Problem">
+
 Blockchains often operate in siloed environments and cannot natively communicate
 with one another. While some ecosystems, such as Cosmos, use built-in protocols
 like the Inter-Blockchain Communication (IBC) protocol to enable data
@@ -73,9 +80,12 @@ with significant drawbacks. Two common methods, lock-and-mint bridging and
 liquidity pool bridging, require depositing USDC liquidity into third-party
 smart contracts. This approach reduces capital efficiency, acts as a target for
 malicious attacks, and introduces additional trust assumptions.
-</Accordion>
 
+</Accordion>
+  
+  
 <Accordion title="Design Approach">
+
 As a low-level primitive, CCTP can be embedded within any app, wallet, or bridge
 to enhance and simplify the user experience for crosschain use cases. With USDC
 circulating across a large number of blockchain networks, CCTP connects and
@@ -88,6 +98,7 @@ USDC is sent across chains and automatically deposited into a DeFi lending pool
 after the transfer, allowing it to generate yield in an automated manner. This
 experience can be designed to feel like a seamless, single transaction for the
 end user.
+
 </Accordion>
 </AccordionGroup>
 
@@ -100,15 +111,10 @@ the steps and speed differ:
 
 <Tabs>
 <Tab title="Fast Transfer">
-
-{/* prettier-ignore-start */}
-
 **Fast Transfer** is an advanced feature of CCTP V2 designed for speed-sensitive
 use cases. It leverages Circle's Attestation Service and
-<Tooltip tip="Events are a logging mechanism used in smart contracts to emit information outside of the contract's storage variables. They are emitted, for example, when a token is transferred, allowing smart contracts to inform off-chain applications or users about state changes.">Fast Transfer Allowance</Tooltip> to enable _faster-than-finality_
+Fast Transfer Allowance to enable *faster-than-finality*
 (soft finality) transfers. The process involves the following steps:
-
-{/* prettier-ignore-end */}
 
 1. **Initiation**. A user accesses an app powered by CCTP V2 and initiates a
    Fast Transfer of USDC, specifying the recipient's wallet address on the
@@ -135,10 +141,8 @@ use cases. It leverages Circle's Attestation Service and
 **Fast Transfer** is ideal for low-latency use cases, enabling USDC transfers to
 be completed in seconds while maintaining trust and security via Circle's Fast
 Transfer Allowance.
-
 </Tab>
 <Tab title="Standard Transfer">
-
 **Standard Transfer** is the default method for transferring USDC across
 blockchains. It relies on transaction finality on the source chain and uses
 Circle's Attestation Service to enable standard-finality (hard finality)
@@ -163,11 +167,10 @@ transfers. The process includes the following steps:
 
 **Standard Transfer** is suitable for scenarios where longer finality times are
 acceptable.
-
 </Tab>
 </Tabs>
-
 <Note>
+
 **CCTP V2 White Paper**
 
 Read the
@@ -175,6 +178,7 @@ Read the
 to learn about the motivation behind CCTP V2 and how the Fast Transfer
 Allowance balances speed, risk, and capital efficiency in crosschain USDC
 transfers.
+
 </Note>
 
 ## Use Cases
@@ -184,40 +188,46 @@ functionalities like trading, lending, payments, NFTs, and gaming, while
 simplifying the user experience. Below are some practical examples of how you
 can leverage CCTP in your applications—expand any to learn more.
 
-<br />
-
 <AccordionGroup>
 <Accordion title="Fast and secure crosschain rebalancing">
+
 Market makers, fillers/solvers, exchanges, and bridges can use CCTP to manage
 liquidity more efficiently. By securely rebalancing USDC holdings across
 blockchains, you can reduce operational costs, meet demand, and take advantage
 of market opportunities with minimal latency.
-</Accordion>
 
+  
+</Accordion>
 <Accordion title="Composable crosschain swaps">
+
 With CCTP, users can quickly swap between digital assets on different
 blockchains by routing through USDC. Users can also swap for USDC and
 automatically trigger subsequent actions on the destination chain, seamlessly
 enabling complex crosschain actions such as swaps and deposits.
-</Accordion>
 
+  
+</Accordion>
 <Accordion title="Programmable crosschain purchases">
+
 Automate crosschain purchases with CCTP. For example, a user can use USDC on one
 chain to purchase an NFT on a decentralized exchange on another chain and list
 it for sale on an NFT marketplace. When the transaction is initiated, CCTP
 routes USDC across chains to buy the NFT and opens the listing on the
 marketplace—all in one streamlined flow.
-</Accordion>
 
+  
+</Accordion>
 <Accordion title="Simplify crosschain complexities">
+
 Simplify the crosschain experience by using USDC as collateral on one chain to
 open a borrowing position on a lending protocol on another chain. With CCTP,
 USDC can move quickly between blockchains, allowing users to onboard to new
 applications without switching wallets or managing multichain complexities.
+
 </Accordion>
 </AccordionGroup>
 
-<br />
+
 **WHAT'S NEXT**
 
-- [CCTP Technical Guide <Icon icon="arrow-right" />](/cctp/technical-guide)
+* [CCTP Technical Guide](/cctp/technical-guide)

@@ -71,7 +71,7 @@ api_instance = developer_controlled_wallets.WalletsApi(client)
 
 try:
     resposne = api_instance.list_wallet_ballance(id="ce714f5b-0d8e-4062-9454-61aa1154869b")
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallet_ballance: %s\n" % e)
 ```
@@ -159,7 +159,7 @@ api_instance = developer_controlled_wallets.WalletsApi(client)
 
 try:
     resposne = api_instance.get_wallets()
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->get_wallets: %s\n" % e)
 ```
@@ -266,7 +266,7 @@ try:
         "feeLevel": 'MEDIUM'
     })
     resposne = api_instance.create_developer_transaction_transfer(request)
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->create_developer_transaction_transfer: %s\n" % e)
 ```
@@ -324,7 +324,7 @@ api_instance = developer_controlled_wallets.TransactionsApi(client)
 
 try:
     resposne = api_instance.get_transaction(id='1af639ce-c8b2-54a6-af49-7aebc95aaac1')
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling TransactionsApi->get_transaction: %s\n" % e)
 ```

@@ -1,11 +1,8 @@
 ---
-title: Transaction Rate Limits and Optimizations
-description: ""
-sideNav: ""
-tableOfContents: true
-documentationItems: 
-- title: Documentation
-sidebarTitle: "Transaction Rate Limits"
+title: "Transaction Rate Limits and Optimizations"
+permalink: "transaction-limits-and-optimizations"
+'og:title': "Transaction Rate Limits and Optimizations"
+'twitter:title': "Transaction Rate Limits and Optimizations"
 ---
 
 In this guide, you’ll learn about the transaction rate limits imposed by
@@ -30,12 +27,12 @@ transaction throughput being significantly higher.
 
 #### Account queue limit in different blockchains
 
-| Blockchain          | EOA wallet      | SCA wallet          |
-| ------------------- | --------------- | ------------------- |
-| Ethereum            | 32 transactions | 1 transaction       |
-| Polygon             | 16 transactions | 1 transaction       |
-| Avalanche           | 32 transactions | 1 transaction       |
-| Solana (no Mempool) | Unlimited       | Not supported by PW |
+| Blockchain | EOA wallet | SCA wallet |
+| --- | --- | --- |
+| Ethereum | 32 transactions | 1 transaction |
+| Polygon | 16 transactions | 1 transaction |
+| Avalanche | 32 transactions | 1 transaction |
+| Solana (no Mempool) | Unlimited | Not supported by PW |
 
 #### Circle Wallets Transaction Queue Limit
 
@@ -61,8 +58,9 @@ More detailed error descriptions and suggestions can be found in the
 section.
 
 To check the number of pending transactions and their status, use the
-`listTransaction` API endpoint. The transaction state should be one of the
-following: `INITIATED`, `CLEARED`, `QUEUED`, `SENT`.
+[list transactions API](/api-reference/wallets/developer-controlled-wallets/list-transactions).
+The transaction state should be one of the following: `INITIATED`, `CLEARED`,
+`QUEUED`, `SENT`, `STUCK`.
 
 ## Client-side Optimizations
 
@@ -73,18 +71,87 @@ of transaction requests.
 
 ### Higher Fees
 
-Consider setting the `fee_level` parameter to at least MEDIUM or HIGH. This
+Consider setting the `fee_level` parameter to at least `MEDIUM` or `HIGH`. This
 ensures that your transactions are processed with higher priority in a
 reasonable timeframe, reducing delays for subsequent transactions.
 
 ### Managing Transactions
 
-1. **Monitor Transaction Status**: Use the list transactions API to query the
-   status of your transactions.
-2. **Cancellation and Acceleration**: Use the cancellation and acceleration API
-   to expedite transactions that have been pending for an extended period.
-3. **Transaction Notifications**: Implement transaction notifications to confirm
-   the completion of transactions before sending more requests.
+This section describes how to monitor and manage transactions that are pending
+but still processing normally (for example, in the `QUEUED` or `SENT` states).
+If a transaction remains unconfirmed for an extended period and enters the
+`STUCK` state, see [Handling Stuck Transactions](#handling-stuck-transactions).
+
+You can monitor and manage pending transactions in several ways.
+
+<Note>
+
+**Recommended approach**
+
+Use [webhook notifications](/wallets/webhook-logs) as the primary method for
+tracking transaction status. Webhooks provide real-time updates and are more
+efficient than polling API endpoints. If you need to proactively check
+transaction status or implement custom retry logic, you can also use the Get
+or List API endpoints, but be aware that frequent polling may lead to
+increased resource use and rate limiting.
+
+</Note>
+
+1. **Monitor Transaction Status**: Use the
+   [get transaction API](/api-reference/wallets/developer-controlled-wallets/get-transaction)
+   if you know the transaction ID, or the
+   [list transactions API](/api-reference/wallets/developer-controlled-wallets/list-transactions)
+   to query multiple transactions or filter by state.
+2. **Cancellation or Acceleration**: Use the
+   [cancel transaction API](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)
+   or
+   [accelerate transaction API](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate)
+   to manage transactions that have been pending for an extended period.
+3. **Transaction notifications**: Implement
+   [webhook events](/wallets/webhook-logs) to confirm the completion of
+   transactions before sending more requests.
+
+### Handling Stuck Transactions
+
+In rare cases, a transaction might remain unconfirmed onchain for an extended
+period because its network fee is too low to meet the current blockchain
+requirements. When this happens, the transaction enters the `STUCK` state.
+
+A `STUCK` transaction is one that has been sent to the blockchain but could not
+be included in a block because the network fee is below the level required for
+inclusion. This state specifically refers to transactions that are underpriced
+relative to current network conditions, such as when gas prices rise during high
+congestion, or when the provided `feeLevel` or the custom `priorityFee` and
+`maxFee` values are too low.
+
+To resolve a stuck transaction:
+
+1. **Accelerate it**: Use the
+   [accelerate transaction API](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-accelerate)
+   to resubmit the transaction with a higher fee. The acceleration API
+   automatically applies a `HIGH` fee level.
+2. **Cancel it**: If you prefer not to accelerate the transaction, use the
+   [cancel transaction API](/api-reference/wallets/developer-controlled-wallets/create-developer-transaction-cancel)
+   to cancel it before it's mined. Note that this action also incurs gas fees.
+
+After taking one of these actions, monitor the transaction status using
+[webhook notifications](/wallets/webhook-logs) (recommended) or the
+[list transactions API](/api-reference/wallets/developer-controlled-wallets/list-transactions)
+to confirm that the state has updated.
+
+If a transaction remains in the `STUCK` state, you must either accelerate or
+cancel it. Leaving it unresolved may block subsequent transactions from the same
+wallet.
+
+The `STUCK` state is not a terminal failure but a signal that manual or
+programmatic intervention is required to ensure confirmation.
+
+<Note>
+
+For details on asynchronous transaction states and error codes, see
+[Transaction States and Errors](/w3s/asynchronous-states-and-statuses).
+
+</Note>
 
 ### Multiple Sender Wallets
 

@@ -88,7 +88,7 @@ api_instance = developer_controlled_wallets.WalletsApi(client)
 
 try:
     resposne = api_instance.get_wallets(blockchain='MATIC-AMOY')
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->get_wallets: %s\n" % e)
 ```
@@ -157,7 +157,7 @@ client = utils.init_developer_controlled_wallets_client(api_key=key, entity_secr
 api_instance = developer_controlled_wallets.WalletsApi(client)
 try:
     resposne = api_instance.list_wallet_ballance(id="15a3c18b-e8c5-572e-be55-89f36e1ba4c4")
-    print(resposne)
+    print(response)
 except developer_controlled_wallets.ApiException as e:
     print("Exception when calling WalletsApi->list_wallet_ballance: %s\n" % e)
 ```
@@ -332,7 +332,7 @@ try:
         "bytecode": '0x...'
     })
     resposne = api_instance.deploy_contract(request)
-    print(resposne)
+    print(response)
 except smart_contract_platform.ApiException as e:
     print("Exception when calling DeployImportApi->deploy_contract: %s\n" % e)
 ```
@@ -394,7 +394,7 @@ const response = await circleContractSdk.getContract({
 api_instance = smart_contract_platform.ViewUpdateApi(scpClient)
 try:
     resposne = api_instance.get_contract(id='0189db84-72b7-7fcc-832b-5bf886b9a0ef')
-    print(resposne)
+    print(response)
 except smart_contract_platform.ApiException as e:
     print("Exception when calling ViewUpdateApi->get_contract: %s\n" % e)
 ```
