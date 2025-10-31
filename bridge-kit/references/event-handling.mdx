@@ -19,7 +19,7 @@ This section lists the CCTP event types to which you can subscribe.
 Emitted when the transaction is approved. This happens when the transaction
 signer has approved the transfer amount on the source chain.
 
-```typescript
+```typescript Typescript
 kit.on("approve", (payload) => {
   console.log("Approval completed:", payload.values.txHash);
 });
@@ -31,7 +31,7 @@ Emitted when tokens are burned on the source chain.
 
 
 
-```typescript
+```typescript Typescript
 kit.on("burn", (payload) => {
   console.log("Burn completed:", payload.values.txHash);
 });
@@ -44,7 +44,7 @@ burn.
 
 
 
-```typescript
+```typescript Typescript
 kit.on("fetchAttestation", (payload) => {
   console.log("Attestation completed:", payload.values.data.attestation);
 });
@@ -56,7 +56,7 @@ Emitted when tokens are minted on the destination chain.
 
 
 
-```typescript
+```typescript Typescript
 kit.on("mint", (payload) => {
   console.log("Mint completed:", payload.values.txHash);
 });
@@ -68,7 +68,7 @@ Listen to all events.
 
 
 
-```typescript
+```typescript Typescript
 kit.on("\*", (payload) => {
   console.log("Event received:", payload);
 });

@@ -18,7 +18,7 @@ also add event listeners for each bridging provider.
 Creates a new BridgeKit instance.
 
 
-```typescript
+```typescript Typescript
 constructor(config?: BridgeKitConfig)
 ```
 
@@ -31,7 +31,7 @@ constructor(config?: BridgeKitConfig)
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Standard setup
 const kit = new BridgeKit();
 
@@ -45,7 +45,7 @@ const kit = new BridgeKit({ providers: [provider] });
 Optionally adds extra bridging providers.
 
 
-```typescript
+```typescript Typescript
 interface BridgeKitConfig {
   /**
    * Add an array of bridging providers available for routing transfers.
@@ -70,7 +70,7 @@ Global configuration for
 [collecting a transfer fee](/bridge-kit/tutorials/collect-a-transfer-fee).
 
 
-```typescript
+```typescript Typescript
 export interface CustomFeePolicy {
   /**
    * A function that returns the fee to charge for the bridge transfer.
@@ -107,7 +107,7 @@ export interface CustomFeePolicy {
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Use in BridgeKit initialization
 const kit = new BridgeKit();
 
@@ -135,7 +135,7 @@ kit.setCustomFeePolicy({
 Executes crosschain transfers.
 
 
-```typescript
+```typescript Typescript
 async bridge(params: BridgeParams): Promise
 ```
 
@@ -152,7 +152,7 @@ async bridge(params: BridgeParams): Promise
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum_Sepolia" },
   to: { adapter, chain: "Base_Sepolia" },
@@ -167,7 +167,7 @@ console.log("Transfer completed:", result.state);
 Estimates costs before transferring.
 
 
-```typescript
+```typescript Typescript
 async estimate(params: BridgeParams): Promise
 ```
 
@@ -184,7 +184,7 @@ async estimate(params: BridgeParams): Promise
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Estimate costs
 const estimate = await kit.estimate({
   from: { adapter, chain: "Ethereum" },
@@ -216,7 +216,7 @@ if (cctpFee == null || parseFloat(cctpFee) < 0.1) {
 Returns a list of available blockchains.
 
 
-```typescript
+```typescript Typescript
 getSupportedChains(): ChainDefinition[]
 ```
 
@@ -234,7 +234,7 @@ getSupportedChains(): ChainDefinition[]
 **Return example**
 
 
-```typescript
+```typescript Typescript
 const chains = kit.getSupportedChains();
 console.log(chains);
 ```
@@ -244,7 +244,7 @@ console.log(chains);
 This code shows how to use the data returned by `ChainDefinition[]`:
 
 
-```typescript
+```typescript Typescript
 import { BridgeKit, ChainDefinition } from '@circle-fin/bridge-kit'
 
 const kit = new BridgeKit()
@@ -265,7 +265,7 @@ function showChainSelector(chains: ChainDefinition[]) {
 Adds an event listener.
 
 
-```typescript
+```typescript Typescript
 on(
   action: string,
   handler: (payload: AllActions) => void
@@ -286,7 +286,7 @@ on(
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Listen to specific events
 kit.on("approve", (payload) => {
   console.log("Approval completed:", payload.values.txHash);
@@ -306,7 +306,7 @@ kit.on("*", (event) => {
 Removes an event listener.
 
 
-```typescript
+```typescript Typescript
 off(
   action: string,
   handler: (payload: AllActions) => void
@@ -327,7 +327,7 @@ off(
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 const mintHandler = (event) => console.log("Mint:", event.values.txHash);
 
 // Register handler
@@ -344,7 +344,7 @@ kit.off("mint", mintHandler);
 Parameters to execute a crosschain bridge transfer.
 
 
-```typescript
+```typescript Typescript
 interface BridgeParams {
   from: AdapterContext;
   to: BridgeDestination;
@@ -367,7 +367,7 @@ interface BridgeParams {
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Basic transfer with default transfer speed (fast) and token (USDC)
 const basicParams: BridgeParams = {
   from: { adapter, chain: "Base" },
@@ -402,7 +402,7 @@ const customParams: BridgeParams = {
 Configuration for transfer speed.
 
 
-```typescript
+```typescript Typescript
 interface BridgeConfig {
   transferSpeed?: "FAST" | "SLOW";
   maxFee?: string;
@@ -421,7 +421,7 @@ interface BridgeConfig {
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Slow transfer speed
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum" },
@@ -447,7 +447,7 @@ const result = await kit.bridge({
 The adapter and its associated chain.
 
 
-```typescript
+```typescript Typescript
 type AdapterContext = {
   adapter: Adapter;
   chain: ChainIdentifier;
@@ -464,7 +464,7 @@ type AdapterContext = {
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Use in bridge operations
 await kit.bridge({
   from: { adapter, chain: "Base" }, // AdapterContext to transfer from Base
@@ -478,7 +478,7 @@ await kit.bridge({
 Specifies where tokens should be sent.
 
 
-```typescript
+```typescript Typescript
 type BridgeDestination = AdapterContext | BridgeDestinationWithAddress;
 ```
 
@@ -492,7 +492,7 @@ type BridgeDestination = AdapterContext | BridgeDestinationWithAddress;
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Usage in bridge calls
 await kit.bridge({
   from: { adapter, chain: "Base" },
@@ -518,7 +518,7 @@ await kit.bridge({
 Specifies a recipient wallet address.
 
 
-```typescript
+```typescript Typescript
 type BridgeDestinationWithAddress = AdapterContext & {
   recipientAddress: string;
 };
@@ -535,7 +535,7 @@ type BridgeDestinationWithAddress = AdapterContext & {
 **Usage example**
 
 
-```typescript
+```typescript Typescript
 // Use in bridge operation
 await kit.bridge({
   from: { adapter: myAdapter, chain: "Ethereum" },
@@ -557,7 +557,7 @@ information, and the transfer amount. Returned by the [bridge](#bridgeparams)
 method.
 
 
-```typescript
+```typescript Typescript
 interface BridgeResult {
   amount: string;
   token: "USDC";
@@ -591,7 +591,7 @@ interface BridgeResult {
 **Example**
 
 
-```typescript
+```typescript Typescript
 {
   "state": "success",
   "steps": [
@@ -637,7 +637,7 @@ Estimated costs of the transaction, returned by the [estimate](#estimateparams)
 method.
 
 
-```typescript
+```typescript Typescript
 interface EstimateResult {
   gasFees: {
     name: string;
@@ -665,7 +665,7 @@ interface EstimateResult {
 **Example:**
 
 
-```typescript
+```typescript Typescript
 {
   "gasFees": {
     "source": "0.025000",      // ~$0.025 gas on Ethereum

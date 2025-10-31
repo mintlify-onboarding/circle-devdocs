@@ -45,7 +45,7 @@ This code block initializes the Viem adapter to transfer tokens between
 EVM-compatible chains:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
 
 const adapter = createAdapterFromPrivateKey({
@@ -60,7 +60,7 @@ This code block initializes the Ethers adapter to transfer tokens between
 EVM-compatible chains:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-ethers-v6";
 
 const adapter = createAdapterFromPrivateKey({
@@ -74,7 +74,7 @@ const adapter = createAdapterFromPrivateKey({
 This code block initializes the Solana adapter to bridge on Solana:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-solana";
 
 // Solana accepts Base58, Base64, or JSON array format private keys
@@ -103,7 +103,7 @@ To use your own connection, replace the default one and add your custom RPC
 endpoint. This example uses an Alchemy connection:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
 import { createPublicClient, http } from "viem";
 
@@ -131,7 +131,7 @@ To use your own connection, replace the default one and add your custom RPC
 endpoint. This example uses an Alchemy connection:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-ethers-v6";
 import { JsonRpcProvider } from "ethers";
 
@@ -153,7 +153,7 @@ Point to that connection when making a Solana adapter. This example creates a
 custom connection using Alchemy:
 
 
-```typescript
+```typescript Typescript
 import { createAdapterFromPrivateKey } from "@circle-fin/adapter-solana";
 import { Connection } from "@solana/web3.js";
 
@@ -191,7 +191,7 @@ to see the code.
 <Tabs>
 <Tab title="Viem">
 
-```typescript
+```typescript Typescript
 import { createAdapterFromProvider } from "@circle-fin/adapter-viem-v2";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { EIP1193Provider } from "viem";
@@ -210,7 +210,7 @@ const adapter = createAdapterFromProvider({
 </Tab>
 <Tab title="Ethers">
 
-```typescript
+```typescript Typescript
 import { createAdapterFromProvider } from "@circle-fin/adapter-ethers-v6";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { EIP1193Provider } from "ethers";
@@ -229,7 +229,7 @@ const adapter = createAdapterFromProvider({
 </Tab>
 <Tab title="Solana">
 
-```typescript
+```typescript Typescript
 import {
   createAdapterFromProvider,
   CreateAdapterFromProviderParams,

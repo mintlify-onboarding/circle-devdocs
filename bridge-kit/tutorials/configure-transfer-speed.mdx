@@ -19,7 +19,7 @@ fast transfers. The transfer switches to slow if the cost is above your limit.
 This code configures a slow transfer speed:
 
 
-```typescript
+```typescript Typescript
 // Slow transfer speed
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum" },
@@ -36,7 +36,7 @@ Set the maximum fee that you want to pay for the CCTP fast burn.
 This code configures a maximum fee of 5 USDC:
 
 
-```typescript
+```typescript Typescript
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum" },
   to: {

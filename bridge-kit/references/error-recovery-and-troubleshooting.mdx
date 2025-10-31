@@ -55,7 +55,7 @@ fetching an attestation:
 
 
 
-```bash
+```bash Shell
 result.state: 'error'
 result.steps: [
   { name: 'approve', state: 'success', txHash: '0x123...' },
@@ -81,7 +81,7 @@ find specific steps:
 
 
 
-```typescript
+```typescript Typescript
 // Start a transfer that might fail
 const result = await kit.bridge({
   from: { adapter: sourceAdapter, chain: "Ethereum" },
@@ -115,7 +115,7 @@ This example shows how the retry method works:
 
 
 
-```typescript
+```typescript Typescript
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum" },
   to: { adapter, chain: "Arbitrum" },
@@ -140,7 +140,7 @@ adapter:
 
 
 
-```typescript
+```typescript Typescript
 const adapter = createAdapterFromPrivateKey({
   privateKey: process.env.PRIVATE_KEY as string,
 });
@@ -195,7 +195,7 @@ This example checks your wallet balance:
 
 
 
-```typescript
+```typescript Typescript
 import "dotenv/config";
 import { createAdapterFromPrivateKey as createViemAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2";
 import { formatUnits } from "viem";

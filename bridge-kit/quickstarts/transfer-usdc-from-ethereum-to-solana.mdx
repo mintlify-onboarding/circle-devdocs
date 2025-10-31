@@ -26,7 +26,7 @@ This step shows you how to prepare your project and environment.
 Create a new directory and install Bridge Kit and its dependencies:
 
 
-```bash
+```bash Shell
 # Set up your directory and initialize the project
 mkdir bridge-kit-quickstart-transfer-eth-to-sol
 cd bridge-kit-quickstart-transfer-eth-to-sol
@@ -41,14 +41,14 @@ npm install @circle-fin/bridge-kit @circle-fin/adapter-viem-v2 @circle-fin/adapt
 First, initialize the project. This command creates a `tsconfig.json` file:
 
 
-```bash
+```bash Shell
 # Initialize a TypeScript project
 npx tsc --init
 ```
 
 Then, edit the `tsconfig.json` file:
 
-```bash
+```bash Shell
 # Replace the contents of the generated file
 cat <<'EOF' > tsconfig.json
 {
@@ -80,7 +80,7 @@ and
 
 
 
-```bash
+```bash Shell
 echo "PRIVATE_KEY={YOUR_PRIVATE_KEY}
 SOLANA_PRIVATE_KEY={YOUR_SOLANA_PRIVATE_KEY}" > .env
 ```
@@ -116,7 +116,7 @@ This code sets up your script and transfers 10 USDC from Ethereum Sepolia to
 Solana Devnet.
 
 
-```typescript
+```typescript Typescript
 // Import Bridge Kit and dependencies
 import "dotenv/config";
 import { BridgeKit } from "@circle-fin/bridge-kit";
@@ -161,7 +161,7 @@ To transfer from Solana Devnet to Ethereum Sepolia, switch the source and
 destination adapter and chain in your bridge call:
 
 
-```typescript
+```typescript Typescript
 // Transfer 10 USDC from Solana to Ethereum
 const result = await kit.bridge({
   // Specify Solana as the source chain
@@ -187,7 +187,7 @@ Save the `index.ts` file and run the script in your terminal:
 
 
 
-```bash
+```bash Shell
 npx tsx index.ts
 ```
 
@@ -203,7 +203,7 @@ transaction:
 
 
 
-```bash
+```bash Shell
 steps: [
   {
     name: "approve",

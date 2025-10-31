@@ -27,7 +27,7 @@ Create a new directory and install Bridge Kit and its dependencies:
 
 
 
-```bash
+```bash Shell
 # Set up your directory and initialize a Node.js project
 mkdir bridge-kit-quickstart-transfer-base-to-eth
 cd bridge-kit-quickstart-transfer-base-to-eth
@@ -43,7 +43,7 @@ First, initialize the project. This command creates a `tsconfig.json` file:
 
 
 
-```bash
+```bash Shell
 # Initialize a TypeScript project
 npx tsc --init
 ```
@@ -52,7 +52,7 @@ Then, edit the `tsconfig.json` file:
 
 
 
-```bash
+```bash Shell
 # Replace the contents of the generated file
 cat <<'EOF' > tsconfig.json
 {
@@ -81,7 +81,7 @@ wallet.
 
 
 
-```bash
+```bash Shell
 echo "PRIVATE_KEY={YOUR_PRIVATE_KEY}" > .env
 ```
 
@@ -123,7 +123,7 @@ This code sets up your script. It transfers 10 USDC from Base Sepolia to
 Ethereum Sepolia:
 
 
-```typescript
+```typescript Typescript
 // Import Bridge Kit and its dependencies
 import "dotenv/config";
 import { BridgeKit } from "@circle-fin/bridge-kit";
@@ -173,7 +173,7 @@ Save the `index.ts` file and run the script in your terminal:
 
 
 
-```bash
+```bash Shell
 npx tsx index.ts
 ```
 
@@ -189,7 +189,7 @@ transaction:
 
 
 
-```bash
+```bash Shell
 steps: [
   {
     name: "approve",

@@ -22,7 +22,7 @@ This example configures your bridge call to collect a fee of 1.50 USDC for a
 specific bridge transfer:
 
 
-```typescript
+```typescript Typescript
 // Transfer 1 USDC
 const result = await kit.bridge({
   from: { adapter, chain: "Ethereum" },
@@ -45,7 +45,7 @@ transfers from Ethereum and 1.50 USDC on transfers from other blockchains:
 
 
 
-```typescript
+```typescript Typescript
 import { Blockchain } from "@circle-fin/bridge-kit";
 const kit = new BridgeKit();
 
