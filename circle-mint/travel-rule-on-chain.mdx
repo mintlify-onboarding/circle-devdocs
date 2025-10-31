@@ -7,9 +7,9 @@ permalink: "travel-rule-on-chain"
 'twitter:description': "Avoid errors when performing $3000+ transfers by complying with the FinCEN Travel Rule."
 ---
 
-Avoid errors when performing $3000+ transfers by complying with the FinCEN Travel Rule.
+Avoid errors when performing \$3000+ transfers by complying with the FinCEN Travel Rule.
 
-Due to FinCEN guidance regarding transfers of $3,000 or more, Circle APIs may require you to share KYC information about the originator of the transaction to prevent the transfer from failing. According to FinCEN guidance regarding applicability of the Travel Rule to transfers of $3,000 or more (or matching cryptocurrency), the originating institution must transmit KYC information about the originator of a transaction to the beneficiary institution. Circle requires the sharing of this information for transfers made on the following blockchains:
+Due to FinCEN guidance regarding transfers of \$3,000 or more, Circle APIs may require you to share KYC information about the originator of the transaction to prevent the transfer from failing. According to FinCEN guidance regarding applicability of the Travel Rule to transfers of $3,000 or more (or matching cryptocurrency), the originating institution must transmit KYC information about the originator of a transaction to the beneficiary institution. Circle requires the sharing of this information for transfers made on the following blockchains:
 
 * *Algorand (ALGO)*
 * *Aptos (APTOS)*
@@ -43,14 +43,14 @@ In technical terms, the originator’s identity is required for
 2. `destination.chain: "<aforementioned-blockchains>"`
 3. `amount.amount` >= $3,000 in value
 
-<Info>
+<Note>
 
 If the `POST /v1/transfers` request requires an originator's identity and the
 transfer does not contain an originator's identity, the transfer will fail.
 You will receive a webhook notification with `data.status: fail`,
 `riskEvaluation.decision: denied`, and `riskEvaluation.reason: 3220`.
 
-</Info>
+</Note>
 
 ## Sending Transfers (Crypto Payouts)
 
@@ -65,12 +65,12 @@ when:
 1. `destination.type: "address_book"`
 2. `amount.amount` >= $3,000 in value
 
-<Info>
+<Note>
 
 If the `POST /v1/payouts` request requires an originator's identity and the
 transfer does not contain an originator's identity, the transfer will fail.
 
-</Info>
+</Note>
 
 ## Sending Transfers (Business Account)
 
@@ -95,12 +95,12 @@ transfer until it is marked with a status of complete.
 * If you are a financial institution and do not see the originator’s identity,
   please reach out to a Circle representative.
 
-<Info>
+<Note>
 
 Non-bank financial institutions will not see the originator’s identity for
 received transfers.
 
-</Info>
+</Note>
 
 ## Identities Schema
 
@@ -117,11 +117,7 @@ received transfers.
 
 ## Example: POST /v1/payouts
 
-#### Request
-
-
-
-```json
+```json Request
 {
   "idempotencyKey": "ba943ff1-ca16-49b2-ba55-1057e70ca5c7",
   "source": {
@@ -156,11 +152,8 @@ received transfers.
 }
 ```
 
-#### Response
 
-
-
-```json
+```json Response
 {
   "data": [
     {
@@ -208,9 +201,7 @@ received transfers.
 the response. Restricts maximum returned items to 5. By default returnIdentities
 is false, resulting in the response not returning `data.source.identities`.
 
-#### Response
-
-```json
+```json Response
 {
   "data": [
     {
@@ -258,10 +249,7 @@ is false, resulting in the response not returning `data.source.identities`.
 the response. Restricts maximum returned items to 5. By default returnIdentities
 is false, resulting in the response not returning `data.source.identities`.
 
-#### Response
-
-
-```json
+```json Response
 {
   "data": {
     "id": "b36cbf12-6ed1-47ed-9eb9-5874f8991ca8",
@@ -303,10 +291,7 @@ is false, resulting in the response not returning `data.source.identities`.
 
 ## Example: Webhook Notification
 
-#### Payload
-
-
-```json
+```json Payload
 {
   "clientId": "c60d2d5b-203c-45bb-9f6e-93641d40a599",
   "notificationType": "transfers",

@@ -18,14 +18,14 @@ improve capital efficiency and minimize trust assumptions when using USDC across
 blockchains. CCTP enables developers to build multichain applications that allow
 users to perform 1:1 transfers of USDC securely across blockchains.
 
-<Info>
+<Note>
 
 **Tip**: Use Bridge Kit for easy crosschain transfers through CCTP.
 
 [Bridge Kit](/bridge-kit) is an SDK that uses CCTP as its protocol provider to
 let you transfer USDC between blockchains in just a few lines of code.
 
-</Info>
+</Note>
 
 CCTP V2 supports both **Fast Transfer** and **Standard Transfer**, and also
 integrates **Hooks** for custom logic. Fast Transfer enables USDC transfers
@@ -35,13 +35,13 @@ crosschain composability by allowing you to trigger automated actions
 post-transfer. For more details, see the
 [Hooks](/cctp/technical-guide#cctp-hooks) section.
 
-<Info>
+<Note>
 
 **Note:** CCTP V2 uses a separate set of contracts and is not backward
 compatible with earlier versions. Developers who need to continue using
 Standard Transfer should consider upgrading to the latest CCTP version.
 
-</Info>
+</Note>
 
 ## Background and Design
 
@@ -49,7 +49,7 @@ The following sections provide additional context on CCTP’s evolution, the
 challenges it addresses, and its architectural principles. Expand any to explore
 these deeper technical details.
 
-  
+<AccordionGroup>
 <Accordion title="Differences between CCTP V2 and CCTP V1">
 
 To better understand the evolution of CCTP, the following table highlights the
@@ -100,7 +100,8 @@ experience can be designed to feel like a seamless, single transaction for the
 end user.
 
 </Accordion>
-  
+</AccordionGroup>
+
 ## How CCTP V2 works
 
 CCTP V2 enables seamless and secure transfers of USDC across blockchains through
@@ -168,7 +169,7 @@ transfers. The process includes the following steps:
 acceptable.
 </Tab>
 </Tabs>
-<Info>
+<Note>
 
 **CCTP V2 White Paper**
 
@@ -178,7 +179,7 @@ to learn about the motivation behind CCTP V2 and how the Fast Transfer
 Allowance balances speed, risk, and capital efficiency in crosschain USDC
 transfers.
 
-</Info>
+</Note>
 
 ## Use Cases
 
@@ -187,7 +188,7 @@ functionalities like trading, lending, payments, NFTs, and gaming, while
 simplifying the user experience. Below are some practical examples of how you
 can leverage CCTP in your applications—expand any to learn more.
 
-  
+<AccordionGroup>
 <Accordion title="Fast and secure crosschain rebalancing">
 
 Market makers, fillers/solvers, exchanges, and bridges can use CCTP to manage
@@ -224,7 +225,8 @@ USDC can move quickly between blockchains, allowing users to onboard to new
 applications without switching wallets or managing multichain complexities.
 
 </Accordion>
-  
+</AccordionGroup>
+
 
 **WHAT'S NEXT**
 

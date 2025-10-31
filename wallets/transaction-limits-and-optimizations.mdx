@@ -84,7 +84,7 @@ If a transaction remains unconfirmed for an extended period and enters the
 
 You can monitor and manage pending transactions in several ways.
 
-<Info>
+<Note>
 
 **Recommended approach**
 
@@ -95,7 +95,7 @@ transaction status or implement custom retry logic, you can also use the Get
 or List API endpoints, but be aware that frequent polling may lead to
 increased resource use and rate limiting.
 
-</Info>
+</Note>
 
 1. **Monitor Transaction Status**: Use the
    [get transaction API](/api-reference/wallets/developer-controlled-wallets/get-transaction)
@@ -146,12 +146,12 @@ wallet.
 The `STUCK` state is not a terminal failure but a signal that manual or
 programmatic intervention is required to ensure confirmation.
 
-<Info>
+<Note>
 
 For details on asynchronous transaction states and error codes, see
 [Transaction States and Errors](/w3s/asynchronous-states-and-statuses).
 
-</Info>
+</Note>
 
 ### Multiple Sender Wallets
 

@@ -20,12 +20,12 @@ required when performing the following tasks in CPN:
   data
 * **Submitting an RFI**: for encrypting the RFI JSON response
 
-<Info>
+<Note>
 
 **Note:** If your RFI response includes a file, that file is
 [encrypted in a different manner](/cpn/howtos/encrypt-files).
 
-</Info>
+</Note>
 
 Regardless of the language used to implement the encryption, the following
 parameters must be followed:
@@ -45,7 +45,7 @@ Quote responses include a certificate field with required parameters to
 establish encryption with the BFI. A sample (truncated) quote response is below:
 
 
-```json
+```json JSON
 {
   "data": [
     {
@@ -86,7 +86,7 @@ verify the following:
   response
 
 
-```java
+```java Java
 public static void verify() throws Exception {
     // Assume the API response is stored in a file "response.json"
     String responseStr = new String(Files.readAllBytes(Paths.get("response.json")));
@@ -165,7 +165,7 @@ From the `certificate` field, extract the JWK parameters: `kty`, `crv`, `kid`,
 example, Nimbus JOSE+JWT in Java).
 
 
-```java
+```java Java
 import com.nimbusds.jose.jwk.JWK;
 
 public static JWK parseJwkFromJson() throws ParseException {
@@ -202,7 +202,7 @@ An example of each is shown below:
 **travelRuleData**
 
 
-```json
+```json JSON
 [[
   {
     "name": "BENEFICIARY_ADDRESS",
@@ -256,7 +256,7 @@ An example of each is shown below:
 **beneficiaryAccountData**
 
 
-```json
+```json JSON
 [
   {
     "name": "BANK_NAME",
@@ -286,7 +286,7 @@ encrypt it. Ensure that the following parameters are used:
 * Encryption method: A128GCM
 
 
-```java
+```java Java
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;

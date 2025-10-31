@@ -30,7 +30,7 @@ Using your chosen implementation language, generate a random 128-bit AES key for
 AES-128-GCM encryption.
 
 
-```java
+```java Java
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
@@ -54,7 +54,7 @@ Using your chosen implementation language, generate a 12-byte IV.
 
 
 
-```java
+```java Java
 import java.security.SecureRandom;
 
 /**
@@ -74,7 +74,7 @@ previous steps.
 
 
 
-```java
+```java Java
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
@@ -106,7 +106,7 @@ encrypt the file contents with the following parameters using JWE:
 
 
 
-```java
+```java Java
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.EncryptionMethod;
@@ -161,7 +161,7 @@ Use these components to create a `multipart/form-data` request to the
 `200` response from the API indicates that the encryption was performed
 correctly and the BFI can decrypt the file's contents.
 
-<Note>
+<Warning>
 
 **Important:** Don't manually set the `Content-Type` header. Let your HTTP
 client library set it automatically. The header must include a boundary
@@ -174,10 +174,10 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 If you manually set `Content-Type: multipart/form-data`, the request will fail.
 
-</Note>
+</Warning>
 
 
-```java
+```java Java
 import okhttp3.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
