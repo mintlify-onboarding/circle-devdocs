@@ -83,7 +83,7 @@ or token balances.
 
 Configure the client to connect to the Sepolia testnet:
 
-```typescript
+```typescript Typescript
 import { http, createPublicClient } from "viem";
 import { sepolia } from "viem/chains";
 
@@ -98,7 +98,7 @@ const publicClient = createPublicClient({
 The wallet client lets you interact with user accounts and sign transactions. To
 connect it to MetaMask in the browser:
 
-```typescript
+```typescript Typescript
 import { createWalletClient, custom } from "viem";
 import { sepolia } from "viem/chains";
 
@@ -116,7 +116,7 @@ token contract address varies by blockchain. This example uses the Ethereum
 Sepolia contract address. For the full list of EURC smart contract addresses,
 see [EURC Contract Addresses](/stablecoins/eurc-contract-addresses).
 
-```typescript
+```typescript Typescript
 const EURC_CONTRACT_ADDRESS = "0x08210f9170f89ab7658f0b5e3ff39b0e03c594d4";
 const EURC_ABI = [
   {
@@ -137,7 +137,7 @@ const EURC_ABI = [
 Create a function to connect to the user's wallet in MetaMask and retrieve the
 wallet address:
 
-```typescript
+```typescript Typescript
 const connect = async () => {
   const [address] = await walletClient.requestAddresses();
   setAccount(address);
@@ -150,7 +150,7 @@ Create a function to send the EURC transfer transaction. This function encodes
 the transfer function data and sends the transaction to the blockchain using the
 wallet client.
 
-```typescript
+```typescript Typescript
 const data = encodeFunctionData({
   abi: EURC_ABI,
   functionName: "transfer",
@@ -190,7 +190,7 @@ must contain native testnet tokens (to pay for gas fees) and testnet EURC.
 
 ### index.tsx
 
-```typescript
+```typescript Typescript
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
