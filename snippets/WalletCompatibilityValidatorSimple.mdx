@@ -1,0 +1,19 @@
+export const WalletCompatibilityValidator = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+
+  return (
+    <div className="wallet-validator">
+      <div className="wallet-validator-header">
+        <h3 className="wallet-validator-title">Wallet Compatibility Validator</h3>
+        <p className="wallet-validator-subtitle">
+          Test your wallet compatibility with Circle Payments Network (CPN)
+        </p>
+      </div>
+
+      <div className="wallet-validator-content">
+        <p>Current Step: {currentStep}</p>
+        <button onClick={() => setCurrentStep(currentStep + 1)}>Next</button>
+      </div>
+    </div>
+  );
+};

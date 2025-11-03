@@ -44,21 +44,21 @@ You can automate the handling of certain error types. These include the
 following error names, which include example messages and constraints, where
 applicable:
 
-| error                   | message                                                                             | constraints                                                                   |
-| :---------------------- | :---------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `value_must_be_true`    | field1 must be true (was false)                                                     | NA                                                                            |
-| `value_must_be_false`   | field1 must be false (was true)                                                     | NA                                                                            |
-| `required`              | field1 may not be null (was null)                                                   | NA                                                                            |
-| `not_required`          | field1 must be null (was foo)                                                       | NA                                                                            |
-| `min_value`             | field1 must be greater than or equal to 2 (was 0)                                   | `"constraints": {    "min": 2 }`                                              |
-| `min_value`             | field1 must be greater than 2.0 (was 2.0)                                           | `"constraints": {     "min": "2.0",     "inclusive": false }`                 |
-| `max_value`             | field1 must be less than or equal to 99 (was 1024)                                  | `"constraints": {    "max": 99 }`                                             |
-| `max_value`             | field1 be less than or equal to 99.99 (was 100)                                     | `"constraints": {     "max": "99.99",     "inclusive": true }`                |
-| `length_outside_bounds` | field1 must be between 2 and 5 (was qwerty)                                         | `"constraints": {    "min": 2,    "max": 5 }`                                 |
-| `pattern_mismatch`      | field1 must match \"[a-z]+\" (was 123456)                                           | `"constraints": {     "pattern": "[a-z]+" }`                                  |
-| `date_not_in_past`      | field1 must be in the past (was 2020-08-31T18:18:54.211Z)                           | NA                                                                            |
-| `date_not_in_future`    | field1 must be in the future (was 2020-08-31T18:18:17.621Z)                         | NA                                                                            |
-| `number_format`         | field1 numeric value out of bounds (\<3 digits>.\<2 digits> expected) (was 123.456) | `"constraints": {   "max-integral-digits": 3,   "max-fractional-digits": 2 }` |
+| error | message | constraints |
+| --- | --- | --- |
+| `value_must_be_true` | field1 must be true (was false) | NA |
+| `value_must_be_false` | field1 must be false (was true) | NA |
+| `required` | field1 may not be null (was null) | NA |
+| `not_required` | field1 must be null (was foo) | NA |
+| `min_value` | field1 must be greater than or equal to 2 (was 0) | `"constraints": { "min": 2 }` |
+| `min_value` | field1 must be greater than 2.0 (was 2.0) | `"constraints": { "min": "2.0", "inclusive": false }` |
+| `max_value` | field1 must be less than or equal to 99 (was 1024) | `"constraints": { "max": 99 }` |
+| `max_value` | field1 be less than or equal to 99.99 (was 100) | `"constraints": { "max": "99.99", "inclusive": true }` |
+| `length_outside_bounds` | field1 must be between 2 and 5 (was qwerty) | `"constraints": { "min": 2, "max": 5 }` |
+| `pattern_mismatch` | field1 must match "[a-z]+" (was 123456) | `"constraints": { "pattern": "[a-z]+" }` |
+| `date_not_in_past` | field1 must be in the past (was 2020-08-31T18:18:54.211Z) | NA |
+| `date_not_in_future` | field1 must be in the future (was 2020-08-31T18:18:17.621Z) | NA |
+| `number_format` | field1 numeric value out of bounds (&lt;3 digits>.&lt;2 digits> expected) (was 123.456) | `"constraints": { "max-integral-digits": 3, "max-fractional-digits": 2 }` |
 
 ### API error format
 
@@ -110,54 +110,54 @@ Error description attributes can be read as follows:
 The table below shows the list of JSON error codes that may be returned in an
 API error response.
 
-| Code     | Message                                                           | Description                                                                                                                             |
-| -------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `-1`     | Unknown Error                                                     | An unknown error occurred processing the API request                                                                                    |
-| `1`      | Malformed authorization. Is the authorization type missing?       | API Key is missing or malformed                                                                                                         |
-| `2`      | Invalid Entity                                                    | Error with the JSON object passed in the request body                                                                                   |
-| `3`      | Forbidden                                                         | API Key used with request does not have one of the roles authorized to call the API endpoint                                            |
-| `1077`   | Payment amount is invalid                                         | Payment amount must be greater than zero                                                                                                |
-| `1078`   | Payment currency not supported                                    | An invalid currency value was used when making a payment                                                                                |
-| `1083`   | Idempotency key already bound to other request                    | The idempotency key used when making a request was used with another payment. Please retry with a different value                       |
-| `1084`   | This item cannot be canceled                                      | A cancel or refund request cannot be canceled                                                                                           |
-| `1085`   | This item cannot be refunded                                      | A cancel or refund request cannot be refunded                                                                                           |
-| `1086`   | This payment was already canceled                                 | This payment was already canceled                                                                                                       |
-| `1087`   | Total amount to be refunded exceeds payment amount                | Total amount to be refunded exceeds payment amount                                                                                      |
-| `1088`   | Invalid source account                                            | An invalid source account was specified in a payout or transfer request                                                                 |
-| `1089`   | The source account could not be found                             | Unable to find the source account specified in a payout or transfer request                                                             |
-| `1093`   | Source account has insufficient funds                             | The source account has insufficient funds for the payout or transfer amount                                                             |
-| `1096`   | Encryption key id could not be found                              | An encryption key id must be provided if request includes encrypted data                                                                |
-| `1097`   | Original payment is failed                                        | Attempting to cancel or refund a failed payment                                                                                         |
-| `1101`   | Invalid country format                                            | An invalid ISO 31660-2 country code was provided                                                                                        |
-| `1106`   | Invalid district format                                           | Invalid district format, must be a 2 character value                                                                                    |
-| `1107`   | Payout limit exceeded                                             | Payout can't be accepted as it would exceed the given limit                                                                             |
-| `1108`   | Unsupported Country                                               | Country not supported for customer                                                                                                      |
-| `1143`   | Checkout session not found                                        | The checkout session id passed in the request doesn't exist in the DB                                                                   |
-| `1144`   | Checkout session is already in a completed state                  | The checkout session cannot be extended because it is already in a complete state                                                       |
-| `2003`   | The recipient address already exists                              | The blockchain address has already been associated with the account                                                                     |
-| `2004`   | The address is not a verified withdrawal address                  | The blockchain address must first be verified before it can be used as a destination in a transfer request                              |
-| `2005`   | The address belongs to an unsupported blockchain                  | The blockchain type used as a transfer destination is not supported                                                                     |
-| `2006`   | Wallet type is not supported                                      | The wallet type specified when creating an end user wallet is not supported                                                             |
-| `2007`   | Unsupported transfer                                              | A transfer from the provided source to the provided destination is not supported                                                        |
-| `5000`   | Invalid travel rule identity type                                 | The provided identity type must be either "individual" or "business"                                                                    |
-| `5001`   | Payout not found                                                  | Payout doesn't exist based on the ID provided. Please check the payout id                                                               |
-| `5002`   | Invalid payout amount                                             | Payout amount must be more than 0                                                                                                       |
-| `5003`   | Inactive destination address                                      | Cannot send payout to an inactive destination address. If you have just added the address, you may have to wait for 24 hours before use |
-| `5004`   | Destination address not found                                     | The destination address for this payout could not be found                                                                              |
-| `5005`   | Source wallet not found                                           | Source wallet for this payout could not be found                                                                                        |
-| `5006`   | Insufficient funds                                                | The source wallet has insufficient funds for this payout                                                                                |
-| `5007`   | Unsupported currency                                              | Currency not supported for this operation                                                                                               |
-| `5011`   | Invalid destination address                                       | Can't send payout to an invalid destination address                                                                                     |
-| `5012`   | Invalid destination location types                                | Can't search for both crypto and fiat payouts                                                                                           |
-| `5013`   | Invalid source wallet id                                          | Source wallet id must be a number for payouts search                                                                                    |
-| `5014`   | The address is not valid for the blockchain                       | Provided blockchain address is not valid for the corresponding blockchain                                                               |
-| `5015`   | Invalid destination chain                                         | Provided blockchain address has an invalid chain in respect to the currency used                                                        |
-| `500000` | Unsupported currency for reporting daily user balance             | User provided a currency other than USDC or EURC                                                                                        |
-| `500001` | Custody balance `asOfDate` is too far from today's date           | `asOfDate` provided was before or after today's date                                                                                    |
-| `500002` | Custody balance cannot be less than zero                          | Negative balances were provided                                                                                                         |
-| `500003` | Local custody balance can't be greater than total custody balance | Total balance must be greater than or equal to local balance                                                                            |
-| `500004` | Idempotency key can't be reused                                   | The same idempotency key was used for different requests                                                                                |
-| `500005` | Custody balance report already exists                             | A custody balance report was already created for the provided date and currency. Contact customer care for edits.                       |
+| Code | Message | Description |
+| --- | --- | --- |
+| `-1` | Unknown Error | An unknown error occurred processing the API request |
+| `1` | Malformed authorization. Is the authorization type missing? | API Key is missing or malformed |
+| `2` | Invalid Entity | Error with the JSON object passed in the request body |
+| `3` | Forbidden | API Key used with request does not have one of the roles authorized to call the API endpoint |
+| `1077` | Payment amount is invalid | Payment amount must be greater than zero |
+| `1078` | Payment currency not supported | An invalid currency value was used when making a payment |
+| `1083` | Idempotency key already bound to other request | The idempotency key used when making a request was used with another payment. Please retry with a different value |
+| `1084` | This item cannot be canceled | A cancel or refund request cannot be canceled |
+| `1085` | This item cannot be refunded | A cancel or refund request cannot be refunded |
+| `1086` | This payment was already canceled | This payment was already canceled |
+| `1087` | Total amount to be refunded exceeds payment amount | Total amount to be refunded exceeds payment amount |
+| `1088` | Invalid source account | An invalid source account was specified in a payout or transfer request |
+| `1089` | The source account could not be found | Unable to find the source account specified in a payout or transfer request |
+| `1093` | Source account has insufficient funds | The source account has insufficient funds for the payout or transfer amount |
+| `1096` | Encryption key id could not be found | An encryption key id must be provided if request includes encrypted data |
+| `1097` | Original payment is failed | Attempting to cancel or refund a failed payment |
+| `1101` | Invalid country format | An invalid ISO 31660-2 country code was provided |
+| `1106` | Invalid district format | Invalid district format, must be a 2 character value |
+| `1107` | Payout limit exceeded | Payout can't be accepted as it would exceed the given limit |
+| `1108` | Unsupported Country | Country not supported for customer |
+| `1143` | Checkout session not found | The checkout session id passed in the request doesn't exist in the DB |
+| `1144` | Checkout session is already in a completed state | The checkout session cannot be extended because it is already in a complete state |
+| `2003` | The recipient address already exists | The blockchain address has already been associated with the account |
+| `2004` | The address is not a verified withdrawal address | The blockchain address must first be verified before it can be used as a destination in a transfer request |
+| `2005` | The address belongs to an unsupported blockchain | The blockchain type used as a transfer destination is not supported |
+| `2006` | Wallet type is not supported | The wallet type specified when creating an end user wallet is not supported |
+| `2007` | Unsupported transfer | A transfer from the provided source to the provided destination is not supported |
+| `5000` | Invalid travel rule identity type | The provided identity type must be either "individual" or "business" |
+| `5001` | Payout not found | Payout doesn't exist based on the ID provided. Please check the payout id |
+| `5002` | Invalid payout amount | Payout amount must be more than 0 |
+| `5003` | Inactive destination address | Cannot send payout to an inactive destination address. If you have just added the address, you may have to wait for 24 hours before use |
+| `5004` | Destination address not found | The destination address for this payout could not be found |
+| `5005` | Source wallet not found | Source wallet for this payout could not be found |
+| `5006` | Insufficient funds | The source wallet has insufficient funds for this payout |
+| `5007` | Unsupported currency | Currency not supported for this operation |
+| `5011` | Invalid destination address | Can't send payout to an invalid destination address |
+| `5012` | Invalid destination location types | Can't search for both crypto and fiat payouts |
+| `5013` | Invalid source wallet id | Source wallet id must be a number for payouts search |
+| `5014` | The address is not valid for the blockchain | Provided blockchain address is not valid for the corresponding blockchain |
+| `5015` | Invalid destination chain | Provided blockchain address has an invalid chain in respect to the currency used |
+| `500000` | Unsupported currency for reporting daily user balance | User provided a currency other than USDC or EURC |
+| `500001` | Custody balance `asOfDate` is too far from today's date | `asOfDate` provided was before or after today's date |
+| `500002` | Custody balance cannot be less than zero | Negative balances were provided |
+| `500003` | Local custody balance can't be greater than total custody balance | Total balance must be greater than or equal to local balance |
+| `500004` | Idempotency key can't be reused | The same idempotency key was used for different requests |
+| `500005` | Custody balance report already exists | A custody balance report was already created for the provided date and currency. Contact customer care for edits. |
 
 ## Entity Error Responses
 

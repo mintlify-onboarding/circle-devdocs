@@ -1,0 +1,305 @@
+export const WalletCompatibilityValidator = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [signingMethod, setSigningMethod] = useState('eip712');
+  const [chain, setChain] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [generatedPayload, setGeneratedPayload] = useState('');
+  const [signature, setSignature] = useState('');
+  const [validationResult, setValidationResult] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const steps = [
+    { number: 1, title: 'Select Method' },
+    { number: 2, title: 'Generate Payload' },
+    { number: 3, title: 'Validate Signature' },
+    { number: 4, title: 'Results' }
+  ];
+
+  const signingMethods = [
+    {
+      id: 'eip712',
+      title: 'EIP-712 Typed Data',
+      description: 'Test wallet ability to sign structured data (USDC authorization)'
+    },
+    {
+      id: 'eip1559',
+      title: 'EIP-1559 Raw Transaction',
+      description: 'Test wallet ability to sign raw transactions with dynamic fees'
+    },
+    {
+      id: 'solana',
+      title: 'Solana Ed25519',
+      description: 'Test wallet ability to sign Solana SPL token transfers'
+    }
+  ];
+
+  const getChainOptions = () => {
+    if (signingMethod === 'solana') {
+      return [
+        { value: 'solana-devnet', label: 'Solana Devnet' }
+      ];
+    }
+    return [
+      { value: 'ethereum-sepolia', label: 'Ethereum Sepolia' },
+      { value: 'polygon-amoy', label: 'Polygon Amoy' },
+      { value: 'base-sepolia', label: 'Base Sepolia' }
+    ];
+  };
+
+  const getWalletPlaceholder = () => {
+    if (signingMethod === 'solana') {
+      return 'Enter Solana wallet address (Base58)';
+    }
+    return 'Enter EVM wallet address (0x...)';
+  };
+
+  const getMethodTitle = () => {
+    const method = signingMethods.find(m => m.id === signingMethod);
+    return method ? method.title : 'EIP-712 Typed Data';
+  };
+
+  const getSigningInstructions = () => {
+    if (signingMethod === 'eip712') {
+      return 'Use eth_signTypedData_v4 RPC method. Returns an off-chain signature (0x...).';
+    } else if (signingMethod === 'eip1559') {
+      return 'Use eth_signTransaction RPC method with EIP-1559 parameters. Returns a signed raw transaction (0x...).';
+    } else if (signingMethod === 'solana') {
+      return 'Use signTransaction method with Ed25519 signature. Returns a Base58 encoded signature.';
+    }
+    return '';
+  };
+
+  const getSignaturePlaceholder = () => {
+    if (signingMethod === 'solana') {
+      return 'Paste your Base58 encoded signature here...';
+    }
+    return 'Paste your off-chain signature (0x...) here...';
+  };
+
+  const generateRandomNonce = () => {
+    const bytes = new Array(32);
+    for (let i = 0; i < 32; i++) {
+      bytes[i] = Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+    }
+    return '0x' + bytes.join('');
+  };
+
+  const generateRandomHex = () => {
+    return '0x' + Math.floor(Math.random() * 0xffffffff).toString(16);
+  };
+
+  const generateValidBefore = () => {
+    return Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60 * 2);
+  };
+
+  const getChainConfig = () => {
+    const configs = {
+      'ethereum-sepolia': { chainId: 11155111, verifyingContract: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' },
+      'polygon-amoy': { chainId: 80002, verifyingContract: '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582' },
+      'base-sepolia': { chainId: 84532, verifyingContract: '0x036CbD53842c5426634e7929541eC2318f3dCF7e' },
+      'solana-devnet': { chainId: null, verifyingContract: null }
+    };
+    return configs[chain] || configs['polygon-amoy'];
+  };
+
+  const handleCopyPayload = () => {
+    navigator.clipboard.writeText(generatedPayload).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => console.error('Failed to copy:', err));
+  };
+
+  const handleGeneratePayload = () => {
+    const addr = walletAddress;
+    let payloadObj = {};
+    const chainConfig = getChainConfig();
+
+    if (signingMethod === 'eip712') {
+      payloadObj = {
+        domain: { name: "USDC", version: "2", chainId: chainConfig.chainId, verifyingContract: chainConfig.verifyingContract },
+        types: { EIP712Domain: [{ name: "name", type: "string" }, { name: "version", type: "string" }, { name: "chainId", type: "uint256" }, { name: "verifyingContract", type: "address" }], TransferWithAuthorization: [{ name: "from", type: "address" }, { name: "to", type: "address" }, { name: "value", type: "uint256" }, { name: "validAfter", type: "uint256" }, { name: "validBefore", type: "uint256" }, { name: "nonce", type: "bytes32" }] },
+        primaryType: "TransferWithAuthorization",
+        message: { from: addr, to: "0x000000000000000000000000000000000000dead", value: "0", validAfter: "0", validBefore: String(generateValidBefore()), nonce: generateRandomNonce() }
+      };
+    } else if (signingMethod === 'eip1559') {
+      payloadObj = { to: "0x000000000000000000000000000000000000dead", value: "0x0", data: "0xa9059cbb000000000000000000000000000000000000000000000000000000000000dead0000000000000000000000000000000000000000000000000000000000000000", gasLimit: "0x186a0", maxFeePerGas: "0x4a817c800", maxPriorityFeePerGas: "0x3b9aca00", nonce: generateRandomHex(), chainId: chainConfig.chainId };
+    } else if (signingMethod === 'solana') {
+      const timestamp = Date.now();
+      payloadObj = { recentBlockhash: "11111111111111111111111111111111", feePayer: addr, nonceInfo: null, instructions: [{ keys: [], programId: "ComputeBudget111111111111111111111111111111", data: [0, 32, 161, 7, 0] }, { keys: [], programId: "ComputeBudget111111111111111111111111111111", data: [3, 232, 3, 0, 0, 0, 0, 0, 0] }, { keys: [{ pubkey: addr, isSigner: true, isWritable: true }, { pubkey: "11111111111111111111111111111112", isSigner: false, isWritable: true }, { pubkey: "11111111111111111111111111111111", isSigner: false, isWritable: false }, { pubkey: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr", isSigner: false, isWritable: false }, { pubkey: "11111111111111111111111111111111", isSigner: false, isWritable: false }, { pubkey: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", isSigner: false, isWritable: false }], programId: "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL", data: [1] }, { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", keys: [{ pubkey: addr, isSigner: false, isWritable: true }, { pubkey: "11111111111111111111111111111112", isSigner: false, isWritable: true }, { pubkey: addr, isSigner: true, isWritable: false }], data: [3, 0, 0, 0, 0, 0, 0, 0, 0] }, { keys: [], programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", data: "CPN_TEST_" + timestamp }], signers: [addr] };
+    }
+
+    setGeneratedPayload(JSON.stringify(payloadObj, null, 2));
+    setCopied(false);
+    setCurrentStep(3);
+  };
+
+  const handleValidateSignature = () => {
+    if (!signature || signature.trim() === '') {
+      setValidationResult({
+        success: false,
+        error: signingMethod === 'solana' ? 'Invalid Solana signature format' : 'Invalid EVM signature format',
+        message: 'Signature cannot be empty'
+      });
+    } else if (signingMethod === 'solana') {
+      const base58Regex = /^[1-9A-HJ-NP-Za-km-z]+$/;
+      if (!base58Regex.test(signature) || signature.length < 80) {
+        setValidationResult({ success: false, error: 'Invalid Solana signature format', message: 'Signature must be a valid Base58 encoded string' });
+      } else {
+        setValidationResult({ success: true, message: 'Signature validated successfully!' });
+      }
+    } else {
+      if (!signature.startsWith('0x') || signature.length !== 132) {
+        setValidationResult({ success: false, error: 'Invalid EVM signature format', message: 'Signature must be 132 characters starting with 0x (65 bytes)' });
+      } else {
+        setValidationResult({ success: true, message: 'Signature validated successfully!' });
+      }
+    }
+    setCurrentStep(4);
+  };
+
+  const handleMethodChange = (method) => {
+    setSigningMethod(method);
+    setChain('');
+    setWalletAddress('');
+    setCopied(false);
+  };
+
+  const resetValidator = () => {
+    setCurrentStep(1);
+    setSigningMethod('eip712');
+    setChain('');
+    setWalletAddress('');
+    setGeneratedPayload('');
+    setSignature('');
+    setValidationResult(null);
+    setCopied(false);
+  };
+
+  return (
+    <div className="wallet-validator">
+      <div className="wallet-validator-header">
+        <h3 className="wallet-validator-title">Wallet Compatibility Validator</h3>
+        <p className="wallet-validator-subtitle">Test your wallet compatibility with Circle Payments Network (CPN)</p>
+      </div>
+
+      <div className="wallet-validator-steps">
+        {steps.map((step) => (
+          <div key={step.number} className={`validator-step ${currentStep >= step.number ? 'active' : ''} ${currentStep === step.number ? 'current' : ''}`}>
+            <div className="validator-step-number">{step.number}</div>
+            <div className="validator-step-title">{step.title}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="wallet-validator-content">
+        {currentStep === 1 && (
+          <div className="validator-section">
+            <h3 className="validator-section-title">Select Signing Method</h3>
+            <p className="validator-section-description">Choose the type of signature you want to test with your wallet.</p>
+            <div className="validator-section-label">Signing Methods</div>
+
+            <div className="signing-methods">
+              {signingMethods.map((method) => (
+                <label key={method.id} className="signing-method">
+                  <input type="radio" name="signing-method" value={method.id} checked={signingMethod === method.id} onChange={(e) => handleMethodChange(e.target.value)} />
+                  <div className="signing-method-content">
+                    <div className="signing-method-title">{method.title}</div>
+                    <div className="signing-method-description">{method.description}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            <button className="validator-button validator-button-primary" onClick={() => setCurrentStep(2)}>Continue</button>
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <div className="validator-section">
+            <h3 className="validator-section-title">Generate {getMethodTitle()} Payload</h3>
+            <p className="validator-section-description">Enter your wallet details to generate a test payload. Always verify the payload before signing.</p>
+
+            <div className="validator-form">
+              <div className="validator-field">
+                <label className="validator-label">Chain</label>
+                <select className="validator-select" value={chain} onChange={(e) => setChain(e.target.value)}>
+                  <option value="">Select a chain</option>
+                  {getChainOptions().map(option => (<option key={option.value} value={option.value}>{option.label}</option>))}
+                </select>
+              </div>
+
+              <div className="validator-field">
+                <label className="validator-label">Wallet Address</label>
+                <input type="text" className="validator-input" placeholder={getWalletPlaceholder()} value={walletAddress} onChange={(e) => setWalletAddress(e.target.value)} />
+              </div>
+
+              <div className="validator-buttons">
+                <button className="validator-button validator-button-primary" onClick={handleGeneratePayload} disabled={!chain || !walletAddress}>Generate Payload</button>
+                <button className="validator-button validator-button-secondary" onClick={() => setCurrentStep(1)}>Back</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentStep === 3 && (
+          <div className="validator-section">
+            <h3 className="validator-section-title">Sign Payload & Validate</h3>
+            <p className="validator-section-description">Copy the payload below, sign it with your wallet using the method below, then paste the signature.</p>
+
+            <div className="validator-info-box">
+              <div className="validator-info-icon">📝</div>
+              <div className="validator-info-content"><strong>Signing Instructions:</strong> {getSigningInstructions()}</div>
+            </div>
+
+            <div className="validator-payload-section">
+              <div className="validator-payload-header">
+                <span className="validator-payload-title">Generated Payload</span>
+                <button className="validator-copy-button" onClick={handleCopyPayload}>{copied ? 'Copied!' : 'Copy'}</button>
+              </div>
+              <pre className="validator-payload-code"><code>{generatedPayload}</code></pre>
+            </div>
+
+            <div className="validator-warning-box">
+              <div className="validator-warning-icon">⚠️</div>
+              <div className="validator-warning-content"><strong>Security Notice:</strong> Always carefully review the payload before signing. Verify all addresses, amounts, and transaction details match your expectations. It contains zero amounts, expired timestamps, and burn addresses - it cannot execute any real transactions.</div>
+            </div>
+
+            <div className="validator-field">
+              <label className="validator-label">Signature</label>
+              <textarea className="validator-textarea" placeholder={getSignaturePlaceholder()} rows="4" value={signature} onChange={(e) => setSignature(e.target.value)} />
+            </div>
+
+            <div className="validator-buttons">
+              <button className="validator-button validator-button-primary" onClick={handleValidateSignature} disabled={!signature || signature.trim() === ''}>Validate Signature</button>
+              <button className="validator-button validator-button-secondary" onClick={() => setCurrentStep(2)}>Back</button>
+            </div>
+          </div>
+        )}
+
+        {currentStep === 4 && (
+          <div className="validator-section">
+            <h3 className="validator-section-title">Validation Results</h3>
+
+            {validationResult && (
+              <div className={`validator-result ${validationResult.success ? 'success' : 'error'}`}>
+                <div className="validator-result-icon">{validationResult.success ? '✓' : '✗'}</div>
+                <div className="validator-result-content">
+                  <div className="validator-result-title">{validationResult.success ? 'Validation Successful' : 'Validation Failed'}</div>
+                  <div className="validator-result-message">
+                    {validationResult.error && <div>{validationResult.error}</div>}
+                    <div className="validator-result-detail">{validationResult.message}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="validator-buttons">
+              <button className="validator-button validator-button-primary" onClick={resetValidator}>Test Another Method</button>
+              <button className="validator-button validator-button-secondary" onClick={() => setCurrentStep(3)}>Try Different Signature</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
