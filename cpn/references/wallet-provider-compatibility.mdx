@@ -3,10 +3,12 @@ title: "Wallet Provider Compatibility"
 description: ""
 sideNav: ""
 tableOfContents: true
-documentationItems: 
+documentationItems:
 - title: Documentation
 sidebarTitle: "Wallet Provider Compatibility"
 ---
+
+import {WalletCompatibilityValidator} from '/snippets/WalletCompatibilityValidator.mdx';
 
 CPN allows you to bring your own wallet provider when integrating with the
 network. Circle Wallets is an option for your integration, but not a
@@ -33,8 +35,7 @@ be able to integrate with CPN:
     EIP-1271 with the hash of the typed data (on behalf of an SCA).
 
 <Note>
-    > **Note:** USDC implements EIP-3009 with the EIP-7598 extension, enabling
-    > both EOAs and SCAs to authorize transfers via the EIP-3009 mechanism.
+    **Note:** USDC implements EIP-3009 with the EIP-7598 extension, enabling both EOAs and SCAs to authorize transfers via the EIP-3009 mechanism.
 </Note>
 
 - **Solana signing:** The provider must support signing raw Solana transaction
@@ -42,12 +43,10 @@ be able to integrate with CPN:
 - **Solana memo field:** The provider must support a memo field for Solana
   transactions.
 
-<FeatureFlaggedSection flag='cpnWalletValidatorEnabled'>
 ## Quick Compatibility Test
-
 Use this interactive tool to test whether your wallet provider supports the
 signing methods required for CPN integration. Test payloads are designed to be
 safe, but always verify what you're signing.
 
+
 <WalletCompatibilityValidator />
-</FeatureFlaggedSection>

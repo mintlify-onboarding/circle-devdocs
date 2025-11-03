@@ -39,28 +39,37 @@ available after fast and standard messages are emitted onchain, respectively.
 | **Unichain**    | 1                | ~8 seconds   |
 | **World Chain** | 1                | ~8 seconds   |
 
+<Note>
+**Note: Chains without Fast Message Attestation Times**
+
+Some chains don't appear in the Fast Message Attestation Times because their standard attestation times are already very fast. Consequently, Fast Transfer is not applicable when these chains are used as the source chain for burns.
+
+Affected chains: **Arc Testnet, Avalanche, HyperEVM, Polygon PoS, Sei, Sonic, XDC.**
+</Note>
+
 ## CCTP V2 Standard Message Attestation Times
 
-| Source Chain        | Number of Blocks | Average Time        |
-| ------------------- | ---------------- | ------------------- |
-| **Ethereum**        | ~65\*            | ~13 to 19 minutes\* |
-| **Arbitrum**        | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **Avalanche**       | 1                | ~8 seconds          |
-| **Base**            | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **BNB Smart Chain** | 3                | ~2 seconds          |
-| **Codex**           | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **HyperEVM**        | 1                | ~5 seconds          |
-| **Ink**             | ~65 ETH blocks\* | ~30 minutes\*       |
-| **Linea**           | 1                | ~6 to 32 hours\*\*  |
-| **OP Mainnet**      | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **Plume**           | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **Polygon PoS**     | ~2-3             | ~8 seconds          |
-| **Sei**             | 1                | ~5 seconds          |
-| **Solana**          | 32               | ~25 seconds         |
-| **Sonic**           | 1                | ~8 seconds          |
-| **Unichain**        | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **World Chain**     | ~65 ETH blocks\* | ~13 to 19 minutes\* |
-| **XDC**             | 3                | ~10 seconds         |
+| Source Chain | Number of Blocks | Average Time |
+| --- | --- | --- |
+| **Ethereum** | ~65\* | ~13 to 19 minutes\* |
+| **Arbitrum** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Arc Testnet** | ~1 | ~0.5 second |
+| **Avalanche** | 1 | ~8 seconds |
+| **Base** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **BNB Smart Chain** | 3 | ~2 seconds |
+| **Codex** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **HyperEVM** | 1 | ~5 seconds |
+| **Ink** | ~65 ETH blocks\* | ~30 minutes\* |
+| **Linea** | 1 | ~6 to 32 hours\*\* |
+| **OP Mainnet** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Plume** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **Polygon PoS** | ~2-3 | ~8 seconds |
+| **Sei** | 1 | ~5 seconds |
+| **Solana** | 32 | ~25 seconds |
+| **Sonic** | 1 | ~8 seconds |
+| **Unichain** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **World Chain** | ~65 ETH blocks\* | ~13 to 19 minutes\* |
+| **XDC** | 3 | ~10 seconds |
 
 <Note>
 **Block confirmations for L2s to Ethereum**
